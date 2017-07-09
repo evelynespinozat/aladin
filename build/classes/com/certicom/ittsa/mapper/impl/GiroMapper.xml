@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.GiroMapper">
+
+<resultMap id="giroResult" type="com.certicom.ittsa.domain.Giro">
+	<id column="idGiro" property="idGiro"/>
+	<result column="idOrigen" property="idOrigen"/>
+	<result column="idDestino" property="idDestino"/>
+	<result column="idOficina" property="idOficina"/>
+	<result column="tipoPersona" property="tipoPersona"/>
+	<result column="montoGiro" property="montoGiro"/>
+	<result column="documento" property="documento"/>
+	<result column="tipoDocumento" property="tipoDocumento"/>
+	<result column="idUsuario" property="idUsuario"/>
+	<result column="idPuntoVentaOrigen" property="idPuntoVentaOrigen"/>
+	<result column="totalCobrado" property="totalCobrado"/>
+	<result column="dniRemitente" property="dniRemitente"/>
+	<result column="apellidosRemitente" property="apellidosRemitente"/>
+	<result column="nombresRemitente" property="nombresRemitente"/>
+	<result column="telefonoRemitente" property="telefonoRemitente"/>
+	<result column="rucRemitente" property="rucRemitente"/>
+	<result column="razonSocialRemitente" property="razonSocialRemitente"/>
+	<result column="dniDestinatario1" property="dniDestinatario1"/>
+	<result column="apellidosDestinatario1" property="apellidosDestinatario1"/>
+	<result column="nombresDestinatario1" property="nombresDestinatario1"/>
+	<result column="telefonoDestinatario1" property="telefonoDestinatario1"/>
+	<result column="rucDestinatario1" property="rucDestinatario1"/>
+	<result column="razonSocialDestinatario1" property="razonSocialDestinatario1"/>
+	<result column="dniDestinatario2" property="dniDestinatario2"/>
+	<result column="apellidosDestinatario2" property="apellidosDestinatario2"/>
+	<result column="nombresDestinatario2" property="nombresDestinatario2"/>
+	<result column="telefonoDestinatario2" property="telefonoDestinatario2"/>
+	<result column="rucDestinatario2" property="rucDestinatario2"/>
+	<result column="razonSocialDestinatario2" property="razonSocialDestinatario2"/>
+	<result column="observacionEnvio" property="observacionEnvio"/>
+	<result column="fEnvio" property="fEnvio"/>
+	<result column="fRecojo" property="fRecojo"/>
+	<result column="fRegistro" property="fRegistro"/>
+	<result column="idPromocion" property="idPromocion"/>
+	<result column="idAutorizante" property="idAutorizante"/>
+	<result column="tipoEntrega" property="tipoEntrega"/>
+	<result column="estado" property="estado"/>
+	<result column="codigo" property="codigo"/>
+	<result column="idPuntoVentaDestino" property="idPuntoVentaDestino"/>
+	<result column="origenString" property="origenString"/>
+	<result column="destinoString" property="destinoString"/>
+	<result column="desOficina" property="desOficina"/>
+</resultMap>
+
+<select id="buscarGirosxCobrar" resultMap="giroResult" parameterType="com.certicom.ittsa.domain.Giro">
+select 
+	g.IdGiro as idGiro,
+	g.IdOrigen as idOrigen ,
+	g.IdDestino as IdDestino,
+	g.IdOficina as idOficina,
+	g.TipoPersona as tipoPersona,
+	g.MontoGiro as montoGiro,
+	g.Documento as documento,
+	g.TipoDocumento as tipoDocumento,
+	g.IdUsuario as idUsuario,
+	g.IdPuntoVentaOrigen as idPuntoVentaOrigen,
+	g.TotalCobrado as totalCobrado,
+	g.DniRemitente as dniRemitente,
+	g.ApellidosRemitente as apellidosRemitente,
+	g.NombresRemitente as nombresRemitente,
+	g.TelefonoRemitente as telefonoRemitente,
+	g.RucRemitente as rucRemitente,
+	g.RazonSocialRemitente as razonSocialRemitente,
+	g.DniDestinatario1 as dniDestinatario1,
+	g.NombresDestinatario1 as nombresDestinatario1,
+	g.ApellidosDestinatario1 as apellidosDestinatario1,
+	g.TelefonoDestinatario1 as telefonoDestinatario1,
+	g.RucDestinatario1 as rucDestinatario1,
+	g.RazonSocialDestinatario1 as razonSocialDestinatario1,
+	g.DniDestinatario2 as dniDestinatario2,
+	g.NombresDestinatario2 as nombresDestinatario2,
+	g.NombresDestinatario2 as nombresDestinatario2,
+	g.TelefonoDestinatario2 as telefonoDestinatario2,
+	g.RucDestinatario2 as rucDestinatario2,
+	g.RazonSocialDestinatario2 as razonSocialDestinatario2,
+	g.ObservacionEnvio as observacionEnvio,
+	g.FEnvio as fEnvio,
+	g.FRecojo as FRecojo,
+	g.FRegistro as fRegistro,
+	g.IdPromocion as idPromocion,
+	g.IdAutorizante as idAutorizante,
+	g.TipoEntrega as tipoEntrega,
+	g.Estado as estado ,
+	g.Codigo as codigo,
+	g.IdPuntoVentaDestino as idPuntoVentaDestino,
+	(select Descripcion from t_agencia a where Idagencia = g.IdOrigen) as origenString,
+	(select Descripcion from t_agencia a where Idagencia = g.IdDestino) as destinoString,
+	(select Nombre from t_agenciaoficina o where o.IdOficina = g.IdOficina) as desOficina
+		from 
+	t_giro g
+	where g.Estado != 10 
+	<if test="idOrigen !=0">
+ 		and g.IdOrigen = #{idOrigen}  
+	</if>
+	<if test="idDestino !=0">
+ 		and g.IdDestino = #{idDestino} 
+	</if>
+	<if test="fecInicio !=null">
+ 		and cast(g.FRegistro as date) &gt;= #{fecInicio}
+	</if>
+	<if test="fecFin !=null">
+ 		and cast(g.FRegistro as date) &lt;= #{fecFin}  
+	</if>
+	<if test="idOficina !=0">
+ 		and g.IdOficina = #{idOficina}  
+	</if>
+	<if test="estado !=0">
+ 		and g.estado = #{estado}  
+	</if>
+
+
+</select>
+
+
+</mapper>	

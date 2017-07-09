@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ProveedorAgenciaMapper">
+
+<resultMap id="proveedorAgenciaResult" type="com.certicom.ittsa.domain.ProveedorAgencia">
+	<id column="Id" property="Id"/>
+	<result column="Idagencia" property="Idagencia"/>
+	<result column="IdOficina" property="IdOficina"/>
+	<result column="IdAlmacen" property="IdAlmacen"/>
+	<result column="IdProveedor" property="IdProveedor"/>
+	<result column="desAgencia" property="desAgencia"/>
+	<result column="desOficina" property="desOficina"/>
+	<result column="RazonSocial" property="RazonSocial"/>
+</resultMap>
+
+
+
+<select id="listOfixProveedor" parameterType="int" resultMap="proveedorAgenciaResult">
+	select 
+		ap.Id,
+		ap.Idagencia,
+		a.Descripcion as desAgencia,
+		ap.IdOficina,
+		o.Nombre as desOficina,
+		pr.RazonSocial
+	  from t_proveedor_agencia ap,
+		   t_agencia a,
+		   t_agenciaoficina o,
+		   t_proveedor pr
+	  where ap.Idagencia = a.Idagencia
+	  	and ap.IdOficina = o.IdOficina
+	  	and ap.IdProveedor = pr.IdProveedor
+	  	and ap.IdProveedor = #{IdProveedor}
+</select>
+
+
+
+</mapper>	

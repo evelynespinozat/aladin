@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.UsuarioMapper">
+
+	<resultMap type="com.certicom.ittsa.domain.Usuario"
+		id="usuarioResult">
+		<result column="idusuario" property="idusuario" />
+		<result column="nombre" property="nombre" />
+		<result column="apellido_paterno" property="apellido_paterno" />
+		<result column="apellido_materno" property="apellido_materno" />
+		<result column="dni" property="dni" />
+		<result column="login" property="login" />
+		<result column="password" property="password" />
+		<result column="estado" property="estado" />
+		<result column="email" property="email" />
+		<result column="fecha_registro" property="fecha_registro" />
+		<result column="fecha_acceso" property="fecha_acceso" />
+		<result column="cod_perfil" property="cod_perfil" />
+		<result column="fecha_cambio_password" property="fecha_cambio_password" />
+		<result column="es_nuevo" property="es_nuevo" javaType="boolean" jdbcType="BOOLEAN"  />
+		<result column="idagencia" property="idagencia" />
+		<result column="descagencia" property="descagencia" />
+		<result column="idoficina" property="idoficina" />
+		<result column="descoficina" property="descoficina" />
+		<result column="idpuntoventa" property="idpuntoventa" />
+		<result column="descpventa" property="descpventa" />
+		<result column="cod_perfil" property="cod_perfil"/>
+	</resultMap>
+	
+	<select id="buscarPorLoginClave" parameterType="com.certicom.ittsa.domain.Usuario"
+		resultMap="usuarioResult">
+		
+		SELECT
+		u.idusuario,u.nombre,u.apellido_paterno,u.apellido_materno,u.dni,u.email,u.direccion,u.login,u.password,u.estado,u.fecha_registro,u.fecha_mod,u.fecha_acceso,u.es_nuevo,
+		u.idpuntoventa , u.idagencia,  u.idoficina, p.cod_perfil 
+		from t_usuario u inner join t_usuarioxperfil p on u.idusuario = p.idusuario 
+		where u.login =#{login} And u.password=#{password}
+		
+	</select>
+
+	<select id="buscarPorDNI" parameterType="String" resultMap="usuarioResult">
+		SELECT
+		idusuario,nombre,apellido_paterno,apellido_materno,dni,email,direccion,login,password,estado,fecha_registro,fecha_mod,es_nuevo 
+		from t_usuario
+		where dni =#{dni}
+	</select>
+
+	<select id="buscarPorNombre" parameterType="String" resultMap="usuarioResult">
+		SELECT
+		idusuario,nombre,apellido_paterno,apellido_materno,dni,email,direccion,login,password,estado,fecha_registro,fecha_mod
+		from t_usuario
+		where nombre =#{nombre}
+	</select>
+
+	<select id="buscarPorApellido" parameterType="String" resultMap="usuarioResult">
+		SELECT
+		idusuario,nombre,apellido_paterno,apellido_materno,dni,email,direccion,login,password,estado,fecha_registro,fecha_mod
+		from t_usuario
+		where apellido_paterno =#{apellido_paterno}
+	</select>
+
+	<select id="buscarPorId" parameterType="int" resultMap="usuarioResult">
+		SELECT
+		idusuario,nombre,apellido_paterno,apellido_materno,dni,email,
+		direccion,login,password,estado,fecha_registro,fecha_mod,es_nuevo,
+		Idagencia as idagencia,
+		IdOficina as idoficina,
+		IdPuntoVenta as idpuntoventa,
+		idtipodoc as idtipodoc,
+		password
+		from t_usuario
+		where idusuario =#{idusuario}
+	</select>
+
+
+	<insert id="insertUsuario" parameterType="com.certicom.ittsa.domain.Usuario">
+		INSERT INTO t_usuario(dni,nombre, apellido_paterno,apellido_materno,email,login,password,
+		direccion,estado,es_nuevo,idagencia,idoficina,idpuntoventa,idtipodoc)
+		values
+		(#{dni},#{nombre},#{apellido_paterno},#{apellido_materno},
+		#{email},#{login},#{password},#{direccion},#{estado},#{es_nuevo},
+		#{idagencia},#{idoficina},#{idpuntoventa},#{idtipodoc})
+	</insert>
+
+	<select id="getlistaUsuario" resultMap="usuarioResult">
+	SELECT  a.idusuario,a.dni, a.nombre, a.apellido_paterno, a.apellido_materno, a.email, a.direccion, a.fecha_registro, a.login,
+		a.fecha_acceso, a.estado, 
+		a.es_nuevo,
+		ag.Idagencia as idagencia,
+		ag.Descripcion as descagencia,
+		ofi.IdOficina as idoficina,
+		ofi.Nombre as descoficina,
+		pv.IdPuntoVenta as idpuntoventa,
+		(pv.NamePuntoVenta + '-' +te.descripcion) as descpventa
+		
+		FROM
+		t_usuario a,
+		t_agencia ag,
+		t_agenciaoficina ofi,
+		t_puntoventa pv,
+		t_tipoequipo te
+		WHERE 
+		a.idagencia = ag.Idagencia
+		and a.idoficina = ofi.IdOficina
+		and a.idpuntoventa = pv.IdPuntoVenta
+		and pv.Tipo = te.idtipoequipo
+		order by 4 , 3 asc
+		
+	</select>
+
+
+	<update id="actualizarEstado" parameterType="com.certicom.ittsa.domain.Usuario">
+		UPDATE t_usuario
+		SET estado = #{estado}
+		WHERE idusuario = #{idusuario}
+	</update>
+
+	<update id="actualizar" parameterType="com.certicom.ittsa.domain.Usuario">
+		update t_usuario
+		SET dni =
+		#{dni},
+		login=#{login},
+		nombre = #{nombre},
+		apellido_paterno = #{apellido_paterno},
+		apellido_materno = #{apellido_materno},
+		email = #{email},
+		direccion = #{direccion},
+		estado = #{estado},
+		fecha_acceso = #{fecha_acceso},
+		es_nuevo = #{es_nuevo},
+		Idagencia = #{idagencia},
+		IdOficina = #{idoficina},
+		IdPuntoVenta =#{idpuntoventa},
+		idtipodoc = #{idtipodoc}
+		WHERE idusuario = #{idusuario}
+	</update>
+	
+	<update id="actualizarLogin" parameterType="com.certicom.ittsa.domain.Usuario">
+		update t_usuario
+		SET 
+		login = #{login},
+		password = #{password}
+		WHERE idusuario = #{idusuario}
+	</update>
+	
+	
+	<update id="actualizarPassword" parameterType="com.certicom.ittsa.domain.Usuario">
+		update t_usuario
+		SET 
+		password = #{password},
+		fecha_cambio_password = #{fecha_cambio_password},
+		es_nuevo = #{es_nuevo}
+		WHERE idusuario = #{idusuario}
+	</update>
+	
+	
+	<update id="actualizarFechaAcceso" parameterType="com.certicom.ittsa.domain.Usuario">
+		update t_usuario SET fecha_acceso = #{fecha_acceso}
+		WHERE idusuario = #{idusuario}
+	</update>
+	
+	<select id="getlistaUsuario_Preparador" parameterType="com.certicom.ittsa.domain.Usuario" resultMap="usuarioResult">
+		SELECT		c.idusuario, dni,	c.nombre,	apellido_paterno, apellido_materno,
+		email, direccion, login
+		FROM 	t_perfil a, t_usuarioxperfil b, t_usuario c
+		where 
+		a.cod_perfil  	 	=  b.cod_perfil
+		AND b.idusuario	 	=  c.idusuario
+		AND a.ind_activo 	=  #{estado}
+		AND b.ind_activo 	=  #{estado}
+		AND c.estado     	=  #{estado}
+		AND a.nombre	 	=  'PREPARADOR'
+	</select>
+	
+	<select id="getlistaUsuario_Digitalizador" parameterType="com.certicom.ittsa.domain.Usuario" resultMap="usuarioResult">
+		SELECT		c.idusuario, dni,	c.nombre,	apellido_paterno, apellido_materno,
+		email, direccion, login
+		FROM 	t_perfil a, t_usuarioxperfil b, t_usuario c
+		where 
+		a.cod_perfil  	 	=  b.cod_perfil
+		AND b.idusuario	 	=  c.idusuario
+		AND a.ind_activo 	=  #{estado}
+		AND b.ind_activo 	=  #{estado}
+		AND c.estado     	=  #{estado}
+		AND a.nombre	 	=  'DIGITALIZADOR'
+	</select>
+	
+	<select id="getlistaUsuario_Perfil" parameterType="com.certicom.ittsa.domain.Usuario" resultMap="usuarioResult">
+		SELECT		c.idusuario, dni,	c.nombre,	apellido_paterno, apellido_materno,
+		email, direccion, login
+		FROM 	t_perfil a, t_usuarioxperfil b, t_usuario c
+		where 
+		a.cod_perfil  	 	=  b.cod_perfil
+		AND b.idusuario	 	=  c.idusuario
+		AND a.ind_activo 	=  #{estado}
+		AND b.ind_activo 	=  #{estado}
+		AND c.estado     	=  #{estado}
+		AND a.cod_perfil	 	=  #{cod_perfil}
+	</select>
+	
+	<select id="buscarPorLogin" parameterType="String"
+		resultMap="usuarioResult">
+		SELECT
+		idusuario,nombre,apellido_paterno,apellido_materno,dni,email,direccion,login,password,estado,fecha_registro,fecha_mod,es_nuevo 
+		from t_usuario
+		where login =#{login} 
+	</select>
+	
+	<!-- eliminar usuario: will -->
+	<delete id="deleteUsuario" parameterType="int">
+		Delete from t_usuario
+		where idusuario=#{idusuario}
+	</delete>
+	
+	
+	<!--listar usarios por proceso  -->
+	<select id="listarUsuariosXPerfilProceso" parameterType="String" resultMap="usuarioResult">
+		select us.idusuario,us.nombre,us.login,us.apellido_paterno, us.apellido_materno,pr.cod_perfil 
+		from t_usuario us, t_usuarioxperfil pu, t_perfil pr
+		where pu.idusuario = us.idusuario
+		and pu.cod_perfil = pr.cod_perfil
+		and pr.proceso=#{proceso}
+	</select>
+	
+	<select id="getUsuarioxDni" parameterType="String" resultMap="usuarioResult">
+		select  us.idusuario,
+		us.nombre,
+		us.apellido_paterno, 
+		us.apellido_materno,
+		us.email
+		from t_usuario us, t_usuarioxperfil pu, t_perfil pr
+		where pu.idusuario = us.idusuario
+		and pu.cod_perfil = pr.cod_perfil
+		and us.dni = #{dni}
+	</select>
+	
+	
+	<select id="listarUsuariosActivos" parameterType="String" resultMap="usuarioResult">
+		select distinct  us.idusuario,
+		us.nombre,us.login,
+		us.apellido_paterno, 
+		us.apellido_materno,
+		us.email,
+		us.dni
+		from t_usuario us, t_usuarioxperfil pu, t_perfil pr
+		where pu.idusuario = us.idusuario
+		and pu.cod_perfil = pr.cod_perfil
+		and us.Estado = 1
+		order by 3 ASC
+	</select>
+	
+	
+</mapper>
+

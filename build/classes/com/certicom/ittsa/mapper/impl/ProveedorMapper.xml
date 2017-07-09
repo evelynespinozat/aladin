@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ProveedorMapper">
+
+<resultMap id="proveedorResult" type="com.certicom.ittsa.domain.Proveedor">
+	<id column="IdProveedor" property="IdProveedor"/>
+	<result column="RUC" property="RUC"/>
+	<result column="RazonSocial" property="RazonSocial"/>
+	<result column="Direccion" property="Direccion"/>
+	<result column="Telefono" property="Telefono"/>
+	<result column="Email" property="Email"/>
+	<result column="codUbigeo" property="codUbigeo"/>
+	<result column="Estado" property="Estado"/>
+	<result column="desUbigeo" property="desUbigeo"/>
+	<result column="Contacto" property="Contacto"/>
+	<result column="telContacto" property="telContacto"/>
+	<result column="tipo" property="tipo"/>
+</resultMap>
+
+
+<select id="findAll" resultMap="proveedorResult">
+		select 
+			 p.IdProveedor,
+			 p.RUC,
+			 p.RazonSocial,
+			 p.Direccion,
+			 p.Telefono,
+			 p.Email,
+			 p.codUbigeo,
+			 p.Estado,
+			 p.Contacto,
+			 p.telContacto,
+			 p.tipo
+			 (select (sdepartamento + '-' + sprovincia + '-' + sdistrito)  from t_ubigeo where sid_ubigeo = p.codUbigeo) as desUbigeo  
+			 from t_proveedor p
+</select>
+
+
+</mapper>	

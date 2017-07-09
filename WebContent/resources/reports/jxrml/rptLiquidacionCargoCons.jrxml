@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptLiquidacionCargoCons" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f1247253-5ed1-4830-8a8f-c58ba01712ea">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_OFICINA" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\IttsaWS\\Ittsa\\WebContent\\resources\\reports\\jxrml\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_FECHA" class="java.lang.String"/>
+	<parameter name="P_EFECTIVO_CAJA" class="java.lang.Double"/>
+	<field name="ingresosDS" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<field name="egresosDS" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="e3290e12-a58f-4ccc-beb2-c12a0d184a21" x="167" y="21" width="259" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIQUIDACION CONSOLIDADA ]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="2e8c789d-9177-4a6b-a580-72d5004f1978" x="10" y="10" width="128" height="31"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="4f7158f9-5392-4842-84b5-3a67b2d0182f" x="10" y="47" width="44" height="20"/>
+				<textElement/>
+				<text><![CDATA[Oficina:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="65f240ee-e5a0-490b-bdbd-41881aee0d7a" x="54" y="47" width="120" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_OFICINA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c1008981-99f7-4044-9af3-71c8455a2687" x="312" y="47" width="44" height="20"/>
+				<textElement/>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement uuid="7883c06e-bf44-483f-88d3-a631e5b75c2b" x="356" y="47" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="103" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="360cc2fb-f857-4253-a0a9-04e7e9a01d33" x="10" y="0" width="528" height="15" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="4aa40324-ab8c-4aa9-946d-1f5fe929fabc" x="20" y="0" width="129" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INGRESOS:]]></text>
+			</staticText>
+			<subreport runToBottom="true">
+				<reportElement uuid="6dc94d4b-f28b-4494-afc6-9b09ee180ff9" x="112" y="25" width="426" height="49"/>
+				<dataSourceExpression><![CDATA[$F{ingresosDS}]]></dataSourceExpression>
+				<subreportExpression><![CDATA["srptLCC_Ingresos.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="95">
+			<rectangle>
+				<reportElement uuid="d207e626-749b-4963-aa4f-7f232f9a58b9" x="10" y="3" width="528" height="15" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="1565e5e4-9b73-47e2-ae60-50c8147fb942" x="20" y="3" width="129" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EGRESOS:]]></text>
+			</staticText>
+			<subreport runToBottom="true">
+				<reportElement uuid="b04b94f3-d811-445a-98b8-c7fdf1d6fbf4" x="112" y="35" width="426" height="49"/>
+				<dataSourceExpression><![CDATA[$F{egresosDS}]]></dataSourceExpression>
+				<subreportExpression><![CDATA["srptLCC_Ingresos.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="50">
+			<staticText>
+				<reportElement uuid="405c6a61-e64f-4fe7-b0cf-52ec5434e2a6" x="154" y="0" width="152" height="20"/>
+				<textElement/>
+				<text><![CDATA[TOTAL EFECTIVO EN CAJA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e74d7977-98de-44ae-9305-3b26ea05d580" x="312" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_EFECTIVO_CAJA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

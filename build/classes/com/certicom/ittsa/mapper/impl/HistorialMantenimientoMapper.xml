@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.HistorialMantenimientoMapper">
+
+<resultMap id="historialMantenimientoResult" type="com.certicom.ittsa.domain.HistorialMantenimiento">
+	<id column="IdHistoMant" property="idHistoMant"/>
+	<result column="IdMecanico" property="idMecanico"/>
+	<result column="FecInicio" property="fecInicio"/>
+	<result column="FecFin" property="fecFin"/>
+	<result column="TipMantenimiento" property="tipMantenimiento"/>
+	<result column="TipMantEfectuado" property="tipMantEfectuado"/>
+	<result column="Cantidad" property="cantidad"/>
+	<result column="Observacion" property="observacion"/>
+	<result column="IdFlotaAuto" property="idFlotaAuto"/>
+	<result column="EstadoMecanico" property="estadoMecanico"/>
+	<result column="FecAsignaMecanico" property="fecAsignaMecanico"/>
+	<result column="FecMantenimiento" property="fecMantenimiento"/>
+	<result column="KmRecibido" property="kmRecibido"/>
+	<result column="TipoAccion" property="tipoAccion"/>
+	<result column="TipoServicio" property="tipoServicio"/>
+	
+	<result column="nombreMeca" property="nombreMeca"/>
+	<result column="idAutomotor" property="idAutomotor"/>
+	<result column="desAutomotor" property="desAutomotor"/>
+	<result column="idAutoparte" property="idAutoparte"/>
+	<result column="desAutoparte" property="desAutoparte"/>
+	<result column="kmCambio" property="kmCambio"/>
+	<result column="mActual" property="kmActual"/>
+	<result column="numBus" property="numBus"/>
+	
+</resultMap>
+
+<select id="obtenerHistorialFlota" parameterType="com.certicom.ittsa.domain.Flota" resultMap="historialMantenimientoResult">
+		select h.IdHistoMant, h.FecMantenimiento ,au.Descripcion as desAutomotor, p.Descripcion as desAutoparte, h.Cantidad, h.TipMantEfectuado, h.TipMantenimiento, h.TipoAccion, m.Nombre +' '+m.ApePaterno +''+ m.ApeMaterno as nombreMeca, h.Observacion      
+		from (((t_historialmantenimiento h 
+			  inner join t_flotaautoparte fa on h.IdFlotaAuto = fa.IdFlotaAuto)
+			  inner join t_automotor au on fa.IdAutomotor = au.IdAutomotor)
+			  inner join t_autoparte p on fa.IdAutoparte = p.IdAutoparte)
+			  inner join t_mecanico m on m.IdMecanico = h.IdMecanico
+	    where h.EstadoMecanico = 2  
+			  and fa.IdBus = #{idBus}
+			  <if test="fecInicio !=null">
+			   and h.FecMantenimiento &gt;= #{fecInicio}
+			  </if>
+			  <if test="fecFin !=null">
+			  and h.FecAsignaMecanico &lt;= #{fecFin}
+			  </if>
+		order by h.FecMantenimiento desc
+</select>
+
+<select id="obtenerMecanicoAsignado" parameterType="com.certicom.ittsa.domain.HistorialMantenimiento" resultMap="historialMantenimientoResult">
+		
+		select h.IdHistoMant, h.FecAsignaMecanico, f.Numero as numBus, mo.IdAutomotor, mo.Descripcion as desAutomotor, a.IdAutoparte, a.Descripcion as desAutoparte, h.TipMantenimiento, m.Nombre +' '+ m.ApePaterno+' '+m.ApeMaterno as nombreMeca, h.TipoServicio 
+		from ((((t_historialmantenimiento h inner join t_mecanico m on h.IdMecanico = m.IdMecanico) 
+										   inner join t_flotaautoparte fa on h.IdFlotaAuto = fa.IdFlotaAuto)
+										   inner join t_flota f on fa.IdBus = f.IdBus) 
+										   inner join t_autoparte a on a.IdAutoparte = fa.IdAutoparte)
+										   inner join t_automotor mo on mo.IdAutomotor = fa.IdAutomotor  
+		where h.EstadoMecanico = 1
+			                               and h.IdMecanico = #{idMecanico} 
+			                                and h.FecAsignaMecanico &gt;= #{fecInicio}
+			                                and h.FecAsignaMecanico &lt;= #{fecFin}
+</select>
+		 
+</mapper>	

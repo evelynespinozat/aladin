@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	<style>
+.ui-panelgrid tr, td {
+border:0 !important;
+}
+
+change it to the following and try again:
+.ui-panelgrid tr, .ui-panelgrid td {
+border:0 !important;
+}
+	</style>
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Venta" url="#" />
+    				<p:menuitem value="Otros Gastos" url="otrosGastos" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Gasto" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{otrosGastosMB.nuevoGastoAdicional()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- lista Gastos Adicionales -->
+			<h:form id="formListaCombustible">
+				<p:dataTable widgetVar="dtCombustible" var="p" value="#{otrosGastosMB.listaOtrosGastos}" filteredValue="#{otrosGastosMB.listFiltroOtrosGastos}"  
+					emptyMessage="No hay Otros Gastos Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista de Gastos Adicionales</f:facet>
+				 
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:10%" headerText="Agencia" filterStyleClass="mayuscula" filterBy="#{p.des_agencia}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.des_agencia}" />
+					</p:column>
+					
+					<p:column style="width:10%" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{p.des_oficina}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.des_oficina}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Fecha"  filterBy="#{p.fecha}" filterMatchMode="contains" filterStyle="width:100px;">
+								<h:outputText value="#{p.fecha}" >
+								<f:convertDateTime pattern="yyyy/MM/dd" />
+						        </h:outputText>
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Motivo" filterStyleClass="mayuscula" filterBy="#{p.motivo}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.motivo}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Monto">
+						<h:outputText value="#{p.monto}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Saldo Actual">
+						<h:outputText value="#{p.saldo}" />
+					</p:column>
+
+					<p:column headerText="Gasto" style="width:15%;text-align: center">
+					
+						<p:commandButton title="Actualizar"  update=":dlgDetNuevo" actionListener="#{otrosGastosMB.editarOtrosGastos(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show()" actionListener= "#{otrosGastosMB.eliminarOtrosGastos(p)}" update=":dlgDetEliminar" icon="icon-delete">
+							 
+						</p:commandButton>
+		
+					</p:column>
+				
+				
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{otrosGastosMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">					
+				<h:form>
+					<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>					
+					<h:panelGrid columns="1">						
+						<p:panelGrid disabled="#{!otrosGastosMB.editar}" style="width: 100%;">
+							<p:row>
+								<p:column style="width: 40%;">
+									<h:outputText value="Agencia" />
+								</p:column>
+								<p:column>
+					           		<p:selectOneMenu style="margin-left:5px;margin-top:10px; width:200px;" value="#{otrosGastosMB.otrosGastos.idAgencia}"  required="true" requiredMessage="Seleccione Agencia">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />							
+										<f:selectItems value="#{otrosGastosMB.listaAgencia}" var="o"  itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/> 
+										<f:ajax event="valueChange" listener="#{otrosGastosMB.listarOficinas()}" render="@form" execute="@this" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Oficina" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu style="margin-left:5px;margin-top:10px; width:200px;" value="#{otrosGastosMB.otrosGastos.idOficina}" required="true" requiredMessage="Seleccione Oficina">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />							
+										<f:selectItems value="#{otrosGastosMB.listaOficina}" var="f" itemLabel="#{f.nombre}" itemValue="#{f.idOficina}"/> 							
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Fecha" />
+								</p:column>
+								<p:column>
+									<p:calendar value="#{otrosGastosMB.otrosGastos.fecha}"  style="margin-left:5px;margin-top:10px;width:190px" pattern="dd/MM/yyyy" locale="es" navigator="true"  required="true" requiredMessage="Se necesita una fecha"  />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Motivo" />
+								</p:column>
+								<p:column>
+									<p:inputText style="margin-left:5px;margin-top:10px;width:190px;" styleClass="mayuscula" value="#{otrosGastosMB.otrosGastos.motivo}"  required="true" requiredMessage="Se necesita un concepto" />
+								</p:column>
+							</p:row>						
+							<p:row>
+								<p:column>
+									<h:outputText value="Monto" />
+								</p:column>
+								<p:column>
+									<pe:inputNumber decimalPlaces="2"  decimalSeparator="." minValue="0.00" style="margin-left:5px;margin-top:10px;width:190px;"  
+										value="#{otrosGastosMB.otrosGastos.monto}" maxlength="50" required="true" requiredMessage="Ingrese valor " dir="rtl"  />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Estado" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu style="margin-left:5px;margin-top:10px; width:200px;" value="#{otrosGastosMB.otrosGastos.estado}" required="true" requiredMessage="Seleccione un Estado">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItem itemLabel="ACTIVO" itemValue="TRUE" />
+										<f:selectItem itemLabel="DESACTIVO" itemValue="FALSE" />
+									</p:selectOneMenu>	
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						
+						<p:panelGrid rendered="#{otrosGastosMB.editar}">
+							<p:row>
+								<p:column>
+									<h:outputText value="Saldo Actual" rendered="#{otrosGastosMB.editar}" />
+								</p:column>
+								<p:column>
+									<pe:inputNumber decimalPlaces="2" disabled="#{otrosGastosMB.editar}" decimalSeparator="." minValue="0.00" style="margin-left:5px;margin-top:10px;width:190px" value="#{otrosGastosMB.otrosGastos.saldo}" maxlength="50" required="true" requiredMessage="Ingrese valor " dir="rtl" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Rendir" rendered="#{otrosGastosMB.editar}" />
+								</p:column>
+								<p:column>
+									<pe:inputNumber decimalPlaces="2" disabled="#{!otrosGastosMB.editar}" decimalSeparator="." minValue="0.00" style="margin-left:5px;margin-top:10px;width:190px"  
+									value="#{otrosGastosMB.otrosGastos.ultimoAporte}" maxlength="50" required="true" requiredMessage="Ingrese valor " dir="rtl" >
+									<f:ajax event="valueChange" listener="#{otrosGastosMB.descontar()}" render="@form" execute="@this" />
+									</pe:inputNumber>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Saldo Pendiente" rendered="#{otrosGastosMB.editar}" />
+								</p:column>
+								<p:column>
+									<pe:inputNumber decimalPlaces="2" disabled="#{otrosGastosMB.editar}" decimalSeparator="." minValue="0.00" style="margin-left:5px;margin-top:10px;width:190px"  
+										value="#{otrosGastosMB.saldoPendiente}" maxlength="50" required="true" requiredMessage="Ingrese valor " dir="rtl" />
+								</p:column>
+							</p:row>						
+						</p:panelGrid>
+					</h:panelGrid>
+					<br/>
+					<p:commandButton value="Guardar" actionListener="#{otrosGastosMB.guardarGasto()}"
+								 update=":formListaCombustible msgNuevo "
+								 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+								 
+					<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+				</h:form>	
+			</p:dialog>
+			
+				<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este gasto?" header="Eliminar Gasto"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Gasto adicional: <h:outputText value="#{otrosGastosMB.otrosGastos.motivo}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaCombustible :sms"
+						actionListener="#{otrosGastosMB.confirmaEliminar()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

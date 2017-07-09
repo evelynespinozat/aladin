@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<style>
+		 html.progress, html.progress * {  
+ 			 cursor: wait !important;  
+ 		}  
+		
+		</style>
+	
+		<p:panel>
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Liquidacion" url="liquidacionCargo" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+				
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="6" id="datareg">
+					
+					<h:outputLabel value="Fecha "  /> 
+					<p:calendar style="width:200px"  value="#{liquidacionCargoMB.fecLiq}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita una fecha de inicio">
+					</p:calendar>
+					
+					<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{liquidacionCargoMB.consultarLiquidacion()}"  
+					 		update=":formListaTarifaGiro :sms"	style=" width:160px;"/>
+					 		
+					 <p:commandButton value="Cerrar Caja" oncomplete="dlgCierreCaja.show();" 
+					 		update=":dlgDetCierreCaja" style="width:160px;"/>		
+					 		
+					<h:commandLink  id="imprimir" value="Imprimir Liquidacion" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{liquidacionCargoMB.imprimirConsolidado}"/>   
+					 
+				</h:panelGrid>
+			</p:panel>
+			</h:form>		
+			
+			<br/>
+			
+			<p:ajaxStatus onstart="on_start()" oncomplete="on_complete()"/> 
+
+			<h:form id="formListaTarifaGiro">
+			
+			<p:dataTable id="dtSeriesDocumento" var="s" style="FONT-SIZE: 10px;" value="#{liquidacionCargoMB.listaSerieDocumento}" > 
+			  <f:facet name="header">Lista Series Documentos</f:facet>
+					
+					<p:column headerText="Tipo Documento" >
+						<h:outputText value="#{s.tipoDocumento}" />
+					</p:column>
+					
+					<p:column headerText="Documento Inicio" >
+						<h:outputText value="#{s.minDocumento}" />
+					</p:column>
+					
+					<p:column headerText="Documento Fin"  >
+						<h:outputText value="#{s.maxDocumento}" />
+					</p:column>
+			</p:dataTable> 
+			 <br/>
+   			 <br/>
+			<p:dataTable id="dtLiquidacion" var="liq" style="FONT-SIZE: 10px;" value="#{liquidacionCargoMB.listaProceso}" >  
+  
+        	<p:columnGroup type="header">  
+            	<p:row>  
+                	<p:column rowspan="2" headerText="Ingresos" />  
+                	<p:column colspan="2" headerText="Ventas del dia" />  
+            	</p:row>  
+  
+            	<p:row>  
+                	<p:column headerText="Valor" />  
+            	</p:row>  
+        	</p:columnGroup>  
+  
+		        <p:subTable var="fPagos" value="#{liq.fPagos}">  
+		            <f:facet name="header">  
+		            	#{liq.proceso}
+		            	<p:spacer width="375px" height="5px"></p:spacer>
+		            	<p:commandButton value="Detalle Giro" rendered="#{liq.proceso eq 'GIRO'?'true':'else'}" icon="icon-search" update=":dlgDetDetalle" oncomplete="dlgDetalle.show();" actionListener="#{liquidacionCargoMB.consultarGirosDisgregados()}"/>
+		            </f:facet>  
+		  
+		            <p:column>  
+		            	#{fPagos.formaPago}
+		            </p:column>  
+		  
+		            <p:column>
+		              #{fPagos.totalxFPago}
+		            </p:column> 
+		            
+		            <p:columnGroup type="footer">  
+		                <p:row>  
+		                    <p:column footerText="TOTAL DE #{liq.proceso}: " style="text-align:right"/>  
+		                    <p:column footerText="#{liq.totalxProceso}" />  
+		                </p:row>  
+		            </p:columnGroup>  
+		        </p:subTable>  
+
+				<p:columnGroup type="footer">  
+	                <p:row>  
+	                    <p:column colspan="1" footerText="TOTAL EFECTIVO EN CAJA: " style="text-align:right"/>  
+	                    <p:column footerText="#{liquidacionCargoMB.efectivoCaja}" style="text-align:left"/>         
+	                </p:row>  
+	            </p:columnGroup> 
+    			</p:dataTable>  
+    <br/>
+    <br/>
+    <p:dataTable id="dtLiquidacionEgreso" var="liq2" style="FONT-SIZE: 10px;" value="#{liquidacionCargoMB.listaProcesoEgreso}" >  
+  
+        	<p:columnGroup type="header">  
+            	<p:row>  
+                	<p:column rowspan="2" headerText="Egreso" />  
+                	<p:column colspan="2" headerText="Ventas del dia" />  
+            	</p:row>  
+  
+            	<p:row>  
+                	<p:column headerText="Valor" />  
+            	</p:row>  
+        	</p:columnGroup>  
+  
+		        <p:subTable var="fPagos2" value="#{liq2.fPagos}">  
+		            <f:facet name="header">  
+		            	#{liq2.proceso}
+		            </f:facet>  
+		  
+		            <p:column>  
+		            	#{fPagos2.formaPago}
+		            </p:column>  
+		  
+		            <p:column>
+		              #{fPagos2.totalxFPago}
+		            </p:column>  
+		  
+		  
+		            <p:columnGroup type="footer">  
+		                <p:row>  
+		                    <p:column footerText="TOTAL DE #{liq2.proceso}: " style="text-align:right"/>  
+		                    <p:column footerText="#{liq2.totalxProceso}" />  
+		                </p:row>  
+		            </p:columnGroup>  
+		        </p:subTable>  
+     </p:dataTable> 
+
+    
+</h:form>
+
+	<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede cerrar la liquidacion porque falta cerrar algunos puntos de venta" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">
+					
+					<p:dataTable widgetVar="dtAgencia" var="p" value="#{liquidacionCargoMB.listPvPendientes}" 
+					emptyMessage="No hay  punto de ventas Pendientes" rowIndexVar="nro" rows="5"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Puntos de Ventas Pendientes</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:20%" headerText="Usuario">
+						<h:outputText value="#{p.userPV}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Punto de Venta">
+						<h:outputText value="#{p.namePV}" />
+					</p:column>
+
+				</p:dataTable>
+					<br/>
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+	</p:confirmDialog>
+	
+	<p:dialog header="Confirmar Cierre Caja" widgetVar="dlgCierreCaja" appendToBody="true"
+					  resizable="false" id="dlgDetCierreCaja" modal="true">
+					  
+			<!-- sms general -->			
+			<p:messages  id="smsCierre" showDetail="false" showSummary="true"  closable="true"/>
+					  
+			  <h:form>
+			   <h:panelGrid columns="2"> 
+					 <h:graphicImage value="/resources/img/user.png"/>
+			       <p:panel>
+			        <h:panelGrid columns="2">
+			         <h:outputText value="Usuario de Cierre" />
+			         <h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{liquidacionCargoMB.usuarioLogin.nombre_completo}" />
+			         
+			         <h:outputText value="Monto de Cierre" />
+			         <h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="S/. #{liquidacionCargoMB.efectivoCaja}" />
+			         
+			         <h:outputText value="Usuario a Pasar" />
+			         <p:selectOneMenu style="width:200px" value="#{liquidacionCargoMB.cierreCaja.idUsuarioReceptor}" required="true" requiredMessage="Seleccione un Usuario">
+						 <f:selectItem itemLabel="Seleccione..." itemValue=""/>
+						 <f:selectItems var="a" value="#{liquidacionCargoMB.listaUsuarioTraspaso}" itemValue="#{a.idusuario}" itemLabel="#{a.nombre_completo}" /> 
+					 </p:selectOneMenu>
+			        </h:panelGrid>
+			       </p:panel>
+			       </h:panelGrid>
+			      <br/>
+				  <p:commandButton value="Aceptar" actionListener="#{liquidacionCargoMB.cerrarCajaxPV()}" update=":formListaTarifaGiro :smsCierre" rendered="#{liquidacionCargoMB.isCounter()}"/>		
+				   
+				  <p:commandButton value="Aceptar" actionListener="#{liquidacionCargoMB.cerrarCajaxOFI()}" update=":formListaTarifaGiro :smsCierre" rendered="#{liquidacionCargoMB.isJFCounter()}"/>	
+				  
+				  <p:commandButton value="Cancelar" onclick="dlgCierreCaja.hide();"/>		
+			  </h:form>
+	</p:dialog>
+			
+	<p:dialog header="Detalle de Giros" widgetVar="dlgDetalle" appendToBody="true"
+					  resizable="false" id="dlgDetDetalle" modal="true">
+					  
+			<!-- sms general -->			
+			<p:messages  id="smsDetalle" showDetail="false" showSummary="true"  closable="true"/>
+					  
+			  <h:form>
+			        <h:panelGrid columns="2"> 
+					 <p:dataTable widgetVar="dtGirosDisgregado" var="p" value="#{liquidacionCargoMB.listaGiroDisgregado}"   
+						emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro" 
+						paginator="true"
+						rows="5" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,20,30"
+						style="FONT-SIZE: 10px; ">
+						<f:facet name="header">Lista Degregado de Giros</f:facet>
+					
+						<p:column headerText="Orden" width="25" style="width:3%" >
+							#{nro+1}
+						</p:column>
+						
+						<p:column style="width:200px" headerText="Monto a Girar" >
+							<h:outputText value="#{p.montoGiro}" />
+						</p:column>
+						
+						<p:column style="width:200px" headerText="Costo Servicio" >
+							<h:outputText value="#{p.totalCobrado}" />
+						</p:column>
+					
+					</p:dataTable>
+			       </h:panelGrid>
+			      <br/>
+				  <p:commandButton value="Cancelar" onclick="dlgDetalle.hide();"/>		
+			  </h:form>
+	</p:dialog>		
+	</p:panel>
+		<script>
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+			
+			 var handle = {}  
+			   
+			 function on_start() {  
+			     handle = setTimeout(function() {  
+			         $('html').addClass('progress')  
+			     }, 250)  
+			 }  
+			   
+			 function on_complete() {  
+			     clearTimeout(handle)  
+			     $('html').removeClass('progress')  
+			 } 
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

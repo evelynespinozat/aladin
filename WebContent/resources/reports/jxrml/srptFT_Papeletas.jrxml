@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="srptFT_Cese" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="057a661b-e334-4c93-8271-024fd08d7546">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="fechaString" class="java.lang.String"/>
+	<field name="lugar" class="java.lang.String"/>
+	<field name="nroBus" class="java.lang.String"/>
+	<field name="motivo" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="53e1038f-5031-4924-a2cc-da39e8abc5e3" x="0" y="0" width="528" height="14" forecolor="#000000" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="66c19a7e-eec5-462d-992b-6783c69fbe4d" x="28" y="0" width="81" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="34b1be48-3100-42f7-be2a-afce93abfb2a" x="383" y="0" width="85" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTIVO]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="66983f29-6f07-45b1-ba3c-92fffdc4e7ad" x="109" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="06fb6097-c7da-40b5-b8d6-a18b3be3f33c" x="222" y="0" width="1" height="14"/>
+			</line>
+			<staticText>
+				<reportElement uuid="48ef0712-c7b9-4179-be0c-431d790b057b" x="123" y="0" width="67" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LUGAR]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="90e9aa11-16c3-4980-8891-8cdb52ed8b8e" x="344" y="0" width="1" height="14"/>
+			</line>
+			<staticText>
+				<reportElement uuid="d29f89e0-fdee-46d4-bd2b-20aec16978f2" x="255" y="0" width="72" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NRO. BUS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="99" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="19c4ff34-ca2a-4198-aef6-050c911cce4c" x="0" y="0" width="528" height="14"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="34b9ee33-19cb-4079-a43c-ad329c498e39" x="28" y="0" width="81" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaString}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c59d0338-9fa1-41c6-9191-07d835e31b88" x="383" y="0" width="85" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{motivo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="a5a7b703-4c57-4e6a-973d-f0f729afc9fe" x="109" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="d2de40ea-cc70-4912-af16-787e97d073d4" x="222" y="0" width="1" height="14"/>
+			</line>
+			<textField>
+				<reportElement uuid="7f382069-82eb-4965-8a17-d3d2b1dd02c6" x="123" y="0" width="88" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lugar}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="82b4d212-411b-44e7-a5b7-d8b87a076664" x="344" y="0" width="1" height="14"/>
+			</line>
+			<textField>
+				<reportElement uuid="9d2f36a7-a4a9-4b8e-9031-1b6ba93e5365" x="255" y="0" width="57" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nroBus}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

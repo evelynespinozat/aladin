@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pretty-config xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" targetNamespace="http://ocpsoft.com/prettyfaces/3.3.3"
+	xmlns="http://ocpsoft.com/prettyfaces/3.3.3">
+
+	<url-mapping id="login">
+		<pattern value="/login" />
+		<view-id value="/faces/control_acceso/login.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="principal">
+		<pattern value="/" />
+		<view-id value="/faces/principal.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="cambioPass">
+		<pattern value="/cambioPass" />
+		<view-id value="/faces/control_acceso/cambiar_password.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="usuarios">
+		<pattern value="/seguridad/usuarios" />
+		<view-id value="/faces/control_acceso/usuarios.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="sistemas">
+		<pattern value="/seguridad/sistemas" />
+		<view-id value="/faces/control_acceso/sistemas.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="menuSistema">
+		<pattern value="/seguridad/menuSistema" />
+		<view-id value="/faces/control_acceso/addMenuSistema.xhtml" />
+	</url-mapping>
+
+
+	<url-mapping id="perfiles">
+		<pattern value="/seguridad/perfiles" />
+		<view-id value="/faces/control_acceso/perfiles.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="asignaPermisosPerfil">
+		<pattern value="/seguridad/asignaPermisosPerfil" />
+		<view-id value="/faces/control_acceso/asignarPermisos.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="addPerfilUsuario">
+		<pattern value="/seguridad/addPerfilUsuario" />
+		<view-id value="/faces/control_acceso/addPerfilUsuario.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="parametros">
+		<pattern value="/seguridad/parametros" />
+		<view-id value="/faces/control_acceso/parametros.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="configuracion">
+		<pattern value="/configuracion" />
+		<view-id value="/faces/digitalizacion/configuracion/configuracion.xhtml" />
+	</url-mapping>
+
+
+	<!-- agencias -->
+	<url-mapping id="agencia">
+		<pattern value="/agencia" />
+		<view-id value="/faces/administracion/agencia.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="oficina">
+		<pattern value="/oficina" />
+		<view-id value="/faces/administracion/oficina.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="turno">
+		<pattern value="/turno" />
+		<view-id value="/faces/administracion/turno.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="frecuencia">
+		<pattern value="/frecuencia" />
+		<view-id value="/faces/administracion/frecuencia.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="categoriaservicio">
+		<pattern value="/categoriaservicio" />
+		<view-id value="/faces/administracion/categoriaservicio.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="turnoagencia">
+		<pattern value="/turnoagencia" />
+		<view-id value="/faces/administracion/turnoagencia.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="puntoventa">
+		<pattern value="/puntoventa" />
+		<view-id value="/faces/administracion/puntoventa.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="piloto">
+		<pattern value="/piloto" />
+		<view-id value="/faces/administracion/piloto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="terramoza">
+		<pattern value="/terramoza" />
+		<view-id value="/faces/administracion/terramoza.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="claseservicio">
+		<pattern value="/claseservicioo" />
+		<view-id value="/faces/administracion/claseservicio.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="destino">
+		<pattern value="/destino" />
+		<view-id value="/faces/administracion/destino.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="asiento">
+		<pattern value="/asiento" />
+		<view-id value="/faces/administracion/asiento.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="usuarioautorizante">
+		<pattern value="/usuarioautorizante" />
+		<view-id value="/faces/administracion/usuarioautorizante.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="concepto">
+		<pattern value="/concepto" />
+		<view-id value="/faces/administracion/concepto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="promocion">
+		<pattern value="/promocion" />
+		<view-id value="/faces/administracion/promocion.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="auditoria">
+		<pattern value="/auditoria" />
+		<view-id value="/faces/control_acceso/auditoria.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="excepcion">
+		<pattern value="/excepcion" />
+		<view-id value="/faces/programacion/excepcion.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="destinos">
+		<pattern value="/destinos" />
+		<view-id value="/faces/programacion/destinos.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="agregaComponente">
+		<pattern value="/agregaComponente" />
+		<view-id value="/faces/administracion/addComponente.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="agregaCompHistorial">
+		<pattern value="/agregaCompHistorial" />
+		<view-id value="/faces/administracion/addCompHistorial.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="ubigeo">
+		<pattern value="/ubigeo" />
+		<view-id value="/faces/administracion/ubigeo.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="tipoAsiento">
+		<pattern value="/tipoAsiento" />
+		<view-id value="/faces/administracion/tipoasiento.xhtml" />
+	</url-mapping>
+
+
+	<!-- Programacion -->
+
+	<url-mapping id="trackingT">
+		<pattern value="/trackingT" />
+		<view-id value="/faces/programacion/tracking_terramoza.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="trackingP">
+		<pattern value="/trackingP" />
+		<view-id value="/faces/programacion/tracking_piloto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="programDemanda">
+		<pattern value="/programDemanda" />
+		<view-id value="/faces/programacion/programDemanda.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="programFrecuente">
+		<pattern value="/programFrecuente" />
+		<view-id value="/faces/programacion/programFrecuente.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="transbordo">
+		<pattern value="/transbordo" />
+		<view-id value="/faces/programacion/transbordo.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="nuevaClaseServicio">
+		<pattern value="/nuevaClaseServicio" />
+		<view-id value="/faces/administracion/nuevaclaseservicio.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="verClaseServicio">
+		<pattern value="/verClaseServicio" />
+		<view-id value="/faces/administracion/verClaseServicio.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="oficinaAlmacen">
+		<pattern value="/oficinaAlmacen" />
+		<view-id value="/faces/administracion/oficinaAlmacen.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="series">
+		<pattern value="/series" />
+		<view-id value="/faces/administracion/series.xhtml" />
+	</url-mapping>
+
+
+
+	<url-mapping id="liquidacionxServicio">
+		<pattern value="/liquidacionxServicio" />
+		<view-id value="/faces/programacion/liquidacionxServicio.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="liquidacion">
+		<pattern value="/liquidacion" />
+		<view-id value="/faces/programacion/liquidacion.xhtml" />
+	</url-mapping>
+
+
+	<!-- servicios -->
+	<url-mapping id="servicio">
+		<pattern value="/servicio" />
+		<view-id value="/faces/programacion/servicio.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="progFlota">
+		<pattern value="/progFlota" />
+		<view-id value="/faces/programacion/programFlota.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="busReten">
+		<pattern value="/busReten" />
+		<view-id value="/faces/programacion/busReten.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="enlace">
+		<pattern value="/enlace" />
+		<view-id value="/faces/programacion/enlace.xhtml" />
+	</url-mapping>
+
+	<!-- ATENCION A BORDO -->
+
+	<url-mapping id="objetosEncontrados">
+		<pattern value="/objetosEncontrados" />
+		<view-id value="/faces/atencion_abordo/objetosEncontrados.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="catProducto">
+		<pattern value="/catProducto" />
+		<view-id value="/faces/atencion_abordo/catProducto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="productos">
+		<pattern value="/productos" />
+		<view-id value="/faces/atencion_abordo/productos.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="proveedor">
+		<pattern value="/proveedor" />
+		<view-id value="/faces/atencion_abordo/proveedor.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="kardex">
+		<pattern value="/kardex" />
+		<view-id value="/faces/atencion_abordo/kardex.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="consultaKardex">
+		<pattern value="/consultaKardex" />
+		<view-id value="/faces/atencion_abordo/consultaKardex.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="plantillaProd">
+		<pattern value="/plantillaProd" />
+		<view-id value="/faces/atencion_abordo/plantillaProd.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="plantillaDetalle">
+		<pattern value="/plantillaDetalle" />
+		<view-id value="/faces/atencion_abordo/plantillaDetalle.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="salidaProductos">
+		<pattern value="/salidaProductos" />
+		<view-id value="/faces/atencion_abordo/salidaProductos.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="registroLlegadaBus">
+		<pattern value="/registroLlegadaBus" />
+		<view-id value="/faces/atencion_abordo/registroLlegadaBus.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="objEncontrados">
+		<pattern value="/objEncontrados" />
+		<view-id value="/faces/atencion_abordo/objEncontrados.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="compra">
+		<pattern value="/compra" />
+		<view-id value="/faces/atencion_abordo/compra.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="KardexConsolidado">
+		<pattern value="/KardexConsolidado" />
+		<view-id value="/faces/atencion_abordo/KardexConsolidado.xhtml" />
+	</url-mapping>
+
+
+	<!-- MANTENIMIENTO -->
+
+	<url-mapping id="tipoConbustible">
+		<pattern value="/tipoConbustible" />
+		<view-id value="/faces/mantenimiento/tipoConbustible.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="flotaVehicular">
+		<pattern value="/flotaVehicular" />
+		<view-id value="/faces/mantenimiento/flotaVehicular.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="sisAutomotor">
+		<pattern value="/sisAutomotor" />
+		<view-id value="/faces/mantenimiento/sisAutomotor.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="componentes">
+		<pattern value="/componentes" />
+		<view-id value="/faces/mantenimiento/componentes.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="tipoFlota">
+		<pattern value="/tipoFlota" />
+		<view-id value="/faces/mantenimiento/tipoFlota.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="autoparte">
+		<pattern value="/autoparte" />
+		<view-id value="/faces/mantenimiento/autoparte.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="proveedorMan">
+		<pattern value="/proveedorMan" />
+		<view-id value="/faces/mantenimiento/proveedorMan.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="almacen">
+		<pattern value="/almacen" />
+		<view-id value="/faces/mantenimiento/almacen.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="autopartesAutomotor">
+		<pattern value="/autopartesAutomotor" />
+		<view-id value="/faces/mantenimiento/autopartesAutomotor.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="flotaAutomotor">
+		<pattern value="/flotaAutomotor" />
+		<view-id value="/faces/mantenimiento/flotaAutomotor.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="mantenimientoFlota">
+		<pattern value="/mantenimientoFlota" />
+		<view-id value="/faces/mantenimiento/mantenimientoFlota.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="reportManPreventivo">
+		<pattern value="/reportManPreventivo" />
+		<view-id value="/faces/mantenimiento/reportManPreventivo.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="mantenimientoAutoparte">
+		<pattern value="/mantenimientoAutoparte" />
+		<view-id value="/faces/mantenimiento/mantenimientoAutoparte.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="mantAutoparteCorrectivo">
+		<pattern value="/mantAutoparteCorrectivo" />
+		<view-id value="/faces/mantenimiento/mantAutoparteCorrectivo.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="mecanico">
+		<pattern value="/mecanico" />
+		<view-id value="/faces/mantenimiento/mecanico.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="servicioPreventivo">
+		<pattern value="/servicioPreventivo" />
+		<view-id value="/faces/mantenimiento/servicioPreventivo.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="servicioCorrectivo">
+		<pattern value="/servicioCorrectivo" />
+		<view-id value="/faces/mantenimiento/servicioCorrectivo.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="verFlotaHistorial">
+		<pattern value="/verFlotaHistorial" />
+		<view-id value="/faces/mantenimiento/verFlotaHistorial.xhtml" />
+	</url-mapping>
+
+
+
+	<!-- ATENCION A BORDO -->
+	<url-mapping id="asociaOficina">
+		<pattern value="/asociaOficina" />
+		<view-id value="/faces/atencion_abordo/asociaOficina.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="asigPiloto">
+		<pattern value="/asigPiloto" />
+		<view-id value="/faces/programacion/asignacionPiloto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="agenciaProducto">
+		<pattern value="/agenciaProducto" />
+		<view-id value="/faces/atencion_abordo/agenciaProducto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="proveedorAgencia">
+		<pattern value="/proveedorAgencia" />
+		<view-id value="/faces/atencion_abordo/proveedorAgencia.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="plantillaProd">
+		<pattern value="/plantillaProd" />
+		<view-id value="/faces/atencion_abordo/plantillaProd.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="salidaProductos">
+		<pattern value="/salidaProductos" />
+		<view-id value="/faces/atencion_abordo/salidaProductos.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="rptServiciosBus">
+		<pattern value="/rptServiciosBus" />
+		<view-id value="/faces/programacion/rptServiciosBus.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="asigterramoza">
+		<pattern value="/asigterramoza" />
+		<view-id value="/faces/atencion_abordo/asigterramoza.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="registroLlegadaBus">
+		<pattern value="/registroLlegadaBus" />
+		<view-id value="/faces/atencion_abordo/registroLlegadaBus.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="entregaProductos">
+		<pattern value="/entregaProductos" />
+		<view-id value="/faces/atencion_abordo/entregaProductos.xhtml" />
+	</url-mapping>
+
+	<!-- ventas -->
+	<url-mapping id="ventaDirecta">
+		<pattern value="/ventaDirecta" />
+		<view-id value="/faces/venta/ventaDirecta.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="listaNegra">
+		<pattern value="/listaNegra" />
+		<view-id value="/faces/venta/listaNegra.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="manifiestoPasajeros">
+		<pattern value="/manifiestoPasajeros" />
+		<view-id value="/faces/venta/manifPasajeros.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="listadelivery">
+		<pattern value="/listadelivery" />
+		<view-id value="/faces/venta/listadelivery.xhtml" />
+	</url-mapping>
+	<!--INICIO PISCOYA -->
+	<url-mapping id="ventaDetallada">
+		<pattern value="/ventaDetallada" />
+		<view-id value="/faces/venta/ventaDetallada.xhtml" />
+	</url-mapping>
+	<!--FIN PISCOYA -->
+
+	<url-mapping id="rptServiciosFlota">
+		<pattern value="/rptServiciosFlota" />
+		<view-id value="/faces/programacion/rptServiciosFlota.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="liquidacionxServicio">
+		<pattern value="/liquidacionxServicio" />
+		<view-id value="/faces/programacion/liquidacionxServicio.xhtml" />
+	</url-mapping>
+
+	<!-- OPERACIONES -->
+
+	<url-mapping id="consumocombustible">
+		<pattern value="/consumocombustible" />
+		<view-id value="/faces/operaciones/consumocombustible.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="kilometraje">
+		<pattern value="/kilometraje" />
+		<view-id value="/faces/operaciones/kilometraje.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="kilometrajeFlota">
+		<pattern value="/kilometrajeFlota" />
+		<view-id value="/faces/operaciones/kilometrajeFlota.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="combustible">
+		<pattern value="/combustible" />
+		<view-id value="/faces/operaciones/combustible.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="consolidadokmbus">
+		<pattern value="/consolidadokmbus" />
+		<view-id value="/faces/operaciones/consolidadokmbus.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="consolidadokmbusfecha">
+		<pattern value="/consolidadokmbusfecha" />
+		<view-id value="/faces/operaciones/consolidadokmbusfecha.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="consumocombustiblebus">
+		<pattern value="/consumocombustiblebus" />
+		<view-id value="/faces/operaciones/consumocombustiblebus.xhtml" />
+	</url-mapping>
+
+	<!-- ATENCION A BORDO -->
+
+	<url-mapping id="rptCostosxServicio">
+		<pattern value="/rptCostosxServicio" />
+		<view-id value="/faces/atencion_abordo/rptCostosxServicio.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="trackingT">
+		<pattern value="/trackingT" />
+		<view-id value="/faces/programacion/tracking_terramoza.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="trackingP">
+		<pattern value="/trackingP" />
+		<view-id value="/faces/programacion/tracking_piloto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="medida">
+		<pattern value="/medida" />
+		<view-id value="/faces/atencion_abordo/medida.xhtml" />
+	</url-mapping>
+
+	<!-- CARGO -->
+	<url-mapping id="personal">
+		<pattern value="/personal" />
+		<view-id value="/faces/cargo/personal.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="tarifaGiro">
+		<pattern value="/tarifaGiro" />
+		<view-id value="/faces/cargo/tarifaGiros.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="tarifaEncomienda">
+		<pattern value="/tarifaEncomienda" />
+		<view-id value="/faces/cargo/tarifaEncomiendas.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="distrito">
+		<pattern value="/distrito" />
+		<view-id value="/faces/cargo/distritos.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="tarifa_productos">
+		<pattern value="/tarifa_productos" />
+		<view-id value="/faces/cargo/tarifa_producto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="tarifaReparto">
+		<pattern value="/tarifaReparto" />
+		<view-id value="/faces/cargo/tarifaReparto.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="notaCobranza">
+		<pattern value="/notaCobranza" />
+		<view-id value="/faces/cargo/notaCobranza.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="actualizarEncomReparto">
+		<pattern value="/actualizarEncomReparto" />
+		<view-id value="/faces/cargo/actualizarEncomiendaReparto.xhtml" />
+	</url-mapping>
+
+
+
+
+
+	<url-mapping id="encomiendas">
+		<pattern value="/encomiendas" />
+		<view-id value="/faces/cargo/encomienda.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="reimpresiondocumentos">
+		<pattern value="/reimpresiondocumentos" />
+		<view-id value="/faces/cargo/reimpresiondocumentos.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="kardexAutoparte">
+		<pattern value="/kardexAutoparte" />
+		<view-id value="/faces/mantenimiento/kardexAutoparte.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="flotaHistorial">
+		<pattern value="/flotaHistorial" />
+		<view-id value="/faces/mantenimiento/flotaHistorial.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="reporteAsigMecanico">
+		<pattern value="/reporteAsigMecanico" />
+		<view-id value="/faces/mantenimiento/reporteAsigMecanico.xhtml" />
+	</url-mapping>
+
+
+	<!-- 05/03/2014 -->
+	<url-mapping id="agenciaAutoparte">
+		<pattern value="/agenciaAutoparte" />
+		<view-id value="/faces/mantenimiento/agenciaAutoparte.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="kardexAutoparte">
+		<pattern value="/kardexAutoparte" />
+		<view-id value="/faces/mantenimiento/kardexAutoparte.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="consultaKardexAutoparte">
+		<pattern value="/consultaKardexAutoparte" />
+		<view-id value="/faces/mantenimiento/consultaKardexAutoparte.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="compraAutoparte">
+		<pattern value="/compraAutoparte" />
+		<view-id value="/faces/mantenimiento/compraAutoparte.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="salidaAutoparte">
+		<pattern value="/salidaAutoparte" />
+		<view-id value="/faces/mantenimiento/salidaAutoparte.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="rptCostosxBus">
+		<pattern value="/rptCostosxBus" />
+		<view-id value="/faces/mantenimiento/rptCostosxBus.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="trackingEncomiendas">
+		<pattern value="/trackingEncomiendas" />
+		<view-id value="/faces/cargo/trackingEncomiendas.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="liquidacionCargo">
+		<pattern value="/liquidacionCargo" />
+		<view-id value="/faces/cargo/liquidacionCargo.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="subManifiestoCarga">
+		<pattern value="/subManifiestoCarga" />
+		<view-id value="/faces/cargo/subManifiestoCarga.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="giros">
+		<pattern value="/giros" />
+		<view-id value="/faces/cargo/giro.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="giroxPagar">
+		<pattern value="/giroxPagar" />
+		<view-id value="/faces/cargo/giroxPagar.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="entregaEncomienda">
+		<pattern value="/entregaEncomienda" />
+		<view-id value="/faces/cargo/entregaEncomienda.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="recepcionEncomienda">
+		<pattern value="/recepcionEncomienda" />
+		<view-id value="/faces/cargo/recepcionEncomienda.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="entEncomiendaxReparto">
+		<pattern value="/entregaEncomiendaxReparto" />
+		<view-id value="/faces/cargo/entregaEncomiendaxReparto.xhtml" />
+	</url-mapping>
+
+
+	<url-mapping id="diascroquis">
+		<pattern value="/diascroquis" />
+		<view-id value="/faces/administracion/diascroquis.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="rptEncomiendaAbandLegal">
+		<pattern value="/rptEncomiendaAbandLegal" />
+		<view-id value="/faces/cargo/rptEncomiendaAbandLegal.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="ubicacionEncomienda">
+		<pattern value="/ubicacionEncomienda" />
+		<view-id value="/faces/cargo/ubicacionEncomienda.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="inventarioEncomiendas">
+		<pattern value="/inventarioEncomiendas" />
+		<view-id value="/faces/cargo/inventarioEncomiendas.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="rptSubManifiesto">
+		<pattern value="/rptSubManifiesto" />
+		<view-id value="/faces/cargo/rptSubManifiesto.xhtml" />
+	</url-mapping>
+
+
+	<url-mapping id="productosxProveedor">
+		<pattern value="/productosxProveedor" />
+		<view-id value="/faces/atencion_abordo/productosxProveedor.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="consultaPostergacion">
+		<pattern value="/consultaPostergacion" />
+		<view-id value="/faces/venta/consultaPostergacion.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="consultaReserva">
+		<pattern value="/consultaReserva" />
+		<view-id value="/faces/venta/consultaReserva.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="consultaPrepagado">
+		<pattern value="/consultaPrepagado" />
+		<view-id value="/faces/venta/consultaPrepagado.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="liquidacionVenta">
+		<pattern value="/liquidacionVenta" />
+		<view-id value="/faces/venta/liquidacionVenta.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="rptSalidaRetorno">
+		<pattern value="/rptSalidaRetorno" />
+		<view-id value="/faces/programacion/rptSalidaRetorno.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="unidadesVacias">
+		<pattern value="/unidadesVacias" />
+		<view-id value="/faces/programacion/unidadesVacias.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="reporteVentas">
+		<pattern value="/reporteVentas" />
+		<view-id value="/faces/programacion/reporteVentas.xhtml" />
+	</url-mapping>
+	
+	
+	<url-mapping id="liquidacionDetallada">
+		<pattern value="/liquidacionDetallada" />
+		<view-id value="/faces/cargo/liquidacionDetallada.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="otrosingresosegresos">
+		<pattern value="/otrosingresosegresos" />
+		<view-id value="/faces/cargo/otrosingresosegresos.xhtml" />
+	</url-mapping>
+	
+		<url-mapping id="biometria">
+		<pattern value="/biometria" />
+		<view-id value="/faces/venta/biometria.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="registroBiometrico">
+		<pattern value="/registroBiometrico" />
+		<view-id value="/faces/venta/registroBiometrico.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="configuracionBiometrica">
+		<pattern value="/configuracionBiometrica" />
+		<view-id value="/faces/venta/configuracionBiometrica.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="boletosanulados">
+		<pattern value="/boletosanulados" />
+		<view-id value="/faces/venta/boletosanulados.xhtml"/>
+	</url-mapping>
+
+	<url-mapping id="pasajeros">
+		<pattern value="/pasajeros" />
+		<view-id value="/faces/venta/pasajeros.xhtml"/>
+	</url-mapping>
+	
+	<url-mapping id="incidenciaEmbarque">
+		<pattern value="/incidenciaEmbarque" />
+		<view-id value="/faces/venta/incidenciaEmbarque.xhtml"/>
+	</url-mapping>
+	
+	<url-mapping id="empresas">
+		<pattern value="/empresas" />
+		<view-id value="/faces/venta/empresas.xhtml"/>
+	</url-mapping>
+	
+	<url-mapping id="otrosGastos">
+		<pattern value="/otrosGastos" />
+		<view-id value="/faces/venta/otrosGastos.xhtml"/>
+	</url-mapping>
+	
+	
+	<url-mapping id="transbordoBus">
+		<pattern value="/transbordoBus" />
+		<view-id value="/faces/venta/transbordo.xhtml"/>
+	</url-mapping>
+	
+	<url-mapping id="reenvioEncomienda">
+		<pattern value="/reenvioEncomienda" />
+		<view-id value="/faces/cargo/reenvioEncomiendas.xhtml"/>
+	</url-mapping>
+	
+	
+	<url-mapping id="asignacion">
+		<pattern value="/asignacion" />
+		<view-id value="/faces/programacion/asignacion.xhtml"/>
+	</url-mapping>
+	
+
+
+
+</pretty-config>

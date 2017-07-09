@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.UsuarioAutorizanteMapper">
+
+	<resultMap id="UsuarioAutorizanteResult"
+		type="com.certicom.ittsa.domain.UsuarioAutorizante">
+		<id column="IdAutorizante" property="IdAutorizante" />
+		<result column="IdUsuario" property="IdUsuario" />
+		<result column="IdAgencia" property="IdAgencia" />
+		<result column="descAgencia" property="descAgencia" />
+		<result column="IdOficina" property="IdOficina" />
+		<result column="descOficina" property="descOficina" />
+		<result column="Nombres" property="Nombres" />
+		<result column="Email" property="Email" />
+		<result column="Estado" property="Estado" />
+		<result column="dni" property="Dni" />
+		<result column="AbreNombre" property="abreNombre" />
+		<result column="Cargo" property="cargo" />
+	</resultMap>
+	
+	
+	<update id="actualizarUsuarioAutorizante" parameterType="com.certicom.ittsa.domain.UsuarioAutorizante">
+		update
+		dbo.t_usuarioautorizante
+		SET
+		IdAgencia = #{IdAgencia},
+		IdOficina = #{IdOficina},
+		Estado = #{Estado},
+		AbreNombre = #{abreNombre},
+		Cargo = #{cargo}
+		WHERE IdAutorizante = #{IdAutorizante}
+	</update>
+
+	<insert id="registrarUsuarioAutorizante" parameterType="com.certicom.ittsa.domain.UsuarioAutorizante">
+		insert into
+		dbo.t_usuarioautorizante(IdUsuario,IdAgencia,IdOficina,Nombres,Email,Estado,dni,AbreNombre,Cargo)
+		values
+		(#{IdUsuario},#{IdAgencia},#{IdOficina},#{Nombres},#{Email},#{Estado},#{dni},#{abreNombre},#{cargo})
+	</insert>
+	
+	<select id="findAll" resultMap="UsuarioAutorizanteResult">
+		select ua.IdAutorizante as IdAutorizante ,
+	  		   ua.IdUsuario as IdUsuario,
+	   		   ua.IdAgencia as IdAgencia,
+	   		   a.descripcion as descAgencia,
+	   		   ua.IdOficina as IdOficina,
+	   		   o.Nombre as descOficina,
+	   		   ua.Nombres as Nombres,
+	   		   ua.Email as Email,
+	   		   ua.Estado as Estado,
+	   		   ua.dni as Dni, 
+	   		   ua.AbreNombre, 
+	   		   ua.Cargo
+	      from t_usuarioautorizante ua,
+			   t_agencia a,
+			   t_agenciaoficina  o
+			   where ua.idagencia = a.Idagencia
+			   and o.IdOficina = ua.idoficina
+			   order by  a.descripcion,o.Nombre,ua.Nombres asc;
+	</select>
+
+</mapper>	

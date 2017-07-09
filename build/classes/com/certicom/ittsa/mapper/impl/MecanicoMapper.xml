@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.MecanicoMapper">
+
+<resultMap id="agenciaResult" type="com.certicom.ittsa.domain.Mecanico">
+	<id column="IdMecanico" property="idMecanico"/>
+	<result column="Estado" property="estado"/>
+	<result column="Nombre" property="nombre"/>
+	<result column="ApePaterno" property="apePaterno"/>
+	<result column="ApeMaterno" property="apeMaterno"/>
+	<result column="Edad" property="edad"/>
+	<result column="Direccion" property="direccion"/>
+	<result column="Especialidad" property="especialidad"/>
+</resultMap>
+
+
+</mapper>	

@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Plantilla de Productos" url="plantillaProd" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nueva Plantilla" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{plantillaMB.nuevaPlantilla()}" />
+
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaPlantillas">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{plantillaMB.listaPlantillas}" filteredValue="#{plantillaMB.listaFiltroPlantillas}"  
+					emptyMessage="No hay Plantillas Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista de Plantillas de Productos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:15%" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains">
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{p.desCServicio}" filterMatchMode="contains">
+						<h:outputText value="#{p.desCServicio}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Agencia" filterStyleClass="mayuscula" filterBy="#{p.desAgencia}" filterMatchMode="contains">
+						<h:outputText value="#{p.desAgencia}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{p.desOficina}" filterMatchMode="contains">
+						<h:outputText value="#{p.desOficina}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{p.desOrigen}" filterMatchMode="contains">
+						<h:outputText value="#{p.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{p.desDestino}" filterMatchMode="contains">
+						<h:outputText value="#{p.desDestino}" />
+					</p:column>
+
+					<p:column style="width:100px;text-align: center;" headerText="HSalida">
+						<h:outputText value="#{p.HSalida}" />
+					</p:column>
+
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{plantillaMB.editarPlantilla(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+							
+						</p:commandButton>
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{plantillaMB.plantilla}" value="#{p}" />
+						</p:commandButton>
+						
+						<p:commandButton title="Agregar Productos" action="#{plantillaMB.agregarProductos(p)}" icon="icon-asociacionproductoalmacen">
+						 </p:commandButton>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{plantillaMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+						#{"Descripcion:"}
+						<p:inputText style="width:200px" value="#{plantillaMB.plantilla.descripcion}" styleClass="mayuscula" required="true" maxlength="50" requiredMessage="Se necesita una descripcion" />
+							
+						#{"Agencia:"}
+						<p:selectOneMenu style="width:200px" value="#{plantillaMB.plantilla.idagencia}" required="true" requiredMessage="Seleccione una Agencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+								<f:selectItems var="ag" value="#{plantillaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cmbOfi" event="change" listener="#{plantillaMB.getOficinasxAgencia()}" /> 
+						</p:selectOneMenu>
+	
+						#{"Oficina:"}
+						<p:selectOneMenu style="width:200px" id="cmbOfi" value="#{plantillaMB.plantilla.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="of" value="#{plantillaMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+							</p:selectOneMenu>
+		
+						#{"Origen:"}
+						 <p:selectOneMenu id="cmbOrigen"  value="#{plantillaMB.plantilla.idOrigen}" style="width:200px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{plantillaMB.listaOrigen}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							<p:ajax listener="#{plantillaMB.listarDestinosxOri()}"  event="change" update="cmbDestino"/>
+						</p:selectOneMenu>
+						
+						#{"Destino:"}
+						 <p:selectOneMenu id="cmbDestino"  value="#{plantillaMB.plantilla.idDestino}" style="width:200px;"
+			        		required="true" requiredMessage="Se necesita un destino"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{plantillaMB.listaDestino}" itemValue="#{o.destino}" itemLabel="#{o.desDestino}"/>
+							<p:ajax listener="#{plantillaMB.pintarDestino()}"/>
+						</p:selectOneMenu>
+					
+						#{"Servicio:"}
+						<p:selectOneMenu id="cmbServicio" value="#{plantillaMB.plantilla.idClase}" style=" width:200px;"
+							required="true" requiredMessage="Se necesita una clase de servicio"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+							<f:selectItems var="d" value="#{plantillaMB.listaCServicio}" itemValue="#{d.idclase}" itemLabel="#{d.descripcion}"/>
+							<p:ajax listener="#{plantillaMB.listarServiciosOriDes()}" update="cmbHora"/>
+						</p:selectOneMenu>
+
+						#{"Hora:"}
+						<p:selectOneMenu id="cmbHora" value="#{plantillaMB.plantilla.idServicio}" style=" width:200px;"
+							required="true" requiredMessage="Se necesita una hora"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+							<f:selectItems var="d" value="#{plantillaMB.listaServicios}" itemValue="#{d.idServicio}" itemLabel="#{d.HSalida}"/>
+						</p:selectOneMenu>
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{plantillaMB.guardarPlantilla()}"
+									 update=":formListaPlantillas msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta plantilla?" header="Eliminar Plantilla"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Plantilla: <h:outputText value="#{plantillaMB.plantilla.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaPlantillas :sms"
+						actionListener="#{plantillaMB.eliminarPlantilla()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede eliminar la plantilla porque cuenta con productos asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

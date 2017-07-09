@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.RutaServicioMapper">
+
+<resultMap id="rutaServicioResult" type="com.certicom.ittsa.domain.RutaServicio">
+	<id column="idRutaDestino" property="rutaServicioId"/>
+	<result column="RutaDestino" property="rutaDestino"/>
+	<result column="TipoViaje" property="tipoViaje"/>
+	<result column="Estado" property="estado"/>
+</resultMap>
+
+
+</mapper>

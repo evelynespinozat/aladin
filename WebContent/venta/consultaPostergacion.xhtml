@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Ventas" url="#" />
+					<p:menuitem value="Boletos Postergados" url="delivery" />
+				</p:breadCrumb>
+			</h:form>
+
+			<br />
+			<!-- sms general -->
+			<p:messages id="sms" showDetail="false" showSummary="true"
+				closable="true" />
+
+			<!-- toolbar -->
+			<h:form id="Busqueda">
+			<p:panel >
+			 	<h:panelGrid columns="7" id="datareg">
+			 	
+			 		#{"Agencia:"}
+					<p:selectOneMenu style="width:150px" value="#{consultaPostergacionMB.filter.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+						<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+						<f:selectItems var="ag" value="#{consultaPostergacionMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{consultaPostergacionMB.getOficinasxAgencia()}" /> 
+					</p:selectOneMenu>
+
+					#{"Oficina:"}
+					<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{consultaPostergacionMB.filter.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="of" value="#{consultaPostergacionMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					</p:selectOneMenu>
+					
+					#{"F. Inicio:"} 
+					<p:calendar style="width:200px"  value="#{consultaPostergacionMB.filter.fecInicio}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita una Fecha inicial">
+							  <p:ajax event="dateSelect" update="clFFin"/>
+					</p:calendar>
+					
+					
+
+
+					<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{consultaPostergacionMB.listarBoletosPostergados()}"  
+					 		update=":sms :formLista imprimir"	style=" width:160px;"/>
+					
+					#{"Origen:"}
+					 <p:selectOneMenu id="cmbOrigen"  value="#{consultaPostergacionMB.filter.origen}" style=" width:150px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+						<f:selectItem itemLabel="Seleccionar" itemValue="" />
+						<f:selectItems var="o" value="#{consultaPostergacionMB.listaOrigen}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+						<p:ajax listener="#{consultaPostergacionMB.listarDestinosxOri()}"  event="change" update="cmbDestino "/>
+					</p:selectOneMenu>
+					
+					#{"Destino:"}
+					<p:selectOneMenu id="cmbDestino" value="#{consultaPostergacionMB.filter.destino}" style=" width:150px;"
+							required="true" requiredMessage="Se necesita un destino"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+							<f:selectItems var="d" value="#{consultaPostergacionMB.listaDestino}" itemValue="#{d.destino}" itemLabel="#{d.desDestino}"/>
+					</p:selectOneMenu>
+					
+				
+					
+					
+					
+					#{"F. Fin:"} 
+					<p:calendar id="clFFin" style="width:200px" mindate="#{consultaPostergacionMB.filter.fecInicio}"  value="#{consultaPostergacionMB.filter.fecFin}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita una Fecha Final">
+					</p:calendar>
+					
+					<h:commandLink   disabled="#{consultaPostergacionMB.btnImprimir}"  id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{consultaPostergacionMB.imprimirPDF}" ajax="false">   
+					</h:commandLink>
+					
+					#{"Tipo. Reserva:"}
+					<p:selectOneMenu style="width:150px" value="#{consultaPostergacionMB.filter.tipoReserva}" required="true" requiredMessage="Seleccione un tipo de Reserva">
+						<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+						<f:selectItem itemLabel="Fecha Normal" itemValue="0"/>
+						<f:selectItem itemLabel="Fecha Abierta" itemValue="1"/>
+					</p:selectOneMenu>
+					
+					
+				</h:panelGrid>
+				</p:panel>
+			</h:form>	
+			
+			<br />
+
+			<!-- listado de agencias -->
+			<h:form id="formLista">
+				<p:dataTable widgetVar="dtAgencia" var="p"
+					value="#{consultaPostergacionMB.listaPostergacion}"
+					filteredValue="#{consultaPostergacionMB.listaPostergacionFilter}"
+					emptyMessage="No hay delivery en la lista" rowIndexVar="nro"
+					paginator="true" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista de boletos Postergados</f:facet>
+
+					<p:column headerText="Orden" width="25" style="width:3%">
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Persona" filterStyleClass="mayuscula" filterBy="#{p.nomPersona}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{p.nomPersona}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="DNI" filterBy="#{p.documentopersona}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{p.documentopersona}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{p.serviciostr}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{p.serviciostr}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="F. Postergacion">
+						<h:outputText value="#{p.fechapostergacion}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Hra. Postergacion">
+						<h:outputText value="#{p.horaPost}"/>
+					</p:column>
+					
+					<p:column style="width:15%" headerText="F. Caducidad">
+						<h:outputText value="#{p.fechacaducidad}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:10%" headerText="Tiempo Vencer Reserva">
+						<h:outputText value="#{p.tiempVencer}"/>
+					</p:column>
+
+					<p:column style="width:15%" headerText="Fecha Vencimiento">
+						<h:outputText value="#{p.FSalida}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:15%" headerText="Hora Vencimiento">
+						<h:outputText value="#{p.HSalida}"/>
+					</p:column>
+
+					<p:column style="width:15%" headerText="Monto">
+						<h:outputText value="#{p.monto}"/>
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Fecha Abierta">
+						<h:outputText value="#{p.fechaAbierta?'Fecha Abierta':'No Fecha Abierta'}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Estado">
+						<h:outputText value="#{p.estado}"/>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+
+
+		</p:panel>
+
+		<script>
+			function validar(xhr, status, args) {
+				if (!args.esValido) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
+</html>

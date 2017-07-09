@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptObjEncontrados" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f7cc5e0a-4947-40f4-9b1a-4371dac1f5b8">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_ORIGEN" class="java.lang.String"/>
+	<parameter name="P_DESTINO" class="java.lang.String"/>
+	<parameter name="P_FECHA" class="java.lang.String"/>
+	<parameter name="P_TOTAL" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="nroAsiento" class="java.lang.Integer"/>
+	<field name="numero" class="java.lang.String"/>
+	<field name="desServicio" class="java.lang.String"/>
+	<field name="fLlegadaReal" class="java.util.Date"/>
+	<field name="nomEntregado" class="java.lang.String"/>
+	<field name="dniEntregado" class="java.lang.String"/>
+	<field name="fechaEntrega" class="java.util.Date"/>
+	<field name="estado" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="115" splitType="Stretch">
+			<image>
+				<reportElement uuid="c9c67bd6-8654-45e3-88cd-c76d834d0947" x="42" y="25" width="103" height="38"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="2f2999d6-f250-474b-b2b3-b2cdb6c8222a" x="189" y="25" width="250" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE OBJETOS ENCONTRADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d14f2887-dbca-4669-b4b0-cc4dad2f6f97" x="252" y="85" width="64" height="18"/>
+				<textElement/>
+				<text><![CDATA[Destino:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fcc51a54-f5cd-4480-b1e1-9877642e5761" x="42" y="85" width="64" height="18"/>
+				<textElement/>
+				<text><![CDATA[Origen:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="969bc9e6-2d34-4940-ab33-409732f78ae5" x="423" y="45" width="64" height="18"/>
+				<textElement/>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="62f073de-3cd9-4e07-a78a-d4f016975317" x="106" y="85" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_ORIGEN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="02f78224-3727-41df-81ed-20df2d16deec" x="316" y="85" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_DESTINO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b21e9418-e4e7-421b-abd5-f1060f158323" x="487" y="45" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="383a8a29-178d-43f3-87b9-05dbd9c98cb8" x="0" y="5" width="555" height="15" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="155de0aa-f48c-4085-9325-be5ed125730c" x="6" y="5" width="80" height="15"/>
+				<textElement/>
+				<text><![CDATA[Objeto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4888e64c-a17e-4e4c-8f49-bb754b255b75" x="86" y="5" width="40" height="15"/>
+				<textElement/>
+				<text><![CDATA[Asiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="10b23df3-8f3f-4bea-ac2f-548cab3ab913" x="126" y="5" width="33" height="15"/>
+				<textElement/>
+				<text><![CDATA[Bus]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e44c3f72-6690-4deb-b8f1-9e0ce607bee9" x="159" y="5" width="61" height="15"/>
+				<textElement/>
+				<text><![CDATA[Servicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73e486d9-e2ec-4356-a5b2-89b14037140f" x="220" y="5" width="59" height="15"/>
+				<textElement/>
+				<text><![CDATA[F.Llegada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2d08f4cf-4eab-4aa3-be68-05be35de09d7" x="279" y="5" width="102" height="15"/>
+				<textElement/>
+				<text><![CDATA[Entregado a ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d5138861-39f4-42ff-8d74-e6f73b447d2e" x="381" y="5" width="42" height="15"/>
+				<textElement/>
+				<text><![CDATA[Dni]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="24d0e0ea-141c-4dac-bb50-321e2c2e7d6b" x="423" y="5" width="74" height="15"/>
+				<textElement/>
+				<text><![CDATA[F. Entrega]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="09ceb01c-d6e0-47ae-9a49-19452188677c" x="497" y="5" width="58" height="15"/>
+				<textElement/>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="5738c9d1-5caf-433f-8eaf-8c30854c87f7" x="0" y="4" width="86" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8e312a56-2bd6-4055-a8fc-00b5d3ef7446" x="86" y="4" width="40" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nroAsiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="94123948-83d6-4f82-9768-28c9dd54f92f" x="126" y="4" width="33" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="05f18c95-d659-4988-a8c4-97b2e6b09080" x="159" y="4" width="61" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desServicio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy h.mm a" isBlankWhenNull="true">
+				<reportElement uuid="0f6275d2-66fb-422e-a3a2-91d1eb81320b" x="220" y="4" width="59" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fLlegadaReal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="e214a144-f9ce-4211-831f-a7b91ee46f02" x="279" y="4" width="102" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomEntregado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bf9a4cd9-de54-4947-bc0e-025d2fe6db4c" x="381" y="4" width="42" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dniEntregado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy h.mm a">
+				<reportElement uuid="07d57c34-5075-4abb-9ddb-72e09bf7f713" x="423" y="4" width="74" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaEntrega}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c89ea839-ba83-4770-8148-1ab237b7edb0" x="497" y="4" width="58" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="df697a8f-2143-445e-a856-74301f30cdf1" x="423" y="34" width="32" height="18"/>
+				<textElement/>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e5c3b565-1bf1-4d76-9dff-bb89635e6d23" x="455" y="32" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

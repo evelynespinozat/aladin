@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptEncomiendaAlmacenAL" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f5c8ae15-bfd8-4ee9-82f3-a1e438ada7b9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_AGENCIA" class="java.lang.String"/>
+	<parameter name="P_OFICINA" class="java.lang.String"/>
+	<parameter name="P_ALMACEN" class="java.lang.String"/>
+	<parameter name="P_FECHA" class="java.lang.String"/>
+	<field name="tipoDocAbr" class="java.lang.String"/>
+	<field name="comprobante" class="java.lang.String"/>
+	<field name="remitcompleto" class="java.lang.String"/>
+	<field name="dest1" class="java.lang.String"/>
+	<field name="detalle" class="java.lang.String"/>
+	<field name="fRegistro" class="java.util.Date"/>
+	<field name="fRegAlmacen" class="java.util.Date"/>
+	<field name="fVencimiento" class="java.util.Date"/>
+	<field name="diasVencimiento" class="java.lang.Integer"/>
+	<field name="ubicacionAlmacen" class="java.lang.String"/>
+	<variable name="docEnc" class="java.lang.String">
+		<variableExpression><![CDATA[$F{tipoDocAbr}+" "+$F{comprobante}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="127" splitType="Stretch">
+			<image>
+				<reportElement uuid="81723121-b785-4111-baf9-2b3e8338c84d" x="37" y="19" width="103" height="38"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="2554be3e-b618-43bd-ba67-f4ccfd46d562" x="176" y="19" width="266" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENCOMIENDAS DESEMBARACADAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="759aa863-7706-4b22-a433-27876ac989b9" x="162" y="78" width="60" height="20"/>
+				<textElement/>
+				<text><![CDATA[OFICINA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0e52eaa0-8996-44d1-bb67-3bc0b1d022b9" x="322" y="78" width="60" height="20"/>
+				<textElement/>
+				<text><![CDATA[ALMACEN :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f2ebb0ab-bff3-4e40-9181-8d67b2af2775" x="37" y="98" width="60" height="20"/>
+				<textElement/>
+				<text><![CDATA[FECHA :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="31b8fcfa-cbff-4636-b01b-3fa3e3fb49d9" x="37" y="78" width="60" height="20"/>
+				<textElement/>
+				<text><![CDATA[AGENCIA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="c07243eb-bcec-415e-a6eb-ce817dd736e0" x="97" y="78" width="65" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_AGENCIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="da534cf7-711b-4370-ae62-8953921c0a87" x="222" y="78" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_OFICINA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4ee69c4b-eb0a-459a-a829-3c25be3c5258" x="382" y="78" width="152" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_ALMACEN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c086b2a4-aefc-4bba-a290-fcbd0071f480" x="97" y="98" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="8a35b27b-0fc4-4fd7-95ff-e3e3ce68cb96" mode="Opaque" x="0" y="9" width="555" height="15" forecolor="#000000" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="217459d2-08aa-4719-a748-d8150d6ef332" x="0" y="9" width="51" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Doc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ca6356d8-1020-4d8c-a1bf-4f7da18254fb" x="51" y="9" width="83" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remitente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e01184a8-98d9-462c-9aa6-f880a4bd29d1" x="217" y="9" width="117" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Detalle]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ed6c747f-836b-4d2b-9771-4768c1e01690" x="382" y="9" width="51" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FLLegada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c04dc41b-59dd-4c61-b0b3-215202011f01" x="436" y="9" width="65" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[F.Aba. Leg]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a48496bd-e660-493b-baa6-187fbd9deba8" x="501" y="11" width="54" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dias Aban]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8d3cc12a-7c88-4b15-852e-aaa93b382cdb" x="134" y="9" width="83" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Destinatario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1f734e52-982e-4b3b-9a8f-b087cb272384" x="334" y="9" width="48" height="13"/>
+				<textElement/>
+				<text><![CDATA[Ubi. Alm]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="e72ed979-812c-43ea-b416-76e49fa52639" x="0" y="0" width="51" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{docEnc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="06ca7ca1-bd60-429e-83e0-53e3d3c4be62" x="51" y="0" width="83" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remitcompleto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="8bc9b1ef-eb8c-46c8-9620-7e5fadda9c5c" x="134" y="0" width="83" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dest1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="3b55c18d-0449-48d8-9543-bcad9b099711" x="217" y="0" width="117" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{detalle}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="91efc6ff-9249-4a9f-9dc3-22fcadd8bc70" x="382" y="0" width="47" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fRegAlmacen}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="eee36a92-3f59-4338-bfd0-c9686f67d61a" x="433" y="0" width="65" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fVencimiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6d974258-78ef-4f35-af1b-17371b4ae390" x="498" y="0" width="54" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diasVencimiento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8a89f6e9-9951-4c53-8108-5127c8996d7c" x="336" y="0" width="46" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ubicacionAlmacen}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

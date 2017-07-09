@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.TerramozaMapper">
+
+<resultMap id="terramozaResult" type="com.certicom.ittsa.domain.Terramoza">
+	<id column="IdTerramoza" property="idTerramoza"/>
+	<result column="DNI" property="dNI"/>
+	<result column="Apellidos" property="apellidos"/>
+	<result column="Nombres" property="nombres"/>
+	<result column="Telefono" property="telefono"/>
+	<result column="FNacimiento" property="fNacimiento"/>
+	<result column="CodigoAnterior" property="codigoAnterior"/>
+	<result column="Estado" property="estado"/>
+	<result column="Fingreso" property="fingreso"/>
+	<result column="Residencia" property="residencia"/>
+	<result column="Imagen" property="imagen"/>
+	
+	<result column="FechaCreacion" property="FechaCreacion"/>
+	<result column="usuarioCreacion" property="usuarioCreacion"/>
+</resultMap>
+
+
+</mapper>	

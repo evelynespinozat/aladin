@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Tarifa de Encomiendas" url="tarifaEncomienda" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nueva Encomienda" icon="icon-add" update=":dlgDetNuevo" 
+					oncomplete="dlgNuevo.show();" actionListener="#{tarifaEncomiendaMB.nuevoTarifaGiro()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaTarifaGiro">
+			<br/>
+				<p:dataTable id="dtAgencias" widgetVar="dtAgencias2" var="a" value="#{tarifaEncomiendaMB.listaAgencias}" 
+					emptyMessage="No exiten agencias registradas." rowIndexVar="nro" 
+					paginator="true" rows="20"
+					style="FONT-SIZE: 10px; ">
+					
+					<p:ajax event="rowToggle" listener="#{tarifaEncomiendaMB.onRowToggle}" />
+					
+					<f:facet name="header">Lista de Agencias</f:facet>
+					
+					<p:column style="width:1%">  
+			            <p:rowToggler />  
+			        </p:column> 
+					
+					<p:column style="width:15%;text-align: left;" headerText="Oficina Origen">
+						<h:outputText value="#{a.descripcion}" />
+					</p:column>
+					
+					<p:rowExpansion>
+						<p:dataTable id="dtTarifaGiros" widgetVar="dtTarifaGiros2" var="t" value="#{tarifaEncomiendaMB.mapAgenciaListaTarifaEncomienda.get(a.idagencia)}" 
+									filteredValue="#{tarifaEncomiendaMB.listaFiltroTarifaGiro}"  paginatorPosition="bottom" 
+									emptyMessage="No existen tarifa de encomiendas registradas." rowIndexVar="nro" 
+									paginator="true" rows="20" style="FONT-SIZE: 10px; ">
+															
+						<f:facet name="header">Lista de Tarifas de Encomiendas</f:facet>
+						
+						<p:column style="width:35%;" headerText="Destino">
+							<h:outputText value="#{t.nombDestino}" />
+						</p:column>
+						
+						
+						<p:column style="width:15%;text-align: right;" headerText="Precio Normal">
+							<h:outputText value="#{t.precioString}" />
+						</p:column>
+						
+						<p:column style="width:15%;text-align: right;" headerText="Precio Corporativo">
+							<h:outputText value="#{t.precioCorporativoString}" />
+						</p:column>
+						
+						<p:column style="width:15%;text-align: right;" headerText="Precio Kilo">
+							<h:outputText value="S/. #{t.precioKilo}" />
+						</p:column>
+						
+						<ui:remove>
+						<p:column style="width:15%;text-align: center;" headerText="Procentual">
+							<h:outputText value="#{t.porcentualString}" />
+						</p:column>
+						</ui:remove>
+						
+						<p:column style="width:7%;text-align: center;" headerText="Estado">
+								<p:commandLink update="@form :sms" actionListener="#{tarifaEncomiendaMB.cambiarEstado(t)}" > 
+								<h:graphicImage value="#{t.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+								title="#{t.estado?'Activo':'Bloqueado'}" />
+								</p:commandLink>
+						</p:column>
+
+						<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+						
+							<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{tarifaEncomiendaMB.editarTarifaGiro(t)}"
+											 oncomplete="dlgNuevo.show();" icon="icon-edit"/>
+								
+	
+							<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+								    <f:setPropertyActionListener target="#{tarifaEncomiendaMB.tarifa}" value="#{t}" />
+							</p:commandButton>
+									
+						</p:column>
+
+				</p:dataTable>
+					</p:rowExpansion>  
+					
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{tarifaEncomiendaMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+								
+							#{"Origen:"}
+							<p:selectOneMenu style="width:150px" value="#{tarifaEncomiendaMB.tarifa.idOrigen}"
+								required="true" requiredMessage="Seleccione origen.">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{tarifaEncomiendaMB.listaAgencias}" 
+									itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+							
+							#{"Destino:"}
+							<p:selectOneMenu style="width:150px" value="#{tarifaEncomiendaMB.tarifa.idDestino}"
+								required="true" requiredMessage="Seleccione destino.">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{tarifaEncomiendaMB.listaAgencias}" 
+									itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+												
+							
+							#{"Tipo de Cobro:"}			
+							<p:selectOneMenu value="#{tarifaEncomiendaMB.tarifa.porcentual}" required="true" requiredMessage="Se necesita un tipo de cobro.">
+								<f:selectItem itemLabel="Fijo" itemValue="false"  />
+								<f:selectItem itemLabel="Porcentual" itemValue="true"  />
+							</p:selectOneMenu>
+							
+							#{"Precio Normal:"}
+							<p:inputText  id="precioNormal" style="width:60px" value="#{tarifaEncomiendaMB.tarifa.precioEnvioNormal}"  required="true" requiredMessage="Se necesita un costo de envío normal." dir="rtl" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Precio Corporativo:"}
+							<p:inputText  id="precioCorporativo" style="width:60px" value="#{tarifaEncomiendaMB.tarifa.precioEnvioCorporativo}"  required="true" requiredMessage="Se necesita un costo de envío corporativo." dir="rtl" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Precio Kilo:"}
+							<p:inputText  id="precioKilo" style="width:60px" value="#{tarifaEncomiendaMB.tarifa.precioKilo}"  required="true" requiredMessage="Se necesita un precio de kilaje." dir="rtl" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+														
+							#{"Estado:"}			
+							<p:selectOneMenu value="#{tarifaEncomiendaMB.tarifa.estado}" required="true" requiredMessage="Se necesita estado.">
+								<f:selectItem itemLabel="Activo" itemValue="true"  />
+								<f:selectItem itemLabel="No activo" itemValue="false"  />
+							</p:selectOneMenu>
+							
+					
+
+						</h:panelGrid>
+						<pe:keyFilter for="precioNormal" mask="num"/>
+						<pe:keyFilter for="precioCorporativo" mask="num"/>
+						<pe:keyFilter for="precioKilo" mask="num"/>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{tarifaEncomiendaMB.guardarTarifaGiro()}" style="margin-left:90px" 
+									 update="msgNuevo :formListaTarifaGiro msgNuevo"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk"/>
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" style="margin-left:5px"/>
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Esta seguro que desea eliminar esta tarifa de giro?" header="Eliminar Tarifa de Giro"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					<p:commandButton value="Eliminar"
+						update=":formListaTarifaGiro :sms"
+						actionListener="#{tarifaEncomiendaMB.eliminarTarifaGiro()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+	</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

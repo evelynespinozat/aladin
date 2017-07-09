@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Ventas" url="#" />
+					<p:menuitem value="Consulta Prepagado" url="consultaPrepagado" />
+				</p:breadCrumb>
+			</h:form>
+
+			<br />
+			<!-- sms general -->
+			<p:messages id="sms" showDetail="false" showSummary="true"
+				closable="true" />
+
+			<!-- toolbar -->
+			<p:panel>
+			
+				<h:form id="Busqueda">
+				<p:panel>
+					<h:panelGrid columns="10">
+						
+						<h:outputLabel value="Origen:" />
+						<p:selectOneMenu id="cmbOrigen"
+							value="#{consultaPrepagadoMB.boletoFilter.origen}"
+							style=" width:150px;" required="true"
+							requiredMessage="Se necesita un origen">
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{consultaPrepagadoMB.listaOrigen}"
+								itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}" />
+							<p:ajax listener="#{consultaPrepagadoMB.listarDestinosxOri()}"
+								update="Busqueda:cmbDestinox" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Destino:" />
+						<p:selectOneMenu id="cmbDestinox" style="width:150px"
+							value="#{consultaPrepagadoMB.boletoFilter.destino}"
+							required="true" requiredMessage="Se necesita un destino">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="ag"
+								value="#{consultaPrepagadoMB.listaDestino}"
+								itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" />
+						</p:selectOneMenu>
+			
+						
+							
+					#{"Fecha Salida:"}
+					<p:calendar id="calFfin"
+							value="#{consultaPrepagadoMB.boletoFilter.ffin}"
+							pattern="dd/MM/yyyy" style="width:100px;" locale="es"
+							navigator="true" required="true"
+							mindate="#{consultaPrepagadoMB.boletoFilter.finicio}"
+							requiredMessage="Se necesita una fecha" />
+							
+					#{"Estado:"}		
+					 <p:selectOneMenu id="cmbEstado"
+							value="#{consultaPrepagadoMB.boletoFilter.estadoDelivery}"
+							style=" width:140px;" required="true"
+							requiredMessage="Se necesita un origen">
+							<f:selectItem itemLabel="NO IMPRESO" itemValue="NO IMPRESO" />
+							<f:selectItem itemLabel="IMPRESO" itemValue="IMPRESO" />
+						</p:selectOneMenu>
+
+						<p:spacer width="10" height="1" />
+
+						<p:commandButton value="Consultar" icon="icon-search"
+							update=":formLista :sms"
+							actionListener="#{consultaPrepagadoMB.listarBoletosPrepagado()}" />	
+					</h:panelGrid>
+					</p:panel>							
+				</h:form>
+				
+			<h:form>
+				<p:panel>
+						<h:panelGrid columns="3">
+						#{"DNI pasajero:"}
+						<h:inputText value="#{consultaPrepagadoMB.dniPasajero}" />							
+						<p:commandButton value="Consultar 2" icon="icon-search"
+							update=":formLista"
+							actionListener="#{consultaPrepagadoMB.listarBoletosPrepagadoxDNI()}" />			
+						</h:panelGrid>
+			   </p:panel>
+			</h:form>
+			
+			
+			<h:form>	
+				<p:panel>
+						<h:commandLink disabled="#{consultaPrepagadoMB.btnImprimir}"
+							id="imprimir" value="Imprimir"
+							style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+   							 color: #1C190A;"
+							actionListener="#{consultaPrepagadoMB.imprimirPDF}" ajax="false"
+							oncomplete="dlgImprimir.hide()"
+							position="center">
+					</h:commandLink>
+				</p:panel>
+			</h:form>	
+				
+
+			</p:panel>
+
+			<br />
+
+			<!-- listado de agencias -->
+			<h:form id="formLista">
+				<p:dataTable widgetVar="dtAgencia" var="p"
+					value="#{consultaPrepagadoMB.listaAsientoVenta}"
+					filteredValue="#{consultaPrepagadoMB.listaAsientoVentaFilter}"
+					emptyMessage="No hay delivery en la lista" rowIndexVar="nro"
+					paginator="true" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista boletos Prepagados</f:facet>
+
+					<p:column headerText="Orden" width="25">
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:50px" headerText="Boleto" filterStyleClass="mayuscula"
+						filterBy="#{p.serieNumeroBoleto}" filterMatchMode="contains"
+						filterStyle="width:50px">
+						<h:outputText value="#{p.serieNumeroBoleto}" />
+					</p:column>
+
+					<p:column style="width:50px" headerText="Ofi. Origen" filterStyleClass="mayuscula"
+						filterBy="#{p.desOficina}" filterMatchMode="contains"
+						filterStyle="width:50px">
+						<h:outputText value="#{p.desOficina}" />
+					</p:column>
+
+					<p:column style="width:300px" headerText="Servicio" filterStyleClass="mayuscula"
+						filterBy="#{p.desServicio}" filterMatchMode="contains"
+						filterStyle="width:80px;">
+						<h:outputText value="#{p.desServicio}" />
+					</p:column>
+
+					<p:column style="width:30px" headerText="Fecha Salida">
+						<h:outputText value="#{p.desFSalida}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:20px" headerText="Hora de Salida">
+						<h:outputText value="#{p.desHsalida}" />
+					</p:column>
+
+					<p:column style="width:30px" headerText="N° Asiento"
+						filterBy="#{p.nroAsiento}" filterMatchMode="contains"
+						filterStyle="width:50px;">
+						<h:outputText value="#{p.nroAsiento}" />
+					</p:column>
+
+					<p:column style="width:50px" headerText="DNI Pagador"
+						filterBy="#{p.personaPagador.dni}" filterMatchMode="contains"
+						filterStyle="width:100px;">
+						<h:outputText value="#{p.personaPagador.dni} " />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Pagador" filterStyleClass="mayuscula"
+						filterBy="#{p.personaPagador.nombres} #{p.personaPagador.APaterno} #{p.personaPagador.AMaterno}"
+						filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText
+							value="#{p.personaPagador.nombres} #{p.personaPagador.APaterno} #{p.personaPagador.AMaterno}" />
+					</p:column>
+
+					<p:column style="width:50px" headerText="DNI Pasajero"
+						filterBy="#{p.personaPagador.dni}" filterMatchMode="contains"
+						filterStyle="width:100px;">
+						<h:outputText value="#{p.personaCliente.dni}" />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Pasajero" filterStyleClass="mayuscula"
+						filterBy="#{p.personaCliente.nombres} #{p.personaCliente.APaterno} #{p.personaCliente.AMaterno}"
+						filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText
+							value="#{p.personaCliente.nombres} #{p.personaCliente.APaterno} #{p.personaCliente.AMaterno}" />
+					</p:column>
+
+					<p:column style="width:80px" headerText="Estado" filterStyleClass="mayuscula"
+						filterBy="#{p.estado_delivery}" filterMatchMode="contains"
+						filterStyle="width:100px;">
+						<h:outputText value="#{p.estado_delivery}" />
+					</p:column>
+
+
+					<p:column headerText="Imprimir"
+						style="width:10px;text-align: center">
+
+						<p:commandButton id="cbtEditar" title="Imprimir"
+							disabled="#{p.estado_delivery eq 'IMPRESO'}"
+							update=":dlgDetNuevo"
+							actionListener="#{consultaPrepagadoMB.setearPrepagado(p)}"
+							oncomplete="dlgNuevo.show();" icon="icon-printer">
+						</p:commandButton>
+
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+
+			<p:dialog header="Imprimir Boleto Prepagado" widgetVar="dlgNuevo"
+				appendToBody="true" resizable="false" id="dlgDetNuevo" modal="true">
+
+				<h:form id="fmImprPre">
+
+					<h:panelGroup>
+						<h:outputLabel value="Datos del Pagador"
+							style="font-weight:bold;font-size: 1em;" />
+						<p:panelGrid columns="4">
+						#{"Dni:"}
+						<h:outputText
+								value=" #{consultaPrepagadoMB.avSelect.personaPagador.dni}"
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Nombres:"}
+						<h:outputText
+								value="#{consultaPrepagadoMB.avSelect.personaPagador.nombres} #{consultaPrepagadoMB.avSelect.personaPagador.APaterno} 
+									#{consultaPrepagadoMB.avSelect.personaPagador.AMaterno}"
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Fecha Venta:"}
+						<h:outputText value="#{consultaPrepagadoMB.avSelect.fechaventa}"
+								style="font-weight:bold;font-size: 1.2em;">
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+									dateStyle="short" />
+							</h:outputText>
+
+						</p:panelGrid>
+
+					</h:panelGroup>
+					<br />
+
+					<h:panelGroup>
+						<h:outputLabel
+							value="Datos del Boleto : #{consultaPrepagadoMB.codigoBoletoSelect}"
+							style="font-weight:bold;font-size: 1em;" />
+						<p:panelGrid columns="4">
+						#{"Dni Pasajero:"}
+						<h:outputText
+								value=" #{consultaPrepagadoMB.avSelect.personaPagador.dni}"
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Pasajero:"}
+						<h:outputText
+								value="#{consultaPrepagadoMB.avSelect.personaCliente.nombres} #{consultaPrepagadoMB.avSelect.personaCliente.APaterno}
+								#{consultaPrepagadoMB.avSelect.personaCliente.AMaterno}"
+								style="font-weight:bold;font-size: 1.2em;" />
+								
+						#{"Origen:"}
+						<h:outputText value=" #{consultaPrepagadoMB.avSelect.desOrigen}"
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Destino:"}
+						<h:outputText value=" #{consultaPrepagadoMB.avSelect.desDestino}"
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Fecha Salida:"}
+						<h:outputText value="#{consultaPrepagadoMB.avSelect.desFSalida}"
+								style="font-weight:bold;font-size: 1.2em;">
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+									dateStyle="short" />
+							</h:outputText>
+						#{"Hora Salida:"}
+						<h:outputText value=" #{consultaPrepagadoMB.avSelect.desHsalida}"
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Asiento:"}
+						<h:outputText value=" #{consultaPrepagadoMB.avSelect.nroAsiento}"
+								style="font-weight:bold;font-size: 1.2em;" />	
+						#{"Servicio:"}
+						<h:outputText value=" #{consultaPrepagadoMB.avSelect.desServicio}"
+								style="font-weight:bold;font-size: 1.2em;" />
+
+						</p:panelGrid>
+					</h:panelGroup>
+					<h:panelGrid columns="2">
+						#{"Estado:"}
+					 	<p:selectOneMenu id="cmb"
+							value="#{consultaPrepagadoMB.valueEntregado}"
+							style=" width:140px;">
+							<f:selectItem itemLabel="NO ENTREGADO" itemValue="NO ENTREGADO" />
+							<f:selectItem itemLabel="ENTREGADO" itemValue="ENTREGADO" />
+							<p:ajax event="change"
+								listener="#{consultaPrepagadoMB.habilitarImprimir}"
+								update=":fmImprPre:imprimir"></p:ajax>
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+
+
+					<br />
+					<p:commandButton id="imprimir"
+						disabled="#{consultaPrepagadoMB.btnPrint}" value="Imprimir Boleto"
+						icon="icon-printer" oncomplete="validar(xhr, status, args)"
+						actionListener="#{consultaPrepagadoMB.imprimirBoletoPrepagado}"
+						update=":formLista">
+					</p:commandButton>
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgNuevo.hide();" icon="icon-cancel" />
+				</h:form>
+			</p:dialog>
+
+
+		</p:panel>
+
+		<script>
+			function validar(xhr, status, args) {
+				if (args.esValido) {
+
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
+</html>

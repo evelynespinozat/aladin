@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Mantenimiento" url="#" />
+				<p:menuitem value="Salida de Autopartes" url="#" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="7" id="datareg">
+				 
+				 #{"Agencia:"}
+				<p:selectOneMenu style="width:150px" value="#{salidaAutoparteMB.filter.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{salidaAutoparteMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{salidaAutoparteMB.getOficinasxAgencia()}" /> 
+				</p:selectOneMenu>
+	
+				#{"Oficina:"}
+				<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{salidaAutoparteMB.filter.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{salidaAutoparteMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					<p:ajax update="cmbAlm" listener="#{salidaAutoparteMB.listarAlmacen()}" />  
+				</p:selectOneMenu>
+				
+				#{"Almacen:"}
+				<p:selectOneMenu style="width:250px" id="cmbAlm" value="#{salidaAutoparteMB.filter.idAlmacen}" required="true" requiredMessage="Seleccione un Almacen ">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="ag" value="#{salidaAutoparteMB.listAlmacen}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.descripcion}" /> 
+				</p:selectOneMenu>
+					
+
+					<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{salidaAutoparteMB.consultarAutopartePedidas()}"  
+					 		update=":formLista :sms"	style=" width:160px;"/>
+					</h:panelGrid>
+					 
+					
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="l" value="#{salidaAutoparteMB.listaSalidaAutoparte}" 
+					paginator="true" rowIndexVar="nro" 
+					emptyMessage="No hay autopartes solicitadas por los filtros seleccionados"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Autopartes Solicitadas por el Mecanico </f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:200px;" headerText="Autoparte" filterStyleClass="mayuscula" filterBy="#{l.descAutoparte}" >
+						<h:outputText value="#{l.descAutoparte}" />
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Solcitante">
+						<h:outputText value="#{l.nomMecanico}" />
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Cantidad">
+						<h:outputText value="#{l.cantidad}" />
+					</p:column>
+
+					<p:column style="width:150px" headerText="Motivo">
+						<h:outputText value="#{l.tipoMantenimiento}" />
+					</p:column>
+
+					<p:column style="width:150px" headerText="Bus ">
+						<h:outputText value="#{l.nroBus}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Fecha Pedido">
+						<h:outputText value="#{l.fecPedido}" rendered="#{l.fecPedido != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Estado">
+						<h:outputText value="#{l.estado == 1 ? 'SOLICITADO':'ATENDIDO'}" />
+					</p:column>
+					
+					<p:column  style="width:25px" headerText="">
+						<p:selectBooleanCheckbox value="#{l.seleccionado}">	
+						</p:selectBooleanCheckbox>
+					</p:column>
+					
+				</p:dataTable>
+				<br/>
+				<p:commandLink update=":sms :formLista"  id="imprimir" value="Ordenar Salida" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							   color: #1C190A;" actionListener="#{salidaAutoparteMB.ordenarSalida()}" ajax="false">   
+				</p:commandLink> 	 				
+			</h:form>
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

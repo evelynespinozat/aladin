@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.FlotaMapper">
+
+<resultMap id="flotaResult" type="com.certicom.ittsa.domain.Flota">
+	<id column="IdBus" property="idBus"/>
+	<result column="IdClase" property="idClase" />
+	<result column="Asientos" property="asientos" />
+	<result column="Numero" property="numero" />
+	<result column="Placa" property="placa" />
+	<result column="Marca" property="marca" />
+	<result column="Modelo" property="modelo" />
+	<result column="Fabricacion" property="fabricacion" />
+	<result column="Recorrido" property="recorrido" />
+	<result column="TPropiedad" property="tPropiedad" />
+	<result column="InscritoMTC" property="inscritoMTC" />
+	<result column="Piloto" property="piloto" />
+	<result column="Copiloto" property="copiloto" />
+	<result column="TipoCombustible" property="tipoCombustible" />
+	<result column="Estado" property="estado" />
+	<result column="IdTipoFlota" property="idTipoFlota" />
+	<result column="IdCertiSat" property="idCertiSat" />
+	<result column="Disponibilidad" property="disponibilidad" />
+	<result column="nombPiloto" property="nombPiloto" />
+	<result column="fecFiltro" property="fecFiltro" />
+	<result column="nroChasis" property="nroChasis" />
+	<result column="telefono" property="telefono" />
+	
+</resultMap>
+
+<insert id="crearFlota" parameterType="com.certicom.ittsa.domain.Flota">
+	insert into t_flota (
+	IdClase, 
+	Asientos, 
+	Numero, 
+	Placa, 
+	Marca, 
+	Modelo,
+	Fabricacion,
+	Recorrido,
+	TPropiedad,
+	InscritoMTC,
+	Piloto,
+	Copiloto,
+	TipoCombustible,
+	Estado,
+	IdTipoFlota,
+	IdCertiSat,
+	Disponibilidad,
+	NroChasis,
+	telefono) 
+	values (
+	#{idClase},
+	#{asientos},
+	#{numero},
+	#{placa},
+	#{marca},
+	#{modelo},
+	#{fabricacion},
+	#{recorrido},
+	#{tPropiedad},
+	#{inscritoMTC},
+	#{piloto},
+	#{copiloto},
+	#{tipoCombustible},
+	#{estado},
+	#{idTipoFlota},
+	#{idCertiSat},
+	#{disponibilidad},
+	#{nroChasis},
+	#{telefono}
+	)
+</insert>
+
+<update id="actualizarFlota" parameterType="com.certicom.ittsa.domain.Flota">
+    update t_flota set 
+    IdClase = #{idClase}, 
+	Asientos = #{asientos}, 
+	Numero = #{numero}, 
+	Placa = #{placa}, 
+	Marca = #{marca}, 
+	Modelo = #{modelo},
+	Fabricacion = #{fabricacion},
+	Recorrido = #{recorrido},
+	TPropiedad = #{tPropiedad},
+	InscritoMTC = #{inscritoMTC},
+	Piloto = #{piloto},
+	Copiloto = #{copiloto},
+	TipoCombustible = #{tipoCombustible},
+	Estado = #{estado},
+	IdTipoFlota = #{idTipoFlota},
+	IdCertiSat = #{idCertiSat},
+	NroChasis = #{nroChasis},
+	telefono = #{telefono} 
+     where IdBus= #{idBus}
+    
+</update>
+
+<select id="busesxCambio" resultMap="flotaResult" >
+
+select fa.FecKmIncremento as fecFiltro, fa.IdBus, f.Numero, f.Placa, f.Recorrido, f.KmAproximado, p.Nombres +' '+ p.ApellidoPaterno +' '+ p.ApellidoMaterno  as nombPiloto    
+					from (((t_flotaautoparte fa inner join t_autoparte a on fa.IdAutoparte = a.IdAutoparte )  
+											   inner join t_flota f on fa.IdBus = f.IdBus)  
+											   inner join t_automotor m on m.IdAutomotor = fa.IdAutomotor)
+											   inner join t_piloto p on p.IdPiloto = f.Piloto    
+				where a.KmCambio &lt;= fa.KmActual  
+					         and fa.FecKmIncremento >= #{fecKmIncremento}  
+					group by fa.FecKmIncremento, fa.IdBus, f.Numero, f.Placa, f.Recorrido , f.KmAproximado, p.Nombres, p.ApellidoPaterno, p.ApellidoMaterno     
+							
+</select>
+
+<select id="busesxCambioAprox" resultMap="flotaResult" >
+
+select fa.FecKmIncrementoAprox as fecFiltro, fa.IdBus, f.Numero, f.Placa, f.Recorrido, f.KmAproximado, p.Nombres +' '+ p.ApellidoPaterno +' '+ p.ApellidoMaterno  as nombPiloto    
+					from (((t_flotaautoparte fa inner join t_autoparte a on fa.IdAutoparte = a.IdAutoparte )  
+											   inner join t_flota f on fa.IdBus = f.IdBus)  
+											   inner join t_automotor m on m.IdAutomotor = fa.IdAutomotor)
+											   inner join t_piloto p on p.IdPiloto = f.Piloto    
+				where a.KmCambio &lt;= fa.KmAproximado  
+					         and fa.FecKmIncrementoAprox >= #{fecKmIncrementoAprox}  
+					group by fa.FecKmIncrementoAprox, fa.IdBus, f.Numero, f.Placa, f.Recorrido , f.KmAproximado, p.Nombres, p.ApellidoPaterno, p.ApellidoMaterno     
+							
+</select>
+
+<select id="busesxCambioAll" resultMap="flotaResult" >
+
+select fa.IdBus, f.Numero, f.Placa, f.Recorrido, f.KmAproximado, p.Nombres +' '+ p.ApellidoPaterno +' '+ p.ApellidoMaterno  as nombPiloto    
+					from (((t_flotaautoparte fa inner join t_autoparte a on fa.IdAutoparte = a.IdAutoparte )  
+											   inner join t_flota f on fa.IdBus = f.IdBus)  
+											   inner join t_automotor m on m.IdAutomotor = fa.IdAutomotor)
+											   inner join t_piloto p on p.IdPiloto = f.Piloto    
+				group by fa.IdBus, f.Numero, f.Placa, f.Recorrido , f.KmAproximado, p.Nombres, p.ApellidoPaterno, p.ApellidoMaterno     
+							
+</select>
+
+</mapper>	

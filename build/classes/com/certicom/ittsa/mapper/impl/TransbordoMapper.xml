@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.TransbordoMapper">
+
+<resultMap id="transbordoResult" type="com.certicom.ittsa.domain.Transbordo">
+	<id column="IdTransbordo" property="idTransbordo"/>
+	<result column="Tipo" property="tipo"/>
+	<result column="FRegistro" property="fRegistro"/>
+	<result column="IdProgramacion" property="idProgramacion"/>
+	<result column="IdBusOrigen" property="idBusOrigen"/>
+	<result column="IdBusDestino" property="idBusDestino"/>
+	<result column="IdClaseOrigen" property="idClaseOrigen"/>
+	<result column="IdClaseDestino" property="idClaseDestino"/>
+	<result column="Observaciones" property="observaciones"/>
+</resultMap>
+
+<select id="listaTransbordos" resultMap="transbordoResult">
+		select t.IdTransbordo, t.Tipo, t.FRegistro, t.IdProgramacion, f.Numero as BusNumOrigen, f2.Numero as BusNumDestino, c.Descripcion as ClaseOrigen, c2.Descripcion as ClaseDestino
+		from (((t_transbordo t inner join t_flota f on t.IdBusOrigen = f.IdBus) 
+							  inner join t_flota f2 on t.IdBusDestino = f2.IdBus) 
+							  inner join t_clase c on t.IdClaseOrigen = c.IdClase) 
+							  inner join t_clase c2 on t.IdClaseDestino = c2.IdClase order by t.FRegistro desc
+</select>
+</mapper>	

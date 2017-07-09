@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.FlotaAutoparteMapper">
+
+<resultMap id="flotaAutoparteResult" type="com.certicom.ittsa.domain.FlotaAutoparte">
+	<id column="IdFlotaAuto" property="idFlotaAuto"/>
+	<result column="IdBus" property="idBus"/>
+	<result column="IdAutomotor" property="idAutomotor"/>
+	<result column="IdAutoparte" property="idAutoparte"/>
+	<result column="KmActual" property="kmActual"/>
+	<result column="FecCambio" property="fecCambio"/>
+	
+	<result column="FecKmIncremento" property="fecKmIncremento"/>
+	<result column="FecKmIncrementoAprox" property="fecKmIncrementoAprox"/>
+	<result column="KmAproximado" property="kmAproximado"/>
+	
+	<result column="desAutoparte" property="desAutoparte"/>
+	<result column="kmCambio" property="kmCambio"/>
+	<result column="kmAdherir" property="kmAdherir"/>
+	
+	<result column="numBus" property="numBus"/>
+	<result column="desAutomotor" property="desAutomotor"/>
+	<result column="tipoKilometraje" property="tipoKilometraje"/>
+
+</resultMap>
+
+<select id="autopartesxCambio" resultMap="flotaAutoparteResult" >
+		select fa.IdFlotaAuto, a.IdAutoparte, fa.IdBus, fa.IdAutomotor, fa.IdAutoparte, f.Numero as numBus, m.Descripcion as desAutomotor, a.Descripcion as desAutoparte, fa.FecKmIncremento, fa.IdAutomotor, a.KmCambio, fa.KmActual, fa.KmAproximado      
+					from ((t_flotaautoparte fa inner join t_autoparte a on fa.IdAutoparte = a.IdAutoparte )  
+											   inner join t_flota f on fa.IdBus = f.IdBus)  
+											   inner join t_automotor m on m.IdAutomotor = fa.IdAutomotor  
+					where a.KmCambio &lt;= fa.KmActual  
+					        and fa.FecKmIncremento = #{fecKmIncremento}   
+					        <if test="idAutoparte != 0 ">
+							and a.IdAutoparte = #{idAutoparte}
+							</if>
+							
+</select>
+
+
+<select id="autopartesxCambioAprox" resultMap="flotaAutoparteResult" >
+		select fa.IdFlotaAuto, a.IdAutoparte, fa.IdBus, fa.IdAutomotor, fa.IdAutoparte, f.Numero as numBus, m.Descripcion as desAutomotor, a.Descripcion as desAutoparte, fa.FecKmIncrementoAprox as FecKmIncremento, fa.IdAutomotor, a.KmCambio, fa.KmAproximado as KmActual, fa.KmAproximado      
+					from ((t_flotaautoparte fa inner join t_autoparte a on fa.IdAutoparte = a.IdAutoparte )  
+											   inner join t_flota f on fa.IdBus = f.IdBus)  
+											   inner join t_automotor m on m.IdAutomotor = fa.IdAutomotor  
+					where a.KmCambio &lt;= fa.KmAproximado   
+					        and fa.FecKmIncrementoAprox = #{fecKmIncremento}   
+					        <if test="idAutoparte != 0 ">
+							and a.IdAutoparte = #{idAutoparte}
+							</if>
+							
+</select>
+
+<select id="autopartesxBus" resultMap="flotaAutoparteResult" >
+		select fa.IdFlotaAuto, a.IdAutoparte, fa.IdBus, fa.IdAutomotor, fa.IdAutoparte, f.Numero as numBus, m.Descripcion as desAutomotor, a.Descripcion as desAutoparte, fa.FecKmIncremento, fa.IdAutomotor, a.KmCambio, fa.KmActual, fa.KmAproximado      
+					from ((t_flotaautoparte fa inner join t_autoparte a on fa.IdAutoparte = a.IdAutoparte )  
+											   inner join t_flota f on fa.IdBus = f.IdBus)  
+											   inner join t_automotor m on m.IdAutomotor = fa.IdAutomotor  
+					where a.KmCambio &lt;= fa.KmActual  
+					        and fa.FecKmIncremento = #{fecFiltro}  
+					        and fa.IdBus = #{idBus}  
+							
+</select>
+
+<select id="autopartesxBusAll" resultMap="flotaAutoparteResult" >
+		select fa.IdFlotaAuto, a.IdAutoparte, fa.IdBus, fa.IdAutomotor, fa.IdAutoparte, f.Numero as numBus, m.Descripcion as desAutomotor, a.Descripcion as desAutoparte, fa.FecKmIncremento, fa.IdAutomotor, a.KmCambio, fa.KmActual, fa.KmAproximado      
+					from ((t_flotaautoparte fa inner join t_autoparte a on fa.IdAutoparte = a.IdAutoparte )  
+											   inner join t_flota f on fa.IdBus = f.IdBus)  
+											   inner join t_automotor m on m.IdAutomotor = fa.IdAutomotor  
+					where fa.IdBus = #{idBus}  
+							
+</select>
+
+</mapper>	

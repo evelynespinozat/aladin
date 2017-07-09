@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Gestion de Transbordo" url="transbordo" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			 <p:panel>
+                    <p:selectOneRadio id="rbtOpcion" value="#{transbordoMB.opcion}" >
+                        <f:selectItem itemLabel="Al mismo servicio" itemValue="1" >
+                        </f:selectItem>  
+                        <f:selectItem itemLabel="A un servicio distínto" itemValue="2">
+                        </f:selectItem>  
+                        <p:ajax update=":panelFiltro2:paneles" listener="#{transbordoMB.cambioPaneles()}"  process="@this"/>
+                    </p:selectOneRadio>
+             </p:panel>
+             
+             	   <!-- sms general -->			
+				  
+                   <h:form id="panelFiltro">
+                    <p:messages  id="msgNuevo" showDetail="false" showSummary="true"  closable="true"/>		
+			
+             			<h:panelGrid columns="11" id="datFiltro" >
+
+			       			#{"Origen:"} 
+							<p:selectOneMenu style="width:130px" value="#{transbordoMB.transbordoFilter.origen}" required="true" requiredMessage="Seleccione un Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{transbordoMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cboDestino" listener="#{transbordoMB.listarDestinosxOri()}"  event="change"/> 
+							</p:selectOneMenu>
+							
+							#{"Destino:"}
+							<p:selectOneMenu id="cboDestino" style="width:150px" value="#{transbordoMB.transbordoFilter.destino}" required="true" requiredMessage="Seleccione un Destino">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{transbordoMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" /> 
+							    <p:ajax listener="#{transbordoMB.capturarDestino()}" event="change"/> 
+							</p:selectOneMenu>
+							
+							#{"Fecha:"}
+                            <p:calendar id="fecha1dv" value="#{transbordoMB.transbordoFilter.fecha}" pattern="dd/MM/yyyy"  mindate="#{transbordoMB.fechaminima}" locale="es" required="true" requiredMessage="Seleccione una Fecha"> 
+                            	<p:ajax event="dateSelect"  listener="#{transbordoMB.obtenerListaHoras()}" update="updatear" />
+                            </p:calendar>
+                            
+                            #{"Hora:"}
+	                        <p:selectOneMenu  id="updatear" value="#{transbordoMB.transbordoFilter.idProgramacion}" style="width: 195px!important;" required="true" requiredMessage="Seleccione Hora" >
+	                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+	                                <f:selectItems  value="${transbordoMB.lsServiciosHora}" var="programacion"
+	                                                itemValue="#{programacion.idProgramacion}" itemLabel="#{programacion.hSalida} - #{programacion.descServicio}"></f:selectItems>
+	                                <p:ajax update="numb" listener="#{transbordoMB.obtenerNumbBus()}" event="change"/>             
+                            </p:selectOneMenu>
+                            
+                            #{"Bus N°:"}
+                            <h:outputText style="color:black;font-style:normal;font-size:30px;width:100px" id="numb" value="#{transbordoMB.transbordoFilter.numBus}"/>
+                            
+                            <p:commandButton value="Registrar Transbordo" actionListener="#{transbordoMB.mostrarPanel()}"
+											 update="msgNuevo" icon="icon-disk" />
+									 
+			 			</h:panelGrid> 
+			       </h:form>
+			       <br/>
+			   <h:form id="formListaTransbordo">
+				<p:dataTable widgetVar="dtTransbordo" var="p" value="#{transbordoMB.listaTransbordo}" 
+					emptyMessage="No hay Transbordo Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Transbordos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Tipo">
+						<h:outputText value="#{p.tipo=='1'?'Mismo Servicio':'Otro Servicio'}"/>
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Fecha Registro">
+						<h:outputText value="#{p.fRegistro}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="N° Bus Origen">
+						<h:outputText value="#{p.busNumOrigen}" />
+					</p:column>
+				
+					<p:column style="text-align: center;" headerText="Clase Origen">
+						<h:outputText value="#{p.claseOrigen}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="N° Bus Destino">
+						<h:outputText value="#{p.busNumDestino}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Clase Destino">
+						<h:outputText value="#{p.claseDestino}" />
+					</p:column>
+					
+				</p:dataTable>
+				</h:form>
+	    </p:panel>     
+		<p:dialog header="Registrar Transbordo" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+			<h:form id="panelFiltro2"> 		       		
+				<h:panelGrid columns="2" id="paneles" >
+			        <p:panel style="width: available;height: available" rendered="#{transbordoMB.muestraPaneles}">
+ 					<h:outputText style="color:black;font-style:normal;font-size:15px;width:100px" id="cc" value="Transbordo Al Mismo Servicio"/>
+                    <br/> 
+                    <br/>     
+<!-- 					panel de transbordo al mismo servicio -->
+					<h:panelGrid columns="4" id="datFiltro">
+                    #{"Motivo:"}
+	                        <p:selectOneMenu  id="updatear2" value="#{transbordoMB.transbordoFilter.idProgramacion}" style="width: 195px!important;" required="true" requiredMessage="Seleccione el Motivo" >
+	                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+		                            <f:selectItem itemLabel="Por Viaje" itemValue="1"></f:selectItem>
+		                            <f:selectItem itemLabel="Por Accidente" itemValue="2"></f:selectItem>
+		                            <f:selectItem itemLabel="Por Fallo Mecánico" itemValue="3"></f:selectItem>
+		                            <f:selectItem itemLabel="Otros" itemValue="4"></f:selectItem>             
+                            </p:selectOneMenu>
+                           
+                     #{"Servicio:"}
+	                        <p:selectOneMenu  id="updatear3" value="#{transbordoMB.transbordoFilter.idProgramacion}" style="width: 195px!important;" required="true" requiredMessage="Seleccione un Servicio" >
+	                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+	                                <f:selectItems  value="${transbordoMB.lsServiciosHora}" var="programacion"
+	                                                itemValue="#{programacion.idProgramacion}" itemLabel="#{programacion.hSalida} - #{programacion.descServicio}"></f:selectItems>
+	                                <p:ajax update="" listener="#{transbordoMB.obtenerNumbBus()}" event="change"/>             
+                            </p:selectOneMenu>
+                           
+					</h:panelGrid>
+					 <br/>
+                     #{"Observaciones:"}
+                        <p:inputTextarea id="obstrans" value="#{transbordoMB.transbordo.observaciones}" style="width: 98% !important; height: 100px !important" autoResize="false" ></p:inputTextarea> 		
+                   
+                   <br/>
+                   <br/>
+						<p:commandButton value="Guardar" actionListener="#{agenciaMB.guardarAgencia()}"
+									     update="" icon="icon-disk" />
+						<p:commandButton value="Cancelar"  type="button" 
+										 onclick="dlgNuevo.hide()" icon="icon-cancel"/>
+										 
+                   </p:panel>
+                   
+<!--                     panel de transbordo a otro servicio -->
+                    <p:panel style="width: available;height: available" rendered="#{!transbordoMB.muestraPaneles}" >
+						<h:outputText style="color:black;font-style:normal;font-size:15px;width:100px" value="Transbordo A Otro Servicio"/>
+						<br/> 
+                   		<br/> 
+						<h:panelGrid columns="3">
+							<p:commandButton value="Procesar" actionListener="#{agenciaMB.guardarAgencia()}" update="" icon="icon-disk" />
+							#{"Nuevo Servicio:"}
+							 <p:selectOneMenu  id="cboServiso" value="#{transbordoMB.transbordoFilter.idProgramacion}" style="width: 195px!important;" required="true" requiredMessage="Seleccione un Servicio" >
+	                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+	                                <f:selectItems  value="${transbordoMB.lsServiciosHora}" var="programacion"
+	                                                itemValue="#{programacion.idProgramacion}" itemLabel="#{programacion.hSalida} - #{programacion.descServicio}"></f:selectItems>
+	                                <p:ajax update="" listener="#{transbordoMB.obtenerNumbBus()}" event="change"/>             
+                            </p:selectOneMenu>
+						</h:panelGrid>
+					
+                    </p:panel>
+                </h:panelGrid>
+				</h:form>
+		</p:dialog>
+			
+		
+		
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

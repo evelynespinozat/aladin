@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Reporte Asignacion de Mecanico" url="reporteAsigMecanico" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<p:panel>
+			  <h:form>
+				<h:panelGrid columns="8">
+						#{"Mecanico:"}
+						<p:selectOneMenu id="cmbMecanico"  value="#{rptAsignaMecanicoMB.historialMantenimientoFilter.idMecanico}" style=" width:150px;"
+							required="true" requiredMessage="Seleccione un mecanico"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{rptAsignaMecanicoMB.listaMecanicos}" itemValue="#{o.idMecanico}" itemLabel="#{o.nombre} #{o.apePaterno} #{o.apeMaterno}"/>
+						</p:selectOneMenu>	
+				
+						<h:outputLabel value="F.Inicio "  /> 
+						<p:calendar style="width:200px"  value="#{rptAsignaMecanicoMB.historialMantenimientoFilter.fecInicio}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita una fecha de inicio">
+							  <p:ajax update="calFfin" event="dateSelect"/>
+							  </p:calendar>
+
+						<h:outputLabel value="F.Fin" />
+						<p:calendar id="calFfin" style="width:200px;" mindate="#{rptAsignaMecanicoMB.historialMantenimientoFilter.fecInicio}"  value="#{rptAsignaMecanicoMB.historialMantenimientoFilter.fecFin}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"  required="true" requiredMessage="Se necesita una fecha final" /> 
+						
+					<p:commandButton value="Consultar" update="@form :formListaHistorial :sms" actionListener="#{rptAsignaMecanicoMB.buscarMecanico()}" />
+					<h:commandLink value="Imprimir" style="padding: 6px 30px;background:#FCC14D; text-decoration:none;border: solid 1px #624B1E;font-weight: bold;color: #1C190A;"
+							actionListener="#{rptAsignaMecanicoMB.imprimirPDF}"/>
+						
+				</h:panelGrid>
+			  </h:form>	
+			</p:panel>
+			<br/>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaHistorial">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{rptAsignaMecanicoMB.listaHistorialMecanico}"  
+					emptyMessage="No hay Almacenes Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Mecanicos Asignados</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Fecha Asignacion" >
+						<h:outputText value="#{p.fecAsignaMecanico}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Bus" >
+						<h:outputText value="#{p.numBus}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Sistema" >
+						<h:outputText value="#{p.desAutomotor}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Autoparte" >
+						<h:outputText value="#{p.desAutoparte}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Tipo Mantenimiento" >
+						<h:outputText value="#{p.tipMantenimiento}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Mecanico" >
+						<h:outputText value="#{p.nombreMeca}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Tipo Servicio" >
+						<h:outputText value="#{p.tipoServicio}" />
+					</p:column>
+					
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+		
+		</p:panel>
+		
+	</ui:define>
+</ui:composition>
+</html>

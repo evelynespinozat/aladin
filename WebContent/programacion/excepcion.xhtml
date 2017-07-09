@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Gestion de Excepciones" url="excepcion" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					
+					<h:panelGrid columns="7">
+						
+						<p:commandButton value="Nueva Excepcion" icon="icon-add" update=":dlgDetNuevo" 
+						oncomplete="dlgNuevo.show();" actionListener="#{excepcionMB.nuevaExcepcion()}" immediate="true" />
+						
+						<p:spacer width="20" height="2" />
+						
+						#{"Anio:"}
+						<h:selectOneMenu value="#{excepcionMB.anio}" required="true" requiredMessage="Se necesita un anio" >
+							<f:selectItem itemLabel="[--Seleccionar--]" itemValue="#{null}" noSelectionOption="true" />
+							<f:selectItem  itemLabel="2015" itemValue="2015" />
+							<f:selectItem  itemLabel="2016" itemValue="2016" />
+							<f:selectItem  itemLabel="2017" itemValue="2017" />
+							<f:selectItem  itemLabel="2018" itemValue="2018" />
+							<f:selectItem  itemLabel="2019" itemValue="2019" />
+							<f:selectItem  itemLabel="2020" itemValue="2020" />
+							<f:selectItem  itemLabel="2021" itemValue="2021" />
+							<f:selectItem  itemLabel="2022" itemValue="2022" />
+							<f:selectItem  itemLabel="2023" itemValue="2023" />
+							<f:selectItem  itemLabel="2024" itemValue="2024" />
+							<f:selectItem  itemLabel="2025" itemValue="2025" />
+							<f:selectItem  itemLabel="2026" itemValue="2026" />
+							<f:selectItem  itemLabel="2027" itemValue="2027" />
+							<f:selectItem  itemLabel="2028" itemValue="2028" />
+							<f:selectItem  itemLabel="2029" itemValue="2029" />
+							<f:selectItem  itemLabel="2030" itemValue="2030" />
+							
+						</h:selectOneMenu>	
+						
+						<p:commandButton value="Listar Excepciones" actionListener="#{excepcionMB.listarExcepciones()}" 
+							update=":sms :formListaExcepcion" oncomplete="dtExcepcion.filter();" />
+						
+						<p:spacer width="80" height="2" />
+						
+						<p:commandButton value="Generar Excepciones por defecto" update=":formListaExcepcion" onclick="dlgExcepcionDefecto.show();" />
+					
+					</h:panelGrid>
+					
+					
+
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaExcepcion">
+				<p:dataTable widgetVar="dtExcepcion" var="p" value="#{excepcionMB.listaExcepcion}" filteredValue="#{excepcionMB.listaFiltroExcepcion}"  
+					emptyMessage="No hay Excepciones Disponibles." rowIndexVar="nro" 
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Excepciones</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:15%" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Fecha">
+						<h:outputText value="#{p.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{excepcionMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{excepcionMB.editarExcepcion(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+							
+						</p:commandButton>
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{excepcionMB.excepcion}" value="#{p}" />
+						</p:commandButton>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{excepcionMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+
+							#{"Descripcion:"}
+							<p:inputText value="#{excepcionMB.excepcion.descripcion}" styleClass="mayuscula" required="true" maxlength="50" requiredMessage="Se necesita una descripcion" />
+							
+							#{"Fecha:"}
+							<p:calendar value="#{excepcionMB.excepcion.fecha}" pattern="dd/MM/yyyy" locale="es"
+							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha" />
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{excepcionMB.guardarExcepcion()}"
+									 update=":formListaExcepcion msgNuevo :sms"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta excepcion?" header="Eliminar Excepcion"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Excepcion: <h:outputText value="#{excepcionMB.excepcion.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaExcepcion :sms"
+						actionListener="#{excepcionMB.eliminarExcepcion()}"
+						oncomplete="dtExcepcion.filter();dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		
+		
+		
+		
+		<!-- dialogo generar Excepcion por defecto -->
+			
+			<p:dialog header="Excepciones por defecto" widgetVar="dlgExcepcionDefecto" appendToBody="true"
+					  resizable="false" id="dlgDetExcepcionDefecto" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+					
+						<h:panelGrid columns="2">
+							
+							#{"Generar Excepciones para el Anio:"}
+							<h:selectOneMenu value="#{excepcionMB.anioGeneracion}" required="true" requiredMessage="Se necesita un anio" >
+								<f:selectItem itemLabel="[--Seleccionar--]" itemValue="#{null}" noSelectionOption="true" />
+								<f:selectItem  itemLabel="2014" itemValue="2014" />
+								<f:selectItem  itemLabel="2015" itemValue="2015" />
+								<f:selectItem  itemLabel="2016" itemValue="2016" />
+								<f:selectItem  itemLabel="2017" itemValue="2017" />
+								<f:selectItem  itemLabel="2018" itemValue="2018" />
+							</h:selectOneMenu>	
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{excepcionMB.generarExcepcionesDefecto()}"
+									 update=":formListaExcepcion msgNuevo :sms"
+									 oncomplete="validarExcepcionDefecto(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgExcepcionDefecto.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+		
+		
+		
+		<script>
+			
+			function validar(xhr, status, args) 
+			{
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+					dtExcepcion.filter();
+					
+				}
+			}
+
+
+			function validarExcepcionDefecto(xhr, status, args) 
+			{
+				if (args.validationFailed) {
+					jQuery('#dlgExcepcionDefecto').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgExcepcionDefecto.hide();
+
+				}
+			}
+
+
+			
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

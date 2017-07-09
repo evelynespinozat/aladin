@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Mantenimiento de Distritos" url="#" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Distrito" icon="icon-add" update=":dlgDetNuevo" 
+					oncomplete="dlgNuevo.show();" actionListener="#{distritoMB.nuevoDistrito()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaTarifaGiro">
+			<br/>
+				<p:dataTable id="dtAgencias" widgetVar="dtAgencias2" var="a" value="#{distritoMB.listaAgencias}" 
+					emptyMessage="No hay Excepciones Disponibles." rowIndexVar="nro" filteredValue="#{distritoMB.listaAgenciasFilter}"
+					paginator="true" rows="20"
+					style="FONT-SIZE: 10px; ">
+					
+					<p:ajax event="rowToggle" listener="#{distritoMB.onRowToggle}" />
+					
+					<f:facet name="header">Lista de Agencias</f:facet>
+					
+					<p:column style="width:1%">  
+			            <p:rowToggler />  
+			        </p:column> 
+					
+					<p:column style="width:15%;text-align: cente;" headerText="OFICINA" filterStyleClass="mayuscula" filterBy="#{a.descripcion}"  filterStyle="width:150px;" filterMatchMode="contains">
+						<h:outputText value="#{a.descripcion}" />
+					</p:column>
+					
+					<p:rowExpansion>
+						<p:dataTable id="dtTarifaGiros" widgetVar="dtTarifaGiros2" var="t" value="#{distritoMB.listaDistrito}" 
+									filteredValue="#{distritoMB.listaFiltroDistrito}"  paginatorPosition="bottom" 
+									emptyMessage="No hay Excepciones Disponibles." rowIndexVar="nro" 
+									paginator="true" rows="20" style="FONT-SIZE: 10px; ">
+															
+						<f:facet name="header">Lista de Tarifas de Giros</f:facet>
+						
+						
+						<p:column style="width:15%;text-align: center;" headerText="Nombre Distrito">
+							<h:outputText value="#{t.descripcion}" />
+						</p:column>
+						
+						<ui:remove>
+						<p:column style="width:7%" headerText="Estado">
+								<p:commandLink update="@form :sms" actionListener="#{distritoMB.cambiarEstado(t)}" > 
+								<h:graphicImage value="#{t.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+								title="#{t.estado?'Activo':'Bloqueado'}" />
+								</p:commandLink>
+						</p:column>
+						</ui:remove>
+
+						<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+						
+							<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{distritoMB.editarDistrito(t)}"
+											 oncomplete="dlgNuevo.show();" icon="icon-edit"/>
+								
+	
+							<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+								    <f:setPropertyActionListener target="#{distritoMB.distrito}" value="#{t}" />
+							</p:commandButton>
+									
+						</p:column>
+
+				</p:dataTable>
+					</p:rowExpansion>  
+					
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="Registrar Nuevo Distrito" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+								
+							#{"Provincia:"}
+							<p:selectOneMenu style="width:150px" value="#{distritoMB.distrito.idAgencia}"
+								required="true" requiredMessage="Seleccione Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{distritoMB.listaAgencias}" 
+									itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+							
+							#{"Distrito:"}
+							<p:inputText  style="width:160px" value="#{distritoMB.distrito.descripcion}" required="true" requiredMessage="Se necesita un rango de inicio" />
+														
+														
+							#{"Estado:"}			
+							<p:selectOneMenu value="#{distritoMB.distrito.estado}" required="true" requiredMessage="se necesita estado">
+								<f:selectItem itemLabel="Activo" itemValue="true"  />
+								<f:selectItem itemLabel="No activo" itemValue="false"  />
+							</p:selectOneMenu>
+							
+					
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{distritoMB.guardarDistrito()}" style="margin-left:90px" 
+									 update="msgNuevo :formListaTarifaGiro msgNuevo"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk"/>
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" style="margin-left:5px"/>
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Esta seguro que desea eliminar este distrito?" header="Eliminar Tarifa de Giro"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					<p:commandButton value="Eliminar"
+						update=":formListaTarifaGiro :sms"
+						actionListener="#{distritoMB.eliminarDistrito()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+	</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

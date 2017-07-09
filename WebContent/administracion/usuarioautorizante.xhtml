@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Usuarios Autorizantes" url="usuarioautorizante" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Usuarios Autorizante" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{usuarioAutorizanteMB.nuevoUsuAut()}"/>
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de Usuarios Autorizantes -->
+			<h:form id="formListaUAutor">
+				<p:dataTable widgetVar="dtCServicio" var="cs" value="#{usuarioAutorizanteMB.listaUsuarioAutorizante}"  filteredValue="#{usuarioAutorizanteMB.listaUsuarioAutorizantefiltro}"
+					emptyMessage="No hay Usuarios Autorizantes disponibles." rowIndexVar="nro" 
+					rows="20" 
+					paginator="true" 
+					paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					 style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Usuarios Autorizantes</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:80px;" headerText="Agencia">
+						<h:outputText value="#{cs.descAgencia}" />
+					</p:column>
+
+					<p:column style="width:80px;" headerText="Oficina">
+						<h:outputText value="#{cs.descOficina}" />
+					</p:column>
+					
+					<p:column style="width:150px;" headerText="Usuario."
+						filterStyleClass="mayuscula" filterBy="#{cs.nombres}" filterStyle="width:150px;"
+						filterMatchMode="contains">
+						<h:outputText value="#{cs.nombres}" />
+					</p:column>
+
+					<p:column style="width:100px;" headerText="Abreviatura."
+						filterStyleClass="mayuscula" filterBy="#{cs.abreNombre}" filterStyle="width:150px;"
+						filterMatchMode="contains">
+						<h:outputText value="#{cs.abreNombre}" />
+					</p:column>
+
+					<p:column style="width:100px;" headerText="Cargo.">
+						<h:outputText value="#{cs.cargo}" />
+					</p:column>
+
+		
+
+					<p:column style="width:10px" headerText="Estado">
+						<p:commandLink update="@form :sms"
+							actionListener="#{usuarioAutorizanteMB.cambiarEstado(cs)}">
+							<h:graphicImage
+								value="#{cs.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}"
+								title="#{cs.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit" actionListener="#{usuarioAutorizanteMB.editarUsuAut(cs)}">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar" title="cbtEliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{usuarioAutorizanteMB.usuarioAutorizante}" value="#{cs}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{usuarioAutorizanteMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form id="fnew">
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+						#{"Agencia:"}
+						<p:selectOneMenu style="width:200px"
+							value="#{usuarioAutorizanteMB.usuarioAutorizante.idAgencia}"
+							required="true" requiredMessage="Seleccione Agencia">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item"
+								value="#{usuarioAutorizanteMB.listaAgencia}"
+								itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							<p:ajax update="cmbOfi" 
+								listener="#{usuarioAutorizanteMB.listarOficinas()}" />
+						</p:selectOneMenu>
+							
+						#{"Oficina:"}
+						<p:selectOneMenu  style="width:200px"
+							value="#{usuarioAutorizanteMB.usuarioAutorizante.idOficina}"
+							id="cmbOfi" required="true" requiredMessage="Seleccione Oficina">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item"
+								value="#{usuarioAutorizanteMB.listaOficinas}"
+								itemValue="#{item.idOficina}" itemLabel="#{item.nombre}" />
+						</p:selectOneMenu>
+
+						#{"Nombre:"}
+						<p:inputText  id="txtNombre" value="#{usuarioAutorizanteMB.usuarioAutorizante.nombres}"
+							style="width:200px" maxlength="30" styleClass="mayuscula" required="true" requiredMessage="Ingrese Nombre">
+						</p:inputText>
+						
+						#{"Abreviatura:"}
+						<p:inputText  id="txtAbrev" value="#{usuarioAutorizanteMB.usuarioAutorizante.abreNombre}"
+							style="width:200px" maxlength="30" styleClass="mayuscula" required="true" requiredMessage="Ingrese Abreviatura">
+						</p:inputText>
+						
+						#{"Cargo:"}
+						<p:inputText   value="#{usuarioAutorizanteMB.usuarioAutorizante.cargo}"
+							style="width:200px" maxlength="30" styleClass="mayuscula" required="true" requiredMessage="Ingrese Cargo">
+						</p:inputText>
+
+				<ui:remove>						
+						#{"Email:"}
+						<p:inputText  value="#{usuarioAutorizanteMB.usuarioAutorizante.email}" style="width:200px" maxlength="30" >
+							<f:validateRegex 
+                                    pattern="^\s*|([_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,}))$" />
+						</p:inputText>
+					</ui:remove>	
+						
+						</h:panelGrid>
+<!-- 						<pe:keyFilter for="txtDni" mask="num"/> -->
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{usuarioAutorizanteMB.guardarUAutorizante()}"
+									 update=":formListaUAutor msgNuevo"
+									 oncomplete="validarCampos(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"  
+									 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este usuario autorizante?" header="Usuario Autorizante"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Usuario autorizante: <h:outputText value="#{usuarioAutorizanteMB.usuarioAutorizante.nombres}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaUAutor :sms"
+						actionListener="#{usuarioAutorizanteMB.eliminarUAutorizante()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validarCampos(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

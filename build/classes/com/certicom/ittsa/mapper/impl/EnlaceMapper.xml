@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.EnlaceMapper">
+
+<resultMap id="enlaceResult" type="com.certicom.ittsa.domain.Enlace">
+	<id column="IdEnlace" property="idEnlace"/>
+	<result column="ServicioOrigen" property="servicioOrigen"/>
+	<result column="ServicioTramo" property="servicioTramo"/>
+	<result column="Tipo" property="tipo"/>
+	<result column="Estado" property="estado"/>
+	<result column="hora" property="hora"/>
+	<result column="IdServicioP" property="IdServicioP"/>
+	<result column="origen" property="origen"/>
+	<result column="destino" property="destino"/>
+	
+	<result column="Ruta" property="ruta"/>
+	<result column="HoraSalida" property="horaSalida"/>
+	<result column="Tramo" property="tramo"/>
+	<result column="HoraSalidaTramo" property="horaSalidaTramo"/>
+	<result column="desOrigen" property="desOrigen"/>
+	<result column="desDestino" property="desDestino"/>
+	<result  column="desServicio" property="desServicio"/>
+	<result  column="HSalida" property="HSalida"/>
+</resultMap>
+
+<select id="listaEnlaces" resultMap="enlaceResult">
+ select 
+			e.IdEnlace as idEnlace,
+			s.IdServicio as IdServicioP,
+			(select Descripcion from t_agencia where Idagencia = s.Origen) + '-' + (select Descripcion from t_agencia where Idagencia = s.Destino) as Ruta,
+			(select a.Descripcion from t_agencia a where a.Idagencia = e.origen) as desOrigen,
+			(select a.Descripcion from t_agencia a where a.Idagencia = e.destino) as desDestino,
+			s.Descripcion as desServicio,
+			e.hora,
+			s.HSalida,
+			e.tipo,
+			e.Estado
+			from t_enlace e inner join t_servicio s
+			on e.IdServicioP = s.IdServicio order by 3 ,s.Descripcion ,hora asc;
+
+</select>
+
+
+<!-- 	<select id="listaEnlaces" resultMap="enlaceResult"> -->
+<!-- 		select  e.IdEnlace,  -->
+<!-- 		   (a.Descripcion +' - '+ g.Descripcion) as Ruta,  -->
+<!-- 			s.HSalida as HoraSalida,  -->
+<!-- 		   (a2.Descripcion +' - '+ g2.Descripcion) as Tramo, -->
+<!-- 		    s2.HSalida as HoraSalidaTramo, -->
+<!-- 		    e.Tipo, -->
+<!-- 		    e.Estado   -->
+<!-- 		from ((((((t_enlace e inner join t_servicio s on e.ServicioOrigen = s.IdServicio)  -->
+<!-- 						  inner join t_agencia a on s.Origen = a.Idagencia)  -->
+<!-- 						  inner join t_agencia g on s.Destino = g.Idagencia) -->
+<!-- 						  inner join t_servicio s2 on e.ServicioTramo = s2.IdServicio)  -->
+<!-- 						  inner join t_agencia a2 on s2.Origen = a2.Idagencia)  -->
+<!-- 						  inner join t_agencia g2 on s2.Destino = g2.Idagencia) -->
+<!-- 	</select> -->
+	
+	<select id="listarTramosServicio" parameterType="int" resultMap="enlaceResult">
+		 select 
+			e.IdEnlace as idEnlace,
+			s.IdServicio as IdServicioP,
+			(select a.Descripcion from t_agencia a where a.Idagencia = e.origen) as desOrigen,
+			(select a.Descripcion from t_agencia a where a.Idagencia = e.destino) as desDestino,
+			s.Descripcion as desServicio,
+			e.hora
+			from t_enlace e inner join t_servicio s
+			on e.IdServicioP = s.IdServicio
+		 	where e.IdServicioP = #{IdServicio} order by s.IdServicio desc
+	</select>
+
+</mapper>	

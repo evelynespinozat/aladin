@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.PersonaMapper">
+
+<resultMap id="personaResult" type="com.certicom.ittsa.domain.Persona">
+	<id column="Dni" property="Dni"/>
+	<result column="tipodocumento" property="tipodocumento"/>
+	<result column="APaterno" property="APaterno"/>
+	<result column="AMaterno" property="AMaterno"/>
+	<result column="Nombres" property="Nombres"/>
+	<result column="sexo" property="sexo"/>
+	<result column="Nacimiento" property="Nacimiento"/>
+	<result column="Email" property="Email"/>
+	<result column="Telefono" property="Telefono"/>
+	<result column="frecuente" property="frecuente"/>
+	<!-- INICIO PISCOYA -->
+	<result column="telefonoMovil " property="telefonoMovil"/>
+	<result column="direccion" property="direccion"/>
+	<!-- FIN PISCOYA -->
+	
+</resultMap>
+
+
+</mapper>	

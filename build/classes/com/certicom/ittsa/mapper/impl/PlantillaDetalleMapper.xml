@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.PlantillaDetalleMapper">
+
+<resultMap id="plantillaDetalleResult" type="com.certicom.ittsa.domain.PlantillaDetalle">
+	<id column="IdPlanDet" property="IdPlanDet"/>
+	<result column="IdPlantilla" property="IdPlantilla"/>
+	<result column="IdAgPro" property="IdAgPro"/>
+	<result column="cantDefecto" property="cantDefecto"/>
+	<result column="IdProducto" property="IdProducto"/>
+	<result column="desProducto" property="desProducto"/>
+	<result column="Stock" property="Stock"/>
+	<result column="Idagencia" property="Idagencia"/>
+	<result column="IdOficina" property="IdOficina"/>
+	<result column="IdClase" property="IdClase"/>
+	<result column="IdOrigen" property="IdOrigen"/>
+	<result column="IdDestino" property="IdDestino"/>
+	<result column="Medida" property="Medida"/>
+	<result column="desMedida" property="desMedida"/>
+	<result column="costoUni" property="costoUni"/>
+	<result column="costo" property="costo"/>
+	<result column="cantDist" property="cantDist"/>
+	<result column="costoxPasj" property="costoxPasj"/>
+	<result column="disgregacion" property="disgregacion"/>
+</resultMap>
+
+<select id="listarPlantillaDetalle" parameterType="int" resultMap="plantillaDetalleResult">
+	select 
+		pd.IdPlanDet,
+		pd.IdPlantilla,
+		pd.IdAgPro,
+		p.IdProducto,
+		p.Descripcion as desProducto,
+		p.Medida,
+		pd.cantDefecto,
+		(select Descripcion from t_medida where CodigoMedida = p.Medida) as desMedida
+	  from t_plantilla_detalle pd,
+		   t_agencia_producto ap,	
+			t_producto p
+	  where pd.IdAgPro = ap.Id
+		    and ap.IdProducto = p.IdProducto
+		    and pd.IdPlantilla = #{IdPlantilla}
+	
+</select>
+
+<insert id="registarPlantillaDetalle" parameterType="com.certicom.ittsa.domain.PlantillaDetalle">
+	insert into t_plantilla_detalle(IdPlantilla,IdAgPro,cantDefecto) values(#{IdPlantilla},#{IdAgPro},#{cantDefecto})
+</insert>
+
+<select id="cantProductoxPlantilla" parameterType="com.certicom.ittsa.domain.PlantillaDetalle" resultType="int">
+select 
+	COUNT(*)
+	  from  t_plantilla_detalle pd
+	  where pd.IdPlantilla = #{IdPlantilla}
+	  and pd.IdAgPro = #{IdAgPro};
+	
+</select>
+
+<select id="listarProductosxPlantilla" parameterType="com.certicom.ittsa.domain.PlantillaDetalle" resultMap="plantillaDetalleResult">
+	select 
+		p.IdPlantilla,
+		pd.IdPlanDet,
+		ap.Id as IdAgPro,
+		pr.IdProducto,
+		pr.Descripcion as desProducto,
+		ap.Stock,
+		p.Idagencia,
+		p.IdOficina,
+		p.IdClase,
+		p.IdOrigen,
+		p.IdDestino,
+		pr.Medida,
+		pd.cantDefecto as cantSalida,
+		(select Descripcion from t_medida where CodigoMedida = pr.Medida) as desMedida,
+		ap.costoUni, ap.costo, ap.cantDist, ap.costoxPasj ,ap.disgregacion
+		 	from t_plantilla p inner join t_plantilla_detalle pd
+		 		on p.IdPlantilla = pd.IdPlantilla
+		 		inner join t_agencia_producto ap
+		 		on ap.Id = pd.IdAgPro
+		 		inner join t_producto pr
+		 		on pr.IdProducto = ap.IdProducto
+		 		where p.Idagencia = #{Idagencia}
+		 		and p.IdOficina = #{IdOficina}
+		 		and p.IdClase = #{IdClase}
+		 		and p.IdOrigen =#{IdOrigen}
+		 		and p.IdDestino =#{IdDestino}
+		 		and p.IdServicio = #{IdServicio}
+</select>
+
+
+</mapper>	

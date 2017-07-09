@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ProductoMapper">
+
+<resultMap id="productoResult" type="com.certicom.ittsa.domain.Producto">
+	<id column="IdProducto" property="IdProducto"/>
+	<result column="Descripcion" property="Descripcion"/>
+	<result column="Medida" property="Medida"/>
+	<result column="Estado" property="Estado"/>
+	<result column="Costo" property="Costo"/>
+	<result column="CostoUni" property="CostoUni"/>
+	<result column="desMedida" property="desMedida"/>
+	<result column="desgregacion" property="desgregacion"/>
+	<result column="cantDist" property="cantDist"/>
+	<result column="costoxPasj" property="costoxPasj"/>
+</resultMap>
+
+
+<select id="findAll" resultMap="productoResult">
+	select 
+		p.IdProducto,
+		p.Descripcion,
+		p.Medida,
+		p.Costo,
+		p.CostoUni,
+		p.Estado,
+		p.idCatProducto,
+		m.Descripcion as desMedida,
+		cp.Descripcion as desCatProducto,
+		p.desgregacion,
+		p.costoxPasj,
+		p.cantDist
+		from t_producto p,
+		t_medida m ,
+		t_categoria_producto cp
+		where  p.Medida = m.CodigoMedida
+			and cp.idCatProducto = p.idCatProducto
+</select>
+
+
+</mapper>	

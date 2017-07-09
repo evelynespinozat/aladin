@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptProgCumplidasxBus" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="62c40109-c191-49e4-bad4-429e1fc7f22a">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="6"/>
+	<property name="ireport.y" value="17"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_RANGO_FECHAS" class="java.lang.String"/>
+	<parameter name="P_TOTAL_PROGRAM" class="java.lang.String"/>
+	<field name="nombOrigen" class="java.lang.String"/>
+	<field name="nombDestino" class="java.lang.String"/>
+	<field name="fSalidaString" class="java.lang.String"/>
+	<field name="nombPiloto" class="java.lang.String"/>
+	<field name="nombCopiloto" class="java.lang.String"/>
+	<field name="hSalida" class="java.lang.String"/>
+	<field name="numeroBus" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="125" splitType="Stretch">
+			<image>
+				<reportElement x="43" y="25" width="103" height="38" uuid="4d137074-6eb1-4c70-a18e-3f612cd68969"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="171" y="25" width="266" height="20" uuid="3bc6a878-1663-42fa-b3da-cf7c6af6b1fe"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  PROGRAMACIONES CUMPLIDAS]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="143" y="77" width="208" height="20" uuid="68e6a425-51e9-4526-b93a-c6515910c766"/>
+				<textFieldExpression><![CDATA[$P{P_RANGO_FECHAS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="43" y="77" width="100" height="20" uuid="be823ced-5117-44f1-a441-c343656fe26b"/>
+				<text><![CDATA[Rango de Fechas:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<rectangle>
+				<reportElement x="11" y="11" width="537" height="15" backcolor="#999999" uuid="d8c38bfb-9682-4d8c-a25b-d0a1a1bd574a"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="24" y="11" width="51" height="13" uuid="eb11dd4e-633a-40f7-8641-9062d4fe3877"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Origen]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="83" y="12" width="53" height="14" uuid="2f5891b9-416f-4f9a-88cc-3dd1c71dee3e"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Destino]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="166" y="12" width="59" height="14" uuid="2d0191d3-c653-43f7-8515-25d6b100d64f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="288" y="12" width="71" height="14" uuid="93e2ddda-1773-48b5-aefc-978b5211c5eb"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Piloto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="11" width="67" height="14" uuid="1dc3ea86-c518-4fb2-8d62-065f20726d56"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Copiloto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="12" width="59" height="14" uuid="4c4703a8-d8f2-44a9-9dc7-e8a303ed251f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="134" y="12" width="29" height="14" uuid="b1d14a22-30ed-4bff-9258-46f3b360006c"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bus]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<line>
+				<reportElement x="11" y="25" width="529" height="1" uuid="f7501a29-3cf8-4901-8943-29d4ba573cb1"/>
+			</line>
+			<textField>
+				<reportElement x="20" y="6" width="51" height="20" uuid="21c9aaaf-2b88-41eb-94e0-fbf211a3b431"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombOrigen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="77" y="5" width="53" height="20" uuid="17b8b127-54a0-4b62-b40b-f8cab18a7151"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombDestino}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="6" width="146" height="20" uuid="076a193a-c47b-42e9-96e2-b31e0c90e144"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombPiloto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="409" y="6" width="139" height="20" uuid="03f81ebf-a80b-4a64-80a2-aa8cc3b43cf0"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombCopiloto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="155" y="6" width="59" height="20" uuid="7f7baafc-da8c-4db3-bc1f-151bc149b83a"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fSalidaString}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="6" width="50" height="20" uuid="9598895e-ecef-40c5-82cc-36ba856a7453"/>
+				<textFieldExpression><![CDATA[$F{hSalida}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="133" y="6" width="43" height="19" uuid="5c53fc53-a53e-451d-8cd1-7f88974cd7e6"/>
+				<textFieldExpression><![CDATA[$F{numeroBus}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="37" splitType="Stretch">
+			<textField>
+				<reportElement x="437" y="11" width="78" height="20" uuid="64c95430-fa1d-45e6-9299-31b71007cec3"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_TOTAL_PROGRAM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="391" y="11" width="46" height="20" uuid="f279aab6-51bd-4b77-aa0d-6ea98a06c082"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL : ]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

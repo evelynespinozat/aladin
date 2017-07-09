@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Gestion de Historial Flota" url="flotaHistorial" />   
+				</p:breadCrumb>	
+			</h:form>
+
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+				<!-- listado de flotas -->
+			<h:form id="formflota">
+				<p:dataTable widgetVar="dtFlota" var="p" value="#{flotaMB.listaFlotas}" filteredValue="#{flotaMB.listaFiltroFlotas}"  
+					emptyMessage="No hay Flota Vehicular Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Flota Vehicular</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:100px;text-align: center;" headerText="Numero" filterBy="#{p.numero}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:outputText value="#{p.numero}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Placa">
+						<h:outputText value="#{p.placa}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Marca" filterStyleClass="mayuscula" filterBy="#{p.marca}" filterMatchMode="contains" >
+						<h:outputText value="#{p.marca}" />
+					</p:column>
+				
+					<p:column style="width:200px;text-align: center;" headerText="Modelo">
+						<h:outputText value="#{p.modelo}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Fabricacion">
+						<h:outputText value="#{p.fabricacion}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Clase" filterStyleClass="mayuscula" filterBy="#{p.descClase}" filterMatchMode="contains" >
+						<h:outputText value="#{p.descClase}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Tipo Flota" filterStyleClass="mayuscula" filterBy="#{p.desTipoFlota}" filterMatchMode="exact" filterOptions="#{flotaMB.listaFiltroTipoFlota}" filterStyle="width:200px;">
+						<h:outputText value="#{p.desTipoFlota}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Tipo Flota">
+						<h:outputText value="#{p.recorrido}" />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Estado">
+						<p:commandLink> 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					<p:column headerText="Historial" style="width:50px;text-align: center">
+						<p:commandButton title="Ver Historial" action="#{flotaMB.verHistorial(p)}" icon="icon-mantenimiento"/>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos     ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="Registrar Flota" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="4">
+
+							#{"Clase:"}
+							<p:selectOneMenu style="width:150px" value="#{flotaMB.flota.idClase}" id="cmbClase"
+								 required="true" requiredMessage="Seleccione una Clase">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{flotaMB.listaClaseServicio}"
+									itemValue="#{item.idclase}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+							
+							#{"Tipo Flota:"}
+							<p:selectOneMenu style="width:150px" value="#{flotaMB.flota.idTipoFlota}" id="cmbTipFlot"
+								 required="true" requiredMessage="Seleccione un Tipo Flota">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{flotaMB.listaTipoFlota}"
+									itemValue="#{item.idTipoFlota}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+							
+							#{"Numero:"}
+							<p:inputText style="width:150px" value="#{flotaMB.flota.numero}" required="true" maxlength="50" requiredMessage="Ingrese numero de Bus" >
+								<pe:keyFilter  mask="num"/> 
+							</p:inputText>
+							
+							#{"Placa:"}
+							<p:inputText style="width:150px" value="#{flotaMB.flota.placa}" maxlength="6" required="true" requiredMessage="Se necesita una Placa" />
+							
+							#{"Asientos:"}
+							<p:inputText style="width:150px" value="#{flotaMB.flota.asientos}" required="true" maxlength="2" requiredMessage="Se necesita N° asientos">
+							 	<pe:keyFilter  mask="num"/> 
+							</p:inputText>
+							
+							#{"Marca:"}
+							<p:inputText style="width:150px" value="#{flotaMB.flota.marca}" maxlength="25" required="true" requiredMessage="Ingrese una Marca" />
+							
+							#{"Modelo:"}
+							<p:inputText style="width:150px" value="#{flotaMB.flota.modelo}" required="true" maxlength="25" requiredMessage="Ingrese un Modelo" />
+							
+							#{"Anio Fabricacion:"}
+							<p:inputText style="width:150px" value="#{flotaMB.flota.fabricacion}" maxlength="4" required="true" requiredMessage="Ingrese anio de fabricacion" >
+								<pe:keyFilter  mask="num"/> 
+							</p:inputText>
+							
+							#{"Recorrido:"}
+							<p:inputText style="width:150px" value="#{flotaMB.flota.recorrido}" required="true" maxlength="6" requiredMessage="Ingrese Recorrido">
+								<pe:keyFilter  mask="num"/> 
+							</p:inputText>
+							
+							#{"Tarjeta Propiedad:"}
+							<p:inputText style="width:150px" value="#{flotaMB.flota.tPropiedad}" maxlength="25" required="true" requiredMessage="Ingrese tarjeta de Propiedad" />
+							
+							#{"Inscripcion MTC:"}
+							<p:selectOneRadio style="width:150px" value="#{flotaMB.flota.inscritoMTC}" required="true" requiredMessage="Instrito en MTC" >
+								<f:selectItem   itemLabel="SI"  itemValue="1"/>
+								<f:selectItem   itemLabel="NO"  itemValue="0"/>
+							</p:selectOneRadio>
+							
+							#{"Tipo Combustible:"}
+							<p:selectOneMenu style="width:150px" value="#{flotaMB.flota.tipoCombustible}" id="cmbTipCombust"
+								 required="true" requiredMessage="Seleccione un Tipo Combustible">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{flotaMB.listaTipoCombustible}"
+									itemValue="#{item.idTipoCombustible}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+							
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{flotaMB.guardarFlota()}"
+									 update=":formflota msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+			<!-- editar los kilometros aproximados -->
+			
+			<p:dialog header="Editar Kilometraje Aproximado" widgetVar="dlgEditKm" appendToBody="true"
+					  resizable="false" id="dlgDetEditKm" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgKmEdit" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Km. Aproximados:"}
+							<p:outputLabel value="#{flotaMB.flota.kmAproximado}" />
+							
+							#{"Km. Modificacion:"}
+							<p:inputText style="width:150px" value="#{flotaMB.editKmAproximado}" required="true" maxlength="10" requiredMessage="Ingrese Km a restar">
+								<pe:keyFilter  mask="num"/> 
+							</p:inputText>
+							
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Actualizar" actionListener="#{flotaMB.actualizarKmAproximados()}"
+									 update=":formflota msgKmEdit"
+									 oncomplete="validarKm(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgEditKm.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta flota?" header="Eliminar Flota"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Flota: <h:outputText value="#{flotaMB.flota.placa}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formflota :sms"
+						actionListener="#{flotaMB.eliminarFlota()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				
+				dlgNuevo.hide();
+			}
+		}
+		
+		function validarKm(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetEditKm').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				
+				dlgEditKm.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

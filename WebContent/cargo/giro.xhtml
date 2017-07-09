@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel>
+	<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />	
+		<h:panelGrid columns="4">
+			<h:form id="formDestino" >
+				<h:panelGrid columns="1">			
+					<p:panel style="width:240px;">
+						<h:panelGroup id="pnTipoPago">
+							<p:outputLabel id="lblBoleta" value="Boleta N°:" rendered="#{giroMB.remitente.tipoPersona eq 'N'}" 
+											style="font-weight:bold;font-size: 1em;color:#E50808;"/>
+			
+							<p:outputLabel id="lblFactura" value="Factura N°:" rendered="#{giroMB.remitente.tipoPersona eq 'J'}" 
+											style="font-weight:bold;font-size: 1em;color:#E50808;"/>
+							<p:outputLabel id="txtDocumento" value="#{giroMB.documento}"  style="margin-left:10px;font-weight:bold;font-size: 1.5em;color:#E50808;"/>
+						</h:panelGroup>
+					</p:panel>
+					<p:panel style="width:240px;">			
+						<h:panelGrid columns="2">		
+								#{"Origen:"}
+								<p:selectOneMenu style="width:150px;margin-right:15px" value="#{giroMB.agencia.idagencia}" disabled="true"
+										required="true" requiredMessage="Seleccione Origen">
+										<f:selectItem itemLabel="#{giroMB.agencia.descripcion}" itemValue="#{giroMB.agencia.idagencia}" />						
+								</p:selectOneMenu>						
+								#{"Destino:"}
+								<p:selectOneMenu id="cmbDest" style="width:150px" value="#{giroMB.idDestino}" 
+										 required="true" requiredMessage="Seleccione Destino">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="item" value="#{giroMB.listaAgenciasDestinos}" itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+										<p:ajax event="change" update="cmbOfi" listener="#{giroMB.optenerOficinas()}"/>
+								</p:selectOneMenu>	
+								#{"Oficina:"}
+								<p:selectOneMenu id="cmbOfi" style="width:150px" value="#{giroMB.idOficina}" 
+										 required="true" requiredMessage="Seleccione Oficina">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="item" value="#{giroMB.listaOficinas}" itemValue="#{item.idOficina}" itemLabel="#{item.nombre}" />
+										<p:ajax event="change" update="pgTarifas :btnRegistrar" listener="#{giroMB.setearDestino()}"/>
+								</p:selectOneMenu>	
+						</h:panelGrid>
+					</p:panel>
+					
+					<p:panel resize="false">
+						<h:panelGroup id="pgTarifas">
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Monto Girar: S/."/>
+							<p:inputText value="#{giroMB.giro.montoGiro}" disabled="#{giroMB.bandDestino}" style="width:50px">
+								<p:ajax event="blur" listener="#{giroMB.calcularTarifa()}" update="txtTarifa txtIGV txtTotal"/>
+							</p:inputText>
+							<p:outputLabel value="Tarifa: S/."/>
+							<p:inputText id="txtTarifa" value="#{giroMB.tarifa}" disabled="#{giroMB.bandDestino}" style="width:50px">
+								<p:ajax event="blur" listener="#{giroMB.calcularImporteTotal()}" update="txtIGV txtTotal"/>
+							</p:inputText> 
+							
+							<p:outputLabel value="IGV: S/." style="font-weight:bold;font-size: 1em;color:#E50808;"/>
+							<p:outputLabel id="txtIGV" value="#{giroMB.importeIGV}" style="font-weight:bold;font-size: 1.5em;color:#E50808;"/> 
+							
+							<p:outputLabel value="TOTAL: S/." style="font-weight:bold;font-size: 1em;color:#E50808;"/>
+							<p:outputLabel id="txtTotal" value="#{giroMB.roundDecimaltoInt(giroMB.importeTotal,0)}" style="font-weight:bold;font-size: 1.5em;color:#E50808;">
+							</p:outputLabel>
+						</h:panelGrid>
+						</h:panelGroup>
+					</p:panel>
+				</h:panelGrid>					
+			</h:form>
+
+			<p:panel header="Remitente">
+				<h:form id="formDatosRemitente" >	
+						<h:panelGrid columns="2">
+							#{"Tipo Persona: (*)"}
+							<p:selectOneRadio id="options" 	value="#{giroMB.remitente.tipoPersona}" style="margin-left:10px" disabled="#{giroMB.destinatarioActivar}">
+									<f:selectItem itemLabel="Normal" itemValue="N" />
+									<f:selectItem itemLabel="Juridica" itemValue="J" />
+									<p:ajax event="change" update="pnRUC :formDestino:pnTipoPago :formDestino:pgTarifas" listener="#{giroMB.setearTipoPersona()}"/>
+							</p:selectOneRadio>
+						</h:panelGrid>
+
+						<h:panelGrid columns="4">					        
+							  	#{"Tipo Doc.: (*)"}
+								<p:selectOneMenu id="tipoDoc" disabled="#{giroMB.destinatarioActivar}"
+								value="#{giroMB.remitente.idtipodoc}"
+								style="width:80px;margin-left:5px">
+								<f:selectItems var="item" value="#{giroMB.listaTipoDoc}"
+									itemValue="#{item.idtipodoc}" itemLabel="#{item.descripcion}" />
+								<p:ajax event="change" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="N°: (*)" style="margin-left:10px" />
+							<p:inputText id="dni" value="#{giroMB.remitente.dni}" style="width:80px;" maxlength="11" required="true" disabled="#{giroMB.destinatarioActivar}" 
+							 requiredMessage="Ingrese N° de Documento de Identidad">
+								<p:ajax event="blur" update="apellidos nombres pnRUC" listener="#{giroMB.buscarPersona('R')}" 
+										oncomplete="validarListaEnvios(xhr, status, args)" />    
+							</p:inputText>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">					        
+								#{"Apellidos: (*)"}
+								<p:inputText id="apellidos"
+								value="#{giroMB.remitente.apellidos}"
+								style="width:200px;margin-left:5px" required="true" disabled="#{giroMB.destinatarioActivar}" styleClass="mayuscula"
+								requiredMessage="Ingrese los apellidos del remitente" />
+
+								#{"Nombres: (*)"}
+								<p:inputText id="nombres" value="#{giroMB.remitente.nombres}" style="width:200px;margin-left:5px" required="true" styleClass="mayuscula"
+									requiredMessage="Ingrese al menos un nombre del remitente" disabled="#{giroMB.destinatarioActivar}"  />
+								#{"Telefono:"}
+								<p:inputText id="telefono" value="#{giroMB.remitente.telefono}" style="width:100px;margin-left:5px" disabled="#{giroMB.destinatarioActivar}" >
+									<p:ajax event="blur" />
+								</p:inputText>
+								
+								
+						</h:panelGrid>
+
+						
+						<h:panelGroup id="pnRUC">
+							<h:panelGrid columns="2" >
+
+								<p:outputLabel value="RUC: (*)"  />
+								<p:inputText id="txtRUC" value="#{giroMB.remitente.empresa.RUC}"	style="width:90px;margin-left:5px" maxlength="11"
+									required="true" requiredMessage="Ingrese el ruc"
+									disabled="#{giroMB.remitente.tipoPersona eq 'N'}">
+									<pe:keyFilter mask="num" />
+									<p:ajax event="blur" update="txtRazonR" listener="#{giroMB.buscarEmpresaGiro('R')}" 
+										oncomplete="validarListaEnvios(xhr, status, args)" /> 
+								</p:inputText>
+
+								<p:outputLabel value="Razon Social: (*)" />
+								<p:inputText id="txtRazonR"
+									value="#{giroMB.remitente.empresa.razonSocial}" styleClass="mayuscula"
+									style="width:190px;margin-left:5px" maxlength="100"
+									required="true" requiredMessage="Ingrese la razon social"
+									disabled="#{giroMB.remitente.tipoPersona eq 'N'}" >
+									<p:ajax event="blur" />
+								</p:inputText>
+							</h:panelGrid>
+						</h:panelGroup>
+						
+						<pe:keyFilter for="dni" mask="num" />
+						<pe:keyFilter for="txtRUC" mask="num" />
+				</h:form>
+				
+			</p:panel>
+			
+				
+			<p:panel id="pnlDestina1" header="Destinatario 1">
+				<h:panelGroup id="formDatosDestinatario1">
+					<h:form>
+					<h:panelGrid columns="2">
+						#{"Tipo Persona: (*)"}
+						<p:selectOneRadio id="optionsD1" value="#{giroMB.destinatario1.tipoPersona}" style="margin-left:10px" >  
+							<f:selectItem itemLabel="Normal" itemValue="N" />
+							<f:selectItem itemLabel="Juridica" itemValue="J" />
+							<p:ajax event="change" update=":formRucD1:pnRUCD1"/>    
+						</p:selectOneRadio> 
+					</h:panelGrid>
+		
+					<h:panelGrid columns="4">					        
+					#{"Tipo Doc.: (*)"}
+					<p:selectOneMenu id="tipoDocD1" value="#{giroMB.destinatario1.idtipodoc}"  style="width:80px;margin-left:5px" > 
+						<f:selectItems var="item" value="#{giroMB.listaTipoDoc}"
+												itemValue="#{item.idtipodoc}" itemLabel="#{item.descripcion}" />
+						<p:ajax event="change" />     
+					</p:selectOneMenu>
+									         
+					<p:outputLabel value="N°: (*)" style="margin-left:10px"/>
+					<p:inputText id="dniD1" value="#{giroMB.destinatario1.dni}" styleClass="mayuscula" style="width:80px;"  maxlength="11" required="true" 
+								requiredMessage="Ingrese N° de Documento de Identidad del 2° destinatario" >									
+								<p:ajax event="blur" update=":apellidosD1 :formRucD1:nombresD1" listener="#{giroMB.buscarPersona('D1')}"/>
+								<p:ajax event="keypress" update=":apellidosD1 :formRucD1:nombresD1" listener="#{giroMB.buscarPersona('D1')}"/> 
+					</p:inputText>
+				</h:panelGrid>	
+				<pe:keyFilter for="dniD1" mask="num"/>
+				<p:commandButton style="visibility:hidden;display:none"/>						 
+				</h:form>	
+						     
+				<h:panelGrid columns="3">					        
+					#{"Apellidos: (*)"}
+					<p:inputText id="apellidosD1" value="#{giroMB.destinatario1.apellidos}" style="width:180px;margin-left:5px" styleClass="mayuscula" required="true" requiredMessage="Ingrese los apellidos del 1° destinatario" />
+					<p:commandButton icon="icon-search" actionListener="#{giroMB.nuevaBusquedaDestinatario('D1')}" update="formDatosDestinatario1 dlgDetBusquedaDest" oncomplete="dlgBusquedaDest.show()"/>
+				</h:panelGrid>
+				
+				<h:form id="formRucD1">				
+				<h:panelGrid columns="2" >
+					#{"Nombres: (*)"}
+					<p:inputText id="nombresD1" value="#{giroMB.destinatario1.nombres}" style="width:200px;margin-left:5px" styleClass="mayuscula" required="true" requiredMessage="Ingrese al menos un nombre del 1° destinatario" />
+					#{"Telefono:"}
+					<p:inputText id="telefonoD1" value="#{giroMB.destinatario1.telefono}" style="width:100px;margin-left:5px" >
+						<p:ajax event="blur" />
+					</p:inputText>
+				</h:panelGrid>
+	
+				<h:panelGroup id="pnRUCD1">
+					<h:panelGrid columns="2" >				
+						<p:outputLabel value="RUC: (*)"/>
+						<p:inputText id="txtRUCD1" value="#{giroMB.destinatario1.empresa.RUC}" style="width:90px;margin-left:5px"  maxlength="11" required="true" 
+									requiredMessage="Ingrese el ruc del 2° destinatario" disabled="#{giroMB.destinatario1.tipoPersona eq 'N'}">
+									<p:ajax event="blur" update="txtRazonD1" listener="#{giroMB.buscarEmpresaGiro('D1')}" 
+										oncomplete="validarListaEnvios(xhr, status, args)" /> 
+									<pe:keyFilter mask="num"/>
+						</p:inputText>
+												
+						<p:outputLabel value="Razon Social: (*)"/>
+						<p:inputText id="txtRazonD1" value="#{giroMB.destinatario1.empresa.razonSocial}" style="width:190px;margin-left:5px"  styleClass="mayuscula" maxlength="100" required="true" 
+									requiredMessage="Ingrese la razon social del 1° destinatario" disabled="#{giroMB.destinatario1.tipoPersona eq 'N'}">
+									<p:ajax event="blur" />
+						</p:inputText>
+					</h:panelGrid>
+				</h:panelGroup>
+							
+					
+					<pe:keyFilter for="txtRUCD1" mask="num"/>
+				</h:form>
+				</h:panelGroup>
+			</p:panel>
+			
+			<p:panel header="Destinatario2">
+				<h:panelGroup id="formDatosDestinatario2">
+						<h:form>
+								<h:panelGrid columns="2">
+									#{"Tipo Persona: (*)"}
+									<p:selectOneRadio id="optionsD2" value="#{giroMB.destinatario2.tipoPersona}" style="margin-left:10px">  
+										<f:selectItem itemLabel="Normal" itemValue="N" />
+										<f:selectItem itemLabel="Juridica" itemValue="J" />
+										<p:ajax event="change" update=":formRucD2:pnRUCD2"/>    
+									</p:selectOneRadio> 
+								</h:panelGrid>
+		
+								 <h:panelGrid columns="4">					        
+									#{"Tipo Doc.: (*)"}
+									<p:selectOneMenu id="tipoDocD2" value="#{giroMB.destinatario2.idtipodoc}"  style="width:80px;margin-left:5px"> 
+										<f:selectItems var="item" value="#{giroMB.listaTipoDoc}"
+												itemValue="#{item.idtipodoc}" itemLabel="#{item.descripcion}" />
+										<p:ajax event="change" />     
+									</p:selectOneMenu>
+									         
+									<p:outputLabel value="N°: (*)" style="margin-left:10px"/>
+									<p:inputText id="dniD2" value="#{giroMB.destinatario2.dni}" style="width:80px;"  maxlength="11" required="true" 
+														 requiredMessage="Ingrese N° de Documento de Identidad del 2° destinatario" >									
+										<p:ajax event="blur" update=":apellidosD2 :formRucD2:nombresD2" listener="#{giroMB.buscarPersona('D2')}"/>
+										<p:ajax event="keypress" update=":apellidosD2 :formRucD2:nombresD2" listener="#{giroMB.buscarPersona('D2')}"/>  
+									</p:inputText>
+								</h:panelGrid>
+								<pe:keyFilter for="dniD2" mask="num"/> 
+								<p:commandButton style="visibility:hidden;display:none"/>  
+							</h:form>	        
+								       
+								<h:panelGrid columns="3">					        
+									#{"Apellidos: (*)"}
+									<p:inputText id="apellidosD2" value="#{giroMB.destinatario2.apellidos}" style="width:180px;margin-left:5px" styleClass="mayuscula"  required="true" requiredMessage="Ingrese los apellidos del 2° destinatario" />
+									<p:commandButton icon="icon-search" actionListener="#{giroMB.nuevaBusquedaDestinatario('D2')}" update="formDatosDestinatario2 dlgDetBusquedaDest" oncomplete="dlgBusquedaDest.show()"/>
+								</h:panelGrid>
+							
+							<h:form id="formRucD2">	
+								<h:panelGrid columns="2">					        
+									#{"Nombres: (*)"}
+									<p:inputText id="nombresD2" value="#{giroMB.destinatario2.nombres}" style="width:200px;margin-left:5px" styleClass="mayuscula" required="true" requiredMessage="Ingrese al menos un nombre del 2° destinatario" />
+									#{"Telefono:"}
+									<p:inputText id="telefonoD2" value="#{giroMB.destinatario2.telefono}" style="width:100px;margin-left:5px">
+										<p:ajax event="blur" />
+									</p:inputText>
+								</h:panelGrid>
+										
+										
+										
+								<h:panelGroup id="pnRUCD2">
+									<h:panelGrid columns="2" >				
+										<p:outputLabel value="RUC: (*)"/>
+										<p:inputText id="txtRUCD2" value="#{giroMB.destinatario2.empresa.RUC}" style="width:90px;margin-left:5px"  maxlength="30" required="true" 
+															 requiredMessage="Ingrese el ruc del 2° destinatario" disabled="#{giroMB.destinatario2.tipoPersona eq 'N'}">
+											<p:ajax event="blur" update="txtRazonD2" listener="#{giroMB.buscarEmpresaGiro('D2')}" 
+										oncomplete="validarListaEnvios(xhr, status, args)" /> 
+											<pe:keyFilter mask="num"/>
+										</p:inputText>
+												
+										<p:outputLabel value="Razon Social: (*)"/>
+										<p:inputText id="txtRazonD2" value="#{giroMB.destinatario2.empresa.razonSocial}" style="width:200px;margin-left:5px"  maxlength="30" required="true" 
+													 requiredMessage="Ingrese la razon social del 2° destinatario" disabled="#{giroMB.destinatario2.tipoPersona eq 'N'}">
+											<p:ajax event="blur" />
+										</p:inputText>
+									</h:panelGrid>
+								</h:panelGroup>
+							
+							
+							<pe:keyFilter for="txtRUCD2" mask="num"/>
+						</h:form>
+					</h:panelGroup>
+			</p:panel>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="5">
+			<h:form id="formObservacion">
+				<p:panel>
+					<h:panelGrid>
+						<p:outputLabel value="Observacion:"/>
+						<p:inputTextarea id="txtObservacion" value="#{giroMB.giro.observacionEnvio}" style="width:400px;" styleClass="mayuscula" resize="false">
+							<p:ajax event="blur"/>
+						</p:inputTextarea>
+					</h:panelGrid>			
+				</p:panel>
+			</h:form>
+				<p:commandButton id="btnRegistrar" value="Registrar Giro" update=":sms :formDestino @this " disabled="#{giroMB.bandDestino}" oncomplete="validar(xhr, status, args)"  
+								 actionListener="#{giroMB.verificarDatosIngreso()}" style="margin-left:50px"/>
+								 
+				<p:commandButton id="btnBuscar" value="Buscar"  oncomplete="dlgBusquedaGiro.show()"  update=":dlgDetBusquedaGiro" 
+								 actionListener="#{giroMB.listarGiros()}" style="margin-left:10px"/>
+								 
+				<p:commandButton id="btnAnular" value="Anular"  disabled="#{giroMB.bandAnularEncomienda}" oncomplete="dlgAnularGiro.show()" update=":dlgDetAnularGiro" style="margin-left:10px"/>
+				
+				<p:commandButton id="btnActualizar" value="Actualizar" oncomplete="dlgActualizarGiro.show()" disabled="#{giroMB.bandAnularEncomienda}" update=":dlgDetActualizarGiro" style="margin-left:8px"/>
+				
+			</h:panelGrid>
+			
+			
+			<p:dialog header="Busqueda por apellidos" widgetVar="dlgBusquedaDest" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetBusquedaDest">
+				<h:form id="formBusquedaDest">
+				<h:panelGrid columns="5">	
+				#{"Apellido Paterno:"}
+				<p:inputText value="#{giroMB.aPaternoDestBusqueda}" style="width:100px"/>
+				#{"Apellido Materno:"}
+				<p:inputText value="#{giroMB.aMaternoDestBusqueda}" style="width:100px"/>
+				<p:commandButton value="Buscar" actionListener="#{giroMB.buscarDestinatario}" update="formBusquedaDest"/>
+				</h:panelGrid>
+				
+				<p:dataTable widgetVar="dtPosiblesDestinatarios" var="p" value="#{giroMB.listaPosiblesDestinatarios}"  
+					emptyMessage="No hay personas con ese apellido" rowIndexVar="nro" 
+					paginator="true" rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,15" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Posibles Destinatarios</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:1%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:50%" headerText="Apellidos y Nombres" >
+						<h:outputText value="#{p.APaterno} #{p.AMaterno} #{p.nombres}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="DNI">
+						<h:outputText value="#{p.dni}" />
+					</p:column>
+
+					<p:column style="width:20%;text-align: center;" headerText="Acciones">
+						<p:commandButton value="Asignar" actionListener="#{giroMB.asignarDestinatario(p)}" update=":formDatosRemitente :formDatosDestinatario1 :formDatosDestinatario2" oncomplete="dlgBusquedaDest.hide()"/> 
+					</p:column>
+					
+
+				</p:dataTable>
+				
+				</h:form>	
+			</p:dialog>
+
+			<p:confirmDialog id="dlgDetConfirmar" appendToBody="true"
+					message="¿Esta seguro que desea registrar este giro?" header="Registrar Giro"
+					severity="alert" widgetVar="dlgConfirmar">
+				<h:form>
+					<p:commandButton value="Aceptar"
+						actionListener="#{giroMB.guardarGiro}"
+						onclick="saveButton.disable()"
+						widgetVar="saveButton"
+						  
+						update=":formDestino  :sms"
+						oncomplete="saveButton.enable(); dlgConfirmar.hide();" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgConfirmar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:dialog header="Busqueda Giros" widgetVar="dlgBusquedaGiro" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetBusquedaGiro">
+				<h:form id="formBusquedaGiro">
+
+				<p:dataTable widgetVar="dtEncomiendas" var="g" value="#{giroMB.listaGiros}"   filteredValue="#{giroMB.listaGirosFilter}" 
+					emptyMessage="No hay giros registradas" rowIndexVar="nro" 
+					paginator="true" rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,15" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista de Giros por Cobrar</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:1%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:10%" headerText="Fecha" filterBy="#{g.fRegistroString}" filterMatchMode="contains" filterStyle="width:50px;">
+						<h:outputText value="#{g.fRegistroString}" />
+					</p:column>
+					
+					<p:column style="width:10%" headerText="Documento" filterBy="#{g.documento}" filterMatchMode="contains" filterStyle="width:50px;">
+						<h:outputText value=" #{g.tipoDocumento}  #{g.documento}" />
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{e.origenString}" filterMatchMode="contains" filterStyle="width:33px;">
+						<h:outputText value="#{g.origenString}" />
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{e.destinoString}" filterMatchMode="contains" filterStyle="width:33px;">
+						<h:outputText value="#{g.destinoString}" />
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{e.desOficina}" filterMatchMode="contains" filterStyle="width:33px;">
+						<h:outputText value="#{g.desOficina}" />
+					</p:column>
+					
+					<p:column style="width:10%" headerText="DNI R." filterBy="#{e.dniRemitente}" filterMatchMode="contains" filterStyle="width:50px;">
+						<h:outputText value="#{g.dniRemitente}" />
+					</p:column>
+					
+					<p:column style="width:20%" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{e.remitente}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{g.apellidosRemitente} #{g.nombresRemitente}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Empresa" filterStyleClass="mayuscula" filterBy="#{e.razonSocialRemitente}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{g.razonSocialRemitente}" />
+					</p:column>
+					
+					<p:column style="width:10%" headerText="DNI D1" filterBy="#{e.dniDestinatario1}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{g.dniDestinatario1}" />
+					</p:column>
+					
+					<p:column style="width:20%" headerText="Destinatario1" filterStyleClass="mayuscula" filterBy="#{e.destinatario1}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{g.apellidosDestinatario1} #{g.nombresDestinatario1}" />
+					</p:column>
+					
+					<p:column style="width:10%" headerText="DNI D2" filterBy="#{e.dniDestinatario2}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{g.dniDestinatario2}" />
+					</p:column>
+					
+					<p:column style="width:20%" headerText="Destinatario2" filterStyleClass="mayuscula" filterBy="#{e.destinatario2}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{g.apellidosDestinatario2} #{g.nombresDestinatario2}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Estado" filterStyleClass="mayuscula" filterBy="#{g.estado eq 1? 'POR COBRAR':'COBRADO'}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{g.estado eq 1? 'POR COBRAR':'COBRADO'}" />
+					</p:column>
+					
+					<p:column style="width:10%" headerText="Acciones">
+						<p:commandButton value="Ver" actionListener="#{giroMB.setearGiro(g)}" oncomplete="dlgBusquedaGiro.hide()" update=":formObservacion" disabled="#{g.estado eq 1? false:true}"/>
+					</p:column>
+					
+
+				</p:dataTable>
+				</h:form>	
+			</p:dialog>
+			
+			<p:confirmDialog id="dlgDetAnularGiro" appendToBody="true"
+					message="¿Esta seguro que desea anular este giro?" header="Anular Giro"
+					severity="alert" widgetVar="dlgAnularGiro">
+				<h:form>
+					<p:commandButton value="Aceptar" actionListener="#{giroMB.anularGiro()}"
+						oncomplete="dlgAnularGiro.hide();" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgAnularGiro.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+				<p:confirmDialog id="dlgDetActualizarGiro" appendToBody="true"
+					message="¿Esta seguro que desea actualizar este giro?" header="Actualizar Datos de  Giro"
+					severity="alert" widgetVar="dlgActualizarGiro">
+				<h:form>
+					<p:commandButton value="Aceptar" actionListener="#{giroMB.actualizarGiro()}"
+						oncomplete="dlgActualizarGiro.hide();" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgActualizarGiro.hide()" icon="icon-cancel"/>
+
+				</h:form>
+	</p:confirmDialog>
+			
+	</p:panel>
+	<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetConfirmar').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgConfirmar.show();
+			}
+		}
+
+		function validarListaEnvios(xhr, status, args) {
+			if (args.esListaEnvios) {
+				dlgEnviosFrecuentes.show();
+			} 
+		}
+
+		function validarProductos(xhr, status, args) {
+			if (args.esDestinoNP) {
+				dlgNuevoProducto.show();
+			} 
+			
+			if (args.esDestinoP) {
+				dlgAdicionar.show();
+			} 
+		}
+
+		function validarFormaPago(xhr, status, args) {
+			if (args.esFormaPago) {
+				dlgFormaPago.show();
+			} 
+		}
+
+		function validarReparto(xhr, status, args) {
+			if (args.esReparto) {
+				dlgReparto.show();
+			} 
+		}
+		
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

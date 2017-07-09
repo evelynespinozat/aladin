@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.AsientoMapper">
+
+	<resultMap id="AsientoResult" type="com.certicom.ittsa.domain.Asiento">
+		<id column="IdAsiento" property="IdAsiento" />
+		<result column="Idclase" property="Idclase" />
+		<result column="Numero" property="Numero" />
+		<result column="Piso" property="Piso" />
+		<result column="Estado" property="Estado" />
+		<result column="nroOrden" property="nroOrden" />
+		<result column="idtipoasiento" property="idtipoasiento" />
+		<result column="descClase" property="descClase" />
+		<result column="canPrPiso" property="canPrPiso" />
+		<result column="canSePiso" property="canSePiso" />
+		<result column="visible" property="visible" />
+                <association property="asientoVenta" javaType="com.certicom.ittsa.domain.AsientoVenta">
+                    <id column="asvidasientoventa" property="idasientoventa" />
+                    <result column="asvestado" property="estado" />
+                    <result column="asvfechaventa" property="fechaventa" />
+                    <result column="asvmonto" property="monto" />
+                    <result column="asvtipoventa" property="tipoventa" />
+                    <result column="asvIdAsiento" property="IdAsiento" />
+                    <result column="asvIdProgramacion" property="IdProgramacion" />
+                    <result column="asvnumero" property="numero" />
+                    <result column="asvsexo" property="sexo" />
+                    <result column="asvobservacion" property="observacion" />
+                    <result column="asvexterno" property="externo" />
+                    <result column="asvoficinaId" property="oficinaId" />
+                    <result column="asvprepagado" property="prepagado" />
+                    <result column="asvtipdocprepagado" property="tipdocprepagado" />
+                    <result column="asvnrodocprepagado" property="nrodocprepagado" />
+                    <result column="asvdelivery" property="delivery" />
+                    <result column="asvtipdocdelivery" property="tipdocdelivery" />
+                    <result column="asvnrodocdelivery" property="nrodocdelivery" />
+                    <result column="asvdireccion" property="direccion" />
+                    <result column="asvidusuarioventa" property="idusuarioventa" />
+                    <result column="asvVisible" property="Visible" />
+                    <result column="asvpromocional" property="promocional" />
+                    <result column="asvidpromocion" property="idpromocion" />
+                    <result column="asvidusuarioautorizante" property="idusuarioautorizante" />
+                    <result column="asvestado_delivery" property="estado_delivery" />
+                    <result column="asvfechaEntregaDelivery" property="fechaEntregaDelivery" />
+                    <result column="asvreferenDelivery" property="referenDelivery" />
+                    <result column="asvtransferenciaBanco" property="transferenciaBanco" />
+                    <result column="asvreferenDelivery" property="transferenciaNumero" />
+                    <result column="asvnumeroImagen" property="numeroImagen" />
+                    <result column="asvnombreImagen" property="nombreImagen" />
+                    <result column="asvventaOrigen" property="ventaOrigen" />
+                    <result column="asvmontoReal" property="montoReal" />
+                    <result column="asvidAsientoVentaInhabiltd" property="idAsientoVentaInhabiltd" />
+                    <result column="asvnropedido" property="nropedido" />
+                </association>
+        </resultMap>
+	
+	
+	<update id="actualizarAsientos" parameterType="com.certicom.ittsa.domain.Asiento">
+		update
+		dbo.t_clase
+		SET
+		Descripcion = #{descripcion},
+		Estado = #{estado},
+		Grupo =
+		#{grupo},
+		NombreCorto = #{nombreCorto},
+		AtnBordo = #{atnBordo},
+		Asientos
+		= #{asientos}
+		WHERE IdClase = #{idclase}
+	</update>
+
+	<insert id="registrarAsientos" parameterType="com.certicom.ittsa.domain.Asiento">
+		insert into
+		dbo.t_asiento(Idclase,Numero,Piso,Estado,nroOrden,idtipoasiento,visible)
+		values
+		(#{Idclase},#{Numero},#{Piso},#{Estado},#{nroOrden},#{idtipoasiento},#{visible})
+	</insert>
+	
+	<select id="findAll" resultMap="AsientoResult">
+		select
+			s.IdClase as Idclase, 
+			s.Descripcion as descClase,  
+			(select count(idasiento) from t_asiento where IdClase = s.IdClase and Piso = 1) as canPrPiso,
+			(select count(idasiento) from t_asiento where IdClase = s.IdClase and Piso = 2) as canSePiso
+		from t_clase s	where s.Estado = 1
+			and (select count(idasiento) from t_asiento where IdClase = s.IdClase)>0 ; 
+	</select>
+	<select id="findAsientoByProgramacion" resultMap="AsientoResult">
+select
+    asi.IdAsiento,
+    asi.Idclase,
+    asi.Numero,
+    asi.Piso,
+    asi.Estado,
+    asi.nroOrden,
+    asi.idtipoasiento,
+    asi.visible,
+    asv.idasientoventa asvidasientoventa,
+    asv.estado asvestado,
+    asv.fechaventa asvfechaventa,
+    asv.monto asvmonto,
+    asv.tipoventa asvtipoventa,
+    asv.IdAsiento asvIdAsiento,
+    asv.IdProgramacion asvIdProgramacion,
+    asv.numero asvnumero,
+    asv.sexo asvsexo,
+    asv.observacion asvobservacion,
+    asv.externo asvexterno,
+    asv.oficinaId asvoficinaId,
+    asv.prepagado asvprepagado,
+    asv.tipdocprepagado asvtipdocprepagado,
+    asv.nrodocprepagado asvnrodocprepagado,
+    asv.delivery asvdelivery,
+    asv.tipdocdelivery asvtipdocdelivery,
+    asv.nrodocdelivery asvnrodocdelivery,
+    asv.direccion asvdireccion,
+    asv.idusuarioventa asvidusuarioventa,
+    asv.Visible asvVisible,
+    asv.promocional asvpromocional,
+    asv.idpromocion asvidpromocion,
+    asv.idusuarioautorizante asvidusuarioautorizante,
+    asv.estado_delivery asvestado_delivery,
+    asv.fechaEntregaDelivery asvfechaEntregaDelivery,
+    asv.referenDelivery asvreferenDelivery,
+    asv.transferenciaBanco asvtransferenciaBanco,
+    asv.referenDelivery asvreferenDelivery,
+    asv.ventaOrigen asvventaOrigen,
+    asv.montoReal asvmontoReal,
+    asv.idAsientoVentaInhabiltd asvidAsientoVentaInhabiltd,
+    asv.nropedido asvnropedido
+from
+    t_asiento asi
+left join
+    t_asientoventa asv
+on
+    asi.IdAsiento = asv.IdAsiento
+and
+    asv.IdProgramacion = #{p_idprogramacion}
+where
+    asi.idclase = (select
+        srv.IdClase
+    from
+        t_programacion prg
+    join
+        t_servicio srv
+    on
+        prg.IdServicio = srv.IdServicio
+    where
+        prg.IdProgramacion = #{p_idprogramacion}
+    )
+and
+    asi.Piso = #{p_piso} 
+order by
+    asi.nroOrden ASC;
+	</select>
+</mapper>	

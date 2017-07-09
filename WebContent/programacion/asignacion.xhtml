@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	
+	<style>
+		.ventanaConfirm{
+
+			width: 400px;
+			margin:auto;
+			padding:5px;
+			
+			border: 1px #000000 solid;
+			background-color:#FFEBA1;
+			
+			-webkit-border-radius: 24px 24px 24px 24px;
+			-moz-border-radius: 24px 24px 24px 24px;
+			border-radius: 24px 24px 24px 24px;
+		
+		}
+	</style>
+	
+	<pe:blockUI target=":formLista2:dtProgAsig" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+	</pe:blockUI> 
+	
+		<p:panel id="panelUR" style="height:400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Programacion" url="#" />
+				<p:menuitem value="Asignacion de Gasto de Viaje" url="#" />
+			</p:breadCrumb>
+			
+		<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel style="width:1200px">
+			       	<h:panelGrid columns="9" id="datUbigeo"> 
+			       			#{"Fecha Programacion:"}
+			       			<p:calendar value="#{progFlotaMB.fechaProgramacion}" pattern="dd/MM/yyyy" mode="popup" showOn="button" locale="es"></p:calendar>
+			       			#{"Origen:"}
+							<p:selectOneMenu style="width:150px" value="#{progFlotaMB.idOrigen}" required="true" requiredMessage="Seleccione un Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{progFlotaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cboDestino" listener="#{progFlotaMB.listarDestinos()}" /> 
+							</p:selectOneMenu>
+							
+							#{"Destino:"}
+							<p:selectOneMenu id="cboDestino" style="width:150px" value="#{progFlotaMB.idDestino}" required="true" requiredMessage="Seleccione un Destino">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{progFlotaMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" />
+								<p:ajax update="cboCategoria" listener="#{progFlotaMB.listarCategoriasServ()}" />  
+							</p:selectOneMenu> 
+							
+							#{"Cat. Servicio:"}
+							<p:selectOneMenu id="cboCategoria" style="width:150px" value="#{progFlotaMB.idCategoriaServ}" required="true" requiredMessage="Seleccione una categoria">
+								<f:selectItems var="cat" value="#{progFlotaMB.listaCatServicio}" itemValue="#{cat.idCatServicio}" itemLabel="#{cat.descripcion}" /> 
+							</p:selectOneMenu> 
+							
+							<p:commandButton value="Buscar" title="Buscar" icon="icon-search" actionListener="#{progFlotaMB.buscarProgramacion()}"
+								onstart="blockUIWidget.block()" 
+						        oncomplete="blockUIWidget.unblock()" 
+							 update =":formLista2"/>
+			       	</h:panelGrid>  
+			 </p:panel>       	
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+			
+
+			
+			<h:form id="formLista2">
+				
+				<p:dataTable id="dtProgAsig" widgetVar="dtProgAsig" var="p" value="#{progFlotaMB.listaProgramacionAsig}" filteredValue="#{progFlotaMB.listaProgramacionFilter}" 
+					emptyMessage="No hay Flota disponible  con copiloto y copiloto asigandos  " rowIndexVar="nro" paginatorPosition="bottom" 
+					paginator="true" rows="5"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header"><span  style="color:red;"> Confirmacion de Asignacion de Salidas Programadas</span></f:facet>
+					
+					<p:column headerText="Orden" style="width:2%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Servicio">
+						
+						<h:outputText value="#{p.descServicio}" rendered="#{not p.ampliado}"/>
+						
+						<h:outputText value="#{p.descServicio eq 'MIXTO 53' ? 'MIXTO 56' : 'SOFA 42'}" style="color:red;" rendered="#{p.ampliado}" />
+						
+						<h:outputText value=" Amp." style="color:red;" rendered="#{p.ampliado}" />
+						
+					</p:column>
+					
+					<p:column style="width:8%;text-align: center;" headerText="Hora Salida">
+						<h:outputText value="#{p.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:6%;text-align: center;" headerText="Piso 1 (S/.)">
+						<h:outputText value="#{p.precioPiso1}.00" />
+					</p:column>
+					
+					<p:column style="width:6%;text-align: center;" headerText="Piso 2 (S/.)">
+						<h:outputText value="#{p.precioPiso2}.00" />
+					</p:column>
+					
+					<p:column style="width:8%;text-align: center;" headerText="Bus">
+						<h:outputText value="#{p.flota.numero}" />					
+						
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Piloto">
+					
+						<h:outputText value="#{p.piloto.apellidoPaterno} #{p.piloto.apellidoMaterno} #{p.piloto.nombres}" />
+						
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Copiloto">
+						<h:outputText value="#{p.copiloto.apellidoPaterno} #{p.copiloto.apellidoMaterno} #{p.copiloto.nombres}" />			
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Asignacion Gasto">
+						<h:outputText value="#{p.asignacionViatico}">
+						</h:outputText>			
+					</p:column>
+					
+					<p:column style="width:40%;text-align: center;" headerText="Agregar Gasto">
+
+						<p:commandButton title="Asignacion de Ingreso al Bus"  icon="icon-money" update=":dlgDetBus"  
+							actionListener="#{progFlotaMB.asignarIngreso(p)}" 
+										 oncomplete="dlgBus.show();">
+
+						</p:commandButton>
+
+					</p:column>	
+				</p:dataTable>
+			</h:form>
+			
+	 	
+	 	<!-- Dialog Seleccionar Bus -->
+	 	
+	 	<p:dialog header="Seleccionar Bus" widgetVar="dlgBus" appendToBody="true"
+					  resizable="false" id="dlgDetBus" modal="true">
+					  
+						<p:messages showDetail="false" showSummary="true" id="msgSelectFlota" closable="true" escape="false" />
+						
+					<h:form>
+						<p:panel style="width:850px">
+			       	<h:panelGrid columns="10">
+			       			#{"Servicio Actual:"}
+			       			<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.descServicio}" />
+						
+			       			#{"Hora Salida:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.hSalida}" />
+						
+							#{"Nro Bus:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.flota.numero}" />
+							
+							#{"Placa:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.flota.placa}" />
+						
+							#{"Frecuencia:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.estado eq '3' ? 'Frecuente' : 'Demanda'}" />
+							
+							#{"Usuario:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{loginMB.usuario.apellido_paterno} #{loginMB.usuario.apellido_materno} #{loginMB.usuario.nombre}" />
+							
+					</h:panelGrid>  
+
+									
+					 </p:panel> 
+					 
+					 <p:panel>
+					 	<h:form>
+					 		<h:panelGrid columns="5">
+					 		
+					 		#{"Monto:"}
+							<p:inputText  style="width:60px" value="#{progFlotaMB.asignacion.monto}" required="true" size="5" maxlength="7" 
+								requiredMessage="Se necesita una monto" >
+							   <pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							<p:spacer  width="30" height="1" />
+							
+							#{"Fecha:"}
+							<p:calendar value="#{progFlotaMB.asignacion.fecha}"	style="font-size:14px;" readonlyInput="true" 
+								size="9" pattern="dd-MM-yyyy" locale="es" required="true" requiredMessage="Se necesit una fecha" />
+					 			
+					 			
+					 		</h:panelGrid>
+					 		<br/><br/>
+					 		<p:commandButton value="Asignar" icon="icon-selecc" actionListener="#{progFlotaMB.guardarIngreso()}" 
+					 		oncomplete="validar(xhr, status, args)" update=":msgSelectFlota :formLista2" />
+					 		
+					 		<p:commandButton value="Cancelar" icon="icon-cancel" oncomplete="dlgBus.hide();"/>
+					 	</h:form>
+					 
+					 </p:panel>
+			 
+						
+					</h:form>
+
+					
+			</p:dialog>
+			
+	</p:panel>
+	
+	<script>
+			
+		function validar(xhr, status, args) {
+			if (args.validationFailed) {
+
+			} else {
+				dlgBus.hide();
+			}
+		}
+
+
+		</script>
+	
+			
+	</ui:define>
+
+</ui:composition>
+</html>

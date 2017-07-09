@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Ventas" url="#" />
+    				<p:menuitem value="Control Biometrico de Pasajeros" url="biometria" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<h:panelGrid columns="2">
+				#{"INGRESE DNI:"}
+				<p:inputText style="width:200px" value="#{pasajerosHuellasMB.dni}" />
+				<p:commandButton value="Buscar" icon="icon-search" update=":formListaAgencia"  actionListener="#{pasajerosHuellasMB.buscarPersona()}" />
+				</h:panelGrid>	
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaAgencia">
+					<h:panelGrid columns="4">
+					#{"Nombre:"}
+					<p:outputLabel style="width:200px" value="#{pasajerosHuellasMB.persona.nombres}" />
+					
+						#{"A. Paterno:"}
+					<p:outputLabel style="width:200px" value="#{pasajerosHuellasMB.persona.APaterno}" />
+					
+						#{"A.Materno:"}
+					<p:outputLabel style="width:200px" value="#{pasajerosHuellasMB.persona.AMaterno}" />
+					
+						#{"Dni:"}
+					<p:outputLabel style="width:200px" value="#{pasajerosHuellasMB.persona.dni}" />
+
+					</h:panelGrid>
+			
+			</h:form>
+			<h:form>	
+               <h:panelGroup>
+						<p:fieldset legend="CONFIGURAR CAPTURA">
+						<h:panelGrid columns="2"> 		
+						  #{"Umbral Captura:"}
+							<div style="display: inline-block; width: 182px;">
+				        		<p:selectOneMenu id="cmbUmbralCaptura"  value="#{pasajerosHuellasMB.umbralCaptura}" style=" width:170px;">
+								<f:selectItem itemLabel="Seleccionar" itemValue="0" />
+								<f:selectItem itemLabel="Muy Bueno" itemValue="1" />
+								<f:selectItem itemLabel="Bueno" itemValue="3" />
+								<f:selectItem itemLabel="Regular" itemValue="5" />
+								<f:selectItem itemLabel="Malo" itemValue="10" />
+								<f:selectItem itemLabel="Muy Malo" itemValue="15" />				
+								
+								</p:selectOneMenu>
+							</div>
+						
+						#{"Umbral Deteccion:"}
+							<div style="display: inline-block; width: 182px;">
+				        		<p:selectOneMenu id="cmbUmbralDeteccion"  value="#{pasajerosHuellasMB.umbralDeteccion}" style=" width:170px;">
+								<f:selectItem itemLabel="Seleccionar" itemValue="0" />
+								<f:selectItem itemLabel="Muy Bueno" itemValue="1" />
+								<f:selectItem itemLabel="Bueno" itemValue="3" />
+								<f:selectItem itemLabel="Regular" itemValue="5" />
+								<f:selectItem itemLabel="Malo" itemValue="10" />
+								<f:selectItem itemLabel="Muy Malo" itemValue="15" />							
+							
+								</p:selectOneMenu>
+							</div>
+						</h:panelGrid>
+						</p:fieldset>
+						
+						<p:fieldset legend= "PROCESO DE CAPTURA">
+						<h:panelGrid columns="4" >
+							<div>
+								<p:commandButton value="Captura" icon="icon-add"  actionListener="#{pasajerosHuellasMB.captura()}" />
+							
+							</div>
+							<div>
+								<p:commandButton value ="Guardar" icon="icon-add" actionListener ="#{pasajerosHuellasMB.guardar()}"/> 
+							</div>
+							<div>
+								<p:commandButton value ="Recuperar" icon="icon-add" actionListener ="#{pasajerosHuellasMB.recuperar()}"></p:commandButton>
+							</div>
+							
+						</h:panelGrid >
+							
+						</p:fieldset>
+						
+						
+				</h:panelGroup>	
+				</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<ui:remove>
+			
+			<p:dialog header="Registrar Agencia" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Nombre:"}
+							<p:inputText style="width:200px" value="#{pasajerosHuellasMB.agencia.descripcion}" required="true" maxlength="50" requiredMessage="Se necesita un nombre" />
+							
+<!-- 							#{"Grupo:"} -->
+<!-- 							<p:inputText style="width:200px" value="#{pasajerosHuellasMB.agencia.grupo}" maxlength="3" required="true" requiredMessage="Se necesita un grupo" /> -->
+				
+		
+							
+							
+							
+							#{"Estado:"}
+							<p:selectOneRadio style="width:200px" value="#{pasajerosHuellasMB.agencia.estado}" required="true" requiredMessage="se necesita un estado" >
+								<f:selectItem   itemLabel="Activo"  itemValue="true"/>
+								<f:selectItem   itemLabel="Inactivo"  itemValue="false"/>
+							</p:selectOneRadio>
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{pasajerosHuellasMB.guardarAgencia()}"
+									 update=":formListaAgencia msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+</ui:remove>
+			
+
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

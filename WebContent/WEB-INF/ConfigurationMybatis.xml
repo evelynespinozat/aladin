@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+			
+			<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+			
+			 <property name="url" value="${jdbc.url}" />
+			<property name="username" value="${jdbc.username}" />
+			<property name="password" value="${jdbc.password}" />
+			 
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="com/certicom/ittsa/mapper/impl/UsuarioMapper.xml" />
+		<mapper resource="com/certicom/ittsa/mapper/impl/SistemaMapper.xml" />
+        <mapper resource="com/certicom/ittsa/mapper/impl/PerfilMapper.xml"/>
+        <mapper resource="com/certicom/ittsa/mapper/impl/ParametroMapper.xml"/>
+        <mapper resource="com/certicom/ittsa/mapper/impl/MenuMapper.xml"/>
+        <mapper resource="com/certicom/ittsa/mapper/impl/ConfiguracionMapper.xml"/>
+        <mapper resource="com/certicom/ittsa/mapper/impl/LogMapper.xml"/>
+        <mapper resource="com/certicom/ittsa/mapper/impl/AgenciaMapper.xml"/>
+        <mapper resource="com/certicom/ittsa/mapper/impl/EmbarqueMapper.xml"/>
+        
+<!--         agregados por Daniel -->
+         <mapper resource="com/certicom/ittsa/mapper/impl/TurnoMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/ClaseServicioMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/OficinaMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/OficinaTurnoMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/ConceptoMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/PromocionMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/DestinoMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/PuntoVentaMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/PilotoMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/TerramozaMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/UsuarioAutorizanteMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/AsientoMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/TipoDocumentoMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/DocumentoMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/EvaluacionMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/PapeletaMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/FormacionMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/CapacitacionMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/ExcepcionMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/FlotaMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/ComponenteMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/CompHistorialMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/UbigeoMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/ProgramacionMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/EnlaceMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/TransbordoMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/FlotaReten.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/TipoCombustible.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/TipoFlota.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/TipoAsiento.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/IncidenciaMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/TipoPromocionMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/AutoparteMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/AutomotorMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/PartesMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/AutopartesAutomotorMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/FlotaAutomotorMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/FlotaAutoparteMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/ConsumoCombustibleMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/MecanicoMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/HistorialMantenimientoMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/SalidaAutoparteMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/CierreCajaMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/GuiaRemisionMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/DetalleGuiaRemisionMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/NotaCobranzaMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/DetalleNotaCobranzaMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/IngresoEgresoMapper.xml"/>
+    	 
+    	 
+    	  <!-- ww -->
+          <mapper resource="com/certicom/ittsa/mapper/impl/ServicioMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/RutaServicioMapper.xml"/>
+          
+           <!-- Diana -->
+         <mapper resource="com/certicom/ittsa/mapper/impl/Detalle_LiquidacionMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/LiquidacionMapper.xml"/>
+         <mapper resource="com/certicom/ittsa/mapper/impl/Historial_LaboralMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/Datos_FamiliaresMapper.xml"/>
+    	 <mapper resource="com/certicom/ittsa/mapper/impl/TripulacionMapper.xml"/>
+    	 
+    	  <mapper resource="com/certicom/ittsa/mapper/impl/AsientoVentaMapper.xml"/>
+    	  <mapper resource="com/certicom/ittsa/mapper/impl/TipoAsientoMapper.xml"/>
+    	  <mapper resource="com/certicom/ittsa/mapper/impl/PersonaMapper.xml"/>
+    	  <mapper resource="com/certicom/ittsa/mapper/impl/TarifaMapper.xml"/>
+    	  <mapper resource="com/certicom/ittsa/mapper/impl/DistritoMapper.xml"/>
+    	  <mapper resource="com/certicom/ittsa/mapper/impl/Tarifa_ProductoMapper.xml"/>
+    	 
+    	  <!-- jtorres 04 02 2014 -->
+   	      <mapper resource="com/certicom/ittsa/mapper/impl/CategoriaProductoMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/ProveedorMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/AlmacenMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/ProductoMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/CeseMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/AgenciaProductoMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/ProveedorAgenciaMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/kardexMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/Historial_AsigPCTMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/PlantillaMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/SalidaMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/SalidaDetalleMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/ObjEncontradosMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/CompraMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/CompraDetalleMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/MedidaMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/AgenciaAutoparteMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/KardexAutoparteMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/CompraAutoparteMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/CompraDetAutoparteMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/HistorialPasajeroMapper.xml"/>
+          
+          <mapper resource="com/certicom/ittsa/mapper/impl/PostergacionMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/EmpresaMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/GiroMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/ListaNegraMapper.xml"/>
+          
+          <mapper resource="com/certicom/ittsa/mapper/impl/TrackingBoletoMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/Liquidacion_VentaMapper.xml"/>
+          
+                    <!-- BIOMETRICO jtarazona -->
+          <mapper resource="com/certicom/ittsa/mapper/impl/UmbralCaptura.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/UmbralDeteccion.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/UmbralVerificacion.xml"/>
+          
+          <!-- israel purizaga -->
+          <mapper resource="com/certicom/ittsa/mapper/impl/SecuenciaMapper.xml"/>
+          
+          <mapper resource="com/certicom/ittsa/mapper/impl/GastoMapper.xml"/>
+          <mapper resource="com/certicom/ittsa/mapper/impl/AsignacionMapper.xml"/>
+	</mappers>
+</configuration>

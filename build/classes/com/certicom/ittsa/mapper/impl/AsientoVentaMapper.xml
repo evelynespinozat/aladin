@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.AsientoVentaMapper">
+
+	<resultMap id="AsientoVentaResult" type="com.certicom.ittsa.domain.AsientoVenta">
+		<id column="idasientoventa" property="idasientoventa" />
+		<result column="estado" property="estado" />
+		<result column="fechaventa" property="fechaventa" />
+		<result column="monto" property="monto" />
+		<result column="tipoventa" property="tipoventa" />
+		<result column="IdAsiento" property="IdAsiento" />
+		<result column="IdProgramacion" property="IdProgramacion" />
+		<result column="numero" property="numero" />
+		<result column="sexo" property="sexo" />
+		<result column="observacion" property="observacion" />
+		<result column="externo" property="externo" />
+		<result column="oficinaId" property="oficinaId" />
+		<result column="prepagado" property="prepagado" />
+		<result column="tipdocprepagado" property="tipdocprepagado" />
+		<result column="nrodocprepagado" property="nrodocprepagado" />
+		<result column="delivery" property="delivery" />
+		<result column="tipdocdelivery" property="tipdocdelivery" />
+		<result column="nrodocdelivery" property="nrodocdelivery" />
+		<result column="direccion" property="direccion" />
+		<result column="idusuarioventa" property="idusuarioventa" />
+		<result column="Visible" property="Visible" />
+		<result column="promocional" property="promocional" />
+		<result column="idpromocion" property="idpromocion" />
+		<result column="idusuarioautorizante" property="idusuarioautorizante" />
+		<result column="estado_delivery" property="estado_delivery" />
+		<result column="fechaEntregaDelivery" property="fechaEntregaDelivery" />
+		<result column="referenDelivery" property="referenDelivery" />
+		<result column="transferenciaBanco" property="transferenciaBanco" />
+		<result column="referenDelivery" property="transferenciaNumero" />
+		<result column="numeroImagen" property="numeroImagen" />
+		<result column="nombreImagen" property="nombreImagen" />
+		<result column="ventaOrigen" property="ventaOrigen" />
+		<result column="montoReal" property="montoReal" />
+		<result column="idAsientoVentaInhabiltd" property="idAsientoVentaInhabiltd" />
+		<result column="nropedido" property="nropedido" />
+		
+		
+		
+	</resultMap>
+	
+	<select id="obtenerDeliverys" parameterType="com.pe.certicom.ittsa.commons.BoletoFilter"  resultMap="AsientoVentaResult" >
+select a.idasientoventa, 
+	   a.monto, a.fechaventa, a.IdAsiento, 
+	   a.documentoPersona, a.oficinaId, 
+	   a.tipdocdelivery, a.numero as nroAsiento,
+	   se.Descripcion as desServicio, 
+	   ofi.Nombre as desOficina, 
+	   a.nrodocdelivery, a.Direccion as direccion, 
+	   s.Numero as nroAsiento, 
+	   p.FSalida as desFSalida,p.HSalida as desHsalida, 
+	   o.Descripcion as desOrigen, d.Descripcion  as desDestino, 
+	   a.referenDelivery , a.telefDelivery, a.fechaEntregaDelivery,
+	   a.estado_delivery, a.nrodocdelivery, 
+coalesce((
+	select tcb.serieBoleto + '-'+tcb.numeroBoleto
+	from t_trackingboleto tcb 
+	where tcb.nrodocumento = a.documentoPersona and cast(tcb.fregistro as date)=a.fechaventa
+	and (select count(*) from t_trackingboleto tcb2 where tcb2.nrodocumento = tcb.nrodocumento and cast(tcb2.fregistro as date)=cast(tcb.fregistro as date))&lt; 2
+),'')  as serieNumeroBoleto, turno_entrega, a.visible
+from	(((((t_asientoventa a inner join t_asiento s on a.IdAsiento = s.IdAsiento) 
+		inner join t_programacion p on p.IdProgramacion = a.IdProgramacion) 
+		inner join t_agencia o on p.Origen = o.Idagencia ) 
+		inner join t_agencia d on p.Destino = d.Idagencia) 
+		inner join t_servicio se on se.IdServicio = p.IdServicio) 
+		inner join t_agenciaoficina ofi on ofi.IdOficina = a.oficinaId 
+where	delivery = 1 and cast(a.fechaEntregaDelivery as date)=#{fechaEntregaDelivery} and turno_entrega=#{turno_entrega} and a.oficinaId=#{idoficina}
+order by a.fechaventa desc
+	</select>
+	
+	
+	
+<!-- 	<select id="transac_block_seat" parameterType="com.certicom.ittsa.domain.AsientoVenta"  resultType= "java.lang.Integer" statementType="CALLABLE"> -->
+			
+<!-- 					DECLARE	@return_value int, -->
+<!-- 						@retorno int -->
+					
+<!-- 					EXEC	@return_value = [dbo].[USP_BLOCK_SEAT] -->
+<!-- 							@idProgramacion = #{IdProgramacion}, -->
+<!-- 							@nroasiento =#{numero}, -->
+<!-- 							@estado = NULL, -->
+<!-- 							@IdAsiento = #{IdAsiento}, -->
+<!-- 							@retorno = #{retorno} OUTPUT									 -->
+					
+<!-- 	</select> -->
+
+
+</mapper>	

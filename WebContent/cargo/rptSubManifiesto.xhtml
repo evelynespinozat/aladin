@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Reporte de SubManifiesto" url="#" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="9" id="datareg">
+				 
+				<h:outputLabel value="Origen:" />  
+			        <p:selectOneMenu id="cmbOrigen"  value="#{rptSubManifiestoMB.progFilter.origen}" style=" width:140px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{rptSubManifiestoMB.listaAgencias}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							<p:ajax listener="#{rptSubManifiestoMB.listarDestinosxOri()}" update="cmbDestinox"/>
+					</p:selectOneMenu>
+					
+					<h:outputLabel  value="Destino:" /> 
+					<p:selectOneMenu id="cmbDestinox" style="width:150px" value="#{rptSubManifiestoMB.progFilter.destino}" 
+							required="true" requiredMessage="Se necesita un destino">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="ag" value="#{rptSubManifiestoMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" /> 
+					</p:selectOneMenu>
+					
+					
+					<h:outputLabel value="F.SubManifiesto "  /> 
+					<p:calendar style="width:200px"  value="#{rptSubManifiestoMB.progFilter.fSubm}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true" >
+					</p:calendar>
+					
+					<h:outputLabel  value="Nro Bus:" /> 
+					<p:selectOneMenu id="cmbBus" style="width:150px" value="#{rptSubManifiestoMB.progFilter.idBus}">
+						<f:selectItem itemLabel="Seleccione..." itemValue="0" />
+						<f:selectItems var="ag" value="#{rptSubManifiestoMB.listaFlota}" itemValue="#{ag.idBus}" itemLabel="#{ag.numero}" /> 
+					</p:selectOneMenu>
+					
+		
+
+				<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{rptSubManifiestoMB.listarSubManifiestos()}"  
+					 		update=":formLista :sms" style=" width:160px;"/>
+				</h:panelGrid>
+					 
+					
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+			
+				<p:dataTable id="dtBuses" widgetVar="dtBuses" var="b" value="#{rptSubManifiestoMB.listaBuses}" filteredValue="#{rptSubManifiestoMB.listaBusesFilter}"
+								 emptyMessage="No hay SubManifiestos Disponibles."  paginatorPosition="bottom" paginator="true" rows="10"
+								  style="FONT-SIZE: 10px; " rowKey="#{b.numeroBus}">
+							
+							<f:facet name="header">Sub Manifiesto</f:facet>
+							
+							<p:column style="width:50px;text-align: center;" headerText="SubManifiesto">
+								<h:outputText value="#{b.idSubmanifiesto}" />
+							</p:column>
+
+							<p:column style="width:70px;text-align: center;" headerText="Nro. Bus" filterBy="#{b.numeroBus}" filterMatchMode="contains" filterStyle="width:50px">
+								<h:outputText value="#{b.numeroBus}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Servicio">
+								<h:outputText value="#{b.descServicio}" />
+							</p:column>
+
+							<p:column style="width:70px;text-align: center;" headerText="Origen">
+								<h:outputText value="#{b.desOrigen}" />
+							</p:column>
+
+							<p:column style="width:70px;text-align: center;" headerText="Destino">
+								<h:outputText value="#{b.desDestino}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="F.Salida">
+								<h:outputText value="#{b.fSalida}" >
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+								</h:outputText>
+							</p:column>
+
+							<p:column style="width:100px;text-align: center;" headerText="F. SubMan.">
+								<h:outputText value="#{b.fSubm}" >
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+								</h:outputText>
+							</p:column>
+							<p:column style="width:100px;text-align: center;" headerText="Hora">
+								<h:outputText value="#{b.hSalida}" />
+							</p:column>
+
+							<p:column style="width:100px;text-align: center;" headerText="Piloto">
+								<h:outputText value="#{b.nomPiloto}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Copiloto">
+								<h:outputText value="#{b.nomCopiloto}" />
+							</p:column>
+
+							<p:column style="width:10px;text-align: center;" >
+								<p:commandButton title="Ver Detalle"  icon="icon-search"  update=":formLista" 
+											actionListener="#{rptSubManifiestoMB.listaDetalleSubManifiesto(b)}"/>
+							</p:column>
+							
+				</p:dataTable>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel value="SubManifiesto: " style="font-weight:bold;font-size:1.2em"/>
+					<h:outputText value="#{rptSubManifiestoMB.progSelected.idSubmanifiesto}" style="font-weight:bold;color:blue;font-size:1.2em" />
+				</h:panelGrid>
+			
+			
+				<p:dataTable id="dataTable" var="l" value="#{rptSubManifiestoMB.listaEncomienda}" 
+					paginator="true" rowIndexVar="nro" filteredValue="#{rptSubManifiestoMB.listaEncomiendaFilter}"
+					emptyMessage="No hay encomiendas seleccionadas"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Detalle SubManifiesto </f:facet>
+					
+					<p:column style="width:50px;" headerText="Doc." filterStyleClass="mayuscula" filterBy="#{l.comprobante}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{l.tipoDocAbr}-#{l.comprobante}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Remitente">
+						<h:outputText value="#{l.remitcompleto}" />
+					</p:column>
+
+					<p:column style="width:200px" headerText="Dest1">
+						<h:outputText value="#{l.dest1}" />
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Detalle">
+						<h:outputText value="#{l.detalle}" />
+					</p:column>
+
+					<p:column style="width:30px;;text-align:right" headerText="Nro bultos">
+						<h:outputText value="#{l.nroBultos}" />
+					</p:column>
+
+					<p:column style="width:50px;text-align:right" headerText="Peso (kg)">
+						<h:outputText value="#{l.pesoTotal}" style="text-align:right"/>
+					</p:column>
+					
+					<p:column style="width:50px;text-align:right" headerText="Importe">
+						<h:outputText value="#{l.totalCobrado}" style="text-align:right"/>
+					</p:column>
+					
+					<p:column style="width:50px" headerText="T.Entrega">
+						<h:outputText value="#{'NORMAL'}" rendered="#{l.servicioEntrega  == null ? true :false}" />
+						<h:outputText value="#{'REPARTO'}" rendered="#{l.servicioEntrega  =='R' ? true :false}"/>
+						<h:outputText value="#{'REP/CONTR'}" rendered="#{l.servicioEntrega  =='RC' ? true :false}"/>
+						<h:outputText value="#{'CONTRAENTREGA'}"  rendered="#{l.servicioEntrega  =='C' ? true :false}"/>
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Estado">
+						<h:outputText value="#{l.desEstado}" style="text-align:right"/>
+					</p:column>
+					
+						<p:columnGroup type="footer">  
+								<p:row>  
+								   <p:column colspan="4" footerText="Total: " style="text-align:right"/>  
+								   <p:column footerText="#{rptSubManifiestoMB.totalBultosGral}" style="text-align:right" />  
+								   <p:column footerText="#{rptSubManifiestoMB.totalPesoGral} Kg." style="text-align:right" />  
+								   <p:column footerText="S/.#{rptSubManifiestoMB.totalImporteGral}"  style="text-align:right"/>
+								   <p:column colspan="2" footerText=" " style="text-align:right"/>  
+								</p:row>  
+						</p:columnGroup> 
+					
+				</p:dataTable>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+						<h:commandLink update=":mensaje :formLista" rendered="#{rptSubManifiestoMB.btnImprimir}"    id="imprimir" value="Imprimir SubManifiesto" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{rptSubManifiestoMB.imprimirPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						<h:commandLink update=":mensaje :formLista" rendered="#{rptSubManifiestoMB.btnImprimir}"    id="imprimirCB" value="Imprimir Codigo Barras" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{rptSubManifiestoMB.imprimirCodigoBarraPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						
+					</h:panelGrid>	
+
+				
+				
+		
+			</h:form>
+			
+			<ui:remove>
+			
+			<p:dialog id="dlgdetImprimir" appendToBody="true" resizable="false" modal="true"
+					 widgetVar="dlgImprimir" closable="true" header="Generar SubManifiesto">
+						
+					<h:form id="formImprimir" style="text-algin:center">
+						
+						<p:messages  id="mensaje" showDetail="false" showSummary="true"  closable="true"/>	
+						<p:panel>
+						<h:panelGrid columns="4">
+							#{"Origen:"}
+							<h:outputText value="#{rptSubManifiestoMB.progSelected.desOrigen}" style="font-weight:bold;font-size:1.2em" />
+							#{"Destino:"}
+							<h:outputText value="#{rptSubManifiestoMB.progSelected.desDestino}" style="font-weight:bold;font-size:1.2em" />
+							#{"Bus:"}
+							<h:outputText value="#{rptSubManifiestoMB.progSelected.numeroBus}" style="font-weight:bold;font-size:1.2em" />
+							#{"Fecha:"}
+							<h:outputText value="#{rptSubManifiestoMB.progSelected.fSalida}" style="font-weight:bold;font-size:1.2em" >
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+							</h:outputText>
+							#{"Hora:"}
+							<h:outputText value="#{rptSubManifiestoMB.progSelected.hSalida}" style="font-weight:bold;font-size:1.2em" />
+							#{"Nro Bultos:"}
+							<h:outputText value="#{rptSubManifiestoMB.totalBultos}" style="font-weight:bold;color:#E50808;font-size:1.2em;" />
+							#{"P. Total"}
+							<h:outputText value="#{rptSubManifiestoMB.totalPeso} Kg." style="font-weight:bold;color:#E50808;font-size:1.2em" />
+							#{"Importe"}
+							<h:outputText value="S/. #{rptSubManifiestoMB.totalImporte}" style="font-weight:bold;color:#E50808;font-size:1.2em" />
+							
+						</h:panelGrid>
+						<h:panelGrid columns="4">	
+							#{"Piloto:"}
+							<h:outputText value="#{rptSubManifiestoMB.progSelected.nomPiloto}" style="font-weight:bold;font-size:1.2em" />
+							#{"Copiloto:"}
+							<h:outputText value="#{rptSubManifiestoMB.progSelected.nomCopiloto}" style="font-weight:bold;font-size:1.2em" />
+						</h:panelGrid>	
+						</p:panel>
+						<br/>
+					<h:panelGrid columns="4">
+						<p:commandButton  value="Guardar " actionListener="#{rptSubManifiestoMB.crearSubManifiesto()}"  
+					 		update=":formImprimir :formLista" style=" width:160px;" disabled="#{rptSubManifiestoMB.btnGuardar}" />
+						
+						<h:commandLink update=":mensaje :formLista"  disabled="#{rptSubManifiestoMB.btnImprimir}"  id="imprimir" value="Imprimir SubManifiesto" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{rptSubManifiestoMB.imprimirPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						<h:commandLink update=":mensaje :formLista"  disabled="#{rptSubManifiestoMB.btnImprimirGuia}"  id="imprimirGuia" value="Imprimir Guia Remision" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{rptSubManifiestoMB.imprimirGuiaRemisionPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						<h:commandLink update=":mensaje :formLista"  disabled="#{rptSubManifiestoMB.btnImprimirGuia}"  id="imprimirCB" value="Imprimir Codigo Barras" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{rptSubManifiestoMB.imprimirCodigoBarraPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						
+					</h:panelGrid>	 	
+							
+					</h:form>
+			</p:dialog>
+			
+			</ui:remove>
+			
+			<script>
+			
+			function validarEncomiendas(xhr, status, args) {
+				if (args.hayEncomiendas) {
+					dlgImprimir.show();
+				} 
+			}
+			</script>
+			
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

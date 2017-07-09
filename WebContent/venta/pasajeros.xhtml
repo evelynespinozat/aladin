@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Ventas" url="#" />
+					<p:menuitem value="Pasajeros" url="pasajeros" />
+				</p:breadCrumb>
+			</h:form>
+
+
+			<br />
+			<!-- sms general -->
+			<p:messages id="sms" showDetail="false" showSummary="true"
+				closable="true" />
+
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Añadir Pasajero" icon="icon-add"
+						update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+						actionListener="#{personaMB.nuevoPasajero()}" />
+				</p:toolbarGroup>
+			</h:form>
+
+			<h:panelGrid columns="7">
+				<h:form>
+								#{"DNI:"}
+								<p:inputText style="width:200px"
+						value="#{personaMB.personaFilter.dni}" maxlength="8">
+						<pe:keyFilter mask="num" />
+					</p:inputText>
+								
+								#{"Apellido Paterno:"}
+								<p:inputText style="width:200px"
+						value="#{personaMB.personaFilter.APaterno}" />
+								
+								#{"Apellido Materno:"}
+								<p:inputText style="width:200px"
+						value="#{personaMB.personaFilter.AMaterno}" />
+
+					<p:commandButton value="Buscar Pasajero"
+						update=":formListaPasajero"
+						actionListener="#{personaMB.buscarPersona()}" />
+				</h:form>
+			</h:panelGrid>
+
+			<!-- listado de agencias -->
+			<h:form id="formListaPasajero">
+				<p:dataTable widgetVar="dtPasajero" var="p"
+					value="#{personaMB.listaPersona}"
+					filteredValue="#{personaMB.listaFiltroPersonas}"
+					emptyMessage="No hay Personas" rowIndexVar="nro" paginator="true"
+					rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Pasajeros</f:facet>
+
+					<p:column headerText="Orden" width="25" style="width:3%">
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:15%" headerText="DNI" filterBy="#{p.dni}"
+						filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.dni}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Apellido Paterno" filterStyleClass="mayuscula"
+						filterBy="#{p.APaterno}" filterMatchMode="contains"
+						filterStyle="width:200px;">
+						<h:outputText value="#{p.APaterno}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Apellido Materno" filterStyleClass="mayuscula"
+						filterBy="#{p.AMaterno}" filterMatchMode="contains"
+						filterStyle="width:200px;">
+						<h:outputText value="#{p.AMaterno}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Nombres" filterStyleClass="mayuscula"
+						filterBy="#{p.nombres}" filterMatchMode="contains"
+						filterStyle="width:200px;">
+						<h:outputText value="#{p.nombres}" />
+					</p:column>
+					<!--INICIO PISCOYA  -->
+					<p:column style="width:15%" headerText="fecha Nacimiento"
+						filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.fNacimiento}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Email"
+						filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.email}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Telefono Fijo"
+						filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.telefono}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="fecha Movil"
+						filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.telefonoMovil}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Dirección"
+						filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.direccion}" />
+					</p:column>
+					<!--FIN PISCOYA  -->
+					<p:column style="width:15%" headerText="Sexo">
+						<h:outputText value="#{p.sexo}" />
+					</p:column>
+					<p:column headerText="Editar" style="width:20%;text-align: center">
+						<p:commandButton id="cbtEditar" title="Editar"
+							update=":dlgDetEditar" oncomplete="dlgEditar.show();"
+							icon="icon-edit" actionListener="#{personaMB.editarPersona(p)}" />
+						<p:tooltip for="cbtEditar" value="Editar" />
+					</p:column>
+
+
+
+				</p:dataTable>
+			</h:form>
+
+			<!-- #############    Dialogos      ################ -->
+			<p:dialog header="Registrar Persona" widgetVar="dlgNuevo"
+				appendToBody="true" resizable="false" id="dlgDetNuevo" modal="true">
+
+				<h:form>
+					<p:messages showDetail="false" showSummary="true" id="msgNuevo"
+						closable="true" />
+
+					<h:panelGrid columns="2">
+
+							#{"DNI:"}
+							<p:inputText style="width:200px" value="#{personaMB.persona.dni}"
+							required="true" maxlength="8" 
+							requiredMessage="Se necesita un dni" />
+							
+							#{"Nombre:"}
+							<p:inputText style="width:200px"
+							value="#{personaMB.persona.nombres}" styleClass="mayuscula" required="true"
+							maxlength="50" requiredMessage="Se necesita un nombres" />
+							
+							#{"Apellido Paterno:"}
+							<p:inputText style="width:200px"
+							value="#{personaMB.persona.APaterno}" styleClass="mayuscula" required="true"
+							maxlength="50" requiredMessage="Se necesita un apellido Paterno" />
+							
+							#{"Apellido Materno:"}
+							<p:inputText style="width:200px"
+							value="#{personaMB.persona.AMaterno}" styleClass="mayuscula" required="true"
+							maxlength="50" requiredMessage="Se necesita un apellido Materno" />
+
+						<!-- 							#{"Fecha:"} -->
+						<!-- 							<p:calendar value="#{personaMB.persona.fnac}" pattern="dd/MM/yyyy" locale="es"  -->
+						<!-- 							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha nacimiento" /> -->
+
+						<!--INICIO PISCOYA -->
+							#{"Fecha Nacimiento:"}
+							<p:calendar id="german" value="#{personaMB.persona.fNacimiento}"
+							locale="de" navigator="true" pattern="dd-MM-yyyy" />
+
+							#{"Email:"}
+							<p:inputText style="width:200px"
+							value="#{personaMB.persona.email}" required="true" maxlength="20"
+							requiredMessage="Se necesita un Email" />
+							
+							#{"Télefono Fijo:"}
+							<p:inputText style="width:200px"
+							value="#{personaMB.persona.telefono}" required="true"
+							maxlength="10" requiredMessage="Se necesita un teléfono Fijo" />
+							
+							#{"Télefono Movil:"}
+							<p:inputText style="width:200px"
+							value="#{personaMB.persona.telefonoMovil}" required="true"
+							maxlength="50" requiredMessage="Se necesita un télefono movil" />
+							
+							#{"Dirección:"}
+							<p:inputText style="width:200px"
+							value="#{personaMB.persona.direccion}" styleClass="mayuscula" required="true"
+							maxlength="50" requiredMessage="Se necesita una dirección" />
+						<!--FIN PISCOYA -->
+							
+							#{"Sexo:"}
+							<p:selectOneRadio style="width:200px"
+							value="#{personaMB.persona.sexo}" required="true"
+							requiredMessage="se necesita un sexo">
+							<f:selectItem itemLabel="Masculino" itemValue="M" />
+							<f:selectItem itemLabel="Femenino" itemValue="F" />
+						</p:selectOneRadio>
+
+
+
+					</h:panelGrid>
+					<br />
+					<p:commandButton value="Guardar"
+						actionListener="#{personaMB.guardarPersona()}"
+						update=":formListaPasajero msgNuevo "
+						oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgNuevo.hide();" icon="icon-cancel" />
+				</h:form>
+			</p:dialog>
+
+
+
+			<!-- dialogo Editar Perfil -->
+
+			<p:dialog header="Editar" widgetVar="dlgEditar" appendToBody="true"
+				position="center,top" resizable="false" id="dlgDetEditar"
+				modal="true">
+
+				<h:panelGrid columns="2">
+
+					<h:form id="frmGneral" enctype="multipart/form-data">
+						<p:messages showDetail="false" showSummary="true" id="msgEditar"
+							closable="true" />
+
+						<p:panel header="Datos del pasajero">
+
+
+							<p:accordionPanel>
+								<p:tab title="Datos Personales">
+									<h:panelGrid columns="2">  
+						        	
+						        	#{"Apellido Paterno: "}
+									<p:inputText style="width:200px"
+											value="#{personaMB.persona.APaterno}" styleClass="mayuscula" maxlength="30"
+											required="true" requiredMessage="Ingrese el apellido paterno" />
+									
+									#{"Apellido Materno: "}
+									<p:inputText style="width:200px"
+											value="#{personaMB.persona.AMaterno}" styleClass="mayuscula" maxlength="30"
+											required="true" requiredMessage="Ingrese el apellido paterno" />
+									
+									#{"Apellido Nombre:"}
+									<p:inputText style="width:200px"
+											value="#{personaMB.persona.nombres}" styleClass="mayuscula" maxlength="30"
+											required="true" requiredMessage="Ingrese el nombre" />							
+															
+																			
+									#{"Telefono Fijo "}
+									<p:inputText style="width:200px"
+											value="#{personaMB.persona.telefono}" maxlength="15"
+											required="true" requiredMessage="Ingrese el telefono fijo" />							
+									
+									
+									#{"Telefono Movil:"}
+									<p:inputText style="width:200px"
+											value="#{personaMB.persona.telefonoMovil}" maxlength="15"
+											required="true" requiredMessage="Ingrese el telefono Movil" />
+											
+									#{"Email:"}
+									<p:inputText style="width:200px"
+											value="#{personaMB.persona.email}" maxlength="15"
+											 />									
+									
+									#{"Dirección: "}
+									<p:inputText style="width:200px"
+											value="#{personaMB.persona.direccion}" maxlength="50" styleClass="mayuscula"
+											required="true" requiredMessage="Ingrese la dirección" />
+
+										<p:commandButton value="Actualizar"
+											actionListener="#{personaMB.guardarEditarPersona()}"
+											update=":formListaPasajero"
+											oncomplete="validarEditar(xhr, status, args);"
+											icon="icon-disk">
+										</p:commandButton>
+
+										<p:commandButton type="button" value="Cerrar"
+											onclick="dlgEditar.hide();"
+											actionListener="#{personaMB.limpiarValores()}"
+											icon="icon-cancel" />
+
+									</h:panelGrid>
+								</p:tab>
+							</p:accordionPanel>
+						</p:panel>
+					</h:form>
+				</h:panelGrid>
+			</p:dialog>
+
+			<script>
+				function validar(xhr, status, args) {
+					if (!args.esValido) {
+						jQuery('#dlgDetNuevo').effect("shake", {
+							times : 1
+						}, 100);
+					} else {
+						//limpiando
+						dlgNuevo.hide();
+					}
+				}
+
+				function validarEditar(xhr, status, args) {
+					console.log('validarEditar');
+					if (args.validationFailed) {
+
+					} else {
+						dlgEditar.hide();
+					}
+				}
+			</script>
+		</p:panel>
+
+	</ui:define>
+</ui:composition>
+</html>

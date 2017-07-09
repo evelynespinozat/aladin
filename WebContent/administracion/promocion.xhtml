@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Promocion" url="promocion" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nueva Promocion" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{promocionMB.nuevoPromocion()}"/>
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de Promociones -->
+			<h:form id="formListaPromocion">
+				<p:dataTable widgetVar="dtPromocion" var="cs" value="#{promocionMB.listaPromocion}"  filteredValue="#{promocionMB.listaPromocionfiltro}"
+					emptyMessage="No hay Promocion disponibles." rowIndexVar="nro" 
+					rows="20" 
+					paginator="true" 
+					paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					 style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Promociones</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:150px;" headerText="Descripcion." filterStyleClass="mayuscula" filterBy="#{cs.descripcion}"  filterStyle="width:150px;" filterMatchMode="contains">
+						<h:outputText value="#{cs.descripcion}"/>
+					</p:column>
+
+					<p:column style="width:50px;" headerText="Valor Dscto" >
+						<h:outputText value="#{cs.valorBoleto}" />
+					</p:column>
+
+					<p:column style="width:100px;" headerText="Fecha Inicio">
+						<h:outputText value="#{cs.fInicio}"
+							rendered="#{cs.fInicio != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					<p:column style="width:100px;" headerText="Fecha Fin">
+						<h:outputText value="#{cs.fFin}"
+							rendered="#{cs.fFin != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:40px;" headerText="Tipo">
+						<h:outputText value="#{cs.tipo == 'F'?'Precio fijo a pagar':''}" />
+						<h:outputText value="#{cs.tipo == 'P'?'Porcentaje a descontar':''}" />
+						<h:outputText value="#{cs.tipo == 'C'?'Cantidad a descontar':''}" />
+					</p:column>
+
+					<p:column style="width:40px;" headerText="Tipo Viaje">
+						<h:outputText value="#{cs.tipoViaje}" />
+					</p:column>
+
+					<p:column style="width:10px" headerText="Estado">
+						<p:commandLink update="@form :sms"
+							actionListener="#{promocionMB.cambiarEstado(cs)}">
+							<h:graphicImage
+								value="#{cs.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}"
+								title="#{cs.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo" actionListener="#{promocionMB.editarPromocion(cs)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{promocionMB.promocion}" value="#{cs}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>								
+					</p:column>
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->			
+			<p:dialog header="#{promocionMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true" width="500">
+					
+				<h:form id="formPrincipal">
+					<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>					
+					<h:panelGroup id="cmbOriDes" >
+					<h:panelGrid columns="2" rendered="#{promocionMB.mostrarPanelAgeOfi}">
+					</h:panelGrid>
+					</h:panelGroup>
+					<h:panelGrid columns="3">
+						<h:outputText value="Nombre :"/>
+						<p:spacer height="0" width="75"/>
+						<p:inputText style="width:200px" styleClass="mayuscula" value="#{promocionMB.promocion.descripcion}" required="true" requiredMessage="Se necesita una  descripcion" />
+						
+						<h:outputText value="Aplicado a:"/>
+						<p:spacer height="0" width="75"/>
+						<p:selectOneMenu style="width:200px" value="#{promocionMB.promocion.isTodos}" required="true" requiredMessage="Seleccione un Tipo Promocion">
+							<p:ajax event="change" update="formPrincipal:pnlDestinos" listener="#{promocionMB.mostrarPanelAgeOfi()}"/>
+							<f:selectItem itemLabel="POR OFICINA" itemValue="1" />
+							<f:selectItem itemLabel="TODAS OFICINAS" itemValue="2" />
+							<f:selectItem itemLabel="VENTAS ONLINE" itemValue="3" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+						
+					<h:panelGroup id="pnlDestinos" >
+						<h:panelGrid columns="3" rendered="#{promocionMB.mostrarPanelAgeOfi}">
+							<p:outputLabel id="textCmbOrigen" value="Origen:" rendered="#{promocionMB.mostrarPanelAgeOfi}"/>
+							<p:spacer height="0" width="97"/>
+							<p:selectOneMenu id="cmbOrigen" style="width:200px" value="#{promocionMB.promocion.idOrigen}" rendered="#{promocionMB.mostrarPanelAgeOfi}" required="true" requiredMessage="Seleccione un Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{promocionMB.listaAgencia}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+							</p:selectOneMenu>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="3" rendered="#{promocionMB.mostrarPanelAgeOfi}">
+							<p:outputLabel id="textCmbDestino" value="Destino:" rendered="#{promocionMB.mostrarPanelAgeOfi}"/>
+							<p:spacer height="0" width="93"/>
+							<p:selectOneMenu id="cmbDestino" style="width:200px" value="#{promocionMB.promocion.idDestino}" rendered="#{promocionMB.mostrarPanelAgeOfi}" required="true" requiredMessage="Seleccione un Destino">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{promocionMB.listaAgencia}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+							</p:selectOneMenu>
+						</h:panelGrid>
+						
+						<ui:remove>										
+							<p:dataTable id="dtServicios" widgetVar="dtServicios" var="serv" value="#{servicioMB.listaServicio}" 
+								filteredValue="#{servicioMB.listaFiltroServicio}"  
+								emptyMessage="No hay Excepciones Disponibles." rowIndexVar="nro" 
+								paginator="true" rows="20"
+								style="FONT-SIZE: 10px; ">
+								
+								<f:facet name="header">Lista Servicios</f:facet>										
+								<p:column headerText="Orden" width="25" style="width:3%" >
+									#{nro+1}
+								</p:column>										
+								<p:column style="width:10%" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{serv.descripcion}" filterMatchMode="contains" 
+									filterStyle="width:120px;" >
+									<h:outputText value="#{serv.descripcion}" />
+								</p:column>										
+								<p:column style="width:15%;text-align: center;" headerText="Tipo" filterStyleClass="mayuscula" filterBy="#{serv.descripcionClase}" filterMatchMode="contains" 
+									filterStyle="width:100px;" >
+									<h:outputText value="#{serv.descripcionClase}" />											
+									<h:graphicImage value="#{serv.descripcionClase eq 'BUS'?'/resources/img/icon-bus.png':'/resources/img/icon-carguero.png'}" 
+										title="#{serv.descripcionClase eq 'BUS'?'BUS':'CARGUERO'}" style="margin-left:20px"/>
+								</p:column>										
+								<p:column style="width:10%;text-align: center;" headerText="Origen">
+									<h:outputText value="#{serv.desOrigen}" />
+								</p:column>										
+								<p:column style="width:10%;text-align: center;" headerText="Destino">
+									<h:outputText value="#{serv.desDestino}" />
+								</p:column>										
+								<p:column style="width:10%;text-align: center;" headerText="Precio P1.">
+									<h:outputText value="#{serv.precio1}" />
+								</p:column>										
+								<p:column style="width:10%;text-align: center;" headerText="Precio P2.">
+									<h:outputText value="#{serv.precio2}" />
+								</p:column>										
+								<p:column style="width:10%;text-align: center;" headerText="Horas Viaje">
+									<h:outputText value="#{serv.horasViaje}" />
+								</p:column>										
+								<p:column style="width:10%;text-align: center;" headerText="H salida" filterMatchMode="contains" filterStyleClass="mayuscula" filterBy="#{serv.HSalida}" filterStyle="width:80px;">
+									<h:outputText value="#{serv.HSalida}" />
+								</p:column>										
+								<p:column style="width:30%;text-align: center;" headerText="Frecuencia" 
+									filterBy="#{serv.descTipoFrecuencia}" filterMatchMode="contains" filterStyleClass="mayuscula"  filterStyle="width:70px;" >
+									<h:outputText value="#{serv.descTipoFrecuencia}" />
+									<h:graphicImage value="#{serv.tipoFrecuencia eq '1'?'/resources/img/icon-programacionfrecuente.png':'/resources/img/icon-programaciondemanda.png'}" 
+										title="#{serv.tipoFrecuencia eq '1'?'FRECUENTE':'DEMANDA'}" style="margin-left:20px"/>
+								</p:column>										
+								<p:column style="width:15%;text-align: center;" headerText="Ruta Compartida" filterMatchMode="contains" filterStyleClass="mayuscula" filterBy="#{serv.rutaCompartida}" filterStyle="width:40px;">
+									<h:outputText value="#{serv.rutaCompartida}" />
+								</p:column>					
+								<p:column headerText="Editar/Elim." style="width:10%;text-align: center">										
+									<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{servicioMB.editarServicio(serv)}"
+													 oncomplete="dlgNuevo.show();" icon="icon-edit"/>					
+									<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+									    <f:setPropertyActionListener target="#{servicioMB.servicio}" value="#{serv}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>										
+						</ui:remove>										
+					</h:panelGroup>
+					<h:panelGrid columns="2" width="400">
+						<h:outputText value="Tipo Viaje:" />										
+						<p:selectOneMenu style="width:200px" value="#{promocionMB.promocion.tipoViaje}" required="true" requiredMessage="Seleccione un Tipo Viaje">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItem itemLabel="IDA" itemValue="IDA"/>
+							<f:selectItem itemLabel="IDA Y VUELTA" itemValue="IDA Y VUELTA"/> 
+						</p:selectOneMenu>
+						<h:outputText value="Tipo Oferta:" />
+						<p:selectOneMenu style="width:200px" value="#{promocionMB.promocion.idTipoPromocion}" required="true" requiredMessage="Seleccione un Tipo Promocion">
+							<p:ajax event="change" update=":formPrincipal:cmbTipo" listener="#{promocionMB.mostrarPanel()}"/>
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="ag" value="#{promocionMB.listaTipoPromocion}" itemValue="#{ag.idTipoPromocion}" itemLabel="#{ag.descripcion}" /> 
+						</p:selectOneMenu>
+						
+						<h:outputText value="Fecha Inicio:" />
+						<p:calendar style="width:200px" value="#{promocionMB.promocion.fInicio}" pattern="dd/MM/yyyy" locale="es"
+							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha Inicio" />
+					
+						<h:outputText value="Fecha Fin:" />
+						<p:calendar style="width:200px" value="#{promocionMB.promocion.fFin}" pattern="dd/MM/yyyy" locale="es"
+						 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha Fin" />
+
+						<h:outputText value="Usuario Autorizante:" />
+						<p:selectOneMenu style="width:200px" value="#{promocionMB.promocion.idAutorizante}" required="true" requiredMessage="Seleccione un Usuario Autorizante">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="ag" value="#{promocionMB.listaUsuarioAutorizante}" itemValue="#{ag.idAutorizante}" itemLabel="#{ag.nombres}" /> 
+						</p:selectOneMenu>
+						
+						<h:outputText value="Estado:" />
+						<p:selectOneRadio style="width:200px" value="#{promocionMB.promocion.estado}" required="true" requiredMessage="se necesita un estado" >
+							<f:selectItem   itemLabel="Activo"  itemValue="true"/>
+							<f:selectItem   itemLabel="Inactivo"  itemValue="false"/>
+						</p:selectOneRadio>
+
+						<h:outputText value="Tipo Descuento:" />
+						<p:selectOneMenu style="width:200px" value="#{promocionMB.promocion.tipo}" required="true" requiredMessage="Se necesita el tipo" >
+							<f:selectItem itemLabel="Seleccione....... " itemValue="" />  
+							<f:selectItem itemLabel="Precio fijo a pagar" itemValue="F" />  
+                          		<f:selectItem itemLabel="Porcentaje a descontar" itemValue="P" />  
+                           	<f:selectItem itemLabel="Cantidad a descontar" itemValue="C" />  
+						</p:selectOneMenu>
+						
+						<h:outputText value="Valor Dscto:" />
+						<pe:inputNumber style="width:200px" value="#{promocionMB.promocion.valorBoleto}" 
+							required="true" requiredMessage="Se necesita el valor del boleto" dir="rtl"/>							
+					</h:panelGrid>
+						
+					<h:panelGroup id="cmbTipo" >
+						<h:panelGrid columns="2" rendered="#{promocionMB.mostrarPanelC1}">
+						</h:panelGrid>
+						<h:panelGrid columns="2" rendered="#{promocionMB.mostrarPanelC2}">
+							<h:outputText value="Tipo Valor Aplicado:" />
+							<p:selectOneMenu style="width:200px" value="#{promocionMB.promocion.tipoValorAplicado}" required="true" requiredMessage="Seleccione Tipo Valor Aplicado" >
+								<f:selectItem itemLabel="Seleccione......." itemValue="" />  
+								<f:selectItem itemLabel="Asiento" itemValue="1" />  
+	                      		<f:selectItem itemLabel="Monto" itemValue="2" />  
+							</p:selectOneMenu>
+						
+							<h:outputText value="Valor Aplicado:" />
+							<pe:inputNumber style="width:200px" value="#{promocionMB.promocion.valorAplicado}" 
+							required="true" requiredMessage="Se necesita el valor del boleto" />
+						</h:panelGrid>
+					</h:panelGroup>
+					<br/>
+					<p:commandButton value="Guardar" actionListener="#{promocionMB.guardarPromocion()}"
+								 update=":formListaPromocion msgNuevo"
+								 oncomplete="validarCampos(xhr, status, args)" icon="icon-disk" />
+								 
+					<p:commandButton value="Cancelar" type="button"
+								 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+				</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta promoción?" header="Clase de Servicio"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Promoci&oacute;n: <h:outputText value="#{promocionMB.promocion.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaPromocion :sms"
+						actionListener="#{promocionMB.eliminarPromocion()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validarCampos(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

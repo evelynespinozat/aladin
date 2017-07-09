@@ -1,0 +1,372 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Registro de Salida de Unidades Vacias" url="unidadesVacias" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Unidad Vacia" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" 
+					actionListener="#{unidadesVaciasMB.nuevaFlotaVacia()}" />
+					<p:commandButton value="Reporte" icon="icon-report" update=":dlgDetPrint" oncomplete="dlgPrint.show();" actionListener="#{unidadesVaciasMB.nuevaFlotaVacia()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaAgencia">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{unidadesVaciasMB.listaFlotaVacias}" filteredValue="#{unidadesVaciasMB.listaFlotaVaciasFiltro}"  
+					emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Unidades</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="30" headerText="Unidad" filterStyleClass="mayuscula" filterBy="#{p.numeroBus}" filterMatchMode="contains" filterStyle="width:30px;" >
+						<h:outputText value="#{p.numeroBus}" />
+					</p:column>
+					<p:column style="width:80" headerText="Piloto" >
+						<h:outputText value="#{p.namePiloto}" />
+					</p:column>
+					<p:column style="width:80" headerText="Copiloto" >
+						<h:outputText value="#{p.nameCopiloto}" />
+					</p:column>
+					<p:column style="width:50" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{p.desOrigen}" filterMatchMode="contains" filterStyle="width:50px;" >
+						<h:outputText value="#{p.desOrigen}" />
+					</p:column>
+					<p:column style="width:50" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{p.desDestino}" filterMatchMode="contains" filterStyle="width:50px;" >
+						<h:outputText value="#{p.desDestino}" />
+					</p:column>
+					<p:column style="width:50" headerText="F.Salida">
+						<h:outputText value="#{p.fechaSalida}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					<p:column  headerText="Motivo" >
+						<h:outputText value="#{p.motivo}" />
+					</p:column>
+					<p:column style="width:20%" headerText="Observacion"  >
+						<h:outputText value="#{p.observacion}" />
+					</p:column>
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo" actionListener="#{unidadesVaciasMB.editarFlotaVacia(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+						
+
+						<p:commandButton id="cbtEliminar" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{unidadesVaciasMB.flotaVacia}" value="#{p}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{unidadesVaciasMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form id="frmUnidadVacia">
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Unidad:"}
+							<p:selectOneMenu size="40" id="txtplaca" style="width:140px" value="#{unidadesVaciasMB.flotaVacia.idBus}" 
+								required="true" requiredMessage="Seleccione un Bus">
+								<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+								<f:selectItems var="fo" value="#{unidadesVaciasMB.listaBuses}" itemValue="#{fo.idBus}" itemLabel="#{fo.numero} -- #{fo.placa}" /> 
+									<p:ajax listener="#{unidadesVaciasMB.mostrarDatosBus()}" update="pnlPiloto" />
+							</p:selectOneMenu>
+							
+							
+							<h:outputLabel value="Origen:"  />  
+			        		<p:selectOneMenu id="cmbOrigen"  value="#{unidadesVaciasMB.flotaVacia.idOrigen}" style=" width:140px;"
+			        				required="true" requiredMessage="Se necesita un origen"> 
+									<f:selectItem itemLabel="Seleccionar" itemValue="" />
+									<f:selectItems var="o" value="#{unidadesVaciasMB.listaOrigen}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							</p:selectOneMenu>
+					
+							<h:outputLabel  value="Destino:" /> 
+							<p:selectOneMenu id="cmbDestinox" style="width:150px" value="#{unidadesVaciasMB.flotaVacia.idDestino}"
+									required="true" requiredMessage="Se necesita un destino">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="ag" value="#{unidadesVaciasMB.listaDestino}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" />
+							</p:selectOneMenu>
+							
+							
+							<h:outputLabel value="F.Salida "/> 
+							<p:calendar style="width:200px"  value="#{unidadesVaciasMB.flotaVacia.fechaSalida}" pattern="dd/MM/yyyy" locale="es"
+								  navigator="true"  requiredMessage="Se necesita una fecha de Salida">
+							</p:calendar>
+				
+							#{"Motivo:"}
+							<p:inputText style="width:200px" styleClass="mayuscula" value="#{unidadesVaciasMB.flotaVacia.motivo}" required="true" maxlength="50" requiredMessage="Se necesita un motivo" />
+							
+							
+							#{"Observacion:"}
+						<p:inputTextarea cols="30" autoResize="true" rows="5" styleClass="mayuscula" value="#{unidadesVaciasMB.flotaVacia.observacion}" required="true" requiredMessage="Se necesita una observacion"/>
+						
+
+						</h:panelGrid>
+						<br/>
+						
+						
+						<h:panelGroup id="pnlPiloto">
+                    		<h:panelGrid columns="3" >
+                    		  
+		                        #{"Piloto Asignado:"}
+		                        <p:inputText    disabled="#{unidadesVaciasMB.disP}" 
+		                        style="width:320px" id="txtnpiloto_S" value="#{unidadesVaciasMB.flotaVacia.namePiloto}"  readonly="true"/>
+		                        <p:commandButton  value="Reasignar Piloto" actionListener="#{unidadesVaciasMB.listarPilotosActivos()}" 
+		                       
+		                        oncomplete="dlgPiloto.show();" update=":dlgDetPiloto" />
+		                        
+		                        
+		                        
+	                        	#{"Copiloto Asignado:"}
+								 <p:inputText disabled="#{unidadesVaciasMB.disCP}"  
+		                        	style="width:320px" id="txtncpiloto_S" value="#{unidadesVaciasMB.flotaVacia.nameCopiloto}" readonly="true" />
+		                          <p:commandButton  value="Reasignar Copiloto" actionListener="#{unidadesVaciasMB.listarCopilotosActivos()}"
+		                        
+		                           oncomplete="dlgCoPiloto.show();" update=":dlgDetCoPiloto" />
+	                       
+	                        </h:panelGrid>
+
+                    	</h:panelGroup>
+						
+						
+						
+						<p:commandButton value="Guardar" actionListener="#{unidadesVaciasMB.guardarFlotaVacia()}"
+									 update=":formListaAgencia msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+			
+			
+				<p:dialog header="Imprimir Salida" widgetVar="dlgPrint" appendToBody="true"
+					  resizable="false" id="dlgDetPrint" modal="true">
+					
+					<h:form id="fmImprimir">
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+						#{"Unidad:"}
+						<p:selectOneMenu  style="width:150px" value="#{unidadesVaciasMB.flotaVacia.idBus}" required="true"
+								requiredMessage="Se necesita el numero de bus">
+									<f:selectItem itemLabel="Seleccione..." itemValue="" />
+									<f:selectItems var="ag" value="#{unidadesVaciasMB.listaBuses}" itemValue="#{ag.idBus}" itemLabel="#{ag.numero}" />
+						</p:selectOneMenu>
+							
+						#{"Fecha Salida Ini.:"}
+						<p:calendar value="#{unidadesVaciasMB.flotaVacia.fecIni}"
+									 locale="es" pattern="dd/MM/yyyy"
+									 navigator="true" required="true" requiredMessage="Se necesita una fecha de inicio">
+						</p:calendar>
+						
+						#{"Fecha Salida Fin:"}
+						<p:calendar value="#{unidadesVaciasMB.flotaVacia.fecFin}"
+									 locale="es" pattern="dd/MM/yyyy"
+									 navigator="true" required="true" requiredMessage="Se necesita una fecha de fin">
+						</p:calendar>
+							
+
+						</h:panelGrid>
+						<br/>
+						
+						<p:commandButton value="Mostrar Reporte" actionListener="#{unidadesVaciasMB.obtenerListaReporte()}"
+									 update="msgNuevo "
+									 oncomplete="validarImp(xhr, status, args)" icon="icon-disk" />
+						
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgPrint.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta unidad vacía?" header="Eliminar Unidad Vacia"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Unidad vac&iacute;a: <h:outputText value="#{unidadesVaciasMB.flotaVacia.numeroBus}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaAgencia :sms"
+						actionListener="#{unidadesVaciasMB.eliminarUnidadVacia()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar la Agencia porque cuenta con oficinas asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+			
+			<h:form id="formImprimir">
+				<h:commandLink id="cmdImprimir" 
+						actionListener="#{unidadesVaciasMB.imprimirPDF}"/>
+			</h:form>
+		
+
+		
+			<p:dialog header="Pilotos" widgetVar="dlgPiloto"
+					appendToBody="true"  resizable="false"
+					id="dlgDetPiloto" modal="true">
+					<h:form>
+						 <p:dataTable var="pilot" style="font-size:10px;"  value="#{unidadesVaciasMB.listaPiloto}"  
+						 	filteredValue="#{unidadesVaciasMB.listaFiltroPiloto}"
+						 	rowIndexVar="nro" rows="5" paginator="true">
+						 	
+						 	<f:facet name="header">
+						 		<h:panelGrid columns="2" style="width:100px;margin:auto;">
+						 			
+						 			<h:outputText value="Lista de Pilotos" />
+						 			<h:graphicImage library="img" name="piloto.png" width="32" height="32" />
+						 		</h:panelGrid>
+						 		
+						 	</f:facet>
+						 	
+				            <p:column headerText="Nro">
+				               #{nro+1}
+				            </p:column>
+				 
+				            <p:column headerText="Piloto" filterStyleClass="mayuscula" filterBy="#{pilot.apellidoPaterno}" filterMatchMode="contains" >
+				                <h:outputText value="#{pilot.apellidoPaterno} #{pilot.apellidoMaterno} #{pilot.nombres}" />
+				            </p:column>
+				 
+				            <p:column headerText="Seleccionar">
+				                <p:commandButton value="Seleccionar" icon="ui-icon-circle-plus" actionListener="#{unidadesVaciasMB.asignarPiloto(pilot)}"
+				                 update=":frmUnidadVacia:txtnpiloto_S" oncomplete="dlgPiloto.hide();" />
+				                	
+				            </p:column>
+					        </p:dataTable>
+					        
+					        <br/>
+					        
+					        <p:commandButton value="Cerrar" onclick="dlgPiloto.hide();" icon="icon-cancel" />
+					        
+					</h:form>
+				</p:dialog>
+				
+				<p:dialog header="Copilotos" widgetVar="dlgCoPiloto"
+					appendToBody="true"  resizable="false"
+					id="dlgDetCoPiloto" modal="true">
+					<h:form>
+					         <p:dataTable var="copilot" style="font-size:10px;" value="#{unidadesVaciasMB.listaCopiloto}"  
+					         filteredValue="#{unidadesVaciasMB.listaFiltroCopiloto}"
+					         	rowIndexVar="nro" rows="5" paginator="true">
+					         	
+					         	<f:facet name="header">
+							 		<h:panelGrid columns="2" style="width:100px;margin:auto;">
+							 			<h:outputText value="Lista de CoPilotos" />
+							 			<h:graphicImage library="img" name="copiloto.png" width="32" height="32"/>
+							 		</h:panelGrid>
+						 		
+						 		</f:facet>
+					         	
+					            <p:column headerText="Nro">
+					                #{nro+1}
+					            </p:column>
+					 
+					            <p:column headerText="CoPiloto" filterStyleClass="mayuscula" filterBy="#{copilot.apellidoPaterno}" filterMatchMode="contains" >
+					               <h:outputText value="#{copilot.apellidoPaterno} #{copilot.apellidoMaterno} #{copilot.nombres}" />
+					            </p:column>
+					 
+					            <p:column headerText="Seleccionar">
+					                <p:commandButton value="Seleccionar" icon="ui-icon-circle-plus" actionListener="#{unidadesVaciasMB.asignarCopiloto(copilot)}"
+				                 update=":frmUnidadVacia:txtncpiloto_S" oncomplete="dlgCoPiloto.hide();" />
+					            </p:column>
+					        </p:dataTable>
+					        
+					        <br/>
+					        
+					        <p:commandButton value="Cerrar" onclick="dlgCoPiloto.hide();" icon="icon-cancel" />
+					</h:form>
+				</p:dialog>
+		
+		
+		
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		function validarImp(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetPrint').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				document.getElementById("formImprimir:cmdImprimir").click()
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

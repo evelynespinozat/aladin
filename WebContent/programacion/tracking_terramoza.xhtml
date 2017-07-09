@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<!-- css especifico -->
+		<style type="text/css">
+    		.ui-fileupload .progress {
+        		display: none;
+    		}
+    		
+		</style>
+		
+		
+		<pe:blockUI target=":formTracking:dtidTracking" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+		</pe:blockUI> 
+	
+		<p:panel >
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Tracking de Terramoza" url="piloto" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- listado de PILOTOS -->
+			<h:form id="formListaPiloto">
+				<p:dataTable widgetVar="dtPiloto" var="p" value="#{trackinTMB.listaTerramoza}" filteredValue="#{trackinTMB.listaFiltroTerramoza}"  
+					emptyMessage="No hay Pilotos Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="5" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Terramozas</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					
+					
+					<p:column style="width:20%;text-align: center;" headerText="Apellidos" filterStyleClass="mayuscula" filterBy="#{p.apellidos}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.apellidos}" />
+					</p:column>
+					
+					
+					<p:column style="width:15%" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{p.nombres}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.nombres}" />
+					</p:column>
+					
+					
+					<p:column style="width:20%;text-align: center;" headerText="DNI" filterBy="#{p.dNI}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{p.dNI}" />
+					</p:column>
+				
+					
+					
+					<p:column headerText="Imagen"  >
+						<h:graphicImage value="/imagen/servletWill/?codigo=T#{p.idTerramoza}" width="60" height="60"/>
+					</p:column>
+
+					<p:column style="width:7%;text-align: center;" headerText="Estado">
+						<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						<ui:remove>	
+						<p:commandLink update="@form :sms" actionListener="#{trackinTMB.cambiarEstado(p)}" >  						
+						</p:commandLink>
+						</ui:remove>
+					</p:column>
+					
+					
+					<p:column headerText="Ver Tracking" style="width:20%;text-align: center">
+						<p:commandButton title="Tracking"  update=":dlgDetTracking"  oncomplete="dlgTracking.show();"
+										 icon="icon-destinos" actionListener="#{trackinTMB.setearTerramoza(p)}"
+										 />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			
+			<p:dialog header="Ver Tracking" widgetVar="dlgTracking" appendToBody="true"
+					  resizable="false" id="dlgDetTracking" modal="true">
+					
+					<h:form id="tracking">
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+							
+						<h:panelGrid columns="8">
+							<p:outputLabel value="Terramoza: "/>
+							<h:outputText value="#{trackinTMB.terramoza.apellidos} #{trackinTMB.terramoza.nombres}" style="font-size:12px;font-weight: bold;" />
+							
+							<p:outputLabel value="DNI:"  style="margin-left:20px"/>
+							<h:outputText value="#{trackinTMB.terramoza.dNI}" style="font-size:12px;font-weight: bold;" />
+
+							
+						</h:panelGrid>
+						<p:separator/>
+						<h:panelGrid columns="6">
+							<h:outputLabel value="F.Inicio "  /> 
+							<p:calendar style="width:200px"  value="#{trackinTMB.fecInicio}" pattern="dd/MM/yyyy" locale="es" showOn="button"
+							  			navigator="true"   required="true" requiredMessage="Se necesita una fecha de inicio">
+							  			<p:ajax update="calFfin" event="dateSelect"/> 
+							</p:calendar>
+
+							<h:outputLabel style="margin-left:20px" value="F.Fin" /> 
+							<p:calendar id="calFfin" style="width:200px;" mindate="#{trackinTMB.fecInicio}"  value="#{trackinTMB.fecFin}" 
+										pattern="dd/MM/yyyy" locale="es"
+							  			showOn="button" navigator="true"  required="true" requiredMessage="Se necesita una fecha final"> 
+							 </p:calendar>
+							  			
+							<p:commandButton id="consultar" value="Consultar" actionListener="#{trackinTMB.consultarTracking()}" update=":formTracking tracking" 
+								 onstart="blockUIWidget.block()" 
+						        oncomplete="dtTracking.getPaginator().setPage(0);blockUIWidget.unblock()" 
+							/>  
+							
+							<h:commandLink id="imprimir" value="Imprimir" style="padding: 6px 20px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							   color: #1C190A;" actionListener="#{trackinTMB.imprimirPDF}" rendered="#{trackinTMB.bandBuscar}"> 
+							</h:commandLink>	 
+						</h:panelGrid>	
+					</h:form>	
+					
+					<h:form id="formTracking">
+						<p:panel style="width:900px">
+						<p:dataTable widgetVar="dtTracking" id="dtidTracking" var="p" value="#{trackinTMB.listaProgramacion}"
+									emptyMessage="No hay Servicios para esas fechas." rowIndexVar="nro" 
+									paginator="true"
+									rows="5" paginatorPosition="bottom" 
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									rowsPerPageTemplate="5,10,20,30"
+									style="FONT-SIZE: 10px; ">
+							<f:facet name="header">Lista Servicios</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:10%" headerText="Origen">
+								<h:outputText value="#{p.nombOrigen}" />
+							</p:column>
+							
+							<p:column style="width:10%" headerText="Destino">
+								<h:outputText value="#{p.nombDestino}" />
+							</p:column>
+							
+							<p:column style="width:18%" headerText="Servicio">
+								<h:outputText value="#{p.descServicio}" />
+							</p:column>
+							
+							<p:column style="width:8%" headerText="Fecha">
+								<h:outputText value="#{p.fSalidaString}" />
+							</p:column>
+							
+							<p:column style="width:9%" headerText="Hora">
+								<h:outputText value="#{p.hSalida}" />
+							</p:column>
+							
+							<p:column style="width:5%" headerText="Bus">
+								<h:outputText value="#{p.numeroBus}" />
+							</p:column>
+							
+							<p:column style="width:21%" headerText="Piloto">
+								<h:outputText value="#{p.nombPiloto}" />
+							</p:column>
+							
+							<p:column style="width:21%" headerText="Copiloto">
+								<h:outputText value="#{p.nombCopiloto}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					</h:form>
+					
+					
+			</p:dialog>
+
+		</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

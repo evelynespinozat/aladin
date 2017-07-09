@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptVentaDetalle" language="groovy" pageWidth="1800" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="1760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1f2c5201-6852-451c-b2ff-27a221eaa080">
+	<property name="ireport.zoom" value="0.9090909090909095"/>
+	<property name="ireport.x" value="539"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomAgencia" class="java.lang.String"/>
+	<field name="nomOficina" class="java.lang.String"/>
+	<field name="nomPuntoVenta" class="java.lang.String"/>
+	<field name="nomUsuario" class="java.lang.String"/>
+	<field name="nBoleto" class="java.lang.String"/>
+	<field name="nComprobante" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="monto" class="java.lang.String"/>
+	<field name="fechaVenta" class="java.util.Date"/>
+	<field name="horaviaje" class="java.lang.String"/>
+	<field name="fechasalida" class="java.lang.String"/>
+	<field name="ruta" class="java.lang.String"/>
+	<field name="asiento" class="java.lang.String"/>
+	<field name="documentoPersona" class="java.lang.String"/>
+	<field name="tarifa" class="java.lang.String"/>
+	<field name="formapago" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="74" splitType="Stretch">
+			<image>
+				<reportElement uuid="07c90400-48bf-48f9-8bf9-6ac8168440a2" x="0" y="0" width="181" height="51"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="5893eb4d-327a-4efb-9503-8e595a9b8bc4" x="348" y="31" width="265" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE VENTA DETALLADA]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="872952f2-dd24-464f-9946-b6e38ae49bb8" x="16" y="1" width="1726" height="15" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="357940d6-74c0-4bb5-8fed-307c407be4d8" x="118" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agencia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c67b400-46a9-4c98-8d68-003903ac4591" x="16" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Oficina]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9be9aefb-6e76-47e3-a02a-80769ee49811" x="220" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Punto de venta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e12eb365-157b-4d7a-8675-ac080953db7c" x="331" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2f70e15c-3a18-497b-8dd8-02173bee60f0" x="435" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Boleto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="370d5ca6-bad8-43a3-b70d-fafdb29f88af" x="539" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comprobante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2fb6f57c-03db-46a8-8923-e7c0bd17b92a" x="643" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b3bce3cc-6cc7-414b-a17a-6ad043fffdda" x="753" y="1" width="65" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff8fb7ce-c476-422f-bd2b-a6f7d97ea7fd" x="842" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de venta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff7bef69-4026-4a85-9434-7102e049fd3f" x="1342" y="1" width="60" height="20"/>
+				<textElement/>
+				<text><![CDATA[asiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="72eaaa61-4bd6-4d2f-9ccd-f58a0046f054" x="1416" y="0" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[documentoPersona]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8f647878-9a5e-44a4-b8a2-bc39c3e82d34" x="1536" y="1" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[tarifa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0da9b673-241d-49bb-b55d-0d92e1666001" x="1242" y="0" width="71" height="20"/>
+				<textElement/>
+				<text><![CDATA[ruta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="420faa47-6e2a-4787-9582-910117afe8ee" x="1142" y="1" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[fechasalida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="48cc1bd6-6241-4947-ad56-8298218cf281" x="1042" y="1" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[horaviaje]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement uuid="5f237176-b613-482b-8f51-dd3f3f1a1498" x="118" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nomAgencia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="87c3d5e6-08e3-4db9-8518-2bf7e7619226" x="16" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nomOficina}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3cd00bce-4783-4828-b3a1-bd68a698bc25" x="331" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nomUsuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="77c13e5a-946a-4e7f-bd6a-9e75d467740f" x="539" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nComprobante}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a1fb67f9-24be-4b46-8502-72fbec1927e6" x="220" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nomPuntoVenta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="01def942-4089-43a2-a48c-fd4ee8944641" x="435" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nBoleto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fa720620-ab51-4d18-a220-85fd87a1542d" x="643" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="820333c9-632e-4845-b68c-96f9aa5434e2" x="753" y="1" width="65" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{monto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cc18eb5c-077c-40ba-91ab-a10a368e970f" x="842" y="1" width="100" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None"/>
+				<textFieldExpression><![CDATA[$F{fechaVenta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="308f79e6-b939-4bcc-a3c7-f039b4b2d030" x="1042" y="1" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{horaviaje}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="82001305-3592-4cb8-b914-7d6b320827bc" x="1342" y="1" width="60" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{asiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e8afed8c-501e-48e3-9eaa-7a5baed77ec5" x="1416" y="1" width="114" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{documentoPersona}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="728345ec-09ff-4c6f-b657-a813641ebc26" x="1541" y="0" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tarifa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="47ecbf3d-a4ef-4d63-9623-9d4d9e5a5638" x="1242" y="1" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ruta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c2119877-526e-49d9-ba7d-0aab62ca6341" x="1142" y="1" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fechasalida}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

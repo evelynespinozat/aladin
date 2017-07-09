@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.PostergacionMapper">
+
+<resultMap id="postergacionResult" type="com.certicom.ittsa.domain.Postergacion">
+	<id column="idpostergado" property="idpostergado"/>
+	<result column="idasientoventa" property="idasientoventa"/>
+	<result column="fechapostergacion" property="fechapostergacion"/>
+	<result column="fechacaducidad" property="fechacaducidad"/>
+	<result column="estado" property="estado"/>
+	<result column="documentopersona" property="documentopersona"/>
+	<result column="documentoempresa" property="documentoempresa"/>
+	<result column="usuarioactiva" property="usuarioactiva"/>
+	<result column="fechaactivacion" property="fechaactivacion"/>
+	<result column="serie" property="serie"/>
+	<result column="fechaAbierta" property="fechaAbierta"/>
+	<result column="origen" property="origen"/>
+	<result column="destino" property="destino"/>
+	<result column="monto" property="monto"/>
+	<result column="servicioid" property="servicioid"/>
+	
+	<result column="origenstr" property="origenstr"/>
+	<result column="destinostr" property="destinostr"/>
+	<result column="serviciostr" property="serviciostr"/>
+</resultMap>
+
+
+</mapper>	

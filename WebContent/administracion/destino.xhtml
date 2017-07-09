@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Administracion" url="#" />
+					<p:menuitem value="Gestion de Destinos" url="destino" />
+				</p:breadCrumb>
+			</h:form>
+
+
+			<br />
+			<!-- sms general -->
+			<p:messages id="sms" showDetail="false" showSummary="true" closable="true" />
+
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Destino" icon="icon-add"
+						update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+						actionListener="#{destinoMB.nuevoDestino()}">
+					</p:commandButton>
+				</p:toolbarGroup>
+			</h:form>
+
+			<!-- listado de Destino -->
+			<h:form id="formListaDestino">
+				<p:dataTable widgetVar="dtDestino" var="cs"
+					value="#{destinoMB.listaDestino}"
+					filteredValue="#{destinoMB.listaDestinofiltro}"
+					emptyMessage="No hay Destinos disponibles" rowIndexVar="nro"
+					rows="20" paginator="true" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Destino</f:facet>
+
+					<p:column headerText="Orden" width="25" style="width:3%">
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:100px;" headerText="Origen."
+						filterStyleClass="mayuscula" filterBy="#{cs.desOrigen}" filterStyle="width:150px;"
+						filterMatchMode="contains">
+						<h:outputText value="#{cs.desOrigen}" />
+					</p:column>
+
+					<p:column style="width:100px;" headerText="Destino"
+						filterStyleClass="mayuscula" filterBy="#{cs.desDestino}" filterStyle="width:150px;"
+						filterMatchMode="contains">
+						<h:outputText value="#{cs.desDestino}" />
+					</p:column>
+					
+					<p:column style="width:100px;" headerText="Km. Aprox." filterStyle="width:150px;">
+						<h:outputText value="#{cs.kmDistancia}" />
+					</p:column>
+
+					<p:column style="width:10px" headerText="Estado">
+						<p:commandLink update="@form :sms"
+							actionListener="#{destinoMB.cambiarEstado(cs)}">
+							<h:graphicImage
+								value="#{cs.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}"
+								title="#{cs.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+
+
+
+					<p:column headerText="Editar/Elim."
+						style="width:10%;text-align: center">
+
+						<p:commandButton id="cbtEditar" title="Editar" update=":dlgDetNuevo"
+							oncomplete="dlgNuevo.show();" icon="icon-edit"
+							actionListener="#{destinoMB.editarDestino(cs)}">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar"  title="Eliminar" oncomplete="dlgEliminar.show();"
+							update=":dlgDetEliminar" icon="icon-delete">
+							<f:setPropertyActionListener target="#{destinoMB.destino}"
+								value="#{cs}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+			<!-- #############    Dialogos      ################ -->
+
+			<p:dialog header="#{destinoMB.titulo}" widgetVar="dlgNuevo"
+				appendToBody="true" resizable="false" id="dlgDetNuevo" modal="true">
+
+				<h:form>
+					<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+
+					<h:panelGrid columns="2">
+
+							#{"Origen:"}
+						<p:selectOneMenu style="width:150px" value="#{destinoMB.destino.origen}"
+							required="true" requiredMessage="Seleccione Origen">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{destinoMB.listaAgOrigen}" 
+							itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							<p:ajax update="cmbDest" listener="#{destinoMB.listarAgeDestino()}" />
+						</p:selectOneMenu>
+							
+							#{"Destino:"}
+						<p:selectOneMenu style="width:150px" value="#{destinoMB.destino.destino}" id="cmbDest"
+							 required="true" requiredMessage="Seleccione Destino">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{destinoMB.listaAgDestinos}"
+								itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+						</p:selectOneMenu>
+
+						#{"KM. Aprox:"}
+						<p:inputText style="width:140px" value="#{destinoMB.destino.kmDistancia}" required="true" maxlength="10" requiredMessage="Ingrese Km de distancia" dir="rtl"/>
+							
+						
+					</h:panelGrid>
+					<br />
+					<p:commandButton value="Guardar"
+						actionListener="#{destinoMB.guardarDestino()}"
+						update=":formListaDestino msgNuevo"
+						oncomplete="validarCampos(xhr, status, args)" icon="icon-disk" />
+
+					<p:commandButton type="button" value="Cancelar" 
+						onclick="dlgNuevo.hide();" icon="icon-cancel" />
+				</h:form>
+			</p:dialog>
+
+
+			<!-- dialogo eliminar -->
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+				message="¿Desea eliminar este destino?"
+				header="Destino" severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Destino: <h:outputText
+						value="#{destinoMB.destino.desOrigen}-#{destinoMB.destino.desDestino}"
+						style="font-size:12px;font-weight: bold;" />
+					<br />
+					<p:commandButton value="Eliminar" update=":formListaDestino :sms"
+						actionListener="#{destinoMB.eliminarDestino()}"
+						oncomplete="dtDestino.filter();dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton type="button" value="Cancelar" onclick="dlgEliminar.hide()"
+						icon="icon-cancel" />
+
+				</h:form>
+			</p:confirmDialog>
+
+
+		</p:panel>
+
+		<script>
+			function validarCampos(xhr, status, args) {
+				if (!args.esValido) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					//limpiando
+
+					dlgNuevo.hide();
+				}
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
+</html>

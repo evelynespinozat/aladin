@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Kardex de Productos" url="kardex" /> 
+    				<p:menuitem value="Consulta" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="6">
+				<p:outputLabel value="Producto :" style="font-size: 1.2em"></p:outputLabel>
+				<h:outputText value=" #{kardexMB.agenciaProducto.desProducto}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				<p:outputLabel value="Medida :" style="font-size: 1.2em"></p:outputLabel>
+				<h:outputText value=" #{kardexMB.agenciaProducto.desMedida}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				<p:outputLabel value="Stock Actual :" style="font-size: 1.2em"></p:outputLabel>
+				<h:outputText value=" #{kardexMB.stockActual}"  
+					style="font-weight:bold;font-size: 2em;color:#0000FF" />	
+				
+				<p:outputLabel value="Agencia :" style="font-size: 1.2em"></p:outputLabel>	
+				<h:outputText value=" #{kardexMB.agenciaProducto.desAgencia}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				<p:outputLabel value="Oficina :" style="font-size: 1.2em"></p:outputLabel>	
+				<h:outputText value=" #{kardexMB.agenciaProducto.desOficina}" 
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+		</h:panelGrid>
+		<br/>
+		<h:form>
+ 			<h:commandLink id="Imprimir" value="Imprimir" style="padding: 6px 20px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							   color: #1C190A;" actionListener="#{kardexMB.imprimirDetalle()}" > 
+			</h:commandLink>
+		</h:form>
+		</p:panel>
+		<br/>
+			
+		<h:form id="frmListaAgP">
+					
+			<p:dataTable value="#{kardexMB.listaKardex}" var="per" style="width:750px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+    			<f:facet name="header">Entradas y salidas del Producto</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Comcepto">
+    				#{per.tipo}
+    			</p:column>
+    			
+    			<p:column headerText="Servicio">
+    				#{per.desServicio}
+    			</p:column>
+    			
+    			<p:column headerText="Origen">
+    				#{per.desOrigen}
+    			</p:column>
+    			
+    			<p:column headerText="Destino">
+    				#{per.desDestino}
+    			</p:column>
+    			
+    			<p:column headerText="Ingreso">
+    				#{per.ingreso}
+    			</p:column>
+
+    			<p:column headerText="Salida">
+    				#{per.salida}
+    			</p:column>
+
+    			<p:column headerText="F.Salida">
+    				<h:outputText value="#{per.fSalida}" rendered="#{per.fSalida != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+					</h:outputText>
+    			</p:column>
+    			<p:column headerText="H.Salida">
+    				#{per.hSalida}
+    			</p:column>
+    		
+    			<p:column headerText="Fecha">
+    				<h:outputText value="#{per.FRegistro}" rendered="#{per.FRegistro != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short" />
+					</h:outputText>
+    			</p:column>
+    		
+				</p:dataTable>
+   		</h:form>
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

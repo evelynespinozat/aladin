@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Seguridad" url="#" />
+    				<p:menuitem value="Gestion de Punto de Ventas" url="puntoventa" /> 
+    				<p:menuitem value="Agregar Componente" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >		
+		<h:panelGrid columns="6">
+				#{"Punto de Venta Seleccionado:"}
+				<h:outputText value=" #{addComponenteMB.puntoVenta.namePuntoVenta}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Oficina:"}
+				<h:outputText value=" #{addComponenteMB.puntoVenta.desOficina}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Agencia:"}
+				<h:outputText value=" #{addComponenteMB.puntoVenta.desAgencia}" 
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>		
+		<!-- toolbar -->
+		
+		<h:form>
+			<h:panelGrid columns="2">
+				<p:commandButton value="Agregar nuevo Componente" icon="icon-add"  oncomplete="perfilDialog.show();" 
+				actionListener="#{addComponenteMB.nuevoComponente()}" update=":detPerfilDialog"	/>
+				<p:commandButton value="Regresar" icon="icon-exit" action="pretty:puntoventa" />
+			</h:panelGrid>
+		</h:form>		
+			
+		<br/>
+		
+		<!-- listado de Componentes -->
+		<h:form id="frmListaComp">
+					
+			<p:dataTable value="#{addComponenteMB.listaComponente}" var="per" style="width:750px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+						 
+    			<f:facet name="header">Lista de Componentes</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Nombre">
+    				#{per.nombre}
+    			</p:column>
+    			
+    			<p:column headerText="Descripcion">
+    				#{per.descripcion}
+    			</p:column>
+    			
+    			<p:column style="width:10px" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{addComponenteMB.cambiarEstado(per)}" > 
+							<h:graphicImage value="#{per.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{per.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+
+
+				<p:column headerText="Editar/Elim." style="width:100px;text-align: center">
+
+				<p:commandButton title="Editar" update=":detPerfilDialog"
+							actionListener="#{addComponenteMB.editarComponente(per)}"
+							oncomplete="perfilDialog.show();" icon="icon-edit">
+				</p:commandButton>
+
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+							<f:setPropertyActionListener target="#{addComponenteMB.componente}"
+								value="#{per}" />
+				</p:commandButton>
+				
+				<p:commandButton title="Historial" action="#{addComponenteMB.agregarHistorial(per)}" icon="icon-historial">
+				</p:commandButton>
+
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+   			<!-- dilogo eliminar -->
+   
+			<p:confirmDialog id="confirmDialog" message="Seguro de eliminar este componente"   appendToBody="true"
+             		header="Eliminar Componente" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaComp :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{addComponenteMB.eliminarComponente()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    		</p:confirmDialog> 
+					
+		
+				<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede eliminar el componente porque cuenta con historiales" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+				
+		<!-- dialogo nuevo perfil -->
+		<p:dialog header="Registrar Componente"
+			  		widgetVar="perfilDialog" resizable="false"
+			  		id="detPerfilDialog" showEffect="fade" hideEffect="explode"
+			 		appendToBody="true" modal="true" >
+			<h:form>
+				<p:messages showDetail="false" showSummary="true" id="mgsNuevo" closable="true" />
+				<h:panelGrid columns="2">
+				
+					#{"Nombre:"}		
+					<h:selectOneMenu value="#{addComponenteMB.componente.nombre}" 
+						required="true" requiredMessage="Se necesita un nombre">
+						<f:selectItem itemLabel="[--Seleccione--]" itemValue="#{null}" noSelectionOption="true" />
+						<f:selectItem   itemLabel="Monitor" itemValue="MONITOR" />
+						<f:selectItem   itemLabel="CPU" itemValue="CPU" />
+						<f:selectItem   itemLabel="Disco duro" itemValue="DISCO_DURO" />
+						<f:selectItem   itemLabel="RAM" itemValue="RAM" />
+						<f:selectItem   itemLabel="Placa" itemValue="PLACA" />
+						<f:selectItem   itemLabel="Fuente PW" itemValue="FUENTE" />
+						<f:selectItem   itemLabel="Teclado" itemValue="TECLADO" />
+						<f:selectItem   itemLabel="Mouse" itemValue="MOUSE" />
+						<f:selectItem   itemLabel="Estabilizador" itemValue="ESTABILIZADOR" />
+						<f:selectItem   itemLabel="Otros" itemValue="OTROS" />
+					</h:selectOneMenu>
+
+					#{"Descripcion:"}		
+					<p:inputTextarea cols="16" rows="4" style="width:200px" value="#{addComponenteMB.componente.descripcion}" 
+					required="true" requiredMessage="Se necesita una descripcion"/>
+					
+							
+					<p:commandButton value="Grabar" actionListener="#{addComponenteMB.guardarComponente()}"
+								 oncomplete="validarCampos(xhr, status, args)" update=":frmListaComp mgsNuevo" />
+							
+					<p:commandButton value="Cerrar" onclick="perfilDialog.hide();" type="button" />
+							
+				</h:panelGrid>
+			</h:form>
+			<p:messages id="sms" showDetail="true" showSummary="true" />
+		</p:dialog>
+		
+		<!-- js  -->		
+		<script>
+
+			function validarCampos(xhr, status, args) {  
+    			if(args.validationFailed) {  
+      				jQuery('#detPerfilDialog').effect("shake", { times:3 }, 100);  
+    			} else {  
+    				
+      				perfilDialog.hide();  
+    			}  
+			}  
+
+		</script>
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Sistema Automotor" url="sisAutomotor" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Sistema Automotor" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{automotorMB.nuevaAutomotor()}" />
+
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de Automotor -->
+			<h:form id="formListaAutomotor">
+				<p:dataTable widgetVar="dtAutomotor" var="p" value="#{automotorMB.listaAutomotors}" filteredValue="#{automotorMB.listaFiltroAutomotors}"  
+					emptyMessage="No hay Partes de Automotor Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Automotor</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:15%" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{automotorMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{automotorMB.editarAutomotor(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+							
+						</p:commandButton>
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{automotorMB.automotor}" value="#{p}" />
+						</p:commandButton>
+						
+						<p:commandButton title="Asociar" action="#{automotorMB.asociarPartes(p)}" icon="icon-asociacionproductoalmacen"/>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{automotorMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Descripcion:"}
+							<p:inputText style="width:200px" value="#{automotorMB.automotor.descripcion}" styleClass="mayuscula" required="true" maxlength="50" requiredMessage="Se necesita un nombre" />
+							
+							
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{automotorMB.guardarAutomotor()}"
+									 update=":formListaAutomotor msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este sistema automotor?" header="Eliminar Automotor"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Automotor: <h:outputText value="#{automotorMB.automotor.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaAutomotor :sms"
+						actionListener="#{automotorMB.eliminarAutomotor()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar el sistema automotor porque cuenta con autopartes asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptBoletosPostergados" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b39488bd-e64e-4662-abb6-3c07198019af">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_DESTINO" class="java.lang.String"/>
+	<parameter name="P_ORIGEN" class="java.lang.String"/>
+	<parameter name="P_OFICINA" class="java.lang.String"/>
+	<parameter name="P_TOTAL" class="java.lang.Integer"/>
+	<field name="desFSalida" class="java.util.Date"/>
+	<field name="desServicio" class="java.lang.String"/>
+	<field name="desHsalida" class="java.lang.String"/>
+	<field name="nroAsiento" class="java.lang.Integer"/>
+	<field name="diasRestantes" class="java.lang.Integer"/>
+	<field name="horasRestantes" class="java.lang.Integer"/>
+	<field name="personaCliente.nombres" class="java.lang.String"/>
+	<field name="personaCliente.dni" class="java.lang.String"/>
+	<field name="desOrigen" class="java.lang.String"/>
+	<field name="desDestino" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="102" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="d41fce65-fdab-4277-bd94-776cb7020ad1" x="179" y="15" width="250" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONSULTA DE RESERVAS]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="33394aa1-db06-41f8-9b14-bfeaad772451" x="32" y="15" width="134" height="47"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="3959fa4d-9548-4f51-9e05-86de5591bb0c" x="381" y="70" width="48" height="18"/>
+				<textElement/>
+				<text><![CDATA[DESTINO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="638815ba-8d1f-40a6-adf3-a87de8669952" x="84" y="70" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_ORIGEN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="37409010-8f2f-46b6-8f4d-c53fc19bf748" x="429" y="70" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_DESTINO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="cbeae254-aff0-4ee0-923a-dab5a7ba17a3" x="20" y="70" width="64" height="18"/>
+				<textElement/>
+				<text><![CDATA[ORIGEN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="65e8549c-aa26-48bb-b5ce-7c855a9883ec" x="200" y="44" width="64" height="18"/>
+				<textElement/>
+				<text><![CDATA[OFICINA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e5398f20-13dd-4123-879c-7403a7df9859" x="264" y="44" width="177" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_OFICINA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="a210503a-b3ab-4a04-bddc-c843e8c547c4" mode="Opaque" x="4" y="0" width="43" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[F.Salida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dd493925-a4ef-48ff-b276-4a1c8f454b78" mode="Opaque" x="47" y="0" width="53" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Servicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="70de486b-3da3-48fc-9104-961ee83eed10" mode="Opaque" x="186" y="0" width="50" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Dias Rest]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dc2d0e07-79c4-4f36-a569-b341076c861d" mode="Opaque" x="141" y="0" width="43" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Asiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3a4bb8b4-5794-4db3-9aa7-bc2d90f50e11" mode="Opaque" x="291" y="0" width="126" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Pasajero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a11058b6-bfbe-4471-b460-44d343ead4e0" mode="Opaque" x="417" y="0" width="44" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Dni]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f604b96b-5380-460d-8c5a-5f591606a89a" mode="Opaque" x="461" y="0" width="43" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Origen]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="861e97d5-62e1-4350-9c20-56717f8f3b7b" mode="Opaque" x="100" y="0" width="41" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[H.Salida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d7143a17-bdd2-4368-b0d9-3f563476d08e" mode="Opaque" x="237" y="0" width="53" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Horas Ret]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9644b1ed-5da6-46f0-8643-4b8e84abab85" mode="Opaque" x="504" y="0" width="51" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Destino]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="a3c81439-7886-42ee-82d0-8cb3851c3b96" x="4" y="0" width="43" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desFSalida}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="f3a1a516-8123-43fc-a5db-907f11a74a49" x="47" y="0" width="53" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desServicio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="2de50c54-90af-47bd-bea8-e469dc52c558" x="100" y="0" width="41" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desHsalida}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="8c7f1c0e-489c-45e4-9526-01d5a848d1f0" x="141" y="0" width="43" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nroAsiento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="47c5155d-4851-41e9-95b7-a64845af019d" x="186" y="0" width="51" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diasRestantes}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="15f227f4-0c67-49b9-80e7-4465accdee57" x="237" y="0" width="54" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{horasRestantes}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="ca39a228-f7d4-498c-9bb0-fbfa5d5d620e" x="291" y="0" width="126" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{personaCliente.nombres}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b276655f-1f19-4968-8791-41b36ad99bbf" x="417" y="0" width="44" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{personaCliente.dni}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="33e69d36-b9b5-4eba-8fde-ed88404f96a1" x="461" y="0" width="43" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desOrigen}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="dc6b48a4-81ef-4a72-8929-841eff0afc3f" x="504" y="0" width="51" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desDestino}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<textField>
+				<reportElement uuid="2581043d-ee4a-4692-8749-9fe9f4ec52f5" x="485" y="34" width="70" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="614d374c-2e3f-4a68-ab1a-d04a5d35ec1c" x="451" y="34" width="34" height="20"/>
+				<textElement/>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

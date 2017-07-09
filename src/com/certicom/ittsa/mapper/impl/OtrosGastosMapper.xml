@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.OtrosGastosMapper">
+
+<resultMap id="otrosGastosResult" type="com.certicom.ittsa.domain.OtrosGastos">
+	<id column="IdOtrosGastos" property="IdOtrosGastos"/>
+	<result column="IdOficina" property="IdOficina"/>
+	<result column="IdAgencia" property="IdAgencia"/>
+	<result column="fecha" property="fecha"/>
+	<result column="motivo" property="Telefono2"/>
+	<result column="monto" property="Telefono1"/>
+	<result column="ultimoAporte" property="Direccion"/>
+	<result column="saldo" property="Descripcion"/>
+	<result column="estado" property="estado"/>
+	
+	
+</resultMap>
+
+
+</mapper>

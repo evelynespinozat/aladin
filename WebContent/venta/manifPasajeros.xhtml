@@ -1,0 +1,947 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	<style>
+	.ui-panelgrid tr, td {
+border:0 !important;
+}
+
+
+.ui-panelgrid tr, .ui-panelgrid td {
+border:0 !important;
+}
+	</style>
+		<p:panel style="width:2000px;">
+			
+			<h:form>
+					<p:breadCrumb>  
+	    				<p:menuitem value="Home" url="#" />  
+	    				<p:menuitem value="Ventas" url="#" />
+	    				<p:menuitem value="Manifiesto de Pasajeros" url="manifiestoPasajeros" />   
+					</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true"/>
+			<h:panelGrid columns="2" style="vertical-align: top;">
+				<h:form id="formBusqueda">
+					<p:panel style="width:350px;">
+						<p:panelGrid>
+							<p:row>
+								<p:column>
+									<h:outputLabel value="Origen:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="cmbOrigen"  value="#{manifPasajeroMB.f_idOrigen}"
+							        	required="true" requiredMessage="Se necesita un origen"> 
+										<f:selectItem itemLabel="Seleccionar" itemValue="" />
+										<f:selectItems var="o" value="#{manifPasajeroMB.listaOrigenes}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+										<p:ajax listener="#{manifPasajeroMB.listarDestinosxOri()}"  event="change" update="cmbDestino "/>
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputLabel value="Destino:" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="cmbDestino" value="#{manifPasajeroMB.f_idDestino}"
+										required="true" requiredMessage="Se necesita un destino"> 
+										<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+										<f:selectItems var="d" value="#{manifPasajeroMB.listaDestinos}" itemValue="#{d.destino}" itemLabel="#{d.desDestino}"/>
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column><h:outputLabel value="Fecha "  /></p:column>
+								<p:column>
+									<p:calendar style="width:90px" value="#{manifPasajeroMB.fecha}" pattern="dd/MM/yyyy" locale="es" navigator="true" required="true" requiredMessage="Se necesita una fecha">
+									</p:calendar>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<p:commandButton icon="icon-search" title="Buscar" value="Buscar" actionListener="#{manifPasajeroMB.consultarProgramacion()}" update=":formListaProg"/>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+				</h:form>
+
+				<h:form id="fmServicio" >
+					<p:panel rendered="#{manifPasajeroMB.activarManifiesto}" style="width:900px;height:50px;">
+						<h:panelGrid columns="6" style="font-weight:bold;font-size: 1.8em;">
+								<h:outputLabel value="Servicio:" style="font-weight:bold;"/>
+								<h:outputLabel value="#{manifPasajeroMB.programacionSelected.descServicio}"
+												style="font-weight:bold;color:red"/>
+								<h:outputLabel value="F.Salida:" style="font-weight:bold;"/>
+								<h:outputLabel value="#{manifPasajeroMB.programacionSelected.fSalida}" style="font-weight:bold;color:red">
+									<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputLabel>
+								<h:outputLabel value="H.Salida:" style="font-weight:bold;"/>
+								<h:outputLabel value="#{manifPasajeroMB.programacionSelected.hSalida}"
+												style="font-weight:bold;color:red"/>
+						</h:panelGrid>
+					</p:panel>
+				</h:form>			
+			</h:panelGrid>			
+			<br/>					
+			<!-- listado de agencias -->
+			<h:panelGrid columns="4">
+				<p:column>
+					<h:form id="formListaProg">
+						<p:dataTable widgetVar="dtProgramacion" var="pr" value="#{manifPasajeroMB.listaProgramacion}" filteredValue="#{manifPasajeroMB.listaProgramacionFilter}"  
+							emptyMessage="No hay Prog Disponibles." rowIndexVar="nro" 
+							paginator="true"
+							rows="5" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20,30"
+							style="FONT-SIZE: 10px;width:500px; ">
+							<f:facet name="header">Programaciones</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:97px;" headerText="H. Salida" filterStyleClass="mayuscula" filterBy="#{pr.hSalida}" 
+									  filterStyle="width:60px;" filterMatchMode="contains">
+									<h:outputText value="#{pr.hSalida}"/>
+							</p:column>
+										
+							<p:column  style="width:75px;" headerText="F.Salida" >
+									<h:outputText value="#{pr.fSalida}">
+									 <f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+							</p:column>
+										
+							<p:column style="width:190px;" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{pr.descServicio}"  
+									  filterStyle="width:100px;" filterMatchMode="contains">
+									<h:outputText value="#{pr.descServicio}"/>
+							</p:column>
+							
+							<p:column headerText="Selecc." style="width:10%;text-align: center">
+								<p:commandButton title="Consultar lista de pasajeros"  actionListener="#{manifPasajeroMB.selectProgramacion(pr)}"
+												  icon="icon-search" update=":formListaManf :fmServicio :fmIngreso" >
+										  
+								</p:commandButton>
+							</p:column>
+		
+						</p:dataTable>
+					</h:form>
+				</p:column>
+					
+				<h:panelGrid columns="1">
+					<h:panelGroup id="fmIngreso">
+						<h:panelGrid columns="2" rendered="#{manifPasajeroMB.activarManifiesto}">
+							<h:form id="fmTipoEmbarque" style="width:550px;">					
+								<p:panel>
+									<h:panelGrid columns="2" >
+										<p:column>
+											<p:outputLabel value="Control de Embarque:" style="width:80px;font-weight:bold;"></p:outputLabel>
+										</p:column>
+										<p:selectOneMenu id="tipoEmb" value="#{manifPasajeroMB.tipoEmbarque}"  style="margin-left:5px;width:150px" >  						
+											<f:selectItem itemLabel="BIOMETRICO" itemValue="B" />
+											<f:selectItem itemLabel="DNI" itemValue="D" />
+											<p:ajax event="change" update=":fmTipoEmbarque:pnlEmbxDni :fmTipoEmbarque:pnlEmbBiometrico" listener="#{manifPasajeroMB.setearTipoEmbarque}"/>    
+										</p:selectOneMenu>
+									</h:panelGrid>
+
+									<h:panelGroup id="pnlEmbxDni">
+										<h:panelGrid columns="1" rendered="#{manifPasajeroMB.actEmbarDni}">
+											<p:messages  id="smsComprobacion" showDetail="false" showSummary="true"  closable="true"/>		
+											<h:panelGrid columns="1">
+												<h:panelGrid columns="2" style="height:80px;">
+													<h:outputLabel value="Ingresar DNI"  style="width:100px;font-weight:bold;"></h:outputLabel>
+													<p:inputText  id="campoDNI" style="margin-left:60px;width: 150px; height: 30px;font-weight:bold;font-size: 2em;" value="#{manifPasajeroMB.p_dni}"  required="true" requiredMessage="Debe ingresar el dni"/>
+												</h:panelGrid>
+																														
+												<h:panelGrid columns="1" style="width:500px;">
+													<p:fieldset  legend="Resumen de Viaje" style="TEXT-ALIGN:center;">
+													
+														<h:panelGrid columns="4"  rendered="#{manifPasajeroMB.estadoAppletCaptura}">
+															<h:outputLabel value="Destino:"  style="font-weight:bold;"></h:outputLabel>
+															<h:outputLabel value="#{manifPasajeroMB.destinoBus}" style="font-weight:bold;color:#AB1D14"></h:outputLabel>
+															<h:outputLabel value="F.Boleto:" style="margin-left:120px;font-weight:bold;"></h:outputLabel>
+															<h:outputLabel value="#{manifPasajeroMB.programacionSelected.fSalida}" style="font-weight:bold;color:#AB1D14">
+																<f:convertDateTime pattern="dd-MM-yyyy" />
+															</h:outputLabel>
+														</h:panelGrid>
+														
+														<h:panelGrid columns="3" rendered="#{manifPasajeroMB.estadoAppletCaptura}">
+															<h:outputLabel value="Bienvenido Sr(a)." style="width:300px;font-weight:bold;font-size: 1.5em;" />
+															<h:outputLabel value="Asiento:" style="margin-left:70px;font-weight:bold;font-size: 1.5em;" />
+															<h:outputLabel style="font-weight:bold;font-size: 1.8em;color:#AB1D14" value="#{manifPasajeroMB.p_asiento}" />
+														</h:panelGrid>
+														
+														<p:column>
+															<h:outputLabel style="font-weight:bold;font-size: 1.8em;color:blue" value="#{manifPasajeroMB.p_pasajero}" />
+														</p:column>
+														<h:panelGrid columns="5" rendered="#{manifPasajeroMB.estadoAppletCaptura}">
+															<h:outputLabel value="Pasajero:" style="font-weight:bold;"></h:outputLabel>
+															
+															<h:panelGrid rendered="#{manifPasajeroMB.estadoAppletCaptura}">
+																	<h:outputLabel value="FRECUENTE" rendered="#{manifPasajeroMB.frecuencia}" style="width:80px;font-weight:bold;color:#AB1D14"></h:outputLabel>
+																	<h:outputLabel value="NUEVO" rendered="#{manifPasajeroMB.nuevo}" style="width:80px;font-weight:bold;color:#AB1D14"></h:outputLabel>
+															</h:panelGrid>
+															
+															<h:outputLabel value="#{manifPasajeroMB.programacionSelected.descServicio}" style="width:80px;margin-left:120px;font-weight:bold;color:#AB1D14"></h:outputLabel>
+															<h:outputLabel value="-" style="font-weight:bold;color:blue"></h:outputLabel>
+															<h:outputLabel value="#{manifPasajeroMB.programacionSelected.hSalida}" style="width:80px;font-weight:bold;color:#AB1D14" ></h:outputLabel>
+														</h:panelGrid>
+												
+													</p:fieldset>
+												</h:panelGrid>
+												<p:column>
+													<p:commandButton  update="@form :sms :formListaManf :fmIngreso :dlgDetBus"  actionListener="#{manifPasajeroMB.arribarPasajero()}" style="visibility:hidden;" />
+												</p:column>
+											</h:panelGrid>
+											
+											<h:panelGrid rendered="#{manifPasajeroMB.estadoAppletCaptura}">
+												<p:fieldset legend= "Enrolamiento" style="width:200px;color:#0000FF;">
+													<h:panelGrid columns="2">
+														<p:column>
+															<applet id="HuelleroAppletCaptura" code="org.certicom.lectorhuella.applet.LectorHuellaApplet" style="width: 200px; height: 200px" archive="AppletBiometrico/ver.jar">	
+					        								 </applet>
+														</p:column>
+														
+														<p:column>
+															<p:inputText id="msCaptura" value="#{manifPasajeroMB.mensajeCaptura}"  style=" width:150px; font-weight:bold;font-size: 1.5 em;color:#080B01;  background: #FCC14D;" readonly="true" ></p:inputText>
+														</p:column>
+														
+														
+														<pe:remoteCommand name="guardar"  actionListener="#{manifPasajeroMB.guadarCaptura()}" process="@this"
+																update=":fmTipoEmbarque :formListaManf:frmBus :dlgDetBus " />
+													
+														
+														<pe:remoteCommand  name="envioTrama" process="@this">  
+												  
+												   			 <pe:assignableParam name="subject" assignTo="#{manifPasajeroMB.tramaHuella}"/>  
+														</pe:remoteCommand>
+														
+														<pe:remoteCommand  name="envioImagen" process="@this">  
+												  
+												   			 <pe:assignableParam name="subject" assignTo="#{manifPasajeroMB.imagenHuella}"/>  
+														</pe:remoteCommand>
+															
+													</h:panelGrid>
+												</p:fieldset>												
+											</h:panelGrid>													
+										</h:panelGrid>											
+									</h:panelGroup>
+								
+									<h:panelGroup id="pnlEmbBiometrico">
+										<h:panelGrid  rendered="#{manifPasajeroMB.actEmbarBiometrico}" style="width:550px;height:150px" id="pnlEm">											
+											<h:form id="formHllas">
+												<p:inputText id="huellasT" value="#{manifPasajeroMB.cadenaHuellas}"  type="hidden"/>
+												<p:inputText id="TotalH" value= "#{manifPasajeroMB.totalHuellas}"  type="hidden"> </p:inputText>					
+											</h:form>
+																		
+											<p:commandButton value="Verificacion"  onclick="verificar();" > </p:commandButton>
+											
+											<h:form id="formAppletMensaje">
+												<h:panelGrid columns="1" border="0" >
+													<h:panelGrid columns="2" border="0" rendered="#{manifPasajeroMB.estadoApplet}">
+														<p:column>
+															<applet style="width: 200px; height: 200px" id="HuelleroApplet" code="org.certicom.lectorhuella.applet.LectorHuellaApplet" archive="AppletBiometrico/ver.jar"> 
+															</applet>
+														</p:column>						
+														<p:column>
+															<p:inputText id="msVerificacion" value="#{manifPasajeroMB.mensajeVerificacion}"  style="width:250px;TEXT-ALIGN:center;font-weight:bold;font-size: 1em;color:#080B01;  background-color:#DABC25 " readonly="true"></p:inputText>
+														</p:column>
+													</h:panelGrid>													
+												</h:panelGrid>
+												
+												<h:panelGrid columns="2" border="0" id="pngBienvenido">
+													<h:outputText value="Bienvenido:" style="font-weight:bold;font-size: 1.2em;" />
+													<h:outputText style="width:280px;TEXT-ALIGN:center;font-weight:bold;font-size: 1.3em;color:blue; " value="#{manifPasajeroMB.p_pasajero}"/>
+						
+													<h:outputText value="Asiento:" style="font-weight:bold;font-size: 1.2em;" />
+													<h:outputText style="width:250px;TEXT-ALIGN:center;font-weight:bold;font-size: 1.3em;color:blue"   value="#{manifPasajeroMB.p_asiento}"/>
+													
+													<pe:remoteCommand id="applyDataCommand" name="applyData" process="@this" oncomplete="verificar();"
+														    actionListener="#{manifPasajeroMB.procesarApplet}" update="@form :formListaManf">  
+														  
+														    <pe:assignableParam name="subject" assignTo="#{manifPasajeroMB.index}"/>  
+													</pe:remoteCommand> 
+													
+													<pe:remoteCommand id="varDeafultBienvenido" name="setNoRegistrado" process="@this"  
+														actionListener="#{manifPasajeroMB.setBienvenidoDeafult()}" update="@form :formListaManf">  
+				
+													</pe:remoteCommand> 
+													
+													<pe:remoteCommand id="mensajeFinal" name="todosEmbarcados" process="@this" update="@form :formListaManf:frmBus" 
+														oncomplete="dlgAlerta.show();" actionListener="#{manifPasajeroMB.ocultarApplet()}" >
+													
+													</pe:remoteCommand>
+												
+												</h:panelGrid>	
+												
+											</h:form>
+											
+										</h:panelGrid>
+													
+									</h:panelGroup>
+									
+												
+								</p:panel>
+								<br/>		
+						
+							</h:form>
+							<h:panelGrid columns="1"  id="pnlResumenAsiento">	
+									<p:fieldset rendered="#{manifPasajeroMB.activarManifiesto}" legend="Resumen Asientos" style="width:300px">
+										<h:panelGrid columns="6">
+										  	#{"Total:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.as_capacidad}" style="width:80px;font-weight:bold;font-size: 2.5em;color:blue" />
+										  	#{"Vendidos:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.as_comprados}" style="width:80px;font-weight:bold;font-size: 2.5em; color:blue"  />
+										  	#{"Embarcados:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.as_embarcados}" style="width:80px;font-weight:bold;font-size: 2.5em; color:green" />
+										  	#{"No Embarcados:"}
+										  	  <h:commandButton  value="#{manifPasajeroMB.as_noembarcados}" style="width:80px;font-weight:bold;font-size: 2.5em;color:red" 
+										  		onclick="mostrarNoEmbarcados();"/> 
+										  	<!--<h:commandButton value="#{manifPasajeroMB.as_noembarcados}"  actionListener="#{manifPasajeroMB.listarNoEmbarcados()}" update=":dlgDetNoEmbarcados" oncomplete="dlgNoEmbarcados.show();"/>-->	 
+        								
+										  	<!--  <h:outputLabel  value="#{manifPasajeroMB.as_noembarcados}" style="width:80px;font-weight:bold;font-size: 2.5em;color:red"/>  --> 
+										  	 	
+										  	#{"Libres:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.as_alibres}" style="width:80px;font-weight:bold;font-size: 2.5em" />
+								  		</h:panelGrid>
+									</p:fieldset>
+					
+									<p:fieldset legend="Datos Bus/Tripulacion" rendered="#{manifPasajeroMB.activarManifiesto}">
+					     			  <h:panelGrid  columns="2">
+										  	#{"Placa:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.placabus}" style="width:80px;font-weight:bold;font-size: 1.2em"/>
+										  	#{"Bus:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.numeroBus}" style="width:80px;font-weight:bold;font-size: 1.2em" />
+										  	#{"Piloto:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.piloto}" style="width:80px;font-weight:bold;font-size: 1.2em" />
+										  	#{"Dni:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.dnipiloto}" style="width:80px;font-weight:bold;font-size: 1.2em"/>
+										  	#{"Copiloto:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.copiloto}" style="width:80px;font-weight:bold;font-size: 1.2em" />
+										  	#{"Dni:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.dnicopiloto}" style="width:80px;font-weight:bold;font-size: 1.2em"/>
+										  	#{"Terramoza 1:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.terramoza1}"  style="width:80px;font-weight:bold;font-size: 1.2em"/>
+										  	#{"Dni:"}
+										  	<h:outputLabel   value="#{manifPasajeroMB.tripulacion_prog.dniterramoza1}" style="width:80px;font-weight:bold;font-size: 1.2em" />
+										  	#{"Terramoza 2:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.terramoza2}"  style="width:80px;font-weight:bold;font-size: 1.2em"/>
+										  	#{"Dni:"}
+										  	<h:outputLabel  value="#{manifPasajeroMB.tripulacion_prog.dniterramoza2}" style="width:80px;font-weight:bold;font-size: 1.2em" />
+									  </h:panelGrid>				
+									</p:fieldset>		
+					
+								</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:panelGrid>
+		<h:form id="formListaManf">
+				
+			<p:remoteCommand  name="listarNoEmbarcados"  action="#{manifPasajeroMB.listarNoEmbarcados()}" update=":dlgDetNoEmbarcados" oncomplete="dlgNoEmbarcados.show();" />
+				
+<!-- 			<table> -->
+		<p:panel rendered="#{manifPasajeroMB.activarManifiesto}">
+			<p:layout style="min-width:1550px;min-height:1550px;">
+<!-- 			<tr> -->
+<!-- 				<td valign="top"> -->
+				<p:layoutUnit position="west" resizable="true" size="720" minSize="500" maxSize="1000" collapsible="true" header="Lista Pasajeros">
+					<p:dataTable rendered="#{manifPasajeroMB.activarManifiesto}" id="dtManifiesto" var="av" value="#{manifPasajeroMB.listaManifiesto}" filteredValue="#{manifPasajeroMB.listaFiltroManifiesto}"  
+							emptyMessage="No hay Prog Disponibles." rowIndexVar="nro" rows="80" style="FONT-SIZE: 10px;width:600px; height:1400px;">
+						<f:facet name="header">
+							Lista de Pasajeros<br/>
+							<h:panelGrid columns="9" >
+								Embarco:
+								<h:graphicImage value="/resources/img/embarco.png" 
+								 height="25" width="25" />
+								 
+								 <p:spacer width="10" height="1" />
+								 
+								 Libre:
+								 <h:graphicImage value="/resources/img/libre.png" 
+								 height="25" width="25" />
+								 
+								 <p:spacer width="10" height="1" />
+								 
+								 No Embarco:
+								 <h:graphicImage value="/resources/img/noEmbarco.png" 
+								 height="25" width="25" />
+								 
+								 <p:spacer width="120" height="1" />
+							</h:panelGrid>
+							
+						</f:facet>
+					
+						<p:column  headerText="Asiento" >
+							<h:outputText value="#{av.numero}"/>
+						</p:column>
+				
+						<p:column  headerText="DNI" filterBy="#{av.documentoPersona}"  
+						 filterStyle="width:60px;" filterMatchMode="contains">
+							<h:outputText value="#{av.documentoPersona}"/>
+						</p:column>
+				
+				    	<p:column  headerText="A.Paterno" filterStyleClass="mayuscula" filterBy="#{av.aPaterno}"  
+						 filterStyle="width:100px;" filterMatchMode="contains" >
+					  		<h:outputText value="#{av.aPaterno}"/>
+				    	</p:column>
+				
+				    	<p:column  headerText="A.Materno" >
+					 		<h:outputText value="#{av.aMaterno}"/>
+				    	</p:column>
+			
+			
+				    	<p:column  headerText="Nombre">
+							<h:outputText value="#{av.nombres}"/>
+				    	</p:column>
+				
+				    	<p:column  headerText="Sexo">
+					    	<h:outputText value="#{av.sexo}"/>
+				    	</p:column>
+
+					   	<p:column style="width:10px" headerText="Abordo">
+							<h:graphicImage value="#{av.abordo ? '/resources/img/embarco.png':av.documentoPersona eq '-' or empty av.documentoPersona ? '/resources/img/libre.png':'/resources/img/noEmbarco.png'}" title="#{av.abordo?'Abordo':'No abordo'}" height="25" width="25" />
+						</p:column>
+					</p:dataTable>
+				
+				</p:layoutUnit>
+				<p:layoutUnit position="center">
+						<h:panelGrid columns="1" id="pnlBus">
+									<p:column>			
+										<h:panelGroup>
+												<p:column rendered="#{manifPasajeroMB.activarManifiesto}">
+														<h:commandLink    id="imprimir" value="Imprimir Manifiesto" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+			    							 				color: #1C190A;" actionListener="#{manifPasajeroMB.imprimirManifiestoPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+														</h:commandLink>
+														<p:spacer width="20" height="2"/>
+														
+														<p:commandLink value="Mostrar Bus" oncomplete="dlgBus.show();"  actionListener="#{manifPasajeroMB.pintarBus()}" update=":dlgDetBus :frmBusDlg"
+																		style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+			    											 color: #1C190A;">
+							
+														</p:commandLink>
+														
+												</p:column>						
+										</h:panelGroup>
+									</p:column>		
+									<br>
+									</br>											
+								<p:column>
+									<h:form id="frmBus">	
+									<!-- ########################################## si el bus es de  dos pisos : #################################################### -->
+					
+<!-- 									<h:panelGroup rendered="#{manifPasajeroMB.busClase.nroPisos eq '2'}"> -->
+<!-- 											<h:panelGrid columns="5"> -->
+<!-- 															<h:graphicImage url="/resources/img/front.gif" height="280" /> -->
+<!-- 															<h:panelGroup> -->
+<!-- 																		<div -->
+<!-- 																			style="text-align: center; font-size: 13px; font-weight: bold; border-top-color: #df8f16; border-top-style: solid;"> -->
+<!-- 																			<h:outputText -->
+<!-- 																				value="Piso Uno: #{manifPasajeroMB.tipoAsientop1.nombre} S/.#{manifPasajeroMB.programacionSelected.servicio.precio1}" /> -->
+<!-- 																		</div> -->
+<!-- 																		<p:dataGrid var="as" -->
+<!-- 																			value="#{manifPasajeroMB.listaAsientosPisoUno}" -->
+<!-- 																			columns="#{manifPasajeroMB.nroColumnasPisoUno}" -->
+<!-- 																			rows="#{manifPasajeroMB.nroColumnasPisoUno*manifPasajeroMB.nroFilas}"> -->
+																			
+<!-- 																			<div style="text-align:center; font-size: 10px;padding: 0px 10px 0px 0px;"> -->
+<!-- 																				<h:outputText value="#{as.asientoVenta.numero}" /><br/> -->
+<!-- 																				<h:graphicImage rendered="#{as.asientoVenta.visible}"  -->
+<!-- 																				 url="http://10.162.170.174/huellas/#{as.asientoVenta.abordo ? as.asientoVenta.documentoPersona: as.asientoVenta.documentoPersona eq '-' or empty as.asientoVenta.documentoPersona ? 'libre':'noEmbarco'}.bmp" -->
+<!-- 																				 width="30" height="33"  onclick="pintarIndividuo('#{as.asientoVenta.documentoPersona}','#{as.asientoVenta.numero}');"  /> -->
+<!-- 																			</div> -->
+																			
+																					
+<!-- 																			<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.gif':'blanco.gif'}" -->
+<!-- 																					rendered="#{not as.estado and as.numero ge '200'}"  /> -->
+										
+																		
+<!-- 																		</p:dataGrid> -->
+<!-- 																		<div  style="height:8px;border-bottom-color:#df8f16;border-bottom-style: solid;" > -->
+<!-- 																			<h:outputText value="" /> -->
+<!-- 																		</div> -->
+<!-- 														 	</h:panelGroup> -->
+											
+<!-- 					  										<h:graphicImage  url="/resources/img/spacer.png" height="200" /> -->
+					  							
+					  							
+<!-- 								  							<h:panelGroup> -->
+								  							
+<!-- 								  								<div  style="text-align:center;font-size:13px;font-weight:bold;border-top-color:#df8f16;border-top-style:solid;" > -->
+<!-- 																<h:outputText value="Piso Dos: #{manifPasajeroMB.tipoAsientop2.nombre} S/.#{manifPasajeroMB.programacionSelected.servicio.precio2}" /> -->
+<!-- 																</div> -->
+																
+<!-- 																<p:dataGrid  var="as" value="#{manifPasajeroMB.listaAsientosPisoDos}"   -->
+<!-- 									  									columns="#{manifPasajeroMB.nroColumnasPisoDos}" rows="#{manifPasajeroMB.nroColumnasPisoDos*manifPasajeroMB.nroFilas}"> -->
+											
+<!-- 																		<div style="text-align:center; font-size: 10px;padding: 0px 10px 0px 0px;"> -->
+<!-- 																			<h:outputText value="#{as.asientoVenta.numero}" /><br/> -->
+<!-- 																			<h:graphicImage rendered="#{as.asientoVenta.visible}"  -->
+<!-- 																			 url="http://10.162.170.174/huellas/#{as.asientoVenta.abordo ? as.asientoVenta.documentoPersona: as.asientoVenta.documentoPersona eq '-' or empty as.asientoVenta.documentoPersona ? 'libre':'noEmbarco'}.bmp" -->
+<!-- 																			 width="30" height="33"  onclick="pintarIndividuo('#{as.asientoVenta.documentoPersona}','#{as.asientoVenta.numero}');"  /> -->
+<!-- 																		</div> -->
+																		
+<!-- 																		<h:graphicImage -->
+<!-- 																				value="resources/img/#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.png':'blanco.gif'}" -->
+<!-- 																				rendered="#{not as.estado and as.numero ge '200'}" /> -->
+									
+<!-- 																</p:dataGrid> -->
+									
+<!-- 																	<div -->
+<!-- 																		style="height: 8px; border-bottom-color: #df8f16; border-bottom-style: solid;"> -->
+<!-- 																		<h:outputText value="" /> -->
+<!-- 																	</div> -->
+<!-- 															</h:panelGroup> -->
+					
+<!-- 															<h:graphicImage url="/resources/img/back.gif" height="240" /> -->
+					
+<!-- 										</h:panelGrid> -->
+					
+<!-- 									</h:panelGroup> -->
+					
+									</h:form>
+								
+								</p:column>
+<!-- 								</tr> -->
+								
+						</h:panelGrid>		
+<!-- 					</table> -->
+					
+				</p:layoutUnit>
+<!-- 				</td> -->
+				
+				
+				
+<!-- 				</tr> -->
+<!-- 			</table> -->
+			</p:layout>
+			</p:panel>
+			
+			<p:remoteCommand  name="buscarInfo"  actionListener="#{manifPasajeroMB.buscarPersona}" oncomplete="dlgPasajero.show();" update=":dlgDetPasajero" />
+			
+			
+			<p:remoteCommand  name="actualizar" oncomplete="actualizaPagina();" update=":dlgDetBus" />
+		</h:form>
+			
+		</p:panel>
+		
+		
+		<p:dialog  widgetVar="dlgNoEmbarcados" appendToBody="true" modal="true" resizable="false"
+                  id="dlgDetNoEmbarcados" >
+				<h:outputText value="Pasajeros aun no Embarcados"  style="color:red; font-size=16px; font-weight:bold;" />	
+					
+				<p:dataTable  var="av" value="#{manifPasajeroMB.listaManifiestoNoEmbarcados}" 
+					filteredValue="#{manifPasajeroMB.listaManifiestoNoEmbarcadosFiltro}"  
+					emptyMessage="Todos los pasajeros embarcaron" rowIndexVar="nro" 
+					rows="80" 
+					style="FONT-SIZE: 10px;width:550px; ">
+					
+					<f:facet name="header">Lista de Pasajeros no Embarcados</f:facet>
+					
+					<p:column  headerText="Asiento" >
+						<h:outputText value="#{av.numero}"/>
+					</p:column>
+			
+					<p:column  headerText="DNI" >
+					<h:outputText value="#{av.persona.dni}"/>
+					</p:column>
+			
+			    	<p:column  headerText="A.Paterno">
+				  	<h:outputText value="#{av.persona.APaterno}"/>
+			    	</p:column>
+			
+			    	<p:column  headerText="A.Materno" >
+				 	<h:outputText value="#{av.persona.AMaterno}"/>
+			    	</p:column>
+			
+			    	<p:column  headerText="Nombre">
+					<h:outputText value="#{av.persona.nombres}"/>
+			    	</p:column>
+			
+			    	<p:column  headerText="Sexo">
+				    <h:outputText value="#{av.persona.sexo}"/>
+			    	</p:column>
+
+				</p:dataTable>
+					
+					
+		</p:dialog>
+	
+	
+		<p:dialog  widgetVar="dlgBus" appendToBody="true" modal="true" resizable="false"
+                  id="dlgDetBus"  closable="false">
+                  
+                                  
+					<h:outputText value="Bus"  style="color:red; font-size=16px; font-weight:bold;" />	
+					
+					<h:panelGrid columns="18" >
+						
+									<h:outputText value="Servicio" style="font-weight:bold;" />
+									<h:outputText value="#{manifPasajeroMB.programacionSelected.descServicio}" />
+									
+									<p:spacer width="10" height="2" />
+									
+									<h:outputText value="Hora de Salida:" style="font-weight:bold;" />
+									<h:outputText value="#{manifPasajeroMB.programacionSelected.hSalida}" />
+									
+									<p:spacer width="10" height="2" />
+									
+									<h:outputText value="Fecha de Salida:" style="font-weight:bold;" />
+									<h:outputText value="#{manifPasajeroMB.programacionSelected.fSalida}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />	
+									</h:outputText>
+									
+									<p:spacer width="10" height="2" />
+									
+									<h:outputText value="Embarcados:" style="font-weight:bold;" />
+									<h:outputText value="#{manifPasajeroMB.embarcados}" />
+									
+									<p:spacer width="10" height="2" />
+									
+									<h:outputText value="Sin Embarcar:" style="font-weight:bold;" />
+									<h:outputText value="#{manifPasajeroMB.noEmbarcados}" />
+									
+									<p:spacer width="10" height="2" />
+									
+									<h:outputText value="Libres" style="font-weight:bold;" />
+									<h:outputText value="#{manifPasajeroMB.libres}" />
+				
+						</h:panelGrid>
+						
+						<h:form id="frmBusDlg">	
+					
+									<p:remoteCommand  name="buscarInfo"  actionListener="#{manifPasajeroMB.buscarPersona()}" 
+										update=":dlgDetPasajero" oncomplete="dlgPasajero.show();" />
+						<!-- ########################################## si el bus es de  dos pisos : #################################################### -->
+
+							<h:panelGroup rendered="#{manifPasajeroMB.busClase.nroPisos eq '2'}">
+									<h:panelGrid columns="5">
+										<h:graphicImage url="/resources/img/front.gif" height="280" />
+												<h:panelGroup>
+														<div
+															style="text-align: center; font-size: 13px; font-weight: bold; border-top-color: #df8f16; border-top-style: solid;">
+															<h:outputText
+																value="Piso Uno: #{manifPasajeroMB.tipoAsientop1.nombre} S/.#{manifPasajeroMB.programacionSelected.servicio.precio1}" />
+														</div>
+														
+														<p:dataGrid var="as"
+																	value="#{manifPasajeroMB.listaAsientosPisoUno}"
+																	columns="#{manifPasajeroMB.nroColumnasPisoUno}"
+																	rows="#{manifPasajeroMB.nroColumnasPisoUno*manifPasajeroMB.nroFilas}">
+																	
+																	<div style="text-align:center; font-size: 10px;padding: 0px 10px 0px 0px;">
+																		<h:outputText value="#{as.asientoVenta.numero}" /><br/>
+																		<h:graphicImage rendered="#{as.asientoVenta.visible}" 
+																		 url="http://10.162.170.174/huellas/#{as.asientoVenta.abordo ? as.asientoVenta.nombreImagen: as.asientoVenta.nombreImagen eq '-' or empty as.asientoVenta.nombreImagen ? 'libre':'noEmbarco'}.bmp"
+																		 width="30" height="33"  onclick="pintarIndividuo('#{as.asientoVenta.documentoPersona}','#{as.asientoVenta.numero}');"  />
+																	</div>
+																	
+																			
+																	<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.gif':'blanco.gif'}"
+																			rendered="#{not as.estado and as.numero ge '200'}"  />
+																				
+														</p:dataGrid>
+														
+														<div  style="height:8px;border-bottom-color:#df8f16;border-bottom-style: solid;" >
+															<h:outputText value="" />
+														</div>
+														
+													</h:panelGroup>
+									
+			  									<h:graphicImage  url="/resources/img/spacer.png" height="200" />
+			  							
+			  							
+				  							<h:panelGroup>
+				  							
+						  								<div  style="text-align:center;font-size:13px;font-weight:bold;border-top-color:#df8f16;border-top-style:solid;" >
+														<h:outputText value="Piso Dos: #{manifPasajeroMB.tipoAsientop2.nombre} S/.#{manifPasajeroMB.programacionSelected.servicio.precio2}" />
+														</div>
+												
+														<p:dataGrid  var="as" value="#{manifPasajeroMB.listaAsientosPisoDos}"  
+							  									columns="#{manifPasajeroMB.nroColumnasPisoDos}" rows="#{manifPasajeroMB.nroColumnasPisoDos*manifPasajeroMB.nroFilas}">
+									
+															
+															
+																<div style="text-align:center; font-size: 10px;padding: 0px 10px 0px 0px;">
+																	<h:outputText value="#{as.asientoVenta.numero}" /><br/>
+																	<h:graphicImage rendered="#{as.asientoVenta.visible}" 
+																	 url="http://10.162.170.174/huellas/#{as.asientoVenta.abordo ? as.asientoVenta.nombreImagen: as.asientoVenta.nombreImagen eq '-' or empty as.asientoVenta.nombreImagen ? 'libre':'noEmbarco'}.bmp"
+																	 width="30" height="33"  onclick="pintarIndividuo('#{as.asientoVenta.documentoPersona}','#{as.asientoVenta.numero}');"  />
+																</div>
+																
+																<h:graphicImage
+																		value="resources/img/#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.png':'blanco.gif'}"
+																		rendered="#{not as.estado and as.numero ge '200'}" />
+							
+																
+							
+														</p:dataGrid>
+					
+														<div
+															style="height: 8px; border-bottom-color: #df8f16; border-bottom-style: solid;">
+															<h:outputText value="" />
+														</div>
+											</h:panelGroup>
+			
+											<h:graphicImage url="/resources/img/back.gif" height="240" />
+			
+										</h:panelGrid>
+										<p:commandButton value="Cerrar" onclick="dlgBus.hide();" update=":dlgDetBus" />	
+			
+								</h:panelGroup>
+
+							</h:form>
+						
+						
+		</p:dialog>
+		
+		
+		<p:dialog  widgetVar="dlgPasajero" appendToBody="true" modal="true" resizable="false"
+                  id="dlgDetPasajero"  style="width:100px;height:80px" closable="false">
+                  <p:fieldset legend= "PASAJERO" style="font-weight:bold;color:#0000FF;">
+		                 <h:panelGrid columns="2" border="0">
+		                 	<h:outputText value="Asiento"  style="font-size=16px; font-weight:bold;" />
+		                 	<h:outputText value="#{manifPasajeroMB.nroAsientoSelec}"   style="padding-left: 0.5cm;color:red; font-size=16px; font-weight:bold;" />
+		                 
+		                 	<h:outputText value="Pasajero"  style="font-size=16px; font-weight:bold;" />
+		                 	<h:outputText value="#{manifPasajeroMB.pasajero.nombres} #{manifPasajeroMB.pasajero.APaterno} #{manifPasajeroMB.pasajero.AMaterno}"  style="padding-left: 0.5cm;color:red; font-size=16px; font-weight:bold;" />
+		                 	
+		                 	<h:outputText value="DNI"  style="font-size=16px; font-weight:bold;" />
+		                 	<h:outputText value="#{manifPasajeroMB.pasajero.dni}"   style="padding-left: 0.5cm;color:red; font-size=16px; font-weight:bold;" />		
+		                 
+		                 </h:panelGrid> 
+		                 <br>
+		                 </br>
+		                 <p:commandButton value="Cerrar" type="button" onclick="dlgPasajero.hide();" />	
+		            </p:fieldset>
+                
+					
+		</p:dialog>
+		
+		<p:dialog widgetVar="dlgAlerta" appendToBody="true" modal="true" resizable="false"
+                  id="dlgDetalerta"  style="width:100px;height:180px" closable="false">
+                  <h:panelGrid columns="1">
+                  		<h:outputText value="NO HAY PASAJEROS A EMBARCAR" style="text-align:center ;font-size=16px; font-weight:bold;color:red">                  		
+                  		</h:outputText>
+                  </h:panelGrid>
+                   <p:commandButton value="Cerrar" oncomplete="dlgAlerta.hide();" 
+                   update=":fmTipoEmbarque:formAppletMensaje" action="#{manifPasajeroMB.mostrarApplet()}"/>	
+		
+		</p:dialog>	
+	
+		
+		
+	<script type="text/javascript" src="jsThreads/Concurrent.Thread.js"></script>	
+		<script type="text/javascript">
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else { 
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+		
+		var cadenaHuella;
+		var cantidadHuellas;
+		var umbcap;
+		var umbdetec;
+		var umbverif;
+		var minUmbralVerificacion;
+		var mensajeVer;
+		var i=0;	
+		var appletHuelleroLumi;
+		var resultadoComparacion=0;
+		
+		function cargaValores(){
+			 var hll=document.getElementById("fmTipoEmbarque:formHllas:huellasT");
+			 cadenaHuella=hll.value;
+			 
+		 	umbcap="#{manifPasajeroMB.getUmbralCaptura()}";
+			umbdetec="#{manifPasajeroMB.getUmbralDeteccion()}";			
+			umbverif="#{manifPasajeroMB.getUmbralVerificacion()}";			
+			minUmbralVerificacion="#{manifPasajeroMB.getMinUmbralVerificacion()}";	
+			
+			
+		}
+		
+		function procesoVerificaHuella(){
+// 			console.log("****** ingresa a proceso de verificacion de Huella");
+			var h;
+			 
+			console.log("*****---> indice--"+i); 
+            if(i==cantidadHuellas){
+				i=0;				
+			}
+            
+            h=cadenaHuella.substring(i*6668,6668*(i+1));
+//             console.log("************ENVIANDO*******");
+//             console.log(h);
+			
+			appletHuelleroLumi=document.getElementById("HuelleroApplet");	
+			
+            
+            appletHuelleroLumi.setUmbralCalidadImagenCaptura(umbcap); 
+            appletHuelleroLumi.setUmbralCalidadImagenDetectada(umbdetec);
+            appletHuelleroLumi.setUmbralVerificacionHuella(umbverif);
+//          appletHuelleroLumi.verificarHuella("Rk1SACAyMAADKgA1CgEAAAEYAWAAxQDFAQAAAAAoQKMA1rAAQKgAwkgAQJQAtKIAQGkAyZMAQFoA5JoAQOYAzo0AQI0BL1UAQGEBHlcAQKQAhVYAQGsBMlwAQGEBOwIAQDABGQYAQHQAWWYAQIQAJ1sAQIgA2KMAQKgBAEoAQKYBDgAAQMUAuT8AQGgBFUwAgOgA7ywAgGkBJLAAgMABLlkAgPQA+lsAgPUAq5cAgO0BL2IAgOcAeJsAgPoAbp0AgIYA5aIAgIsBA0YAgHAA+kEAgIsBHlQAgNUAr44AgNoBEF8AgFABB04AgPMA1ZQAgH8BOVwAgNoBNggAgDABERkAgLsAYqAAgGcATGYAAhoBAQIaSUMCASA4AQISGtAMAOc1k1h+wMJqDgDzRpdrwcBp/sRqEQD7V5rAwmXC/23Dd8IHAIAmfWl7EgD/ZZpywGuIcoQRAPBlmnTB/pSQwcF7FAEDhaDAwcDCZcPAwW/CwW8KAN5vnHjCwMCDBgBdS3DCagYAXVJtfsEMALFdj4D/xIZsBgBwWnSTwBYBA9yp/1JqeImdwsJkCQEHsqRFwMLAwBMA78uwwGl0kcDEjsDBBgDDbB5U/hAA48SxaXjDwMLDoMAQANXTvcL/wsKDwsLCxcLCwAMBB5emwQQA7YIkVQ8Am3+MpcLDlMDDw8DDDgCahonFw6nBk3kJAK6NHv///P//9fsVAMW1qYDExMPHwsLDkcHBl8ETAMXKusXBgsnFw8Op/8PCxMIEAL/ComoDAJ2sHMAEAIqsRrIDAPe1K8AFAJC5JsSaBADWtDRGEgBSwEDC/8PEwcGD/5FdBQBawD2ODgBrzjfEeKDCUv4EAKvdDKUIAIvbGsJ9iQMAiOgcwRAATvAkecFmfMM+AwBI9CnCBgDx+oPCwf/ACBB6AhN7kwcQ+wV6W0kEEF4UkKYDEFkYicQMEP8desL+wvzBP1YEEFcfgI4HEL4wg09tCBCKLoP//8NxCxD/J3rAc/9DwAQQYS+AXQMQ/zB3wgQQYTd6RwwQ0Dl6/1PBwUX/DhD/O3pb/1lZNgYQ/0N6wMBUAxCzS4PCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");           
+            if(h!=null){           	 
+            	 appletHuelleroLumi.verificarHuella(h);
+            	 h=null;           	
+            }else{
+            	console.log("****** CADENA NULL");
+            }
+           
+           
+        
+    	}
+		
+		function  encontrarPasajero(numero){						
+			applyData(numero);	
+			console.log("**** termino applyData");
+			i=0;
+						
+		}
+		
+		function setValorDefaultBienvenido(){
+			setNoRegistrado();			
+		}
+		
+		function getResultadoComparacion(resultado){
+			 resultadoComparacion=parseInt(resultado);
+//			   console.log("---****** RESULTADO COMP :: "+resultadoComparacion);
+			   mensajeVer=document.getElementById("fmTipoEmbarque:formAppletMensaje:msVerificacion");
+			   
+			   console.log("SE PARECEN EN "+resultadoComparacion+" %");
+	           if(resultadoComparacion>umbverif){	
+	        	   console.log("---ESTA");
+	        	   mensajeVer.value="REGISTRADO EN EL SISTEMA"; 
+	        	   resultadoComparacion=0;
+	        	   encontrarPasajero(i);	        	          	   
+	           }else{
+	        	   resultadoComparacion=0;
+	        	   console.log("---NO ESTA");
+	        	   i=i+1;
+		        	   if(i==cantidadHuellas){
+		   					i=0;				
+		   				}
+	        	   mensajeVer.value="NO ESTA EN EL SISTEMA";	
+	        	   setValorDefaultBienvenido();					
+	           }
+	          
+	       }
+		
+		function verificar(){
+			var ct=document.getElementById("fmTipoEmbarque:formHllas:TotalH");
+			cantidadHuellas=ct.value;	
+		 	cargaValores();
+			 if(cantidadHuellas>0){	
+				 console.log("*** INICIA I-->"+i);
+				 procesoVerificaHuella();
+			 }else{
+				 mostrarMensajeFinal();
+			 }
+		}
+		
+		function mostrarMensajeFinal(){
+			todosEmbarcados();
+		}
+		
+		
+		function mostrarNoEmbarcados()
+		{
+			listarNoEmbarcados();
+
+		}
+		
+		function pintarIndividuo(dni,nro)
+		{
+// 			alert("--datos capturados "+dni+"--asiento "+nro);
+
+			var documento = dni;
+	    	//enviando parametros al metodo java
+	    	buscarInfo([{name:'doc', value:documento}, {name:'nro', value:nro}]);
+
+			
+			//alert("Datos del pasajero:\nDNI:"+dni+"\nNombres:"+nom);
+			
+// 			enviarDni(dni);
+// 			enviarAsiento(nro);
+		}
+		
+		//INICIANDO PROCESO DE CAPTURA DE HUELLAS
+		
+// 		var nombreImagen;
+		
+
+		function procesoCapturaHuella(nombreImagen){
+// 		         console.log(" procesa applet");
+		         
+		         var calidadImagenCaptura = "#{manifPasajeroMB.getUmbralCaptura()}";
+			     var calidadImagenDetectada ="#{manifPasajeroMB.getUmbralDeteccion()}";
+		         var appletHuelleroLumiCaptura=document.getElementById("HuelleroAppletCaptura");
+		         var pasajero=document.getElementById("fmTipoEmbarque:campoDNI");
+// 		         var nombreImagen="#{manifPasajeroMB.getNombreImagen()}" ;
+		         
+// 		         alert("-----nombre "+nombreImagen);
+// 		         console.log("*** nombre Imagen en proceso Captura "+nombreImagen);
+		         
+		          appletHuelleroLumiCaptura.setPathImagenHuella("C:\\xampp\\htdocs\\huellas\\"+nombreImagen);
+		          appletHuelleroLumiCaptura.setUmbralCalidadImagenCaptura(calidadImagenCaptura); 
+		          appletHuelleroLumiCaptura.setUmbralCalidadImagenDetectada(calidadImagenDetectada);
+// 		          console.log("iniciando captura");
+		          appletHuelleroLumiCaptura.capturarHuella();
+		                   
+		       }
+		
+		 function captura(img){
+			 
+// 			 	alert("var esperada:"+img);
+// 			 	console.log("---- inicia proceso de captura activado desde MB");
+// 	           console.log("************ PROCESO CAPTURA");				           
+	           procesoCapturaHuella(img);		     		           
+	       }
+		 
+		 
+		 function terminoCapturarHuella(tramaHuella){           
+// 		        console.log("---capturo huella");   
+	            envioTrama(tramaHuella);
+	       }
+
+		 function actualizaPagina(){
+// 			 alert("---ACTUALIZANDO PAGINA DESPUES DE GUARDAR--");
+// 			console.log("..actualizando");
+		 }
+	       function terminoCapturarImagenHuella(imagenHuella){           
+	           //EN ESTE METODO SE GUARDA LA TRAMA DE LA HUELLA			            
+	           	var varMensaje=document.getElementById("fmTipoEmbarque:msCaptura");
+// 	            console.log("---capturo imagen");  
+	            varMensaje.value="CAPTURA CORRECTA!";
+	            envioImagen(imagenHuella);
+// 	            console.log("****** invoca a remote command ---> guardar");
+	            guardar();
+	            actualizar();
+	       }
+		
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCostoMantxBus" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b39488bd-e64e-4662-abb6-3c07198019af">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_FEC_DESDE" class="java.lang.String"/>
+	<parameter name="P_FEC_HASTA" class="java.lang.String"/>
+	<parameter name="P_NROBUS" class="java.lang.Integer"/>
+	<parameter name="P_TOTAL" class="java.lang.Double"/>
+	<field name="descAutoparte" class="java.lang.String"/>
+	<field name="cantidad" class="java.lang.Integer"/>
+	<field name="costo" class="java.lang.Double"/>
+	<field name="fecPedido" class="java.util.Date"/>
+	<field name="tipoMantenimiento" class="java.lang.String"/>
+	<field name="subtotal" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="99" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="d41fce65-fdab-4277-bd94-776cb7020ad1" x="152" y="15" width="250" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COSTOS POR BUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="295ed5c9-1e0e-4480-8e77-458a52c088cb" x="19" y="64" width="69" height="18"/>
+				<textElement/>
+				<text><![CDATA[Rango Fechas:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="8a8c220b-12cd-4600-b7c8-08dcf52aa64b" x="88" y="64" width="100" height="18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cf32974f-ed11-433d-947c-f7bc77e19dbd" x="206" y="64" width="100" height="18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_HASTA}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="33394aa1-db06-41f8-9b14-bfeaad772451" x="32" y="15" width="103" height="38"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="5f51f6bd-a6f2-432f-b70b-7d9738ca9376" x="357" y="64" width="45" height="18"/>
+				<textElement/>
+				<text><![CDATA[Bus Nro:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="00094be9-19dd-447f-9889-a2d100296aa0" x="402" y="64" width="93" height="18"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NROBUS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="53f80087-91c9-42cf-94ad-441c6e340d84" x="0" y="6" width="555" height="15" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="8a806d8e-e9fd-4c1b-99af-12acdac74678" x="4" y="6" width="120" height="15"/>
+				<textElement/>
+				<text><![CDATA[Autoparte]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0cb16ee4-d4df-4bea-8177-63a48074e8d9" x="163" y="6" width="37" height="15"/>
+				<textElement/>
+				<text><![CDATA[Cant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f9e5e9bc-37e2-4cb1-9e87-705b5d919f6c" x="220" y="6" width="43" height="15"/>
+				<textElement/>
+				<text><![CDATA[Costo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b46091d0-515b-4930-af3e-35e2664d499e" x="370" y="7" width="108" height="14"/>
+				<textElement/>
+				<text><![CDATA[Tip. Mant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eae0f672-0a9c-4822-bf06-3047ac750686" x="282" y="7" width="62" height="14"/>
+				<textElement/>
+				<text><![CDATA[Fecha Sol.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="602faf0c-e252-4192-9da2-f2d2dfb52722" x="495" y="6" width="60" height="14"/>
+				<textElement/>
+				<text><![CDATA[Costo Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement uuid="0f2e055a-d1ae-448c-8451-7a42972e00d5" x="4" y="0" width="120" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descAutoparte}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="d9ca38bb-e822-45d7-9ee7-33b5266bcc05" x="370" y="0" width="108" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoMantenimiento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="540ad23c-3e5a-47c9-80a9-b06b40213656" x="282" y="0" width="62" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecPedido}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="59b5ef8f-dbaa-46e6-b750-30300ffe128b" x="495" y="1" width="60" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="6c2cc498-a5f6-4315-830a-0bec27c33bc8" x="219" y="1" width="43" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{costo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="ec0622eb-7554-4f35-82e2-9e5986336959" x="163" y="1" width="37" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="50"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="47" splitType="Stretch">
+			<textField>
+				<reportElement uuid="8ef67529-2fc9-4739-883e-c38da777f117" x="495" y="-47" width="60" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b79422ee-3040-4999-bc62-a617e34e08eb" x="431" y="-45" width="47" height="18"/>
+				<textElement/>
+				<text><![CDATA[Total: S/. ]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

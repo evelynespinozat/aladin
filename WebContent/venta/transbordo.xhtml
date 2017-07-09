@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<style>
+		.ui-datagrid-column 
+		{
+			padding: 0px !important;
+		}
+		
+		.ui-buttonset 
+		{
+			margin-right: 0px !important;
+		}
+
+		.ui-datagrid .ui-widget-content .ui-state-default
+		{
+			margin-right: 0px !important;
+		}
+	
+	</style>
+	
+	<p:growl id="sms" showDetail="false" showSummary="true"  sticky="false" life="3000"   />
+			
+	<!-- ########################################## pintando bus #################################################### -->
+	<h:form id="frmBusOrigen">
+
+	<h:panelGroup>
+		<div style="width:1000px;text-align: center;" >
+			<h:outputText value="Origen #{trasnbordoBusMB.programacion.servicio.descripcion}" style="color:red; font-size:18px;font-weight:bold;" />
+		</div>
+		
+    	<h:panelGrid columns="5" >
+    						
+    		<h:graphicImage name="front.gif" library="img" height="220" width="70" />					
+    		<h:panelGroup>
+    		
+				<div  style="height:30px;text-align:center;font-size:13px;font-weight:bold;border-top-color:#000;border-top-style:solid;" >
+					<h:outputText value="Piso Uno: #{trasnbordoBusMB.programacion.tipoAsientoP1.nombre} S/.#{trasnbordoBusMB.programacion.servicio.precio1}" />
+				</div>
+									
+    			<p:dataGrid var="as" value="#{trasnbordoBusMB.listaAsientosPisoUno}"  
+    						columns="#{trasnbordoBusMB.nroColumnasPisoUno}" 
+    						rows="#{trasnbordoBusMB.nroColumnasPisoUno*trasnbordoBusMB.nroFilas}">
+    										
+							<p:commandButton value="#{as.asientoVenta.numero}"
+								rendered="#{as.estado and as.asientoVenta.visible}"
+								actionListener="#{trasnbordoBusMB.seleccionarAsiento(as.asientoVenta)}" 
+								disabled="#{as.asientoVenta.estado eq 'PROCESO' or not as.visible}" 
+								icon="#{as.asientoVenta.sexo eq 'F' ? 'icon-mujer':as.asientoVenta.sexo eq 'M'?'icon-varon':'icon-vacio'}"
+							 	style="border-color: #fff; border-width: 1px; font-size:11px;font-weight:bold; color:#000; background-image: none;
+							 	background-color:#{as.asientoVenta.estado eq 'VENTA' ? 'red': as.asientoVenta.estado eq 'RESERVA' ? '#D80DCE':as.asientoVenta.estado eq 'PROCESO' ? '#1C7FC2':'#30E673' };">
+							
+							</p:commandButton>
+			 				
+			 				<h:graphicImage rendered="#{not as.estado and as.numero ge '200'}"
+			 				 name="#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.gif':'blanco.gif'}" library="img" title="asiento ocupado" />
+				</p:dataGrid>
+				
+				<div  style="height:20px;border-bottom-color:#000;border-bottom-style: solid;" >
+					<h:outputText value="" />
+				</div>
+			</h:panelGroup>
+		
+			<h:graphicImage name="spacer.png" library="img" height="180" />							
+    							
+    		<h:panelGroup>
+    							
+				<div  style="text-align:center;font-size:13px;font-weight:bold;border-top-color:#000;border-top-style:solid;" >
+					<h:outputText value="Piso Dos: #{trasnbordoBusMB.programacion.tipoAsientop2.nombre} S/.#{trasnbordoBusMB.programacion.servicio.precio2}" />
+				</div>
+									
+				<p:dataGrid  var="as" value="#{trasnbordoBusMB.listaAsientosPisoDos}"  
+							columns="#{trasnbordoBusMB.nroColumnasPisoDos}" rows="#{trasnbordoBusMB.nroColumnasPisoDos*trasnbordoBusMB.nroFilas}">
+							
+							<p:commandButton value="#{as.asientoVenta.numero}" rendered="#{as.estado}" 
+								actionListener="#{trasnbordoBusMB.seleccionarAsiento(as.asientoVenta)}"
+								disabled="#{as.asientoVenta.estado eq 'PROCESO'}" 
+								icon="#{as.asientoVenta.sexo eq 'F' ? 'icon-mujer':as.asientoVenta.sexo eq 'M'?'icon-varon':'icon-vacio'}"
+							 	style="border-color:#fff; color:#000; border-width: 1px; font-size:11px;font-weight:bold; background-image: none;
+								background-color:#{as.asientoVenta.estado eq 'VENTA' ? 'red': as.asientoVenta.estado eq 'RESERVA' ? '#D80DCE':as.asientoVenta.estado eq 'PROCESO' ? '#1C7FC2':'#30E673' };">
+							</p:commandButton>	 
+
+							<h:graphicImage rendered="#{not as.estado and as.numero ge '200'}"
+			 				 name="#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.gif':'blanco.gif'}" library="img" title="asiento ocupado" />
+
+				</p:dataGrid>
+									
+				<div  style="height:8px;border-bottom-color:#000;border-bottom-style: solid;" >
+					<h:outputText value="" />
+				</div>
+    		</h:panelGroup>
+    		
+    		<h:graphicImage name="back.gif" library="img" height="190" width="30" />					
+    							
+    	</h:panelGrid>
+
+	</h:panelGroup>
+
+	</h:form>
+
+		<hr/>
+		
+	<h:form>
+	
+		<p:fieldset legend="Servicios Programados" toggleable="true" toggleSpeed="100" >
+		
+			<p:dataTable id="dtProg" var="pr" value="#{trasnbordoBusMB.listaProgramacion}"
+						selectionMode="single" rowKey="#{pr.idProgramacion}"
+						selection="#{trasnbordoBusMB.programacionSelec}"
+						emptyMessage="No hay programaciones disponibles" rowIndexVar="nro"
+						style="FONT-SIZE: 10px;width:1000px;">
+
+						<p:ajax event="rowSelect"
+							listener="#{trasnbordoBusMB.seleccionar()}"
+							update=":frmTarget" />
+
+						<f:facet name="header">Servicios Frecuentes</f:facet>
+
+						<p:column style="width:80px;" headerText="H. Salida" filterStyleClass="mayuscula"
+							filterBy="#{pr.hSalida}" filterStyle="width:50px;"
+							filterMatchMode="contains">
+							<h:outputText value="#{pr.hSalida}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:105px;" headerText="H. Aprox Llegada">
+							<h:outputText value="#{pr.hLlegadaAprox}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:250px;" headerText="Servicio" filterStyleClass="mayuscula"
+							filterBy="#{pr.servicio.descripcion}"
+							filterStyle="width:150px;" filterMatchMode="contains">
+							<h:outputText value="#{pr.servicio.descripcion}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:60px;" headerText="Disp.">
+							<h:outputText value="#{pr.disponibles}"
+								style="color:#{pr.clase.color};font-size:12px;font-weight:bold;" />
+						</p:column>
+
+						<p:column headerText="Tipo P1/Disp.">
+							<h:outputText
+								value="#{pr.disponibleP1}-#{pr.tipoAsientoP1.nombre}"
+								style="color:#{pr.clase.color};"/>
+						</p:column>
+
+						<p:column headerText="Tipo P2/Disp.">
+							<h:outputText
+								value="#{pr.disponibleP2}-#{pr.tipoAsientop2.nombre}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:80px;" headerText="S/.P1"
+							filterBy="#{pr.servicio.precio1}" filterStyle="width:40px;"
+							filterMatchMode="contains">
+							<h:outputText value="S/.#{pr.servicio.precio1}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:80px;" headerText="S/.P2"
+							filterBy="#{pr.servicio.precio2}" filterStyle="width:40px;"
+							filterMatchMode="contains">
+							<h:outputText value="S/.#{pr.servicio.precio2}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+				
+			</p:dataTable>
+			
+			<hr/>
+			
+			
+			<p:dataTable id="dtProgDeman" var="pr" value="#{trasnbordoBusMB.listaProgramacionDemanda}"
+						selectionMode="single" rowKey="#{pr.idProgramacion}"
+						selection="#{trasnbordoBusMB.programacionSelec}"
+						emptyMessage="No hay programaciones disponibles" rowIndexVar="nro"
+						style="FONT-SIZE: 10px;width:1000px;">
+
+						<p:ajax event="rowSelect"
+							listener="#{trasnbordoBusMB.seleccionar()}"
+							update=":frmTarget" />
+
+						<f:facet name="header">Servicios a Demanda</f:facet>
+
+						<p:column style="width:80px;" headerText="H. Salida"
+							filterBy="#{pr.hSalida}" filterStyle="width:50px;"
+							filterMatchMode="contains">
+							<h:outputText value="#{pr.hSalida}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:105px;" headerText="H. Aprox Llegada">
+							<h:outputText value="#{pr.hLlegadaAprox}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:250px;" headerText="Servicio" filterStyleClass="mayuscula"
+							filterBy="#{pr.servicio.descripcion}"
+							filterStyle="width:150px;" filterMatchMode="contains">
+							<h:outputText value="#{pr.servicio.descripcion}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:60px;" headerText="Disp.">
+							<h:outputText value="#{pr.disponibles}"
+								style="color:#{pr.clase.color};font-size:12px;font-weight:bold;" />
+						</p:column>
+
+						<p:column headerText="Tipo P1/Disp.">
+							<h:outputText
+								value="#{pr.disponibleP1}-#{pr.tipoAsientoP1.nombre}"
+								style="color:#{pr.clase.color};"/>
+						</p:column>
+
+						<p:column headerText="Tipo P2/Disp.">
+							<h:outputText
+								value="#{pr.disponibleP2}-#{pr.tipoAsientop2.nombre}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:80px;" headerText="S/.P1"
+							filterBy="#{pr.servicio.precio1}" filterStyle="width:40px;"
+							filterMatchMode="contains">
+							<h:outputText value="S/.#{pr.servicio.precio1}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+						<p:column style="width:80px;" headerText="S/.P2"
+							filterBy="#{pr.servicio.precio2}" filterStyle="width:40px;"
+							filterMatchMode="contains">
+							<h:outputText value="S/.#{pr.servicio.precio2}"
+								style="color:#{pr.clase.color};" />
+						</p:column>
+
+									
+			</p:dataTable>
+			
+			</p:fieldset>
+	
+		</h:form>
+		
+		<br/>
+		
+		<h:form id="frmTarget" >
+			<h:panelGroup  rendered="#{not empty trasnbordoBusMB.programacionSelec.idProgramacion}">
+			
+			<h:panelGroup>
+				<div style="width:1000px;text-align: center;">
+					<p:commandLink actionListener="#{trasnbordoBusMB.transbordar}" update="@form :frmBusOrigen :sms">  
+						<h:graphicImage name="transbordar.png" library="img" height="54" width="55" />
+					</p:commandLink>
+					<h:outputText value="Transbordo #{trasnbordoBusMB.programacionSelec.servicio.descripcion}" style="color:red; font-size:18px;font-weight:bold;" />
+				</div>
+				
+    		<h:panelGrid columns="5" >
+    						
+    		<h:graphicImage name="front.gif" library="img" height="220" width="70" />					
+    		<h:panelGroup>
+    		
+				<div  style="height:30px;text-align:center;font-size:13px;font-weight:bold;border-top-color:#000;border-top-style:solid;" >
+					<h:outputText value="Piso Uno: #{trasnbordoBusMB.programacionSelec.tipoAsientoP1.nombre} S/.#{trasnbordoBusMB.programacionSelec.servicio.precio1}" />
+				</div>
+									
+    			<p:dataGrid var="as" value="#{trasnbordoBusMB.listaAsientosPisoUnoTarget}"  
+    						columns="#{trasnbordoBusMB.nroColumnasPisoUnoTarget}" 
+    						rows="#{trasnbordoBusMB.nroColumnasPisoUnoTarget*trasnbordoBusMB.nroFilas}">
+    										
+							<p:commandButton value="#{as.asientoVenta.numero}" rendered="#{as.estado}" 
+								disabled="#{as.asientoVenta.estado eq 'PROCESO'}" 
+								icon="#{as.asientoVenta.sexo eq 'F' ? 'icon-mujer':as.asientoVenta.sexo eq 'M'?'icon-varon':'icon-vacio'}"
+							 	style="color: #000; border-color: #fff; border-width: 1px; font-size:11px;font-weight:bold; background-image:none;
+								background-color:#{as.asientoVenta.estado eq 'VENTA' ? 'red': as.asientoVenta.estado eq 'RESERVA' ? '#D80DCE':as.asientoVenta.estado eq 'PROCESO' ? '#1C7FC2':'#30E673' };">
+							</p:commandButton>	 
+			 				
+			 				<h:graphicImage rendered="#{not as.estado and as.numero ge '200'}"
+			 				 name="#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.gif':'blanco.gif'}" library="img" title="asiento ocupado" />
+				</p:dataGrid>
+				
+				<div  style="height:20px;border-bottom-color:#df8f16;border-bottom-style: solid;" >
+					<h:outputText value="" />
+				</div>
+		</h:panelGroup>
+		
+		<h:graphicImage name="spacer.png" library="img" height="180" />							
+    							
+    	<h:panelGroup>
+    							
+				<div  style="text-align:center;font-size:13px;font-weight:bold;border-top-color:#000;border-top-style:solid;" >
+					<h:outputText value="Piso Dos: #{trasnbordoBusMB.programacionSelec.tipoAsientop2.nombre} S/.#{trasnbordoBusMB.programacionSelec.servicio.precio2}" />
+				</div>
+									
+				<p:dataGrid  var="as" value="#{trasnbordoBusMB.listaAsientosPisoDosTarget}"  
+							columns="#{trasnbordoBusMB.nroColumnasPisoDosTarget}" rows="#{trasnbordoBusMB.nroColumnasPisoDosTarget*trasnbordoBusMB.nroFilas}">
+							
+							<p:commandButton value="#{as.asientoVenta.numero}" rendered="#{as.estado}" 
+								disabled="#{as.asientoVenta.estado eq 'PROCESO'}" 
+								icon="#{as.asientoVenta.sexo eq 'F' ? 'icon-mujer':as.asientoVenta.sexo eq 'M'?'icon-varon':'icon-vacio'}"
+							 	style="color: #000; border-color:#fff; border-width: 1px; font-size:11px; font-weight:bold; background-image:none;
+								background-color:#{as.asientoVenta.estado eq 'VENTA' ? 'red': as.asientoVenta.estado eq 'RESERVA' ? '#D80DCE':as.asientoVenta.estado eq 'PROCESO' ? '#1C7FC2':'#30E673' };">
+							</p:commandButton>	 
+
+							<h:graphicImage rendered="#{not as.estado and as.numero ge '200'}"
+			 				 name="#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.gif':'blanco.gif'}" library="img" title="asiento ocupado" />
+
+				</p:dataGrid>
+									
+				<div  style="height:8px;border-bottom-color:#000;border-bottom-style: solid;" >
+					<h:outputText value="" />
+				</div>
+    		</h:panelGroup>
+    		
+    		<h:graphicImage name="back.gif" library="img" height="190" width="30" />					
+    							
+    		</h:panelGrid>
+
+		</h:panelGroup>	
+		
+		
+		<div style="text-align: center; width: 900px; " >
+			<p:panel id="pnBoton" style="width:250px;margin:auto;">
+				<p:commandButton styleClass="botonRed" value="Confirmar Transbordo" oncomplete="bui.show();" 
+					rendered="#{trasnbordoBusMB.trasnbordoRealizado}"
+					actionListener="#{trasnbordoBusMB.confirmarTransbordo()}" update=":sms" icon="icon-warning"  />
+			</p:panel>
+		</div>
+		
+		
+		
+		</h:panelGroup>
+		
+		<p:blockUI block="pnBoton" widgetVar="bui"/>
+		
+		</h:form>
+		
+		<!-- ###################### Dialog - Asignacion Manual de Asientos ###########################  -->
+
+		<p:dialog  widgetVar="dlgManual" appendToBody="true" modal="true" resizable="false"
+                  id="dlgDetManual" >
+             
+             <p:panel rendered="#{empty trasnbordoBusMB.programacionSelec}" >
+             	<h:panelGrid columns="3">
+             	
+             		<h:graphicImage name="warning.png" library="img" height="80" width="90"/>
+             		<p:spacer width="20" height="2" />
+             		<h:outputText value="Seleccione un Servicio de Destino" style="color:red;font-size:24px;font-weight:bold;" />
+
+             	</h:panelGrid>
+             	<br/>
+             	<div style="text-align: center;" >
+						
+					 	<p:commandButton value="Cerrar" 
+						  oncomplete="dlgManual.hide();" />
+					</div>
+             </p:panel>
+             
+             <p:panel rendered="#{not empty trasnbordoBusMB.programacionSelec}">
+             	<h:outputText value="Asignacion Manual de Asientos" style="color:red;font-size:16px;font-weight:bold;" />      
+	      		<br/>	
+				<h:form>
+					<p:panel>
+						<h:panelGrid columns="6">
+							#{"Servicio a Transbordar:"}
+							<h:outputText value="#{trasnbordoBusMB.programacion.servicio.descripcion}" style="font-weight:bold;"  />
+							
+							#{"H. Salida:"}
+							<h:outputText value="#{trasnbordoBusMB.programacion.servicio.HSalida}" style="font-weight:bold;"/>
+											
+							#{"Asiento:"}
+							<h:outputText value="#{trasnbordoBusMB.asientoVentaSelec.numero}" style="font-weight:bold;"/>
+						</h:panelGrid>
+					</p:panel>
+					<hr/>
+					<p:panel>
+						<h:panelGrid columns="8">
+							
+							#{"Servicio destino:"}
+							<h:outputText value="#{trasnbordoBusMB.programacionSelec.servicio.descripcion}" style="font-weight:bold;"/>
+							
+							#{"H. Salida:"}
+							<h:outputText value="#{trasnbordoBusMB.programacionSelec.servicio.HSalida}" style="font-weight:bold;"/>
+							
+							#{"Piso:"}
+							<h:selectOneMenu value="#{trasnbordoBusMB.piso}">
+								<f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true" />
+								<f:selectItem  itemLabel="1" itemValue="1" />
+								<f:selectItem  itemLabel="2" itemValue="2" />
+								<f:ajax event="valueChange" execute="@this" render="@form" listener="#{trasnbordoBusMB.listarAsientosDisponibles()}" />
+							</h:selectOneMenu>
+							
+							#{"Asientos disponibles:"}
+							<h:selectOneMenu value="#{trasnbordoBusMB.asientoVentaDestino.numero}">
+								<f:selectItems itemLabel="#{asiv.numero}" itemValue="#{asiv.numero}" value="#{trasnbordoBusMB.listaAsientosVentaLibres}" var="asiv" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+					</p:panel>
+					
+					<div style="text-align: center;" >
+						<p:commandButton value="Trasnbordar" actionListener="#{trasnbordoBusMB.hacerTransbordoIndividual()}"
+					 		update=":frmTarget :frmBusOrigen :sms" oncomplete="dlgManual.hide();" />
+					 	<p:spacer width="20" height="2" />
+					 	<p:commandButton value="Cancelar" 
+						  oncomplete="dlgManual.hide();" />
+					</div>
+					
+			
+				</h:form>
+             </p:panel>
+             
+            					
+		</p:dialog>
+		
+		
+		<p:confirmDialog header="Confirmacion de Transbordo" widgetVar="dlgConfirm" appendToBody="true" 
+			message="Transbordo realizado con exito"  closable="false" >
+			
+			<h:form>
+				 <p:commandButton value="Continuar" style="width:250px;margin:auto;" action="#{trasnbordoBusMB.confirmarTransbordoDialogo()}" ajax="false" />
+			</h:form>
+		</p:confirmDialog>
+		
+		
+		
+	</ui:define>
+</ui:composition>
+</html>

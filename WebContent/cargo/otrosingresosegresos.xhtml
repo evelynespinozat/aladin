@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Otros Ingresos Egresos" url="otrosingresosegresos" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Registro Movimiento" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{otrosIngEgreMB.nuevoIngresoEgreso()}" />
+				</p:toolbarGroup>
+			</h:form>
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+					<h:panelGrid columns="9">
+					 
+					#{"Agencia:"}
+					<p:selectOneMenu style="width:150px" value="#{otrosIngEgreMB.ingresoEgresoFilter.idagencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{otrosIngEgreMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{otrosIngEgreMB.getOficinasxAgencia()}" /> 
+					</p:selectOneMenu>
+	
+					#{"Oficina:"}
+					<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{otrosIngEgreMB.ingresoEgresoFilter.idoficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{otrosIngEgreMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					</p:selectOneMenu>
+					
+					#{"Tipo Operacion:"} 	 
+					<p:selectOneMenu style="width:165px" value="#{otrosIngEgreMB.ingresoEgresoFilter.operacion}" required="true" requiredMessage="Seleccione una Operacion">
+						<f:selectItem itemLabel="TODOS" itemValue="0" />
+						<f:selectItem itemLabel="INGRESO" itemValue="1" />
+						<f:selectItem itemLabel="EGRESO" itemValue="2" /> 
+					</p:selectOneMenu>
+					
+					<p:commandButton  icon="icon-search" value="Buscar" actionListener="#{otrosIngEgreMB.obtenerIngresoEgreso()}"  update=":formLista :sms"/>
+					<h:commandLink update=":formLista"  id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;color: #1C190A;" actionListener="#{otrosIngEgreMB.imprimirPDF}" />   
+				</h:panelGrid>			  
+					
+			</p:panel>
+			</h:form>			
+			
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+				<p:dataTable widgetVar="dtingresoEgreso" var="i" value="#{otrosIngEgreMB.listaIngresoEgreso}" filteredValue="#{otrosIngEgreMB.listaIngresoEgresoFilter}"  
+					emptyMessage="No hay Ingresos ni Egresos Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Ingresos y Engresos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Fecha Registro" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{i.fechareg}">
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Operacion" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{i.operacion eq 1 ? 'INGRESO':'EGRESO'}"  />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Usuario" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{i.usuario}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Monto" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{i.monto}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Motivo" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{i.motivo}" />
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Estado">
+						<h:outputText value="#{i.estado eq 1 ?'POR RENDIR':'RENDIDO'}"  />
+					</p:column>
+					
+				</p:dataTable>
+			</h:form>
+			
+			
+			<p:dialog header="Registrar Movimiento" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="4">
+							 
+							#{"Tipo Operacion:"} 	 
+							<p:selectOneMenu style="width:165px" value="#{otrosIngEgreMB.ingresoEgreso.operacion}" required="true" requiredMessage="Seleccione una Agencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItem itemLabel="INGRESO" itemValue="1" />
+								<f:selectItem itemLabel="EGRESO" itemValue="2" /> 
+							</p:selectOneMenu>
+							
+							#{"Fecha:"}
+							<p:calendar value="#{otrosIngEgreMB.ingresoEgreso.fechareg}" pattern="dd/MM/yyyy" locale="es"
+							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha" />
+							
+							#{"Agencia:"}
+							<p:selectOneMenu style="width:165px" value="#{otrosIngEgreMB.ingresoEgreso.idagencia}" required="true" requiredMessage="Seleccione una Agencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{otrosIngEgreMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" />
+								<p:ajax update="cmbOfiReg" event="change" listener="#{otrosIngEgreMB.getOficinasxAgenciaReg()}" />  
+							</p:selectOneMenu>
+							
+							#{"Oficina:"}
+							<p:selectOneMenu id="cmbOfiReg" style="width:165px" value="#{otrosIngEgreMB.ingresoEgreso.idoficina}" required="true" requiredMessage="Seleccione una Agencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="of" value="#{otrosIngEgreMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" /> 
+							</p:selectOneMenu>
+							#{"Monto:"}
+							<p:inputText style="width:158px" value="#{otrosIngEgreMB.ingresoEgreso.monto}" maxlength="50" required="true" requiredMessage="Se necesita un monto" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							#{"Usuario:"}
+							<p:inputText style="width:430px" value="#{otrosIngEgreMB.ingresoEgreso.usuario}" maxlength="50" required="true" requiredMessage="Se necesita un Usuario" />
+						    #{"Motivo:"}
+							<p:inputTextarea style="width:430px" value="#{otrosIngEgreMB.ingresoEgreso.motivo}" maxlength="50" required="true" requiredMessage="Se necesita un Motivo" />
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{otrosIngEgreMB.guardarMovimiento()}"
+									 update=":formLista msgNuevo"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+
+	</ui:define>
+
+</ui:composition>
+</html>

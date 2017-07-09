@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Gestion de Historial Flota" url="flotaHistorial" /> 
+    				<p:menuitem value="Ver Historial Flota" url="verFlotaHistorial" />   
+				</p:breadCrumb>	
+			</h:form>
+				<br/>		
+	<div>
+		<p:panel id="cabCabecera">			    
+		<h:panelGrid columns="14" cellspacing="5">
+				#{"Numero:"}
+				<h:outputText value=" #{verFlotaHistorialMB.flota.numero}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				#{"Placa:"}
+				<h:outputText value=" #{verFlotaHistorialMB.flota.placa}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Marca:"}
+				<h:outputText value=" #{verFlotaHistorialMB.flota.marca}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Modelo:"}
+				<h:outputText value=" #{verFlotaHistorialMB.flota.modelo}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+				
+				#{"Clase:"}
+				<h:outputText value=" #{verFlotaHistorialMB.flota.descClase}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+				#{"Tipo Flota:"}
+				<h:outputText value=" #{verFlotaHistorialMB.flota.desTipoFlota}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Kilometraje:"}
+				<h:outputText value=" #{verFlotaHistorialMB.flota.recorrido}"  
+					style="font-weight:bold;font-size: 1.2em;" />						
+				
+		</h:panelGrid>
+				
+		<h:form>		
+		<h:panelGrid columns = "6">
+				<h:outputLabel value="F.Inicio "  /> 
+				<p:calendar style="width:200px"  value="#{verFlotaHistorialMB.flota.fecInicio}" pattern="dd/MM/yyyy" locale="es"
+					  navigator="true"   >
+					  <p:ajax update="calFfin" event="dateSelect"/>
+					  </p:calendar>
+
+				<h:outputLabel value="F.Fin" />
+				<p:calendar id="calFfin" style="width:200px;" mindate="#{verFlotaHistorialMB.flota.fecInicio}"  value="#{verFlotaHistorialMB.flota.fecFin}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true" /> 
+				
+				<p:commandButton value="Consultar" update="@form :formHistoFlota" actionListener="#{verFlotaHistorialMB.consultarHistorial()}" />
+				<h:commandLink value="Imprimir" style="padding: 6px 30px;background:#FCC14D; text-decoration:none;border: solid 1px #624B1E;font-weight: bold;color: #1C190A;"
+						actionListener="#{verFlotaHistorialMB.imprimirPDF}"/>	
+			
+			
+		</h:panelGrid>
+		</h:form>
+		</p:panel>
+	</div>
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+
+			<!-- listado de Historial -->
+			<h:form id="formHistoFlota">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{verFlotaHistorialMB.listaHistorialMantenimiento}" filteredValue="#{verFlotaHistorialMB.listaFiltroHistorialMantenimiento}"  
+					emptyMessage="No hay Almacenes Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Historial Flota</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:180px" headerText="Fecha Accion">
+						<h:outputText value="#{p.fecMantenimiento}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:180px" headerText="Automotor" filterStyleClass="mayuscula" filterBy="#{p.desAutomotor}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.desAutomotor}" />
+					</p:column>
+					
+					<p:column style="width:180px" headerText="Autoparte" filterStyleClass="mayuscula" filterBy="#{p.desAutoparte}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.desAutoparte}" />
+					</p:column>
+					
+					<p:column style="width:180px" headerText="Cantidad">
+						<h:outputText value="#{p.cantidad}" />
+					</p:column>
+					
+					<p:column style="width:180px" headerText="Tipo Mantenimiento" filterStyleClass="mayuscula" filterBy="#{p.tipMantenimiento}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.tipMantenimiento}" />
+					</p:column>
+					
+					<p:column style="width:180px" headerText="Tipo Mantenimiento Efectuado" filterStyleClass="mayuscula" filterBy="#{p.tipMantEfectuado}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.tipMantEfectuado}" />
+					</p:column>
+					
+					<p:column style="width:180px" headerText="Accion" filterStyleClass="mayuscula" filterBy="#{p.tipoAccion}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.tipoAccion}" />
+					</p:column>
+					
+					<p:column style="width:180px" headerText="Mecanico" filterStyleClass="mayuscula" filterBy="#{p.nombreMeca}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.nombreMeca}" />
+					</p:column>
+					
+					<p:column style="width:180px" headerText="Observacion" >
+						<h:outputText value="#{p.observacion}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+		</p:panel>
+		
+	</ui:define>
+</ui:composition>
+</html>

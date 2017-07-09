@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Punto de Ventas" url="puntoventa" /> 
+    				<p:menuitem value="Agregar Componente" url="#{addCompHistorialMB.gotoComponentes('2')}"/>     
+    				<p:menuitem value="Historial" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >		
+		<h:panelGrid columns="6">
+				#{"Punto de Venta :"}
+				<h:outputText value=" #{addCompHistorialMB.puntoVenta.namePuntoVenta}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Componente:"}
+				<h:outputText value=" #{addCompHistorialMB.componente.nombre}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>		
+		<!-- toolbar -->
+		
+		<h:form>
+			<h:panelGrid columns="2">
+				<p:commandButton value="Agregar nuevo Historial" icon="icon-add"  oncomplete="perfilDialog.show();" 
+				actionListener="#{addCompHistorialMB.nuevoCompHis()}" update=":detPerfilDialog"	/>
+				<p:commandButton value="Regresar" icon="icon-exit" action="#{addCompHistorialMB.gotoComponentes('1')}" />
+			</h:panelGrid>
+		</h:form>		
+			
+		<br/>
+		
+		<!-- listado de Componentes -->
+		<h:form id="frmListaCH">
+					
+			<p:dataTable value="#{addCompHistorialMB.listaComponenteHis}" var="per" style="width:750px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+						 
+    			<f:facet name="header">Historial</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Fecha">
+    				<h:outputText value="#{per.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+					</h:outputText>
+    			</p:column>
+    			
+    			<p:column headerText="Descripcion">
+    				#{per.descripcion}
+    			</p:column>
+    			
+    			<p:column headerText="Observacion">
+    				#{per.observacion}
+    			</p:column>
+    			
+    			<p:column headerText="Tecnico">
+    				#{per.tecnico}
+    			</p:column>
+    			
+    			<p:column headerText="Estado">
+    				#{per.estadoHis}
+    			</p:column>
+    			
+
+				<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+
+				<p:commandButton title="Editar" update=":detPerfilDialog"
+							actionListener="#{addCompHistorialMB.editarCompHis(per)}"
+							oncomplete="perfilDialog.show();" icon="icon-edit">
+				</p:commandButton>
+
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+							<f:setPropertyActionListener target="#{addCompHistorialMB.compHistorial}"
+								value="#{per}" />
+				</p:commandButton>
+				
+
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+   			<!-- dilogo eliminar -->
+   
+			<p:confirmDialog id="confirmDialog" message="Seguro de eliminar este historial"   appendToBody="true"
+             		header="Eliminar Historial" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaCH :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{addCompHistorialMB.eliminarCompHistorial()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    		</p:confirmDialog> 
+					
+				
+		<!-- dialogo nuevo perfil -->
+		<p:dialog header="Registrar Historial"
+			  		widgetVar="perfilDialog" resizable="false"
+			  		id="detPerfilDialog"  hideEffect="explode"
+			 		appendToBody="true" modal="true" >
+			<h:form>
+				<p:messages showDetail="false" showSummary="true" id="mgsNuevo" closable="true" />
+				<h:panelGrid columns="2">
+					
+					
+					#{"Descripcion:"}		
+					<p:inputText style="width:200px" value="#{addCompHistorialMB.compHistorial.descripcion}" 
+					required="true" requiredMessage="Se necesita un nombre"/>
+
+					#{"Observacion:"}		
+					<p:inputTextarea cols="16" rows="8" autoResize="false"  style="width:200px" value="#{addCompHistorialMB.compHistorial.observacion}" 
+					required="true" requiredMessage="Se necesita una descripcion"/>
+
+					#{"Fecha:"}
+					<p:calendar style="width:200px" value="#{addCompHistorialMB.compHistorial.fecha}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"  required="true" requiredMessage="Se necesita una fecha" />
+					
+					#{"Tecnico:"}		
+					<p:inputText style="width:200px" value="#{addCompHistorialMB.compHistorial.tecnico}" 
+					required="true" requiredMessage="Se necesita un tecnico"/>
+					
+					#{"Estado:"}	
+					<p:selectOneMenu required="true" requiredMessage="Seleccione un Estado" style="width:200px" value="#{addCompHistorialMB.compHistorial.estadoHis}">
+						<f:selectItem itemValue="" itemLabel="Seleccione"/>
+						<f:selectItem itemValue="Reparado" itemLabel="Reparado"/>
+						<f:selectItem itemValue="Mantenimiento" itemLabel="Mantenimiento"/>
+						<f:selectItem itemValue="Cambiado" itemLabel="Cambiado"/>
+					</p:selectOneMenu>
+					
+							
+					<p:commandButton value="Grabar" actionListener="#{addCompHistorialMB.guardarCompHistorial()}"
+								 oncomplete="validarCampos(xhr, status, args)" update=":frmListaCH mgsNuevo" />
+							
+					<p:commandButton value="Cerrar" onclick="perfilDialog.hide();" type="button" />
+							
+				</h:panelGrid>
+			</h:form>
+			<p:messages id="sms" showDetail="true" showSummary="true" />
+		</p:dialog>
+		
+		<!-- js  -->		
+		<script>
+
+			function validarCampos(xhr, status, args) {  
+    			if(args.validationFailed) {  
+      				jQuery('#detPerfilDialog').effect("shake", { times:1 }, 100);  
+    			} else {  
+    				
+      				perfilDialog.hide();  
+    			}  
+			}  
+
+		</script>
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

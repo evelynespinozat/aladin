@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Operaciones" url="#" />
+    				<p:menuitem value="Gestion de Consumo de Combustible" url="consumocombustible" />   
+    				<p:menuitem value="Registro de Combustible" url="#" />
+				</p:breadCrumb>	
+			</h:form>
+			<br/>
+				<div>
+		<p:panel id="cabCabecera">			    
+		<h:panelGrid columns="14">
+				#{"Numero:"}
+				<h:outputText value=" #{mantFlotaMB.flota.numero}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				#{"Placa:"}
+				<h:outputText value=" #{mantFlotaMB.flota.placa}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Marca:"}
+				<h:outputText value=" #{mantFlotaMB.flota.marca}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Modelo:"}
+				<h:outputText value=" #{mantFlotaMB.flota.modelo}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+				
+				#{"Clase:"}
+				<h:outputText value=" #{mantFlotaMB.flota.descClase}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+				#{"Tipo Flota:"}
+				<h:outputText value=" #{mantFlotaMB.flota.desTipoFlota}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Kilometraje:"}
+				<h:outputText value=" #{mantFlotaMB.flota.recorrido}"  
+					style="font-weight:bold;font-size: 1.2em;" />						
+				
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+	</div>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>	
+			
+				<!-- listado de flotas -->
+			<h:form id="formConsumoCombustible">
+				<p:dataTable widgetVar="dtFlota" var="p" value="#{consumoCombustibleMB.listaProgramcnKilom}" filteredValue="#{consumoCombustibleMB.listaFiltroProgramcnKilom}"  
+					emptyMessage="No hay Programaciones Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Programaciones con Recorrido</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:100px;text-align: center;" headerText="N° Bus" >
+						<h:outputText value="#{p.numBus}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Fecha Kilometraje" >
+						<h:outputText value="#{p.fecRegKilome}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Km Inicial">
+						<h:outputText value="#{p.kmInicial}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Km Final">
+						<h:outputText value="#{p.kmFinal}" />
+					</p:column>
+				
+					<p:column style="width:100px;text-align: center;" headerText="Km Recorridos">
+						<h:outputText value="#{p.kmRecorridos}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Consumo">
+						<h:outputText value="#{p.consumo}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Km/Gal." >
+						<h:outputText value="#{p.kmGalon}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Codigo" filterBy="#{p.desAgen}" filterMatchMode="contains">
+						<h:outputText value="#{p.desAgen}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Precio Unit.">
+						<h:outputText value="#{p.precioComb}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Costo Total">
+						<h:outputText value="#{p.costoTotal}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Costo por Km">
+						<h:outputText value="#{p.costoKm}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Piloto">
+						<h:outputText value="#{p.piloto1}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Copiloto">
+						<h:outputText value="#{p.piloto2}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Consumo">
+						<pe:inputNumber decimalPlaces="2"  decimalSeparator="." minValue="0.00" style="width:100px"  
+								value="#{p.consumo}" maxlength="4" disabled="#{p.activar}" />
+					</p:column>
+					
+<!-- 					<p:column style="width:100px;text-align: center;" headerText="Siguiente Servicio"> -->
+<!-- 						<p:selectOneMenu style="width:70px" value="#{destinoMB.destino.destino}"> -->
+<!-- 							<f:selectItem itemLabel="NO" itemValue="NO" /> -->
+<!-- 							<f:selectItem itemLabel="SI" itemValue="SI" /> -->
+<!-- 						</p:selectOneMenu> -->
+<!-- 					</p:column> -->
+					
+					<p:column headerText="Guardar//Editar" style="width:10%;text-align: center">
+					   <p:commandButton title="Guardar"  actionListener="#{consumoCombustibleMB.setearCombustible(p)}"
+									   update=":dlgDetSelecAgencia" icon="icon-disk" disabled="#{p.activar}" oncomplete="dlgSelecAgencia.show();" />
+						<p:commandButton title="Actualizar" actionListener="#{consumoCombustibleMB.editarCombustible(p)}"
+									 update=":formConsumoCombustible " icon="icon-edit" />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+			<p:dialog header="Registrar Agencia" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Consumo:"}
+							<p:inputText style="width:200px" value="#{consumoCombustibleMB.consumoCombustible.consumo}" required="true" maxlength="50" requiredMessage="Se necesita ingresar Consumo" />
+						
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{consumoCombustibleMB.guardarConsumoCombustible()}"
+									 update=":formConsumoCombustible "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+			<p:dialog header="Seleccione Agencia" widgetVar="dlgSelecAgencia" appendToBody="true"
+					  resizable="false" id="dlgDetSelecAgencia" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgSelecAgencia" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Agencia:"}
+							<p:selectOneMenu style="width:150px" value="#{consumoCombustibleMB._idOrigen}"
+								required="true" requiredMessage="Seleccione Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{consumoCombustibleMB.listaAgOrigen}" 
+								itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+						
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{consumoCombustibleMB.guardarConsumoCombustible()}"
+									 update=":formConsumoCombustible"
+									 oncomplete="validarSelecAge(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgSelecAgencia.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+
+
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+		
+		function validarSelecAge(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetSelecAgencia').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				
+				dlgSelecAgencia.hide();
+			}
+		}
+		
+		
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

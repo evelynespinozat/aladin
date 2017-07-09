@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Turno Agencia" url="turnoagencia" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Turno Agencia" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{oficinaTurnoMB.nuevoOficTurno()}">
+					</p:commandButton>
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de Oficina Turno -->
+			<h:form id="formListaOficinaTurno">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{oficinaTurnoMB.listaOficinaTurno}"  
+					filteredValue="#{oficinaTurnoMB.listaFiltroOficinaTurno}" 
+					emptyMessage="No hay Turno Oficina Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10"
+					 style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Turno Ofinca</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Agencia" filterStyleClass="mayuscula" filterBy="#{p.desAgencia}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.desAgencia}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{p.desOficina}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.desOficina}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Turno" filterStyleClass="mayuscula" filterBy="#{p.desTurno}" filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.desTurno}" />
+					</p:column>	
+
+					<p:column style="width:20%;text-align: center;" headerText="Hora Inicio">
+						<h:outputText value="#{p.hInicio}" />
+					</p:column>	
+					<p:column style="width:20%;text-align: center;" headerText="Hora Fin" >
+						<h:outputText value="#{p.hFin}" />
+					</p:column>	
+					
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{oficinaTurnoMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>				
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton id="cbtEditar"  update=":dlgDetNuevo" actionListener="#{oficinaTurnoMB.editarOficTurno(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{oficinaTurnoMB.oficinaTurno}" value="#{p}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{oficinaTurnoMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+
+							#{"Agencia:"}
+							<p:selectOneMenu style="width:150px" value="#{oficinaTurnoMB.oficinaTurno.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+								<f:selectItems var="ag" value="#{oficinaTurnoMB.listaAgencia}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cmbOfi" listener="#{oficinaTurnoMB.getOficinasxAgencia()}" /> 
+							</p:selectOneMenu>
+	
+							#{"Oficina:"}
+							<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{oficinaTurnoMB.oficinaTurno.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{oficinaTurnoMB.listaOficinas}" itemValue="#{ag.idOficina}" itemLabel="#{ag.nombre}" /> 
+							</p:selectOneMenu>
+							
+							#{"Turno:"}
+							<p:selectOneMenu style="width:150px" value="#{oficinaTurnoMB.oficinaTurno.idTurno}" required="true" requiredMessage="Seleccione un Turno">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{oficinaTurnoMB.listaTurno}" itemValue="#{ag.idTurno}" itemLabel="#{ag.descripcion}" /> 
+							</p:selectOneMenu>
+	
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{oficinaTurnoMB.guardarOficinaTurno()}"
+									 update=":formListaOficinaTurno msgNuevo"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"
+									 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este turno agencia?" header="Eliminar Agencia"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Agencia: <h:outputText value="#{oficinaTurnoMB.oficinaTurno.desOficina}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					Turno: <h:outputText value="#{oficinaTurnoMB.oficinaTurno.desTurno}" style="font-size:12px;font-weight: bold;" />
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaOficinaTurno :sms"
+						actionListener="#{oficinaTurnoMB.eliminarOficnaTurno()}"
+						oncomplete="dtAgencia.filter();dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					
+					dtAgencia.filter();
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Seguridad" url="#" />
+    				<p:menuitem value="Gestion de perfiles de usuario" url="perfiles" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- growl general -->			
+			<p:messages  id="msgGeneral" showDetail="false" showSummary="true" />		
+			
+			<!-- tootlbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Perfil" icon="icon-add"
+						update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+						actionListener="#{perfilMB.newInsert()}" >
+						</p:commandButton>
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de perfiles -->
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="p" value="#{perfilMB.listaPerfil}" widgetVar="dtPerfiles" 
+					emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro" 
+					 style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Perfiles</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:18%" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{p.nombre}" filterMatchMode="contains" filterStyle="width:250px;" >
+						<h:outputText value="#{p.nombre}" />
+					</p:column>
+					
+					<p:column style="width:30%" headerText="Descripcion">
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:30%" headerText="Tipo Liquidacion">
+					
+						<h:outputText value="#{p.liquidacion eq 'PV'?'PUNTO VENTA':'OFICINA'}" />
+					</p:column>
+					
+					<p:column style="width:2%" headerText="Estado">
+						<p:commandLink update="@form :msgGeneral" actionListener="#{perfilMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.ind_activo?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.ind_activo?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+						<p:commandButton id="cbtEditar"
+							actionListener="#{perfilMB.editarPerfil(p)}" update=":dlgDetNuevo"
+							oncomplete="dlgNuevo.show();" title="Editar" icon="icon-edit" />
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar"
+							actionListener="#{perfilMB.newDelete(p)}"
+							oncomplete="dlgEliminar.show();" title="Eliminar"
+							icon="icon-delete" />
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+							
+							
+						<p:commandButton id="cbtAgPermisos"
+							action="#{perfilMB.asignarPermisos(p)}" title="Asignar permisos"
+							icon="icon-pref">
+						</p:commandButton>
+						<p:tooltip  for="cbtAgPermisos" value="Asignar Permisos"/>		
+
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{perfilMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+					<p:messages showDetail="false" showSummary="true" id="msgNuevo" />
+					<h:panelGrid columns="2">
+
+						#{"Nombre:"}
+						<p:inputText value="#{perfilMB.perfil.nombre}" id="nombre"
+							required="true" maxlength="50" label="nombre" requiredMessage="Se necesita un nombre"
+							style="width:200px;" styleClass="mayuscula" />
+
+						#{"Descripcion:"}
+						<p:inputTextarea value="#{perfilMB.perfil.descripcion}" required="true" 
+							id="descripcion" maxlength="100" label="descripcion" requiredMessage="Se necesita una descripcion"
+							style="width:200px;" styleClass="mayuscula" />
+							
+						#{"Liquidacion:"}	
+						<p:selectOneMenu value ="#{perfilMB.perfil.liquidacion}" required="true"
+						          requiredMessage="Se necesita una liquidacion" style="width: 205px">
+							<f:selectItem itemLabel="POR OFICINA" itemValue="OF"/>
+							<f:selectItem itemLabel="POR PUNTO DE VENTA" itemValue="PV"/>
+						</p:selectOneMenu>
+						
+					</h:panelGrid>
+					<br/>
+					<p:commandButton value="Guardar"
+						actionListener="#{perfilMB.guardarPerfil()}"
+						update=":formLista msgNuevo"
+						oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+				<p:commandButton value="Cancelar" type="button"
+						onclick="dlgNuevo.hide();" icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este perfil?" header="Eliminar Perfil"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					<p:commandButton value="Eliminar"
+						update=":formLista :msgGeneral"
+						actionListener="#{perfilMB.deletePerfil}"
+						oncomplete="dlgEliminar.hide();dtPerfiles.clearFilters();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide();" icon="icon-cancel" />
+
+				</h:form>
+			</p:confirmDialog>
+		
+		  <p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar el Perfil porque cuenta con usuarios asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					
+				} else {
+					dtPerfiles.clearFilters();  
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel>
+		
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Seguridad" url="#" />
+    				<p:menuitem value="Registro de nuevos modulos" url="sistemas" />
+    				<p:menuitem value="Agregar menu al modulo" url="#" />      
+				</p:breadCrumb>	
+		</h:form>	
+		
+	
+		<br/>
+		<!-- toolbar -->
+		<h:form>
+			<p:commandButton value="Regresar" icon="icon-exit" action="pretty:sistemas" />	
+		</h:form>
+		
+		<br/>
+		
+		<p:messages showSummary="true" showDetail="false" id="sms" />
+		
+		<!-- arbol de menus -->
+		<h:form id="frmMenuModulo">
+    		<p:contextMenu for="trMenuModulo" rendered="#{not menuModuloMB.padre}">
+  				<p:menuitem value="Agregar menu"  actionListener="#{menuModuloMB.nuevoMenu()}" update=":detPerfilDialog"  oncomplete="nuevoMenuDialog.show();" icon="ui-icon-search" />    
+       			<p:menuitem value="Eliminar menu"  oncomplete="dlgEliminar.show();" icon="ui-icon-search" />  
+        		<p:menuitem value="Modificar menu"  actionListener="#{menuModuloMB.editarMenu()}" update=":detPerfilDialog"  oncomplete="nuevoMenuDialog.show();" icon="ui-icon-close"/>  
+    		</p:contextMenu> 
+    		
+    
+    		<p:tree value="#{menuModuloMB.raiz}"   var="node" id="trMenuModulo"  
+    			selectionMode="single"  selection="#{menuModuloMB.nodoSelec}"> 
+    			<p:ajax event="select"  listener="#{menuModuloMB.onNodeSelect}" /> 
+    			
+        		<p:treeNode id="treeNode" expandedIcon="icon-open"  
+                    collapsedIcon="icon-close" >  
+            		<h:outputText value="#{node}" id="lblNode"/>  
+        		</p:treeNode>  
+    		</p:tree>  
+    		
+		</h:form>
+		
+		<!-- dialogo nuevo menu -->
+		<p:dialog header="Registro de nuevo menu" widgetVar="nuevoMenuDialog" 
+			resizable="false" id="detPerfilDialog" showEffect="fade" 
+			hideEffect="explode" appendToBody="true" modal="true" >
+				
+			<h:form id="frmNuevoMenu">
+				<p:messages id="messagePop" showDetail="true" showSummary="true" />
+				<h:panelGrid columns="2">
+				
+					#{"Nombre:"}
+					<h:inputText value="#{menuModuloMB.menu.nombre}" maxlength="50" required="true" requiredMessage="Se necesita un nombre de menu" />
+					
+					#{"Descripcion:"}
+					<h:inputTextarea value="#{menuModuloMB.menu.descripcion}" cols="18" rows="3" required="true" requiredMessage="se nececita una descripcion" />
+					
+					
+					#{"Icono:"}
+					<h:panelGroup>
+						<h:inputText id="txtIcono" value="#{menuModuloMB.menu.icono}" required="true" requiredMessage="se necesita un icono" maxlength="50" />
+						<p:commandButton 
+									update="txtIcono" 
+									oncomplete="nuevoIconoDialog.show()"  
+									icon="icon-icon" />
+					</h:panelGroup>
+					
+					
+				</h:panelGrid>
+				
+				
+									
+									
+				<p:commandButton value="Agregar Menu" 
+									update=":frmMenuModulo messagePop " 
+									actionListener="#{menuModuloMB.agregarMenu()}" 
+									oncomplete="validarCampos(xhr, status, args);"  
+									icon="icon-disk" />
+									
+				<p:commandButton value="Cancelar" onclick="nuevoMenuDialog.hide();" icon="icon-cancel"/>
+			</h:form>
+			
+		</p:dialog>  
+		
+		
+		
+		
+		<!-- dialogo nuevo icono -->
+		<p:dialog header="Icono" widgetVar="nuevoIconoDialog" 
+			resizable="false" id="detnuevoIconoDialog" showEffect="fade" 
+			hideEffect="explode" appendToBody="true" modal="true" >
+				
+			<h:form>
+				
+				<p:dataGrid var="icon" value="#{menuModuloMB.listaIconos}" columns="3" layout="grid"
+			        rows="6" paginator="false">
+			 
+			 		<p:commandLink update=":frmNuevoMenu:txtIcono"  >
+			 			 <p:graphicImage name="iconos/#{icon}.png"  library="img" title="#{icon}" />
+			 			 <f:setPropertyActionListener target="#{menuModuloMB.menu.icono}" value="#{icon}" />
+			 		</p:commandLink>
+			 
+			    </p:dataGrid>
+				<br/>	
+								
+				<p:commandButton value="Cerrar" oncomplete="nuevoIconoDialog.hide();" icon="icon-cancel"/>
+			</h:form>
+			
+		</p:dialog> 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- Dialogo eliminar -->
+		<p:confirmDialog id="dialogoEliminar" message="¿Esta seguro de eliminar?"   appendToBody="true"
+                header="Iniciando proceso de eliminacion" severity="alert" widgetVar="dlgEliminar">  
+                 <h:form> 
+        	<p:commandButton id="confirm" value="Si estoy seguro" update=":sms :frmMenuModulo" oncomplete="dlgEliminar.hide()"  
+                    actionListener="#{menuModuloMB.eliminarMenu()}" />  
+        	<p:commandButton id="decline" value="No, aun no" onclick="dlgEliminar.hide()" type="button" />   
+                </h:form>  
+    	</p:confirmDialog>	
+    	
+    	<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar el menu porque a sido asignado a perfil" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+    		 
+	</p:panel>
+	
+	<script>
+	
+		function validarCampos(xhr, status, args) {  
+			if(!args.esValido) {  
+				jQuery('#detPerfilDialog').effect("shake", { times:1 }, 100);  
+			} else {
+				//limpiando
+				dtModulo.clearFilters();  
+				dlgNuevo.hide();  
+			}  
+		}  
+	</script>
+	
+	</ui:define>
+</ui:composition>
+</html>
+
+	

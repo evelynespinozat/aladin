@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Servicio Correctivo" url="servicioCorrectivo" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- cabecera filtro -->				
+				<!-- listado de agencias -->
+			<h:form id="formListaBuses">
+				<p:dataTable widgetVar="dtBuses" var="p" value="#{servicioCorrectivoMB.listaBusesCambio}" 
+					emptyMessage="No hay Buses Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Buses Km Vencidos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:200px" headerText="Bus" >
+						<h:outputText value="#{p.numero}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Placa" >
+						<h:outputText value="#{p.placa}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Km. Actual" >
+						<h:outputText value="#{p.recorrido}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Km. Aproximado">
+						<h:outputText value="#{p.kmAproximado}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Piloto" >
+						<h:outputText value="#{p.nombPiloto}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Asignar">
+						<p:commandButton title="Taller" action="#{servicioCorrectivoMB.asignarMecanico(p)}" icon="icon-asociarsistemabus"/>
+					</p:column>
+					
+					
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

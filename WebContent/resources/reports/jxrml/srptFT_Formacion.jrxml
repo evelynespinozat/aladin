@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="srptFT_Formacion" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="057a661b-e334-4c93-8271-024fd08d7546">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="tipoFormacion" class="java.lang.String"/>
+	<field name="nivelAcademico" class="java.lang.String"/>
+	<field name="anio" class="java.lang.String"/>
+	<field name="titulo" class="java.lang.String"/>
+	<field name="centroEstudios" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="53e1038f-5031-4924-a2cc-da39e8abc5e3" x="0" y="0" width="528" height="14" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="06a3e50a-e9ec-4119-988f-c7b7d737785f" x="14" y="0" width="85" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO FORMACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="db463c04-91ca-4e47-9fa6-5b4a94bf7037" x="115" y="0" width="90" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NIVEL ACADEMICO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="819aa104-fdc1-4715-89e2-6cb6c16782fd" x="212" y="0" width="44" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AÑO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9d54eb36-a4e4-425d-91d8-cdac97cbbc54" x="274" y="0" width="121" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TITULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f25eff2f-7da2-4333-ba4e-d5d7a03d0502" x="413" y="0" width="89" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CENTRO ESTUDIOS]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="c7daa7ac-4be2-4aa1-beae-f15e27a7aa77" x="99" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="263bab93-de08-4f21-89fc-1dd28e475a06" x="205" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="40c4508c-977d-456c-a325-629c497d12fd" x="256" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="a2786936-b3a3-478a-b013-f633478b7b12" x="395" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="19c4ff34-ca2a-4198-aef6-050c911cce4c" x="0" y="0" width="528" height="14"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="2c24df9b-b2fa-494e-ae01-0b5456c291c5" x="14" y="0" width="85" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoFormacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="54d7bc9a-d378-4647-9a7a-e1ac54b71a22" x="115" y="0" width="90" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nivelAcademico}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="991ab1ba-2cb7-4cd9-b6d6-bea361c16662" x="212" y="0" width="44" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5252ee00-90d5-47b8-bac1-535f40cbfc15" x="274" y="0" width="121" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e7d75658-178b-4e9f-80b9-ddd0cbc2e605" x="413" y="0" width="89" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{centroEstudios}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="de4aeb7e-e07e-4da2-a2d6-b95b1bf8dc34" x="99" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="4a9b57f5-43ae-435b-98ae-a9003ef6cbac" x="205" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="8470a7b2-bb16-44e2-87a8-e876a9586ac0" x="256" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="2d933d12-c84c-4ed7-9322-58b170389bc0" x="395" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

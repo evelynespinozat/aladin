@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Ventas" url="#" />
+    				<p:menuitem value="Empresas" url="empresas" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Empresa" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{empresaMB.nuevaEmpresa()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaAgencia">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{empresaMB.listaEmpresas}" filteredValue="#{empresaMB.listaFiltroEmpresas}"  
+					emptyMessage="No hay Empresas Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Empresas</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:15%" headerText="RUC" filterBy="#{p.RUC}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.RUC}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Razon social" filterStyleClass="mayuscula" filterBy="#{p.razonSocial}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.razonSocial}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Direccion" filterStyleClass="mayuscula" filterBy="#{p.direccion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.direccion}" />
+					</p:column>
+					
+
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{empresaMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo" actionListener="#{empresaMB.editarEmpresa(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+						
+
+						<p:commandButton id="cbtEliminar" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{empresaMB.empresa}" value="#{p}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+				<p:dialog header="#{empresaMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"RUC:"}
+							<p:inputMask mask="99999999999" style="width:200px" disabled="#{empresaMB.blockRUC}" value="#{empresaMB.empresa.RUC}" required="true" maxlength="50" requiredMessage="Se necesita el RUC(11 digitos)"  dir="rtl" />
+							
+							#{"Razon Social:"}
+							<p:inputText style="width:200px" value="#{empresaMB.empresa.razonSocial}" styleClass="mayuscula" required="true" maxlength="50" requiredMessage="Se necesita la razon social" />
+							
+							#{"Direccion:"}
+							<p:inputText style="width:200px" value="#{empresaMB.empresa.direccion}" styleClass="mayuscula" maxlength="50"/>
+						    <!--<INICIO> JPISCOYA -->  
+							#{"Télefono:"}
+							<p:inputText style="width:200px" value="#{empresaMB.empresa.telefono2}" maxlength="50" dir="rtl" />
+							
+							#{"Página Web:"}
+							<p:inputText style="width:200px" value="#{empresaMB.empresa.paginaWeb}" styleClass="mayuscula" maxlength="50"/>
+							
+							#{"Persona Contacto:"}
+							<p:inputText style="width:200px" value="#{empresaMB.empresa.personaContacto}" styleClass="mayuscula" maxlength="50"/>
+							 <!--<FIN> JPISCOYA -->
+							
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{empresaMB.guardarEmpresa()}"
+									 update=":formListaAgencia msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta empresa?" header="Eliminar Empresa"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Empresa: <h:outputText value="#{empresaMB.empresa.razonSocial}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaAgencia :sms"
+						actionListener="#{empresaMB.eliminarEmpresa()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar la Empresa porque cuenta con oficinas asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

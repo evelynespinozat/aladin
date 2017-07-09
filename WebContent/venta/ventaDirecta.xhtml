@@ -1,0 +1,4335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	
+	
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+
+	
+ <style>
+ 
+.ui-datagrid-column {
+	padding: 0px !important;
+}
+
+.ui-buttonset {
+	margin-right: 0px !important;
+}
+
+
+
+.ui-datagrid .ui-widget-content .ui-state-default
+{
+	margin-right: 0px !important;
+	
+	/*
+	background-color: green !important;
+	background-image : none !important;
+	*/
+}
+
+.ui-datepicker {
+	font-size: 14px;
+}
+
+
+
+.ui-dialog-titlebar{
+    padding: 2px 5px !important;
+}
+
+
+.ui-dialog-content
+{
+	padding: 2px !important;
+}
+
+
+.ui-dialog-title 
+{
+	font-size: 16px !important;
+}
+
+.aviso
+{
+	
+	/*border: 1px solid #f5860e;*/
+   background: #ffffff;
+   background: -webkit-gradient(linear, left top, left bottom, from(#cccccc), to(#ffffff));
+   background: -webkit-linear-gradient(top, #cccccc, #ffffff);
+   background: -moz-linear-gradient(top, #cccccc, #ffffff);
+   background: -ms-linear-gradient(top, #cccccc, #ffffff);
+   background: -o-linear-gradient(top, #cccccc, #ffffff);
+   background-image: -ms-linear-gradient(top, #cccccc 0%, #ffffff 100%);
+   -webkit-border-radius: 0px;
+   -moz-border-radius: 0px;
+   border-radius: 0px;
+   -webkit-box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 0px 0;
+   -moz-box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 0px 0;
+   box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 0px 0;
+   font-family: 'Helvetica Neue',Helvetica,sans-serif;
+   text-decoration: none;
+   vertical-align: middle;
+   padding:20px;
+
+}
+
+.foo td {
+    vertical-align: top;
+}
+
+
+.ui-panelgrid tr, td {
+border:0 !important;
+}
+
+
+.ui-panelgrid tr, .ui-panelgrid td {
+border:0 !important;
+}
+
+</style>
+
+
+<pe:blockUI target=":fmTrackingBoleto:pnPersonaHistorial" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+</pe:blockUI> 
+
+
+<pe:blockUI target=":frmListaPersonasHistorial:dtHst" widgetVar="blockUIWidget1">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+</pe:blockUI> 
+
+
+<pe:blockUI target=":frmListaMovimiento" widgetVar="blockUIWidget2">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+</pe:blockUI> 
+
+
+<p:growl life="4000" id="grwGlobal" />
+
+
+		<h:form>
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Venta" url="#" />
+				<p:menuitem value="Venta Directa" url="ventaDirecta" />
+			</p:breadCrumb>
+		</h:form>
+
+		<br />
+		<p:panel style="width:1200px;">
+			<p:layout style="min-width:500px;min-height:1500px;" widgetVar="layoutV">
+				<p:layoutUnit position="west"  resizable="true" size="250"
+					minSize="150" maxSize="260" header="Tipo Vista" collapsible="true">
+					<div id="menu" style="margin-bottom: 8px;">
+						<h:form id="form">  
+  					#{"Tipo vista:"} 
+  					<p:spacer width="20px;" height="2px;" />
+
+							<p:commandLink update="pnVista"
+								actionListener="#{ventaDirectaMB.cambiarVista('ARBOL')}">
+								<h:graphicImage value="resources/img/icon-arbol.png" height="32"
+									width="26" />
+							</p:commandLink>
+
+							<p:spacer width="20px;" height="2px;" />
+
+							<p:commandLink update="pnVista" 
+								actionListener="#{ventaDirectaMB.cambiarVista('CALENDARIO')}">
+								<h:graphicImage value="/resources/img/icon-calendario.png"
+									height="32" width="30" />
+							</p:commandLink>
+
+							<br />
+							<span style="font-weight: bold;">Origen-Destino </span>
+							<h:panelGroup id="pnVista">
+
+								<p:tree rendered="#{ventaDirectaMB.tipoVista eq 'ARBOL'}"
+									style="width:240px;" value="#{ventaDirectaMB.raiz}" var="nodo"
+									dynamic="true" cache="true" selectionMode="single"
+									selection="#{ventaDirectaMB.nodoFechaSeleccionado}" >
+									<p:ajax event="select"
+										update=":form :frmBusClase :frmBus :frmManifiesto"
+										listener="#{ventaDirectaMB.onNodoFechaSeleccionado}" onsuccess="doCollapsed();"  />
+
+									<p:treeNode icon="ui-icon-document" >
+										<h:outputText value="#{nodo}" />
+										<h:graphicImage  url="/resources/img/icon-seleccionar.png"
+											rendered="#{nodo eq ventaDirectaMB.fechaString}" />
+									</p:treeNode>
+								</p:tree>
+
+							</h:panelGroup>
+
+						</h:form>
+					</div>
+				</p:layoutUnit>
+
+				<p:layoutUnit position="center">
+					<h:form id="frmBusClase">
+						<h:panelGrid columns="4">
+
+							<h:panelGrid columns="17"
+								rendered="#{not empty ventaDirectaMB.fechaSelec}"> 
+				    			#{"Origen:"}
+				    			<h:outputText
+									value="#{ventaDirectaMB.agenciaOrigen.descripcion}"
+									style="font-weight:bold;font-size:15px;" />
+								<p:spacer width="10" />
+				    			#{"Destino:"}
+				    			<h:outputText
+									value="#{ventaDirectaMB.agenciaDestino.descripcion}"
+									style="font-weight:bold;font-size:15px;" />
+								<p:spacer width="10" />
+				    			
+				    			<h:panelGrid columns="3" id="pnFecha" rendered="#{ventaDirectaMB.login.listaPerfiles.get(0).descripcion ne 'COUNTERS PASAJES'}" >
+									#{"Seleccionar fecha:"}
+					    			<p:calendar value="#{ventaDirectaMB.temp}"
+										style="font-size:14px;" readonlyInput="true" size="9"
+										pattern="dd-MM-yyyy" locale="es">
+										<p:ajax event="dateSelect" update=":frmBusClase:pnWill :frmBus"
+											listener="#{ventaDirectaMB.fechaSeleccionado()}" />
+									</p:calendar>
+								</h:panelGrid>
+				    			
+								<p:selectOneMenu style="width:150px"
+									value="#{ventaDirectaMB.tipoItinerario}">
+									<f:selectItem itemLabel="Itinerario Actual" itemValue="1" />
+									<f:selectItem itemLabel="Itinerario Todos" itemValue="2" />
+									<p:ajax update=":frmBusClase:pnWill :frmBus :frmManifiesto"
+										listener="#{ventaDirectaMB.prepararProgramacion(ventaDirectaMB.agenciaOrigen.idagencia,ventaDirectaMB.agenciaDestino.idagencia,ventaDirectaMB.fechaSelec)}" />
+								</p:selectOneMenu>
+
+								<p:commandButton value="Actualizar Program."
+									style="font-size:11px;" icon="ui-icon-refresh"
+									actionListener="#{ventaDirectaMB.prepararProgramacion(ventaDirectaMB.agenciaOrigen.idagencia,ventaDirectaMB.agenciaDestino.idagencia,ventaDirectaMB.fechaSelec)}"
+									update=":frmBusClase:pnWill :frmBus :frmManifiesto" />
+
+								<p:ajaxStatus style="width:14px;height:14px;">
+									<f:facet name="start">
+										<h:graphicImage value="resources/img/active.gif" />
+									</f:facet>
+									<f:facet name="complete">
+										<h:outputText value="" />
+									</f:facet>
+								</p:ajaxStatus>
+								
+							</h:panelGrid>
+							
+							<p:commandButton value="Buscar pasajero"
+								update=":dlgDetHistorial"
+								actionListener="#{ventaDirectaMB.inicioHistorial()}"
+								oncomplete="dlgHistorial.show();" icon="icon-buscar"
+								style="font-size:10px;" />
+								
+                            <p:commandButton 
+                                oncomplete="dlgMovimiento.show()" update=":dlgDetMovimiento"
+                                actionListener="#{ventaDirectaMB.inicioMovimientos()}"
+                                icon="icon-buscar" value="Buscar boleto"
+								style="font-size:10px;"  />
+							
+							<h:commandLink id="imprimirmanifiesto"	value="Manifiesto"
+								style="padding: 4px 15px; width:160px; background: #222222; text-decoration: none; border: solid 1px #624B1E; color: #fff;"
+								actionListener="#{ventaDirectaMB.generarManifiesto(ventaDirectaMB.programacionSelec)}">
+							</h:commandLink>
+								
+						</h:panelGrid>
+
+						<!-- lista de servicios -->
+
+						<h:panelGrid columns="3" id="pnWill" rendered="#{not empty ventaDirectaMB.listaProgramacion}" >
+
+							<h:panelGroup>
+
+								<p:dataTable id="dtProg" var="pr"
+									value="#{ventaDirectaMB.listaProgramacion}"
+									filteredValue="#{ventaDirectaMB.listaFiltroProgramacion}"
+									selectionMode="single" rowKey="#{pr.idProgramacion}"
+									selection="#{ventaDirectaMB.programacionSelec}"
+									scrollable="true" scrollHeight="150" scrollWidth="1004"
+									emptyMessage="No hay Asiento disponibles." rowIndexVar="nro"
+									style="FONT-SIZE: 10px;width:1000px;">
+
+									<p:ajax event="rowSelect"
+										listener="#{ventaDirectaMB.seleccionar()}"
+										update="@form :frmBus :frmManifiesto" />
+
+									<f:facet name="header">Servicios</f:facet>
+
+									<p:column style="width:80px;" headerText="H. Salida"
+										filterBy="#{pr.hSalida}" filterStyle="width:50px;"
+										filterMatchMode="contains">
+										<h:outputText value="#{pr.hSalida}"/>
+									</p:column>
+
+								<!-- 	<p:column style="width:105px;" headerText="H. Aprox Llegada">
+										<h:outputText value="#{pr.hLlegadaAprox}"
+											style="color:#{pr.clase.color};" />
+									</p:column> -->
+
+									<p:column style="width:250px;" headerText="Servicio" filterStyleClass="mayuscula"
+										filterBy="#{pr.servicio.descripcion}"
+										filterStyle="width:150px;" filterMatchMode="contains">
+										<h:outputText value="#{pr.servicio.descripcion}" />
+                                        <h:panelGroup  rendered="#{pr.ampliado}">
+										#{"-"}	
+										<h:outputText value="#{pr.servicio.descripcion eq 'MIXTO 53' ? 'MIXTO 56' : 'SOFA 42'}" />
+										<h:outputText value=" Amp." style="color:red;"/></h:panelGroup>
+									</p:column>
+
+									<p:column style="width:60px;" headerText="Disp.">
+										<h:outputText value="#{pr.disponibles}" />
+									</p:column>
+
+									<p:column headerText="Tipo P1/Disp." >
+										<h:outputText
+											value="#{pr.disponibleP1}-#{pr.tipoAsientoP1.nombre}"/>
+									</p:column>
+
+									<p:column headerText="Tipo P2/Disp." >
+										<h:outputText
+											value="#{pr.disponibleP2}-#{pr.tipoAsientop2.nombre}"/>
+									</p:column>
+
+									<p:column style="width:80px;" headerText="S/.P1"
+										filterBy="#{pr.servicio.precio1}" filterStyle="width:40px;"
+										filterMatchMode="contains">
+										<h:outputText value="S/.#{pr.servicio.precio1}"/>
+									</p:column>
+
+									<p:column style="width:80px;" headerText="S/.P2"
+										filterBy="#{pr.servicio.precio2}" filterStyle="width:40px;"
+										filterMatchMode="contains">
+										<h:outputText value="S/.#{pr.servicio.precio2}"/>
+									</p:column>
+
+									<!-- <p:column style="width:100px;" headerText="Seleccionar">
+										<h:commandLink value="Seleccionar"
+											style="font-weight:bold;font-size:12px; ">
+											<f:ajax event="click" execute="@this"
+												render="@form :frmBus :frmManifiesto"
+												listener="#{ventaDirectaMB.pintarBus(pr)}" />
+										</h:commandLink>
+									</p:column> -->
+								</p:dataTable>
+
+								
+
+							</h:panelGroup>
+
+							<p:spacer width="30" />
+							
+							
+							<h:panelGroup id="pnToolMenu"
+								rendered="#{not empty ventaDirectaMB.programacionSelec.idProgramacion}">
+								<p:menu>
+									<ui:remove>
+									<p:submenu label="Opciones">
+										<p:menuitem value="Consulta Pasajeros" update=":dlgDetHistorial"
+											actionListener="#{ventaDirectaMB.inicioHistorial()}"
+											oncomplete="dlgHistorial.show();" icon="ui-icon-contact"
+											style="font-size:11px;" />
+
+<!-- 										<p:menuitem value="Consulta Pasajeros" -->
+<!-- 											update=":dlgDetConsulta" oncomplete="dlgConsulta.show();" -->
+<!-- 											icon="ui-icon-flag" style="font-size:11px;" /> -->
+
+										<p:menuitem value="Movimientos" update=":dlgDetMovimiento"
+											oncomplete="dlgMovimiento.show();" icon="ui-icon-flag"
+											actionListener="#{ventaDirectaMB.inicioMovimientos()}"
+											style="font-size:11px;" />
+
+										<p:menuitem value="Anular Boletos"
+											actionListener="#{ventaDirectaMB.inicioAnularBoletos()}"
+											update=":dlgDetAnularBoleto"
+											oncomplete="dlgAnularBoleto.show();" icon="ui-icon-flag"
+											style="font-size:11px;" />
+									</p:submenu>
+									</ui:remove>
+									
+									<ui:remove>
+										<p:menuitem value="Activar Postergacion"
+											actionListener="#{ventaDirectaMB.limpiarPersona()}"
+											update=":dlgDetActivar" oncomplete="dlgActivar.show();"
+											icon="ui-icon-unlocked" style="font-size:11px;" />
+										
+										<p:menuitem value="Generar Manifiesto"
+											actionListener="#{ventaDirectaMB.generarManifiesto(ventaDirectaMB.programacionSelec)}"
+											update=":frmManifiesto" icon="ui-icon-clipboard"
+											style="font-size:11px;" />
+									</ui:remove>
+									
+										<p:menuitem value="Transbordo"
+											action="#{ventaDirectaMB.generarTransbordo(ventaDirectaMB.programacionSelec)}" ajax="false"
+											 icon="ui-icon-clipboard"
+											style="font-size:11px;" />
+											
+								</p:menu>
+
+
+
+							</h:panelGroup>
+
+
+
+						</h:panelGrid>
+
+					</h:form>
+
+					<!-- aqui se pinta el bus -->
+
+					<h:form id="frmBus">
+
+						<h:panelGroup rendered="#{ventaDirectaMB.visibleBus}">
+
+							<h:panelGrid columns="6" 
+								style="border-color:#000000;border-width: 1px; border-style: solid; ">
+								<h:outputText value="Servicio:"
+									style="font-weight:bold;font-size:14px;" />
+								<h:outputText
+									value="#{ventaDirectaMB.programacionSelec.hSalida}, #{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+									style="font-weight:bold;font-size:14px;color:red;" />
+
+								<p:spacer width="15" height="3" />
+
+								<p:ajaxStatus style="width:14px;height:14px;">
+									<f:facet name="start">
+										<h:graphicImage value="resources/img/active.gif" />
+									</f:facet>
+
+									<f:facet name="complete">
+										<h:outputText value="" />
+									</f:facet>
+								</p:ajaxStatus>
+
+								<h:panelGrid columns="15" style="width:350">
+									<p:spacer width="25" height="5" />
+									<h:outputText value="Vendido" style="font-weight:bold;" />
+									<h:graphicImage value="resources/img/icon-red.png" width="20"
+										height="20" />
+									<p:spacer width="5" height="5" />
+									<h:outputText value="Libre" style="font-weight:bold;" />
+									<h:graphicImage value="resources/img/icon-green.png" width="20"
+										height="20" />
+									<p:spacer width="5" height="5" />
+									<h:outputText value="Reservado" style="font-weight:bold;" />
+									<h:graphicImage value="resources/img/icon-violet.png"
+										width="18" height="18" />
+									<p:spacer width="5" height="5" />
+									<h:outputText value="Separado" style="font-weight:bold;" />
+									<h:graphicImage value="resources/img/icon-blue.png"
+										width="18" height="18" />
+									<p:spacer width="5" height="5" />
+									<h:outputText value="En Proceso" style="font-weight:bold;" />
+									<h:graphicImage value="resources/img/icon-grey.png" width="20"
+										height="20" />
+								</h:panelGrid>
+
+							</h:panelGrid>
+
+							<!--####################################### si el bus es de  un piso: quitado el 10 de 09 del 2014 #################################-->
+
+
+
+								<!-- ########################################## si el bus es de  dos pisos : #################################################### -->
+
+							<h:panelGrid rendered="#{ventaDirectaMB.busClase.nroPisos eq '2'}" columns="3"> 
+								<h:panelGrid columns="5">
+									<h:graphicImage url="/resources/img/front.gif" height="220" />
+									<h:panelGroup>
+										<div
+											style="height: 30px; text-align: center; font-size: 13px; font-weight: bold; border-top-color: #000; border-top-style: solid;">
+											<h:outputText
+												value="Piso Uno: #{ventaDirectaMB.tipoAsientop1.nombre} S/.#{ventaDirectaMB.programacionSelec.servicio.precio1}" />
+										</div>
+										<p:dataGrid var="as"
+											value="#{ventaDirectaMB.listaAsientosPisoUno}"
+											columns="#{ventaDirectaMB.nroColumnasPisoUno}"
+											rows="#{ventaDirectaMB.nroColumnasPisoUno*ventaDirectaMB.nroFilas}">
+											
+											<p:commandButton
+												value="#{as.asientoVenta.numero}" rendered="#{as.asientoVenta.visible}" 
+												disabled="#{as.asientoVenta.estado eq 'PROCESO'}" icon="#{as.asientoVenta.sexo eq 'F' ? 'icon-mujer':as.asientoVenta.sexo eq 'M'?'icon-varon':'icon-vacio'}"
+											 	update=":frmBusClase :frmBus :dlgDetVender :dlgDetVentaInfo" 
+											 	style="color: #000; border-color: #ffffff; font-size:11px;font-weight:bold; width:42px; height: 30px; background-image:none;
+												 	background-color:#{as.asientoVenta.estado eq 'VENTA' ? 'red': as.asientoVenta.estado eq 'RESERVA' ? '#ff9900':as.asientoVenta.estado eq 'PROCESO' ? '#D8D8D8': as.asientoVenta.estado eq 'SEPARADO' ? '#013ADF':'#30E673' };"
+													actionListener="#{ventaDirectaMB.mostrarAsiento(as)}"  /> 
+													
+													
+												<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.gif':'blanco.gif'}"
+													rendered="#{not as.estado and as.numero ge '200'}"  />
+	
+										
+										</p:dataGrid>
+									<div  style="height:20px;border-bottom-color:#000;border-bottom-style: solid;" >
+										<h:outputText value="" />
+									</div>
+								</h:panelGroup>
+								
+    							<h:graphicImage  url="/resources/img/spacer.png" height="180" />
+    							
+    							
+    							<h:panelGroup>
+    							
+    								<div  style="text-align:center;font-size:13px;font-weight:bold;border-top-color:#000;border-top-style:solid;" >
+										<h:outputText value="Piso Dos: #{ventaDirectaMB.tipoAsientop2.nombre} S/.#{ventaDirectaMB.programacionSelec.servicio.precio2}" />
+									</div>
+									
+									<p:dataGrid  var="as" value="#{ventaDirectaMB.listaAsientosPisoDos}"  
+    									columns="#{ventaDirectaMB.nroColumnasPisoDos}" rows="#{ventaDirectaMB.nroColumnasPisoDos*ventaDirectaMB.nroFilas}">
+				
+										<span style="width:100px; height:45px;" >
+										
+                                                <p:commandButton 
+												value="#{as.asientoVenta.numero}" rendered="#{as.asientoVenta.visible}" 
+												disabled="#{as.asientoVenta.estado eq 'PROCESO'}" icon="#{as.asientoVenta.sexo eq 'F' ? 'icon-mujer':as.asientoVenta.sexo eq 'M'?'icon-varon':'icon-vacio'}"
+                                                update=":frmBusClase :frmBus :dlgDetVender :dlgDetVentaInfo"
+											 	style="color: #000; border-color: #ffffff; font-size:11px;font-weight:bold; width:42px; height: 30px; background-image:none; 
+												 	background-color:#{as.asientoVenta.estado eq 'VENTA' ? 'red': as.asientoVenta.estado eq 'RESERVA' ? '#ff9900':as.asientoVenta.estado eq 'PROCESO' ? '#D8D8D8': as.asientoVenta.estado eq 'SEPARADO' ? '#013ADF':'#30E673' };"
+													actionListener="#{ventaDirectaMB.mostrarAsiento(as)}" />
+											
+											<h:graphicImage
+													value="resources/img/#{as.numero eq '200' ? 'escalera.gif': as.numero eq '300' ? 'tv.gif' : as.numero eq '400' ? 'cafe.gif':as.numero eq '500'?'wc.png':'blanco.gif'}"
+													rendered="#{not as.estado and as.numero ge '200'}" />
+
+											</span>
+
+										</p:dataGrid>
+
+										<div
+											style="height: 8px; border-bottom-color: #000; border-bottom-style: solid;">
+											<h:outputText value="" />
+										</div>
+									</h:panelGroup>
+
+									<h:graphicImage url="/resources/img/back.gif" height="190" />
+
+								</h:panelGrid>
+								
+								<p:spacer width="20" height="2"/>
+								
+								<h:panelGrid columns="1">
+								
+									<p:commandButton value="Vender Asiento" actionListener="#{ventaDirectaMB.mostrarPanelVentas('venta')}"
+									icon="icon-ventas" update=":frmVenta :formVentMult :formDatos :formAvisoCompra :dlgDetVender" style="width:160px;"  />
+									
+									<p:spacer  height="5" width="2" />
+									
+									<p:commandButton value="Reservar Asiento" actionListener="#{ventaDirectaMB.mostrarPanelVentas('reserv')}"
+									icon="icon-reservar" update=":frmVenta :formVentMult :formDatos :formAvisoCompra :dlgDetVender" style="width:160px;"/>
+                                            
+									<p:spacer  height="5" width="2" />
+									<p:commandButton  icon="icon-separar" value="Separar Asiento" actionListener="#{ventaDirectaMB.separarAsiento()}" 
+										update="@form :frmBusClase" style="width:160px;" />
+
+									<p:spacer  height="5" width="2" />
+									
+									
+									<p:commandButton  icon="icon-empresa" value="Postergar" actionListener="#{ventaDirectaMB.recuperarPostergacion()}" 
+										update="@form :frmBusClase" style="width:160px;" /> 
+
+									<p:spacer  height="5" width="2" />
+									
+									<ui:remove>
+									<p:commandButton  icon="icon-llegabus" value="Act. Inhabilitacion" actionListener="#{ventaDirectaMB.recuperarInhabilitacion()}" 
+										update=":dlgRecuperarInhabilitado :frmBusClase " style="width:160px;" /> 
+									</ui:remove>
+									
+									<p:spacer  height="5" width="2" />	
+									
+									<p:commandButton  icon="icon-prepapagado" value="Post.Fec.Abierta" actionListener="#{ventaDirectaMB.recuperarPostergacionFechaAbierta()}" 
+										update=":frmBusClase" style="width:160px;" /> 
+									
+									<p:spacer  height="5" width="2" />
+									
+									<p:commandButton style="width:160px;" title="Liberar Asiento" value="Liberar Asientos"
+										actionListener="#{ventaDirectaMB.liberarAsiento()}"
+										icon="ui-icon-wrench" update="@form :frmBus :frmBusClase" >
+									</p:commandButton>
+
+								</h:panelGrid>
+								
+								
+								
+							</h:panelGrid>
+
+
+
+							<!-- vender asiento -->
+								
+								<h:panelGrid columns="17"
+									style="width:900px; background-color:#ffffff;border-color:black; border-style: solid; border-width: 1px; "
+									rendered="#{not empty ventaDirectaMB.programacionSelec.idProgramacion}">
+									<h:outputText value="Disponibles:" style="color:#000000;" />
+									<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.disponibles}"
+										style="font-weight:bold; font-size:16px; color:green;" />
+									<p:spacer width="10" height="3" />
+									<h:outputText value="Vendido:" style="color:#000000;"/>
+									<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.vendidos}"
+										style="font-weight:bold; font-size:16px; color:red;" />
+									<p:spacer width="10" height="3" />
+									<h:outputText value="Reserva:" style="color:#000000;"/>
+									<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.reservados}"
+										style="font-weight:bold; font-size:16px; color:#D80DCE;" />
+									<p:spacer width="10" height="3" />
+									<h:outputText value="Separado:" style="color:#000000;"/>
+									<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.separados}"
+										style="font-weight:bold; font-size:16px; color:#013ADF;" />	
+									<p:spacer width="10" height="3" />
+									<h:outputText value="Capacidad:" style="color:#000000;"/>
+									<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.capacidadVerdadera}"
+										style="font-weight:bold; font-size:16px; color:black;" />
+
+									<p:spacer width="10" height="2" />
+
+									<p:menubar>
+
+										<p:menuitem value="Refrescar Bus"
+											style="color:red;font-size:14px;font-weight:bold;"
+											actionListener="#{ventaDirectaMB.pintarBus(ventaDirectaMB.programacionSelec)}"
+											update="@form :frmBus" icon="ui-icon-refresh" />
+											
+
+									</p:menubar>
+								</h:panelGrid>
+								
+							<!-- Leyenda -->
+
+							
+								
+						</h:panelGroup>
+
+					</h:form>
+					<br />
+					<br />
+					<!-- ######################################  manifiesto de pasajeros #######################################-->
+
+					<h:form id="frmManifiesto">
+						<table>
+							<tr>
+								
+								<td align="center">
+							
+									<br /></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td valign="top"><p:dataTable
+										rendered="#{ventaDirectaMB.manifiesto}" var="av"
+										value="#{ventaDirectaMB.listaManifiesto}"
+										filteredValue="#{ventaDirectaMB.listaFiltroManifiesto}"
+										emptyMessage="No hay manifiesto disponible." rowIndexVar="nro"
+										style="FONT-SIZE: 10px;width:700px;">
+
+										<f:facet name="header">Manifiesto de Pasajeros</f:facet>
+
+										<p:column width="15" headerText="Ord.">
+					#{nro+1}
+				</p:column>
+
+										<p:column width="20" headerText="Asiento"
+											filterBy="#{av.numero}" filterMatchMode="contains">
+											<h:outputText value="#{av.numero}" />
+										</p:column>
+
+										<p:column width="50" headerText="DNI"
+											filterBy="#{av.persona.dni}" filterStyle="width:70px;"
+											filterMatchMode="contains">
+											<h:outputText value="#{av.persona.dni}" />
+										</p:column>
+
+										<p:column headerText="Paterno" filterStyleClass="mayuscula"
+											filterBy="#{av.persona.APaterno}" filterStyle="width:100px;"
+											filterMatchMode="contains">
+											<h:outputText value="#{av.persona.APaterno}" />
+										</p:column>
+
+										<p:column headerText="Materno">
+											<h:outputText value="#{av.persona.AMaterno}" />
+										</p:column>
+
+										<p:column headerText="Nombre">
+											<h:outputText value="#{av.persona.nombres}" />
+										</p:column>
+
+										<p:column width="30" headerText="Sexo">
+											<h:outputText value="#{av.persona.sexo}" />
+										</p:column>
+
+										<p:column width="30" headerText="Edad">
+											<h:outputText value="#{av.persona.edad}" />
+										</p:column>
+
+									</p:dataTable></td>
+								<td valign="top"><p:fieldset legend="Datos Bus/Tripulacion"
+										rendered="#{ventaDirectaMB.manifiesto}">
+										<h:panelGrid columns="2">
+					  	#{"Placa:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.placabus}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Bus:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.numeroBus}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Piloto:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.piloto}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Dni:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.dnipiloto}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Copiloto:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.copiloto}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Dni:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.dnicopiloto}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Terramoza 1:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.terramoza1}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Dni:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.dniterramoza1}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Terramoza 2:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.terramoza2}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+					  	#{"Dni:"}
+					  	<h:outputLabel
+												value="#{ventaDirectaMB.tripulacion_venta.dniterramoza2}"
+												style="width:80px;font-weight:bold;font-size: 1.2em" />
+										</h:panelGrid>
+									</p:fieldset></td>
+							</tr>
+						</table>
+					</h:form>
+
+					<!-- ######################################  popup vender/reservar/editar #######################################-->
+					
+					<p:dialog widgetVar="dlgAvisoCompra" appendToBody="true"
+						resizable="false" id="dlgDetAvisoComprar" modal="true" closable="false">
+						
+						
+						<h:panelGrid>
+							<h:form id="formAvisoCompra">
+								
+								<h:outputLabel value="EL Asiento ha sido seleccionado " rendered="#{!ventaDirectaMB.bandMultiple}"></h:outputLabel>
+									<h:panelGrid columns="2" rendered="#{!ventaDirectaMB.bandMultiple}">
+										<h:outputLabel value="Usuario "></h:outputLabel>
+										<h:outputText value="#{ventaDirectaMB.usuarioAsientoVenta.login}"></h:outputText>
+									</h:panelGrid>
+									
+									<p:dataTable id="dtMultipleNoValidos" widgetVar="dtVentasNoValidos" var="av" value="#{ventaDirectaMB.listaAsientosxVenderNoValidos}"   
+										emptyMessage="No hay Asientos a Vender" rowIndexVar="nro" 
+										style="FONT-SIZE: 10px;border: inset 0pt;" rendered="#{ventaDirectaMB.bandMultiple}">
+										
+										<f:facet name="header">Lista de Asientos No Validos</f:facet>
+										
+										<p:column width="60" style="text-align: center;" headerText="Nro Asiento" >									
+											<h:outputText value="#{av.numero}"></h:outputText>																						
+										</p:column>
+										<p:column width="60" style="text-align: center;" headerText="Usuarios" >
+											<h:outputText value="#{av.usuario.nombre_completo} "></h:outputText>
+										</p:column>
+								 	 </p:dataTable>
+								 	 
+								 	 
+								 	 <p:dataTable id="dtMultipleValidos" widgetVar="dtVentasValidos" var="av" value="#{ventaDirectaMB.listaAsientosxVenderValidos}"   
+										emptyMessage="No hay Asientos a Vender" rowIndexVar="nro" 
+										style="FONT-SIZE: 10px;border: inset 0pt;" rendered="#{ventaDirectaMB.bandMultiple}">
+										
+										<f:facet name="header">Lista de Asientos Validos</f:facet>
+										
+										<p:column width="60" style="text-align: center;" headerText="Nro Asiento" >									
+											<h:outputText value="#{av.numero}"></h:outputText>
+										</p:column>
+
+								 	 </p:dataTable>
+									
+								<p:commandButton value="Cancelar" icon="icon-cancel"
+										disabled="#{ventaDirectaMB.tipoVenta eq 'EDITAR'}"
+										immediate="true" style="width:180px;"
+										actionListener="#{ventaDirectaMB.venderAsiento('LIBERAR')}"
+										update=":frmBusClase :frmBus" oncomplete="dlgAvisoCompra.hide();" />
+								
+								<p:commandButton value="Siguiente" rendered="#{ventaDirectaMB.bandMultiple}"
+										disabled="#{ventaDirectaMB.tipoVenta eq 'EDITAR'}"
+										immediate="true" style="width:180px;"
+										actionListener="#{ventaDirectaMB.venderAsiento('LIBERAR')}"
+										update=":frmBusClase :frmBus" oncomplete="dlgVentaMulti.show();dlgAvisoCompra.hide();" />
+						
+							</h:form>
+						</h:panelGrid>
+						
+					</p:dialog>
+					
+				<!-- ######################################  popup vender/reservar principal #######################################-->	
+
+					<p:dialog widgetVar="dlgVender" appendToBody="true" resizable="false" id="dlgDetVender" modal="true" closable="true" width="1000" >
+
+						<p:panelGrid id="txtTitulo" style="width: 100%;">
+							<p:row>
+								<p:column>
+									<span style="font-size: 16px; font-weight: bold; margin: auto;">#{ventaDirectaMB.tipoVenta}
+										BOLETO - <h:outputText id="txtNumeroSerieBoleto" value="#{ventaDirectaMB._Serie} #{ventaDirectaMB._Numero}"
+											style="font-weight:bold;font-size:18px; color:red;" />
+									</span>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:form id="formDatos">
+										<p:panelGrid style="width: 100%;">
+											<p:row>
+												<p:column>
+													<h:panelGrid width="100%" rendered="#{ventaDirectaMB._frecuencia}">
+														<table width="100%"
+															style="border-color: red; border: 2px; border-style: outset;background-color:#A9D0F5">
+															<tr>
+																<td colspan="4" align="center"
+																	style="color: red; font-size: 12px; font-weight: bold;">PASAJERO FRECUENTE</td>
+															
+																<td width="40px">Viajes:</td>
+																<td width="20px" style="font-size: 12px; font-weight: bold;">#{ventaDirectaMB._cantidadViajes}</td>
+																<td width="85px">Último Viaje.:</td>
+																<td width="100px"
+																	style="font-size: 12px; font-weight: bold;">#{ventaDirectaMB._ultimaFechaViaje}</td>
+															</tr>
+														</table>
+													</h:panelGrid>
+												</p:column>
+												<p:column>
+													<h:panelGrid width="100%" rendered="#{ventaDirectaMB._nuevo}">
+														<table width="100%" style="border-color: green; border: 2px; border-style: outset;background-color:#A9D0F5">
+															<tr>
+																<td colspan="4" align="center"
+																	style="color: green; font-size: 12px; font-weight: bold;">PASAJERO NUEVO</td>
+														
+																<td width="40px">Viajes:</td>
+																<td width="20px" style="font-size: 12px; font-weight: bold;">#{ventaDirectaMB._cantidadViajes}</td>
+																<td width="85px">Último Viaje:</td>
+																<td width="100px"
+																	style="font-size: 12px; font-weight: bold;">#{ventaDirectaMB._fechahoy}</td>
+															</tr>
+														</table>
+													</h:panelGrid>	
+												</p:column>
+												<p:column>
+													<h:panelGrid width="100%" rendered="#{ventaDirectaMB.pasajeroReg}">
+														<table width="100%"
+															style="border-color: green; border: 2px; border-style: outset;background-color:#A9D0F5">
+															<tr>
+																<td colspan="4" align="center"
+																	style="color: green; font-size: 12px; font-weight: bold;">PASAJERO COMPRO BOLETO</td>
+						 
+															</tr>
+															
+															<tr>
+						
+																<td colspan="4" align="center"
+																	style="color: green; font-size: 12px; font-weight: bold;">#{ventaDirectaMB.servicioCompra.descripcion}</td>	
+																	 
+															</tr>
+															<tr>
+																<td width="50px">Hora Salida:</td>
+																<td width="30px" style="font-size: 12px; font-weight: bold;">#{ventaDirectaMB.horaSalidaCompra}</td>
+																<td width="50px">Fecha:</td>
+																<td width="100px" 
+																style="font-size: 12px; font-weight: bold;">#{ventaDirectaMB.fechaCompraBoleto}</td>
+															</tr>
+														</table>	
+													</h:panelGrid>
+												</p:column>
+												<p:column>
+													<ui:remove>         
+														<h:panelGrid columns="2" rendered="#{ventaDirectaMB._isCompartida}" style="border: 2px; border-style: outset;background-color:#A9D0F5;border-left:50px" width="100%">
+															<p:outputLabel style="color: green; font-size: 16px; font-weight: bold;" value="RUTA COMPARTIDA" /> <p:commandButton icon="icon-search" update=":dlgDetRutasCompartidas" oncomplete="dlgRutasCompartidas.show();" actionListener="#{ventaDirectaMB.buscarRutasCompartidas()}" />
+														</h:panelGrid>
+													</ui:remove>
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+		
+									</h:form>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<!-- panel de informacion si la vent0a ya esta hecha -->
+						<h:panelGroup rendered="#{not ventaDirectaMB.estaLibre}">
+							<br />
+							<br />
+
+							<h:panelGrid columns="4">
+							#{"Oficina:"}
+							<h:outputText value="#{ventaDirectaMB.asientoVenta.desOficina}"
+												style="color:red;font-weight:bold; font-size:14px;" />
+							
+							#{"Origen:"}
+							<h:outputText value="#{ventaDirectaMB.agenciaOrigen.descripcion}"
+												style="color:red;font-weight:bold; font-size:14px;" />
+							
+							#{"Destino:"}
+							<h:outputText value="#{ventaDirectaMB.agenciaDestino.descripcion}"
+												style="color:red;font-weight:bold; font-size:14px;" />
+							
+							#{"Fecha:"}
+							<h:outputText value="#{ventaDirectaMB.programacionSelec.fSalida}"
+												style="color:red;font-weight:bold; font-size:14px;">
+												<f:convertDateTime type="date" pattern="dd-MM-yyyy" />
+											</h:outputText>
+							
+							#{"Hora:"}
+							<h:outputText value="#{ventaDirectaMB.programacionSelec.hSalida}"
+												style="color:red;font-weight:bold; font-size:14px;" />
+							
+							#{"Responsable:"}
+							<h:outputText
+												value="#{ventaDirectaMB.asientoVenta.completoVendedor}"
+												style="color:red;font-weight:bold; font-size:14px;" />
+							
+							#{"Asiento:"}
+							<h:outputText
+												value="#{ventaDirectaMB.asientoSelec.numero} NO DISPONIBLE"
+												style="color:red;font-weight:bold; font-size:14px;" />
+										</h:panelGrid>
+			
+							<h:panelGrid columns="2" rendered="#{ventaDirectaMB.asientoVenta.promocional}">
+										<h:outputText value="BOLETO PROMOCIONAL!" style="font-size:14px;font-weight:bold;color:green;" />
+										<h:outputText value="Costo S/.10.00" style="font-size:14px;font-weight:bold;color:green;" />
+										#{"Usuario Autorizante:"}
+										<h:outputText value="#{ventaDirectaMB.usuarioAutorizante.nombres}" style="width:200px;font-size:14px;font-weight:bold;color:red;" />
+							</h:panelGrid>
+			
+										<hr />
+										<br />
+							#{"Pasajero:"}
+							<h:outputText
+											value="#{ventaDirectaMB.persona.APaterno} #{ventaDirectaMB.persona.AMaterno} #{ventaDirectaMB.persona.nombres}"
+											style="font-weight:bold;font-size:13px; " />
+										<hr />
+										<h:panelGrid columns="2" style="width:350px;">
+								
+								#{"Sexo:"}
+								<h:outputText value="#{ventaDirectaMB.persona.sexo}"
+												style="font-weight:bold;font-size:13px;" />
+								
+								#{"Documento:"}
+								<h:outputText
+												value="#{ventaDirectaMB.persona.tipodocumento} #{ventaDirectaMB.persona.dni}"
+												style="font-weight:bold;font-size:13px; " />
+				
+								#{"Ruc:"}
+								<h:outputText
+												value="#{ventaDirectaMB.empresa.RUC} #{ventaDirectaMB.empresa.razonSocial}"
+												style="font-weight:bold;font-size:13px;" />
+			
+										</h:panelGrid>
+			
+										<hr />
+										<h:form>
+								#{"Generar Copia:"}
+								<h:selectBooleanCheckbox value="#{ventaDirectaMB.copiaBoleto}">
+									<f:ajax execute="@this" render="pnCopia" event="valueChange" />
+								</h:selectBooleanCheckbox>
+								<br />
+								<h:panelGroup id="pnCopia">
+									<h:outputText rendered="#{ventaDirectaMB.copiaBoleto}"
+										value="Valor de la copia S/.:" />
+									<h:inputText rendered="#{ventaDirectaMB.copiaBoleto}" size="5"
+										maxlength="6" value="#{ventaDirectaMB.boletaCopia.valorCopia}" />
+									<p:commandButton rendered="#{ventaDirectaMB.copiaBoleto}"
+										value="Imprimir"
+										actionListener="#{ventaDirectaMB.generarCopia()}" />
+								</h:panelGroup>
+
+								<hr />
+
+								<h:panelGroup
+									rendered="#{not empty ventaDirectaMB.asientoSelec.asientoVenta.nrodocprepagado}">
+									<h:outputText value="Boleto Prepagado:"
+										style="font-size:14px;font-weight:bold;" />
+									<h:panelGrid columns="3">
+							#{"Pagador:"}
+							<h:outputText value="#{ventaDirectaMB.pagador.nombre}" />
+										<p:commandButton value="Imprimir Boleto"
+											actionListener="#{ventaDirectaMB.imprimirBoletoPrepagado()}" />
+									</h:panelGrid>
+								</h:panelGroup>
+								<hr />
+
+
+							</h:form>
+							<br />
+							<p:commandButton value="Cerrar" type="button"
+								style="width:250px;" onclick="dlgVender.hide();" />
+						</h:panelGroup>
+
+						<!-- panel de informacion para hacer la venta -->
+
+						<h:form id="frmVenta" rendered="#{ventaDirectaMB.estaLibre}">
+							<p:messages showDetail="false" showSummary="true" id="msgNuevo"
+								closable="true" />
+
+
+							<h:panelGrid columns="2">
+
+								<p:panel>
+									<h:panelGrid columns="2">
+				
+											#{"Origen:"}
+											<h:outputText value="#{ventaDirectaMB.agenciaOrigen.descripcion}"
+																		style="font-weight:bold;font-size:12px;" />
+											
+											#{"Destino:"}
+											<h:outputText value="#{ventaDirectaMB.agenciaDestino.descripcion}"
+																		style="font-weight:bold;font-size:12px;" />
+											
+											#{"Servicio:"}
+											<h:outputText
+																		value="#{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+																		style="font-weight:bold;font-size:12px;" />
+											
+											#{"Fecha viaje:"}
+											<h:outputText value="#{ventaDirectaMB.programacionSelec.fSalida}">
+																		<f:convertDateTime type="date" pattern="dd-MM-yyyy" />
+																	</h:outputText>
+											
+											#{"Hora viaje:"}
+											<h:outputText value="#{ventaDirectaMB.programacionSelec.hSalida}"
+																		style="font-weight:bold;font-size:12px;" />
+											
+											#{"Nro. Asiento:"}
+											<h:outputText value="#{ventaDirectaMB.asientoSelec.numero}"
+																		style="font-weight:bold;font-size:18px; color:red; " />
+											
+											#{"Piso:"}
+											<h:outputText value="#{ventaDirectaMB.asientoSelec.piso}"
+																		style="font-weight:bold;font-size:18px;color:green" />
+											
+											#{"Precio Normal S/.:"}
+											<h:outputText value="#{ventaDirectaMB.precioAsiento}"
+																		style="font-weight:bold;font-size:18px;" />
+											
+											<h:outputText value="Diferencia S/.:" rendered="#{ventaDirectaMB.activaPostergacion}" />							
+											<h:outputText value="#{ventaDirectaMB.diferencia}" rendered="#{ventaDirectaMB.activaPostergacion}"
+																		style="color:red;font-weight:bold;font-size:18px;" />							
+
+									</h:panelGrid>
+									
+									
+									<h:panelGroup id="pnPromocion">
+										<h:panelGrid columns="2"
+											rendered="#{ventaDirectaMB.tienePromocion}">
+											#{"Descuento promocion:"}
+											<h:outputText value="#{ventaDirectaMB.promocion.valorBoleto}"
+																		style="font-weight:bold;font-size:18px;" />
+											
+											#{"Nombre promocion:"}
+											<h:outputText value="#{ventaDirectaMB.promocion.descripcion}"
+																		style="font-weight:bold;font-size:18px;" />
+											
+											#{"Pago total:"}
+											<h:outputText value="#{ventaDirectaMB.precioAsientoPromocion}"
+																		style="font-weight:bold;font-size:18px;" />
+										</h:panelGrid>
+										
+										<h:outputText value="No tiene promocion"
+											style="color:red;font-size:14px;"
+											rendered="#{ventaDirectaMB.noPromocionIdaVuelta}" />
+											
+									</h:panelGroup>
+									
+									<br />				
+						<ui:remove>					
+						#{"Boleto Promocional:"}
+						<h:selectBooleanCheckbox value="#{ventaDirectaMB.esPromocional}">
+										<f:ajax execute="@this" render="pnPromocional"
+											event="valueChange"
+											listener="#{ventaDirectaMB.activarBoletoPromocional()}" />
+						</h:selectBooleanCheckbox>
+						</ui:remove>
+						<h:panelGroup id="pnPromocional">
+							<h:panelGrid columns="2" rendered="#{ventaDirectaMB.esPromocional}">
+							#{"Autorizante:"}
+							<p:selectOneMenu style="width:200px" value="#{ventaDirectaMB.promocion.idAutorizante}"
+													required="true"
+													requiredMessage="Seleccione un Usuario Autorizante">
+													<f:selectItem itemLabel="Seleccione..." itemValue="" />
+													<f:selectItems var="ag"
+														value="#{promocionMB.listaUsuarioAutorizante}"
+														itemValue="#{ag.idAutorizante}" itemLabel="#{ag.nombres}" />
+												</p:selectOneMenu>
+							
+							#{"Monto a pagar S/.:"}
+							<h:outputText value="#{ventaDirectaMB.costoBoletoPromocional}" style="font-weight:bold;font-size:18px;" />
+	
+							</h:panelGrid>
+						</h:panelGroup>
+						
+						<ui:remove>
+						#{"Activar Promocion:"}
+						<h:selectBooleanCheckbox value="#{ventaDirectaMB.enablePromocion}">
+										<f:ajax execute="@this" render="pnPromociones"
+											event="valueChange"
+											listener="#{ventaDirectaMB.activarPromocion()}" />
+						</h:selectBooleanCheckbox>
+						</ui:remove>
+						<h:panelGroup id="pnPromociones">
+						<h:panelGrid columns="2" rendered="#{ventaDirectaMB.enablePromocion}">
+						#{"Elegir Promocion:"}
+						<h:selectOneMenu style="width:200px" value="#{ventaDirectaMB.idPromocionSelect}"
+												required="true"
+												requiredMessage="Seleccione una Promocion">
+												<f:selectItem itemLabel="Seleccione..." itemValue="" />
+												<f:selectItems var="ag"
+													value="#{ventaDirectaMB.listaCmbPromociones}"
+													itemValue="#{ag.idPromocion}" itemLabel="#{ag.descripcion}" />
+													<f:ajax render="montoDscto" event="change" listener="#{ventaDirectaMB.setPromocionBoleto('INDIVIDUAL')}"></f:ajax>
+											</h:selectOneMenu>
+						
+						#{"Monto a pagar S/.:"}
+						<h:outputText id="montoDscto" value="#{ventaDirectaMB.precioAsientoPromocion}" style="font-weight:bold;font-size:18px;" />
+
+						</h:panelGrid>
+						</h:panelGroup>
+						
+						
+						<!-- FIN PANEL PROMOCION -->
+
+									<br />
+									<!--  
+						#{"Boleto Ida-Vuelta:"}
+						<h:selectBooleanCheckbox value="#{ventaDirectaMB.idaVuelta}">
+										<f:ajax execute="@this" render="pnPromocion"
+											event="valueChange"
+											listener="#{ventaDirectaMB.buscarpromocionidaVuelta()}" />
+						</h:selectBooleanCheckbox>
+						-->
+					</p:panel>
+
+					<h:panelGroup id="pnDatosBoleto">
+					<hr />
+					<span style="font-size: 12px; font-weight: bold; margin: auto;">DATOS DE BOLETO</span>
+					<h:panelGrid columns="2">
+
+						#{"Tipo Pago:"}
+						<p:selectOneMenu style="width:150px"
+										value="#{ventaDirectaMB._tipoPago}">
+										<f:selectItem itemLabel="EFECTIVO" itemValue="EFECTIVO" />
+										<f:selectItem itemLabel="TARJETA" itemValue="TARJETA" />
+										<!-- <f:selectItem itemLabel="NOTA COBRANZA" itemValue="NOTA COBRANZA" /> -->
+										<f:selectItem itemLabel="TRANS. BANCARIA" itemValue="TRAN-BANCARIA" /> -->
+										<f:selectItem itemLabel="MIXTO" itemValue="MIXTO" />
+										<p:ajax event="change" update=":dlgDetFormaPago"
+											listener="#{ventaDirectaMB.setearFormaPago}"
+											oncomplete="validarFormaPago(xhr, status, args)" />
+						</p:selectOneMenu>
+						
+						<ui:remove>				
+						#{"Tipo Entrega:"}
+						<p:selectOneMenu style="width:150px" value="#{ventaDirectaMB._tipoEntrega}">		
+							<f:selectItem itemLabel="OFICINA" itemValue="OFICINA" />
+							<f:selectItem itemLabel="DELIVERY" itemValue="DELIVERY" />
+							<p:ajax event="valueChange"
+								update=":dlgDelivery :frmVenta:msgNuevo pnInfoDelivery"
+								listener="#{ventaDirectaMB.visualizarPagador()}"/>
+						</p:selectOneMenu>
+						</ui:remove>
+					</h:panelGrid>
+					
+					<h:panelGroup id="pnInfoDelivery">
+						<h:panelGrid columns="8" rendered="#{ventaDirectaMB.deliveryVenta}">
+							#{"Delivery:"}
+							<h:outputText value="#{ventaDirectaMB.delivery.tipoDoc}" style="color:red;font-size:bold;" />
+							<p:spacer height="1" width="3"/>
+							<h:outputText value="#{ventaDirectaMB.delivery.nroDoc}" style="color:red;font-size:bold;"/>
+							<p:spacer height="1" width="3"/>
+							<h:outputText value="#{ventaDirectaMB.delivery.nombre}" style="color:red;font-size:bold;"/>
+						</h:panelGrid>
+					</h:panelGroup>
+
+									
+
+                    <h:panelGrid rendered="#{not ventaDirectaMB.alertaReserva and ventaDirectaMB.tipoVenta eq 'RESERVA'}" columns="2" style="margin: 20px 0;">
+                                        #{"Codigo Reserva:"}
+                                        <h:outputText
+                                        value="#{ventaDirectaMB.listaAsientosxVender.get(0).codigoReserva}"
+                                        style="color:red;font-size:14px;" />
+
+                                        #{"Hora caducidad:"}
+                                        <p:calendar widgetVar="fechaCaducidadWidget" rendered="#{ventaDirectaMB.reservaEnElDia}"
+                                                value="#{ventaDirectaMB.fechaLimiteReserva}"
+                                                pattern="hh:mm a" timeOnly="true"
+                                                locale="es" >
+                                        </p:calendar>
+
+                                        <p:calendar widgetVar="fechaCaducidadWidget" rendered="#{not ventaDirectaMB.reservaEnElDia}"
+                                                value="#{ventaDirectaMB.fechaLimiteReserva}"
+                                                pattern="dd-MM-yyyy hh:mm a" readonly="true" locale="es">
+                                        </p:calendar>
+                                        
+                                        <h:inputHidden id="fechaActual" value="#{ventaDirectaMB.fechaActual}">
+                                            <f:convertDateTime pattern="dd-MM-yyyy hh:mm a" />
+                                        </h:inputHidden>
+
+                       </h:panelGrid>
+
+
+
+									<h:panelGrid columns="4">
+										<h:outputText value="Venta de otra Oficina" />
+										<p:spacer width="10" height="2" />
+										<h:selectBooleanCheckbox
+											value="#{ventaDirectaMB.esOficinaExterna}">
+											<f:ajax execute="@this" render=":txtTitulo pnOfExter"
+												event="valueChange"
+												listener="#{ventaDirectaMB.consultarAgenciaExterna()}" />
+										</h:selectBooleanCheckbox>
+
+										<h:panelGroup id="pnOfExter">
+											<h:panelGrid rendered="#{ventaDirectaMB.esOficinaExterna}"
+												columns="4">
+												#{"Agencia:"}
+												<p:selectOneMenu style="width:130px"
+													value="#{ventaDirectaMB.agenciaExterna.idagencia}"
+													required="true" requiredMessage="Se necesita una agencia">
+													<f:selectItem itemLabel="Seleccionar" itemValue="#{null}"
+														noSelectionOption="true" />
+													<f:selectItems var="ag"
+														value="#{ventaDirectaMB.listaAgenciasExternas}"
+														itemLabel="#{ag.descripcion}" itemValue="#{ag.idagencia}" />
+													<p:ajax update="cmbOficinas"
+														listener="#{ventaDirectaMB.consultarOficinaExterna()}" />
+												</p:selectOneMenu>
+										
+												#{"Oficina:"}
+												<p:selectOneMenu id="cmbOficinas" style="width:150px"
+													required="true" requiredMessage="Se nececita una oficina"
+													value="#{ventaDirectaMB.oficinaExterna.idOficina}">
+													<f:selectItem itemLabel="Seleccionar" itemValue="#{null}"
+														noSelectionOption="true" />
+													<f:selectItems var="of"
+														value="#{ventaDirectaMB.listaOficinasExternas}"
+														itemLabel="#{of.nombre}" itemValue="#{of.idOficina}" />
+												</p:selectOneMenu>
+											</h:panelGrid>
+										</h:panelGroup>
+
+									</h:panelGrid>
+									
+									<ui:remove>
+									<p:commandButton value="Boleto Prepagado" update=":dlgPrepagado"  icon="icon-concepto"  immediate="true"
+										actionListener="#{ventaDirectaMB.boletoPrepagado()}" oncomplete="wdlgPrepagado.show();" />
+									</ui:remove>	
+
+									<h:panelGroup id="pnBoletoPrepag">
+										<p:panel rendered="#{ventaDirectaMB.boletoPrepagado}">
+											<h:panelGrid columns="14" >
+												<h:outputText value="Prepagado:"
+												style="font-weight:bold;" />
+												<p:spacer width="5" height="1"/>	
+												<h:outputText value="#{ventaDirectaMB.pagador.tipoDoc}"
+													style="font-weight:bold;" />
+												<h:outputText value=":"	style="font-weight:bold;" />	
+												<h:outputText value="#{ventaDirectaMB.pagador.nroDoc}"
+													style="font-weight:bold;" />
+												<p:spacer width="5" height="1"/>	
+												<h:outputText value="#{ventaDirectaMB.pagador.nombre}"
+													style="font-weight:bold;" />
+												<p:spacer width="5" height="1"/>
+												<h:outputText value="Boleta:" />			
+												<h:outputText value="#{ventaDirectaMB.listaAsientosxVender.get(0).codigoBoleta}" />		
+												<p:spacer width="5" height="1"/>
+												<h:outputText value="Monto S/.:" />	
+												<h:outputText value="#{ventaDirectaMB.montoPrepagado}" />
+											</h:panelGrid>
+										</p:panel>
+									</h:panelGroup>
+											
+
+								</h:panelGroup>
+
+							</h:panelGrid>
+
+							<h:panelGroup id="pnDatosCliente">
+
+								<hr />
+								<span style="font-size: 12px; font-weight: bold; margin: auto;">DATOS DE PASAJERO</span>
+
+								<h:panelGrid columns="10">		
+
+							#{"Tipo Documento:"}
+							<h:selectOneMenu value="#{ventaDirectaMB.persona.tipodocumento}">
+										<f:selectItem itemLabel="DNI" itemValue="DNI" />
+										<f:selectItem itemLabel="PAS" itemValue="PAS" />
+										<f:selectItem itemLabel="CE" itemValue="CE" />
+										<f:ajax event="valueChange" render="txtDNIndiv"
+											execute="@this" />
+									</h:selectOneMenu>
+
+									<p:spacer width="90" height="3" />
+							
+							#{"Numero Doc.:"}
+							
+							<h:panelGroup id="txtDNIndiv">
+							
+							<p:inputText id="txtDocDniIndiv" rendered="#{ventaDirectaMB.persona.tipodocumento eq 'DNI' }"
+										value="#{ventaDirectaMB.persona.dni}" size="18"
+										maxlength="8"
+										required="true"
+										requiredMessage="se necesita un numero de documento">
+										<pe:keyFilter mask="num"/>
+										<f:ajax event="blur"
+											listener="#{ventaDirectaMB.buscarPersonaSola()}"
+											execute="@this" render="pnDatosCliente pnBotonera :formDatos :frmVenta:chckRuc :frmVenta:pnRuc" />	
+							</p:inputText>					
+							
+							<p:inputText   rendered="#{ventaDirectaMB.persona.tipodocumento != 'DNI' }"
+										value="#{ventaDirectaMB.persona.dni}" size="18"
+										maxlength="14"
+										required="true"
+										requiredMessage="se necesita un numero de documento">
+										<pe:keyFilter mask="alphanum"/>
+										<f:ajax event="blur"
+											listener="#{ventaDirectaMB.buscarPersonaSola()}"
+											execute="@this" render="pnDatosCliente pnBotonera :formDatos :frmVenta:chckRuc :frmVenta:pnRuc" />
+											
+							</p:inputText>
+							
+							</h:panelGroup>
+									<p:spacer width="30" height="3" />
+
+									<p:commandButton id="btnBusquedaPasaj" immediate="true"
+										
+										actionListener="#{ventaDirectaMB.limpiarDialogoCliente()}"
+										oncomplete="dlgCliente.show()" update=":dlgDetCliente"	
+															
+										icon="icon-buscar" />
+
+								</h:panelGrid>
+
+								<h:outputText rendered="#{ventaDirectaMB.dniDigitado}"
+									value="#{ventaDirectaMB.personaEncontrada eq 'true' ? 'Persona Registrada':'Persona No Registrada'}"
+									style="color:#{ventaDirectaMB.personaEncontrada eq 'true' ? 'green':'red'};" />
+
+								<h:outputText value=""
+									rendered="#{not ventaDirectaMB.dniDigitado}" />
+
+								<h:panelGrid columns="6">		
+
+							#{"Ap. Paterno:"}
+							<h:inputText value="#{ventaDirectaMB.persona.APaterno}" size="20"
+										maxlength="15" required="true"
+										requiredMessage="se necesita un ap.paterno"
+										validatorMessage="solo caracteres para el paterno">
+									</h:inputText>
+							
+							#{"Ap. Materno:"}
+							<h:inputText value="#{ventaDirectaMB.persona.AMaterno}" size="20"
+										maxlength="15" required="true"
+										requiredMessage="se necesita un materno"
+										validatorMessage="solo caracteres para el materno">
+									</h:inputText>
+							
+							#{"Nombres:"}
+							<h:inputText value="#{ventaDirectaMB.persona.nombres}" size="35"
+										maxlength="30" required="true"
+										requiredMessage="se necesita un nombre"
+										validatorMessage="solo caracteres para el nombre">
+									</h:inputText>
+							
+							#{"Telefono:"}
+							<h:inputText id="txtTelefFinal" value="#{ventaDirectaMB.persona.telefono}" size="20"
+										maxlength="15">
+									</h:inputText>
+							
+							#{"Email:"}
+							<h:inputText value="#{ventaDirectaMB.persona.email}" size="20"
+										maxlength="50">
+									</h:inputText>
+							
+							#{"Sexo:"}
+							<h:panelGroup>
+										<h:selectOneMenu value="#{ventaDirectaMB.persona.sexo}">
+											<f:selectItem itemValue="M" itemLabel="Masculino" />
+											<f:selectItem itemValue="F" itemLabel="Femenino" />
+										</h:selectOneMenu>
+										<p:spacer width="10" />
+
+									</h:panelGroup>
+							
+							<h:outputText rendered="#{not ventaDirectaMB.personaEncontrada}" value="Fecha Nac.:"/>
+							
+							<p:calendar rendered="#{not ventaDirectaMB.personaEncontrada}"
+										value="#{ventaDirectaMB.fechaCumpleAnios}" navigator="true"
+										pattern="dd-MM-yyyy" locale="es" >
+										<p:ajax event="dateSelect"
+											listener="#{ventaDirectaMB.calculaEdad()}"
+											update=":frmVenta:pnEdad" />
+									</p:calendar>
+								</h:panelGrid>
+								<h:panelGrid id="pnEdad" columns="5">
+				
+					#{"Edad:"}
+					<h:outputText
+										style="color:#{ventaDirectaMB.persona.edad le 18 ? 'red':'green'}; font-size:16px;"
+										value="#{ventaDirectaMB.persona.edad}" />
+									<p:spacer width="210" height="3" />
+					#{"Observacion:"}
+					<h:inputText value="#{ventaDirectaMB.observacion}"
+										style="color:red;" size="70" />
+
+								</h:panelGrid>
+							</h:panelGroup>
+							<hr />
+							<h:panelGrid columns="4">
+									#{"Boleto con RUC:"}
+									<p:spacer width="10" height="2" />
+										<p:selectBooleanCheckbox value="#{ventaDirectaMB.boletoRuc}" id="chckRuc">
+									<f:ajax execute="@this" render="pnRuc" event="valueChange" listener="#{ventaDirectaMB.check()}"/>
+									</p:selectBooleanCheckbox>
+
+
+								<h:panelGroup id="pnRuc">
+                                                                    
+									<h:panelGrid rendered="#{ventaDirectaMB.boletoRuc}" columns="4" id="plgRuc">
+										<!-- MODIFICACION  ACTUAL-->
+											#{"RUC:"}
+											<h:inputText value="#{ventaDirectaMB.nroRuc}" maxlength="11"
+													size="15" 
+													requiredMessage="se debe especificar RUC">
+													<f:ajax event="valueChange"
+														listener="#{ventaDirectaMB.buscarEmpresa()}" execute="@this" render="pnlRend"
+														 />
+											</h:inputText>	
+											<h:panelGrid id="pnlRend" columns="3">
+											<h:outputText value="Razon Social:" />
+											<h:inputText id="txtRazon"
+												value="#{ventaDirectaMB.empresa.razonSocial}" />
+											
+											<h:outputText rendered="#{ventaDirectaMB.rucDigitado}" id="msjReg"
+										value="#{ventaDirectaMB.empresaEncontrada eq 'true' ? 'Empresa registrada' : 'Empresa no registrada'}"
+										style="color:#{ventaDirectaMB.empresaEncontrada eq 'true' ? 'green' : 'red'};font-weight:bold; " />
+										
+											</h:panelGrid>
+
+									</h:panelGrid>
+									
+								</h:panelGroup>
+							</h:panelGrid>
+
+							<h:panelGrid columns="5" id="pnBotonera">
+													
+								<p:commandButton id="btnVentaIndiv" icon="icon-printer"
+									onclick="saveButton.disable()"
+									widgetVar="saveButton"
+									value="#{ventaDirectaMB.tipoVenta} Boleto" 
+									disabled="#{ventaDirectaMB.estaListaNegra or (ventaDirectaMB.alertaReserva and ventaDirectaMB.tipoVenta eq 'RESERVA')}"
+									update=":frmBusClase :frmBus :frmManifiesto msgNuevo"
+									actionListener="#{ventaDirectaMB.venderAsiento(ventaDirectaMB.tipoVenta)}"
+									style="width:180px;" oncomplete="saveButton.enable();dlgVender.show(); validarBoleto(xhr, status, args);">
+								</p:commandButton> 
+								<p:spacer width="30" />										
+								
+								<ui:remove>
+								<p:commandButton value="Habilitar Boleto"
+										icon="icon-reservas" style="width:180px;font-size:10px;" immediate="true"
+										actionListener="#{ventaDirectaMB.limpiarPersona()}"
+                                        disabled="#{ventaDirectaMB.alertaReserva and ventaDirectaMB.tipoVenta eq 'RESERVA'}"
+										update=":dlgDetActivar" oncomplete="dlgActivar.show();" />
+								</ui:remove>
+								
+								
+								<p:spacer width="30" />		
+								<p:commandButton value="Cancelar" icon="icon-cancel"
+									disabled="#{ventaDirectaMB.tipoVenta eq 'EDITAR'}"
+									immediate="true" style="width:180px;"
+									actionListener="#{ventaDirectaMB.venderAsiento('LIBERAR')}"
+									update=":frmBusClase :frmBus" oncomplete="dlgVender.hide();" />
+
+								<h:panelGrid>
+                                           <h:outputText rendered="#{ventaDirectaMB.estaListaNegra}"                                         
+												value="El pasajero se encuentra en la lista negra"
+												style="color:red;font-size:14px;" />
+                                                           <h:outputText value="Límite de tiempo superado" style="color: red;font-size:14px;"
+                                                                     rendered="#{ventaDirectaMB.alertaReserva}"/>
+                                 </h:panelGrid>
+							</h:panelGrid>
+
+						</h:form>
+
+						<p:ajaxStatus style="width:16px;height:16px;">
+							<f:facet name="start">
+								<h:graphicImage value="resources/img/Ajaxloading.gif" />
+							</f:facet>
+
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</p:dialog>
+
+					<!-- ####################################################	VENTA MULTIPLE     ################################################-->
+
+					<p:dialog header="Venta Multiple Boletos" widgetVar="dlgVentaMulti"
+						appendToBody="true" resizable="false" id="dlgDetVentaMulti" closable="false"
+						modal="true">
+						
+						<p:ajax event="close" listener="#{ventaDirectaMB.venderAsiento('LIBERAR MASIVO')}" update=":frmBusClase :frmBus" />
+						
+						<!--  
+						<h:form id="formDatosM">
+																
+											
+									<h:panelGrid width="100%" rendered="#{ventaDirectaMB.pasajeroReg}">
+										<table width="100%"
+											style="border-color: green; border: 2px; border-style: outset;background-color:#A9D0F5">
+											<tr>
+												<td colspan="4" align="center"
+													style="color: green; font-size: 16px; font-weight: bold;">PASAJERO COMPRO BOLETO</td>
+											</tr>
+											<tr>
+												<td width="50px">Hora Salida:</td>
+												<td width="20px" style="font-size: 16px; font-weight: bold;">#{ventaDirectaMB.horaSalidaCompra}</td>
+												<td width="80px">Fecha:</td>
+												<td width="100px" 
+												style="font-size: 16px; font-weight: bold;">#{ventaDirectaMB.fechaCompraBoleto}</td>
+											</tr>
+										</table>	
+									</h:panelGrid>
+
+							</h:form>
+							-->
+							
+						
+							
+						
+
+						<h:form id="formVentMult" style="width:1300px;">
+							<p:messages showDetail="false" showSummary="true"
+								id="msgMultiple" closable="true" />
+							<p:panel style="background-color:#ffe2b6;">
+								<h:panelGrid columns="14">
+									<p:outputLabel value="Origen :" style="font-size: 1.2em"></p:outputLabel>
+									<h:outputText
+										value="#{ventaDirectaMB.agenciaOrigen.descripcion}"
+										style="font-weight:bold;font-size: 1.2em;" />
+
+									<p:spacer width="30" height="2" />
+
+									<p:outputLabel value="Destino :" style="font-size: 1.2em"></p:outputLabel>
+									<h:outputText
+										value="#{ventaDirectaMB.agenciaDestino.descripcion}"
+										style="font-weight:bold;font-size: 1.2em;" />
+
+									<p:spacer width="70" height="2" />
+
+									<p:outputLabel value="Servicio :" style="font-size: 1.2em"></p:outputLabel>
+									<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+										style="font-weight:bold;font-size: 1.2em;" />
+
+									<p:spacer width="30" height="2" />
+
+									<p:outputLabel value="Fecha Viaje :" style="font-size: 1.2em"></p:outputLabel>
+									<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.fSalida}"
+										style="font-weight:bold;font-size: 1.2em;">
+										<f:convertDateTime type="date" pattern="dd-MM-yyyy" />
+									</h:outputText>
+
+									<p:spacer width="30" height="2" />
+
+									<p:outputLabel value="Hora Viaje :" style="font-size: 1.2em"></p:outputLabel>
+									<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.hSalida}"
+										style="font-weight:bold;font-size: 1.2em;" />
+
+								</h:panelGrid>
+							</p:panel>
+							<br />
+
+							<h:panelGrid columns="8">
+							        #{"Tipo Pago:"}
+									<h:selectOneMenu style="width:150px"
+									value="#{ventaDirectaMB._tipoPago}">
+									<f:selectItem itemLabel="EFECTIVO" itemValue="EFECTIVO" />
+									<f:selectItem itemLabel="TARJETA" itemValue="TARJETA" />
+									<f:selectItem itemLabel="NOTA COBRANZA" itemValue="NOTA COBRANZA" />
+									<f:selectItem itemLabel="TRANS. BANCARIA" itemValue="TRAN-BANCARIA" />
+									<f:selectItem itemLabel="MIXTO" itemValue="MIXTO" />
+									<p:ajax event="change" update=":dlgDetFormaPago"
+										listener="#{ventaDirectaMB.setearFormaPago}"
+										oncomplete="validarFormaPago(xhr, status, args)" />
+								</h:selectOneMenu>
+									<ui:remove>
+									#{"Tipo Entrega:"}
+									<h:selectOneMenu style="width:150px"
+									value="#{ventaDirectaMB._tipoEntrega}">
+									<f:selectItem itemLabel="OFICINA" itemValue="OFICINA" />
+									<f:selectItem itemLabel="DELIVERY" itemValue="DELIVERY" />									
+									<p:ajax event="valueChange"
+										update="pnDeliveryPagMult :formVentMult:msgMultiple"
+										listener="#{ventaDirectaMB.visualizarPagador()}" />
+									</h:selectOneMenu>
+									</ui:remove>
+										
+										<h:panelGroup id="pnlHoraReserva" style="margin: 20px 0;">
+											<h:panelGrid rendered="#{not ventaDirectaMB.alertaReserva and ventaDirectaMB.tipoVenta eq 'RESERVA'}"
+                                                                                                     columns="2">
+												#{"Hora caducidad:"}
+												<p:calendar rendered="#{ventaDirectaMB.reservaEnElDia}"
+													value="#{ventaDirectaMB.fechaLimiteReserva}"
+													pattern="hh:mm a" timeOnly="true"
+                                                                                                        locale="es" >
+												</p:calendar>
+
+												<p:calendar rendered="#{not ventaDirectaMB.reservaEnElDia}"
+													value="#{ventaDirectaMB.fechaLimiteReserva}"
+													pattern="dd-MM-yyyy hh:mm a" readonly="true"
+                                                                                                        locale="es" >
+												</p:calendar>
+												
+											</h:panelGrid>
+										</h:panelGroup>
+										
+										<h:panelGrid columns="2" rendered="#{ventaDirectaMB._isCompartida}" style="border: 2px; border-style: outset;background-color:#A9D0F5;border-left:50px" width="100%">
+											<p:outputLabel style="color: green; font-size: 16px; font-weight: bold;" value="RUTA COMPARTIDA" /> <p:commandButton icon="icon-search" update=":dlgDetRutasCompartidas" oncomplete="dlgRutasCompartidas.show();" actionListener="#{ventaDirectaMB.buscarRutasCompartidas()}" />
+										</h:panelGrid>
+										
+							</h:panelGrid>
+
+							<h:panelGroup id="pnDeliveryPagMult">
+								<p:panel rendered="#{ventaDirectaMB.deliveryVenta}">
+									<h:panelGrid columns="11">
+										<h:outputText value="Datos del Pagador de Delivery"
+											style="font-weight:bold;" />
+																		
+																		#{"Tip.Doc:"}
+																		<h:selectOneMenu
+																			value="#{ventaDirectaMB.delivery.tipoDoc}">
+																			<f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true" />
+																			<f:selectItem itemLabel="DNI" itemValue="DNI" />
+																			<f:selectItem itemLabel="RUC" itemValue="RUC" />
+																			<f:ajax execute="@this" event="valueChange"
+																				render="txtDocPagadorMult"
+																				listener="#{ventaDirectaMB.limpiarDocDelivery()}" />
+																		</h:selectOneMenu>
+																		
+																		#{"Documento:"}
+																		<h:inputText id="txtDocPagadorMult"
+																			value="#{ventaDirectaMB.delivery.nroDoc}" size="14"
+																			maxlength="14">
+																			<f:ajax event="blur"
+																				listener="#{ventaDirectaMB.buscarPagadorDelivery()}"
+																				execute="@this" render="msgMultiple txtNomPagadorMul" />
+																		</h:inputText>
+																		
+																		
+																		#{"Nombre:"}
+																		<h:inputText id="txtNomPagadorMul"
+																						value="#{ventaDirectaMB.delivery.nombre}" size="25"
+																						maxlength="25" />
+																		
+																		#{"Monto S/.:"}
+																		<h:inputText value="#{ventaDirectaMB.montoDelivery}"
+																						size="5" maxlength="6" />
+																		
+																			#{"Hora Entrega"}
+										
+																<p:calendar
+											value="#{ventaDirectaMB.fechaEntregaDelivery}"
+											pattern="hh:mm a" locale="es" timeOnly="true"
+											maxHour="#{ventaDirectaMB.horaMaximaDelivery}">
+											<f:convertDateTime pattern="hh:mm a" />
+										</p:calendar>
+
+									</h:panelGrid>
+
+									<h:panelGrid columns="6">
+																	#{"Direccion:"}
+																	<h:inputText id="txtDireccionM"
+											value="#{ventaDirectaMB.delivery.direccion}" size="14"
+											maxlength="50" style="width:200px ">
+										</h:inputText>
+
+																	#{"Referencia:"}
+																	<h:inputText id="txtReferenciaM"
+											value="#{ventaDirectaMB.delivery.referencia}" size="14"
+											maxlength="50" style="width:200px ">
+										</h:inputText>
+		
+																	#{"Telefono:"}
+																	<h:inputText id="txtTelDelM"
+											value="#{ventaDirectaMB.delivery.telefono}" size="14"
+											maxlength="50" style="width:100px ">
+										</h:inputText>
+									</h:panelGrid>
+								</p:panel>
+							</h:panelGroup>
+
+							<h:panelGrid columns="4">
+										
+										#{"Venta de otra Oficina"}
+										<p:spacer width="10" height="2" />
+								<h:selectBooleanCheckbox
+									value="#{ventaDirectaMB.esOficinaExterna}">
+									<f:ajax execute="@this" render="pnOfExterMul dtMultiple"
+										event="valueChange"
+										listener="#{ventaDirectaMB.consultarAgenciaExterna()}" />
+								</h:selectBooleanCheckbox>
+
+								<h:panelGroup id="pnOfExterMul">
+
+									<h:panelGrid rendered="#{ventaDirectaMB.esOficinaExterna}"
+										columns="4">
+											
+												#{"Agencia:"}
+												<p:selectOneMenu
+											value="#{ventaDirectaMB.agenciaExterna.idagencia}"
+											required="true" requiredMessage="se necesita una agencia">
+											<f:selectItem itemLabel="Seleccionar" itemValue="#{null}"
+												noSelectionOption="true" />
+											<f:selectItems var="ag"
+												value="#{ventaDirectaMB.listaAgenciasExternas}"
+												itemLabel="#{ag.descripcion}" itemValue="#{ag.idagencia}" />
+											<p:ajax update="cmbOficinasMul"
+												listener="#{ventaDirectaMB.consultarOficinaExterna()}" />
+										</p:selectOneMenu>
+												
+												
+												#{"Oficina:"}
+												<p:selectOneMenu id="cmbOficinasMul" style="width:150px"
+											required="true" requiredMessage="Se nececita una oficina"
+											value="#{ventaDirectaMB.oficinaExterna.idOficina}">
+											<f:selectItem itemLabel="Seleccionar" itemValue="#{null}"
+												noSelectionOption="true" />
+											<f:selectItems var="of"
+												value="#{ventaDirectaMB.listaOficinasExternas}"
+												itemLabel="#{of.nombre}" itemValue="#{of.idOficina}" />
+										</p:selectOneMenu>
+
+
+									</h:panelGrid>
+
+								</h:panelGroup>
+
+							</h:panelGrid>
+							
+							<ui:remove>
+							<h:panelGrid columns="4">
+									#{"Boleto Prepagado"}
+									<p:spacer width="28" height="2" />
+								<h:selectBooleanCheckbox
+									value="#{ventaDirectaMB.boletoPrepagado}">
+									<f:ajax execute="@this" render="pnBoletoPrepagMul"
+										event="valueChange" />
+								</h:selectBooleanCheckbox>
+
+								<h:panelGroup id="pnBoletoPrepagMul">
+									<h:panelGroup rendered="#{ventaDirectaMB.boletoPrepagado}">
+
+										<h:panelGrid columns="6">
+											<h:outputText value="Datos del Pagador:"
+												style="font-weight:bold;" />
+											
+											#{"Tip.Doc:"}
+											<h:selectOneMenu value="#{ventaDirectaMB.pagador.tipoDoc}">
+												<f:selectItem itemLabel="DNI" itemValue="DNI" />
+												<f:selectItem itemLabel="RUC" itemValue="RUC" />
+												<f:ajax execute="@this" event="valueChange"
+													render="txtDocPagador" />
+											</h:selectOneMenu>
+											
+											#{"Documento:"}
+											<h:inputText id="txtDocPagador"
+												value="#{ventaDirectaMB.pagador.nroDoc}" size="14"
+												maxlength="14">
+												<f:ajax event="blur"
+													listener="#{ventaDirectaMB.buscarPagador()}"
+													execute="@this" render="msgMultiple pnDatosPagador" />
+											</h:inputText>
+
+											<h:panelGrid columns="5" id="pnDatosPagador">	
+											
+												#{"Nombre:"}
+												<h:inputText style="font-size:10px;"
+													value="#{ventaDirectaMB.pagador.nombre}" size="25"
+													maxlength="25" />
+											
+												#{"Monto S/.:"}
+												<h:inputText value="#{ventaDirectaMB.montoPrepagado}"
+													size="5" maxlength="6" />
+
+											</h:panelGrid>
+										</h:panelGrid>
+
+									</h:panelGroup>
+								</h:panelGroup>
+							</h:panelGrid>
+							</ui:remove>
+						 <h:panelGrid columns="4">
+										
+										#{"Boleto con RUC:"}
+										<p:spacer width="40" height="2" />
+								          <h:selectBooleanCheckbox value="#{ventaDirectaMB.boletoRuc}"  id="chckRucM" >
+									            <f:ajax execute="@this" render="pnRucM" event="valueChange" listener="#{ventaDirectaMB.check()}" />
+								          </h:selectBooleanCheckbox>
+								          
+					
+                                <h:panelGroup id="pnRucM">
+								
+									<h:panelGrid rendered="#{ventaDirectaMB.boletoRuc}" columns="4" id="plgRucM">
+											
+												#{"RUC:"}
+												<h:inputText value="#{ventaDirectaMB.nroRuc}"
+															maxlength="13" size="12" required="true"
+															requiredMessage="se debe especificar RUC">
+															<f:ajax event="valueChange"		listener="#{ventaDirectaMB.buscarEmpresa()}" execute="@this"	  update="pnlRend"/>
+												</h:inputText>	
+												
+												
+															
+												<h:panelGrid id="pnlRend" columns="3">
+													<h:outputText value="Razon Social:" />
+													<h:inputText id="txtRazon"
+													value="#{ventaDirectaMB.empresa.razonSocial}" />			
+	
+	
+													<h:outputText rendered="#{ventaDirectaMB.rucDigitado}"
+														id="txtSms"
+														value="#{ventaDirectaMB.empresaEncontrada eq 'true' ? 'Empresa registrada' : 'Empresa no registrada'}"
+														style="color:#{ventaDirectaMB.empresaEncontrada eq 'true' ? 'green' : 'red'};font-weight:bold; " />
+														
+											    </h:panelGrid>
+
+									</h:panelGrid>
+									
+								</h:panelGroup>
+									
+							</h:panelGrid>		
+								
+						<ui:remove>
+						<h:panelGrid columns="4">
+							
+							#{"Activar Promocion:"}
+							<h:selectBooleanCheckbox value="#{ventaDirectaMB.enablePromocion}">
+										<f:ajax execute="@this" render=":formVentMult:pnPromocionesMple :formVentMult:dtMultiple"
+											event="valueChange" listener="#{ventaDirectaMB.activarPromocion()}" />
+							</h:selectBooleanCheckbox>
+							<h:panelGroup id="pnPromocionesMple">
+							<h:panelGrid columns="4" rendered="#{ventaDirectaMB.enablePromocion}">
+								#{"Elegir Promocion:"}
+								<h:selectOneMenu style="width:200px" value="#{ventaDirectaMB.idPromocionSelect}" required="true" requiredMessage="Seleccione una Promocion">
+												<f:selectItem itemLabel="Seleccione..." itemValue="" />
+												<f:selectItems var="ag" value="#{ventaDirectaMB.listaCmbPromociones}"
+													itemValue="#{ag.idPromocion}" itemLabel="#{ag.descripcion}" />
+												<f:ajax render=":formVentMult:montoDsctoM :formVentMult:dtMultiple" event="change" listener="#{ventaDirectaMB.setPromocionBoleto('MULTIPLE')}"></f:ajax>
+								</h:selectOneMenu>
+								#{"Monto Descuento S/.:"}
+								<h:outputText id="montoDsctoM" value="#{ventaDirectaMB.dsctoBoletoMultiple}" style="font-weight:bold;font-size:18px;" />
+
+							</h:panelGrid>
+							</h:panelGroup>
+						
+						</h:panelGrid>
+						</ui:remove>
+						<!-- Panel Boleto Promocional Multiple -->	
+						
+						<ui:remove>
+						<h:panelGrid columns="4">
+							#{"Boleto Promocional:"}
+						<h:selectBooleanCheckbox value="#{ventaDirectaMB.esPromocional}">
+										<f:ajax execute="@this" render="pnPromocionalM"
+											event="valueChange"
+											listener="#{ventaDirectaMB.activarBoletoPromocional()}" />
+						</h:selectBooleanCheckbox>
+
+						<h:panelGroup id="pnPromocionalM">
+						<h:panelGrid columns="4" rendered="#{ventaDirectaMB.esPromocional}">
+						#{"Autorizante:"}
+						<p:selectOneMenu style="width:200px" value="#{ventaDirectaMB.promocion.idAutorizante}"
+												required="true"
+												requiredMessage="Seleccione un Usuario Autorizante">
+												<f:selectItem itemLabel="Seleccione..." itemValue="" />
+												<f:selectItems var="ag"
+													value="#{promocionMB.listaUsuarioAutorizante}"
+													itemValue="#{ag.idAutorizante}" itemLabel="#{ag.nombres}" />
+											</p:selectOneMenu>
+						
+						#{"Monto a pagar(Boletos) S/.:"}
+						<h:outputText value="#{ventaDirectaMB.costoBoletoPromocional}" style="font-weight:bold;font-size:18px;" />
+
+						</h:panelGrid>
+						</h:panelGroup>
+						</h:panelGrid>
+						</ui:remove>
+							
+							<p:commandButton id="movieBtn" value="Buscar Persona"
+									style="font-size:10px;"
+									actionListener="#{ventaDirectaMB.limpiarDialogoCliente()}"
+								   icon="icon-buscar" />
+						
+							 <p:dataTable id="dtMultiple" widgetVar="dtVentas" var="av" value="#{ventaDirectaMB.listaAsientosxVender}"   
+										emptyMessage="No hay Asientos a Vender" rowIndexVar="nro" 
+										style="FONT-SIZE: 10px;border: inset 0pt;">
+										
+										<f:facet name="header">Lista de Asientos a Registrar</f:facet>
+										
+										<p:column width="60" style="text-align: center;" headerText="Boleto" >
+										
+											<h:outputText rendered="#{ventaDirectaMB.tipoVenta eq 'VENTA' and not ventaDirectaMB.esOficinaExterna}" value="#{av.serieBoletoMulti}-#{av.numeroBoletoMulti}" 
+												style="font-weight:bold;font-size:10px; color:red; "/>
+												
+											<h:outputText rendered="#{ventaDirectaMB.tipoVenta eq 'RESERVA' and not ventaDirectaMB.esOficinaExterna}" value="#{av.codigoReserva}" 
+												style="font-weight:bold;font-size:10px; color:red; "/>
+												
+											<h:panelGrid columns="3" rendered="#{ventaDirectaMB.esOficinaExterna}">
+												<h:inputText value="#{av.serieBoletoMulti}" size="4" maxlength="4" required="true" requiredMessage="se necesita serie" />
+												#{"-"}
+												<h:inputText value="#{av.numeroBoletoMulti}" size="2" maxlength="4" required="true" requiredMessage="se necesita nro boleto" />
+											</h:panelGrid>
+				
+										</p:column>
+										
+										<p:column width="40" style="text-align: center;" headerText="N° Asiento" >
+											<h:outputText value="#{av.numero}" style="color:green;font-weight:bold;font-size:13px;" />
+										</p:column>
+										
+										<p:column width="25" style="text-align: center;" headerText="Piso" >
+											<h:outputText value="#{av.piso}" />
+										</p:column>
+										
+										<p:column width="36" style="text-align: center;" headerText="Costo S/." >
+											<h:outputText value="#{av.monto}" />
+										</p:column>
+										
+										<p:column width="25" headerText="Pegar" >
+											<h:commandLink >
+												<h:graphicImage value="resources/img/icon-marker.png" height="20" width="20" />
+												<f:ajax event="click" execute="@this" render=":formVentMult:dtMultiple:formJesus:txtDocumento" listener="#{ventaDirectaMB.pinchar(av)}" 
+												/>
+											</h:commandLink>
+										</p:column>
+
+										<p:column width="200" style="text-align: center;"
+													headerText="Tipo - N° Documento">
+													<h:form id="formJesus">
+													<h:panelGroup>
+														<h:selectOneMenu value="#{av.persona.tipodocumento}">
+															<f:selectItem itemLabel="DNI" itemValue="DNI" />
+															<f:selectItem itemLabel="PAS" itemValue="PAS" />
+															<f:selectItem itemLabel="CE" itemValue="CE" />
+															<f:ajax event="valueChange" update="@this" render="txtDocumento" listener="#{ventaDirectaMB.actualizarTipoDocumento(av)}"/>
+														</h:selectOneMenu>
+														
+														<p:spacer width="20px"></p:spacer>
+														
+														<h:panelGroup id="txtDocumento" >
+															<p:inputText  size="10" rendered="#{av.persona.tipodocumento eq 'DNI' }"
+																value="#{av.documentoPersona}" required="true" maxlength="8"
+																requiredMessage="Se necesita un N° documento para el asiento #{av.numero}">
+																<pe:keyFilter mask="num"/>
+																<p:ajax event="blur"
+																	update=":formVentMult:dtMultiple :formVentMult:obsMultiple :formVentMult:pnBotoneraVarios  @this"
+																	listener="#{ventaDirectaMB.buscarPersona(av)}" />  
+															</p:inputText>
+															
+															<p:inputText  size="10"  rendered="#{av.persona.tipodocumento != 'DNI' }"
+																value="#{av.documentoPersona}" required="true" maxlength="14"
+																requiredMessage="Se necesita un N° documento para el asiento #{av.numero}">
+																<pe:keyFilter mask="alphanum"/>
+																<p:ajax event="blur"
+																	update=":formVentMult:dtMultiple :formVentMult:obsMultiple :formVentMult:pnBotoneraVarios  @this"
+																	listener="#{ventaDirectaMB.buscarPersona(av)}" />
+															</p:inputText>
+														</h:panelGroup>
+													</h:panelGroup>
+												   </h:form>
+											</p:column>
+
+										
+										<p:column width="80" style="text-align: center;font-size:10px;" headerText="Ape. Paterno" >
+											<h:inputText  id="apepaterno" size="15" value="#{av.persona.APaterno}" required="true" maxlength="50" requiredMessage="Se necesita un Apellido Paterno para el asiento #{av.numero}">
+												<!--<f:ajax event="blur" execute="@this" />-->
+											</h:inputText>
+										</p:column>
+										
+										<p:column width="80" style="text-align: center;font-size:10px;" headerText="Ape. Materno" >
+											<h:inputText id="apematerno" size="15"  value="#{av.persona.AMaterno}" required="true" maxlength="50" requiredMessage="Se necesita un Apellido Materno para el asiento #{av.numero}" >
+												<!--<f:ajax event="blur" execute="@this" />-->
+											</h:inputText>
+										</p:column>
+										
+										<p:column width="80" style="text-align: center;font-size:10px;" headerText="Nombres" >
+											<h:inputText id="nombres" size="15" value="#{av.persona.nombres}" required="true" maxlength="50" requiredMessage="Se necesita un nombre para el asiento #{av.numero}">
+												<!--<f:ajax event="blur" execute="@this" />-->
+											</h:inputText>
+										</p:column>
+										
+										<p:column width="60" style="text-align: center;font-size:10px;" headerText="Telefono" >
+											<h:inputText id="telefono" size="8" value="#{av.persona.telefono}" maxlength="50">
+												<!--<f:ajax event="blur" execute="@this" />-->
+											</h:inputText>
+										</p:column>
+										
+										<p:column width="60" style="text-align: center;font-size:10px;" headerText="Email" >
+											<h:inputText id="email" size="8" value="#{av.persona.email}" maxlength="50">
+												<!--<f:ajax event="blur" execute="@this" />-->
+											</h:inputText>
+										</p:column>
+										
+										<p:column width="70" style=";text-align: center;" headerText="Sexo" >
+											<h:selectOneMenu id="sosexo" value="#{av.persona.sexo}"  >
+												<f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true" />
+												<f:selectItem itemValue="M" itemLabel="Masculino"  />
+												<f:selectItem itemValue="F" itemLabel="Femenino"  />
+												<!--<f:ajax event="valueChange" execute="@this" />-->
+											</h:selectOneMenu>
+										</p:column>
+										
+										<p:column width="65" style="text-align: center;" headerText="F.Nac" >
+											<p:calendar id="txtFecNac" size="10" disabled="#{av.persona.ubicado}" value="#{av.persona.fnac}" navigator="true" pattern="dd-MM-yyyy" locale="es" >
+												<p:ajax event="dateSelect" listener="#{ventaDirectaMB.calculaEdadPersona(av.persona)}" update=":formVentMult:dtMultiple:txtEdadp :formVentMult:obsMultiple" /> 
+											</p:calendar>
+										</p:column>
+										
+										<p:column width="30" style="text-align: center;" headerText="Edad" >
+											<h:outputText id="txtEdadp" value="#{av.persona.edad}" style="color:#{av.persona.edad le 18 ? 'red':'green'}; font-size:13px;" />
+										</p:column>	
+										
+										
+										<p:column width="40" style="text-align: center;" headerText="Replicar" >
+
+											<h:commandLink  disabled="#{ventaDirectaMB.tipoVenta eq 'VENTA' or empty av.persona.APaterno}" style="font-weight:bold;font-size:12px;" >
+												<f:ajax event="click" execute="@this" render=":formVentMult:dtMultiple" listener="#{ventaDirectaMB.replicarDNI(av)}" />
+												<h:graphicImage  url="#{ventaDirectaMB.tipoVenta eq 'VENTA' or empty av.persona.APaterno ? 'resources/img/fillDisabled.png' : 'resources/img/fill.png'}" title="Solo aplica para la reserva" height="20" width="20"  />
+											</h:commandLink >
+											
+										</p:column>	
+									
+										<p:column width="40" style="text-align: center;" headerText="Eliminar" >
+											
+											<h:commandLink  style="font-weight:bold;font-size:12px;" >
+												<f:ajax event="click" execute="@this" render=":formVentMult:dtMultiple" listener="#{ventaDirectaMB.eliminarVentaDeGrupoDeVentaMultiple(av)}" />
+												<h:graphicImage value="resources/img/quitar.png" height="20" width="20" />
+											</h:commandLink >
+
+										</p:column>											
+									
+								  </p:dataTable>
+
+                     
+
+							<br />
+								  #{"Observaciones:"}
+								  <br />
+							<h:panelGroup id="obsMultiple">
+								<h:inputTextarea value="#{ventaDirectaMB.observacionesMultiple}"
+									cols="50" rows="3" style="color:red;" />
+							</h:panelGroup>
+
+							<br />
+
+							<h:panelGrid id="pnBotoneraVarios" columns="3">
+
+								<p:commandButton id="btnGuardar"
+									onclick="saveButton.disable()"
+									widgetVar="saveButton"
+									disabled="#{ventaDirectaMB.estaListaNegra or (ventaDirectaMB.alertaReserva and ventaDirectaMB.tipoVenta eq 'RESERVA')}" icon="icon-printer"
+									value="#{ventaDirectaMB.tipoVenta} Boleto"
+									update="msgMultiple :frmBusClase :frmBus :frmManifiesto"
+									style="width:180px;"
+									actionListener="#{ventaDirectaMB.venderAsientosMultiple()}"
+									oncomplete="saveButton.enable();validarMultiple(xhr, status, args)" />
+
+
+								<p:spacer width="100" height="2" />
+
+								<p:commandButton value="Cancelar" immediate="true"
+									icon="icon-cancel"
+									actionListener="#{ventaDirectaMB.venderAsiento('LIBERAR MASIVO')}"
+									update=":frmBusClase :frmBus"
+									oncomplete="dlgVentaMulti.hide();" style="width:180px;" />
+
+								<h:panelGrid>
+                                                                    <h:outputText rendered="#{ventaDirectaMB.estaListaNegra}"
+									value=" el pasajero #{ventaDirectaMB.persona.nombres} #{ventaDirectaMB.persona.APaterno} #{ventaDirectaMB.persona.AMaterno} se encuentra en la lista negra"
+									style="color:red;font-size:14px;" />
+                                                                    <h:outputText value="Límite de tiempo superado" style="color: red;font-size:14px;"
+                                                                              rendered="#{ventaDirectaMB.alertaReserva}"/>
+                                                                </h:panelGrid>
+							</h:panelGrid>
+						</h:form>
+
+					</p:dialog>
+
+	<!-- ###################################### popup informacion de la venta ######################################### -->
+
+	<p:dialog header="Informacion de Venta" widgetVar="dlgVentaInfo" closable="false"
+						appendToBody="true" resizable="false" id="dlgDetVentaInfo"
+						modal="true">
+		<p:messages id="smsInfoVenta" showDetail="false" showSummary="true" closable="true"/>
+		<h:panelGrid  columns="3">
+		
+			<p:panel>
+
+				<h:outputText  rendered="#{ventaDirectaMB.asientoVenta.externo}"  value="Boleto comprado en otra oficina"  style="color:#B13BCE;font-size:16px;" />
+			
+							
+				<h:panelGrid columns="4">
+					#{"Origen:"}
+					<h:outputText value="#{ventaDirectaMB.agenciaOrigen.descripcion}"
+									style="color:red;font-weight:bold; font-size:14px;" />
+				
+					#{"Destino:"}
+					<h:outputText value="#{ventaDirectaMB.agenciaDestino.descripcion}"
+									style="color:red;font-weight:bold; font-size:14px;" />
+				</h:panelGrid>
+							
+				<h:panelGrid columns="8">
+					#{"Fecha:"}
+					<h:outputText value="#{ventaDirectaMB.programacionSelec.fSalida}"
+									style="color:red;font-weight:bold; font-size:14px;">
+					<f:convertDateTime type="date" pattern="dd-MM-yyyy" />
+								</h:outputText>
+				
+					#{"Hora:"}
+					<h:outputText value="#{ventaDirectaMB.programacionSelec.hSalida}"
+									style="color:red;font-weight:bold; font-size:14px;" />
+					#{"Asiento:"}
+					<h:outputText
+									value="#{ventaDirectaMB.asientoSelec.numero}"
+									style="color:red;font-weight:bold; font-size:14px;" />
+									
+					#{"Boleto:"}
+					<h:outputText
+									value="#{ventaDirectaMB._Serie} - #{ventaDirectaMB._Numero}"
+									style="color:red;font-weight:bold; font-size:14px;" />				
+					
+				</h:panelGrid>
+				<hr />
+							
+				<h:panelGrid columns="4" >
+					#{"Pasajero:"}
+					<h:outputText
+								value="#{ventaDirectaMB.persona.APaterno} #{ventaDirectaMB.persona.AMaterno} #{ventaDirectaMB.persona.nombres}"
+								style="font-weight:bold;font-size:13px; " />
+					#{"Sexo:"}
+					<h:outputText value="#{ventaDirectaMB.persona.sexo}"
+									style="font-weight:bold;font-size:13px;" />
+				
+				</h:panelGrid>
+							
+				<h:panelGrid columns="6" style="width:350px;">
+					
+					#{"Documento:"}
+					<h:outputText	value="#{ventaDirectaMB.persona.tipodocumento} #{ventaDirectaMB.persona.dni}"
+									style="font-weight:bold;font-size:13px; " />
+	
+					#{"Ruc:"}
+					<h:outputText
+									value="#{ventaDirectaMB.empresa.RUC} #{ventaDirectaMB.empresa.razonSocial}"
+									style="font-weight:bold;font-size:13px;" />
+					<p:spacer width="10" height="1" />				
+				
+					<h:outputText
+									value="#{ventaDirectaMB.empresa.razonSocial}"
+									style="font-weight:bold;font-size:13px;" />
+
+				</h:panelGrid>
+							
+				<hr/>
+							
+							
+				<h:panelGrid columns="4">
+					#{"Oficina:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.desOficina}"
+										style="color:red;font-weight:bold; font-size:14px;" />
+
+					#{"Responsable:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.completoVendedor}"
+										style="color:red;font-weight:bold; font-size:14px;" />
+
+				</h:panelGrid>
+							
+				<hr/>
+			
+				<h:panelGrid columns="2" rendered="#{ventaDirectaMB.asientoVenta.promocional}">
+					<h:outputText value="BOLETO PROMOCIONAL!" style="font-size:14px;font-weight:bold;color:green;" />
+					<h:outputText value="Costo S/.10.00" style="font-size:14px;font-weight:bold;color:green;" />
+				
+					#{"Usuario Autorizante:"}
+					<h:outputText value="#{ventaDirectaMB.usuarioAutorizante.nombres}" style="width:200px;font-size:14px;font-weight:bold;color:red;" />
+				</h:panelGrid>
+			
+						<hr />
+						<br />
+						<hr />
+				<h:form>
+					#{"Generar Copia:"}
+					<h:selectBooleanCheckbox value="#{ventaDirectaMB.copiaBoleto}">
+						<f:ajax execute="@this" render="pnCopia" event="valueChange" />
+					</h:selectBooleanCheckbox>
+					<br />
+					<h:panelGroup id="pnCopia">
+						<h:outputText rendered="#{ventaDirectaMB.copiaBoleto}"
+							value="Valor de la copia S/.:" />
+						<h:inputText rendered="#{ventaDirectaMB.copiaBoleto}" size="5"
+							maxlength="6" value="#{ventaDirectaMB.boletaCopia.valorCopia}" />
+						
+						<iframe id="frmImprimirPdf" name="frmImprimirPdf" width="0" height="0"></iframe>
+						<h:commandLink rendered="#{ventaDirectaMB.copiaBoleto}"
+							value="Imprimir Boleta Venta"
+							actionListener="#{ventaDirectaMB.generarCopia()}"  target="frmImprimirPdf"
+							style="padding: 6px 10px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold; color: #1C190A;" >  
+						</h:commandLink>
+					</h:panelGroup>
+
+					<hr />
+
+					<h:panelGroup	rendered="#{not empty ventaDirectaMB.asientoSelec.asientoVenta.nrodocprepagado}">
+						<h:outputText value="Boleto Prepagado:" style="font-size:14px;font-weight:bold;" />
+						
+						<h:panelGrid columns="3">
+							#{"Pagador:"}
+							<h:outputText value="#{ventaDirectaMB.pagador.nombre}" />							
+							<p:commandButton id="btnImprimirBoleta" icon="icon-printer"
+									value="Imprimir Boleta"									
+									update=":frmBusClase :frmBus :frmManifiesto"
+									actionListener="#{ventaDirectaMB.mandarImpresionBoletaPrepagado()}"
+									style="width:180px;" oncomplete="validarPrepago(xhr, status, args)" />
+						</h:panelGrid>
+					</h:panelGroup>
+					
+					<hr />
+
+				</h:form>
+
+		</p:panel>
+		
+		
+		<p:spacer width="40" height="1" />
+		
+		<p:panel>
+				<h:form>
+
+					<p:menu style="width:250px;">
+				        <p:submenu label="Operaciones Adicionales"  >
+				            
+				            <p:menuitem value="Anular" 
+				            	disabled="#{asientoSelec.asientoVenta.estado eq  'LIBRE'}"  
+				            	actionListener="#{ventaDirectaMB.anularAsiento()}"  
+						        update=":dlgDetAnular" oncomplete="dlgAnular.show();"  icon="ui-icon-trash" style="font-size:11px;"/>	
+							
+							<ui:remove>
+	       					<p:menuitem value="Postergar" disabled="#{asientoSelec.asientoVenta.estado eq  'LIBRE' or asientoSelec.asientoVenta.estado eq  'RESERVA'}" 
+	       						 actionListener="#{ventaDirectaMB.postergarBoleto('noabierta')}"  
+	       						update=":dlgDetPostergar" oncomplete="dlgPostergar.show();"  icon="ui-icon-cancel" style="font-size:11px;"/>
+	       					</ui:remove>
+	       					
+	       					<p:menuitem value="Postergar Fecha Abierta" 
+	       						 actionListener="#{ventaDirectaMB.postergarBoleto('abierta')}"  
+	       						update=":dlgDetPostergar" oncomplete="dlgPostergar.show();"  icon="ui-icon-cancel" style="font-size:11px;"/>
+	       						
+	       					<ui:remove>
+	       					<p:menuitem value="Inhabilitar"  actionListener="#{ventaDirectaMB.mostrarInhabilitarAsiento()}"  
+	       						disabled="#{asientoSelec.asientoVenta.estado eq 'LIBRE' or asientoSelec.asientoVenta.estado eq  'RESERVA'}"
+	       						update=":dlgDetInhabilitar" oncomplete="dlgInhabilitar.show();"  icon="ui-icon-close" style="font-size:11px;"/>
+	       					</ui:remove>
+	       					
+	       					<ui:remove>
+	       					<p:menuitem value="Cambio de Asiento"  actionListener="#{ventaDirectaMB.inicarCambioAsiento()}" update=":dlgDetManual" 
+	       						oncomplete="dlgManual.show();" 
+	       						  icon="ui-icon-close" style="font-size:11px;"/>
+				            </ui:remove>
+				        </p:submenu>
+				    </p:menu>
+
+				</h:form>
+				<br/>
+				<p:panel>
+			
+					<h:panelGrid columns="2" >
+						#{"F. emision:"}
+						<h:outputText value="#{ventaDirectaMB.asientoVenta.horareserva}">
+							<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+						</h:outputText>
+						
+						#{"Movimientos:"}
+						
+					</h:panelGrid>
+				
+				
+				</p:panel>
+				
+		</p:panel>
+		
+		
+		
+		
+		</h:panelGrid>
+		
+		<br/>
+		
+		<h:form>
+			<div>
+				<p:commandButton value="Cerrar" style="width:150px;margin: :auto;"
+							oncomplete="dlgVentaInfo.hide();" icon="icon-cancel" />
+			</div>
+		</h:form>
+		
+
+
+	</p:dialog>
+			
+			
+					
+	<!-- ######################################  popup postergar asiento co fecha abierta#######################################-->  
+  
+  	<p:dialog header="Realizar Postergacion" widgetVar="dlgPostergar" appendToBody="true"
+			  resizable="false" id="dlgDetPostergar" modal="true" closable="true" >
+					  	  
+		<span style="font-size: 16px;font-weight: bold;margin:auto;">POSTERGACION DE BOLETO DE VIAJE 
+		<h:outputText value="#{ventaDirectaMB._Serie} #{ventaDirectaMB._Numero}" style="font-weight:bold;font-size:18px; color:red;" /></span> 
+		
+		<br/><br/>
+		<h:panelGroup rendered="#{not ventaDirectaMB.postergar}" >
+			<h:panelGrid columns="8">
+			#{"Oficina:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.desOficina}" style="font-size: 16px;font-weight: bold;"/>
+			<p:spacer width="10px"/>
+			#{"Origen:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.desOrigen}" style="font-size: 16px;font-weight: bold;"/>
+			<p:spacer width="10px"/>
+			#{"Destino:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.desDestino}" style="font-size: 16px;font-weight: bold;"/>
+			#{"Fecha Salida:"}
+			<h:outputText value="#{ventaDirectaMB.programacionSelec.fSalida}" style="font-size: 16px;font-weight: bold;">
+				<f:convertDateTime pattern="dd-MM-yyyy" />
+			</h:outputText>
+			<p:spacer width="10px"/>
+			#{"Hora Salida:"}
+			<h:outputText value="#{ventaDirectaMB.programacionSelec.hSalida}" style="font-size: 16px;font-weight: bold;"/>
+			<p:spacer width="10px"/>
+			#{"Asiento:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.numero}" style="font-size: 16px;font-weight: bold;"/>
+			#{"Responsable:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.usuario.apellido_paterno} #{ventaDirectaMB.asientoVenta.usuario.apellido_materno} 
+								#{ventaDirectaMB.asientoVenta.usuario.nombre}" style="font-size: 16px;font-weight: bold;"/>
+			<p:spacer width="10px"/>
+			#{"DNI:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.documentoPersona}" style="font-size: 16px;font-weight: bold;"/>
+			<p:spacer width="10px"/>
+			#{"Pasajero:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.persona.nombres}" style="font-size: 16px;font-weight: bold;"/>
+			#{"Fecha de Postergación:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.postergacion.fechapostergacion}" style="font-size: 16px;font-weight: bold;">
+				<f:convertDateTime pattern="dd-MM-yyyy" />
+			</h:outputText>
+			<p:spacer width="10px"/>
+			#{"Hora de Postergación:"}
+			<h:outputText value="#{ventaDirectaMB.asientoVenta.postergacion.fechapostergacion}" style="font-size: 16px;font-weight: bold;">
+				<f:convertDateTime pattern="HH:mm:ss a" />
+			</h:outputText>
+			</h:panelGrid>
+			<div style="color:red;font-size:2em;">
+				No es posible Postergar el asiento, ha sobrepasado el limite de tiempo 
+			</div>
+		</h:panelGroup>
+		
+		<p:panel>
+		
+		<h:form rendered="#{ventaDirectaMB.postergar}" >
+			
+			#{"Pasajero:"}
+			<h:outputText
+				value="#{ventaDirectaMB.persona.nombres} #{ventaDirectaMB.persona.APaterno}  #{ventaDirectaMB.persona.AMaterno}" style="font-weight:bold;font-size:13px;" />
+				
+				<hr />
+				<h:panelGrid columns="4">
+				
+				#{"Documento:"}
+				<h:outputText value="#{ventaDirectaMB.persona.tipodocumento}" 
+										style="font-weight:bold;font-size:13px;" />
+				
+				#{"Nro. Documento:"}
+				<h:outputText value="#{ventaDirectaMB.persona.dni}"
+										style="font-weight:bold;font-size:13px;" />
+				
+				#{"Origen:"}
+				<h:outputText value="#{ventaDirectaMB.agenciaOrigen.descripcion}"
+										style="font-weight:bold;font-size:13px;color:green;" />
+				
+				#{"Destino:"}
+				<h:outputText value="#{ventaDirectaMB.agenciaDestino.descripcion}"
+										style="font-weight:bold;font-size:13px;color:green;" />
+				
+				#{"Nro. Asiento:"}
+				<h:outputText value="#{ventaDirectaMB.asientoVenta.numero}"
+										style="font-weight:bold;font-size:13px;color :red;" />
+				
+				#{"Piso:"}
+				<h:outputText value="#{ventaDirectaMB.asientoSelec.piso}"
+										style="font-weight:bold;font-size:13px;" />
+
+				#{"Servicio:"}
+				<h:outputText
+							  value="#{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+							  style="font-weight:bold;font-size:13px;" />	
+				
+				#{"Monto:S/."}
+				<h:outputText value="#{ventaDirectaMB.asientoVenta.monto}"
+										style="font-weight:bold;font-size:13px;color:red;" />
+
+
+			</h:panelGrid>
+
+								<br />
+								<hr />
+								
+			#{"Fecha Hora Viaje:"}
+			<h:outputText value="#{ventaDirectaMB.programacionSelec.fSalida}"
+									style="color:green;font-weight:bold;font-size:14px;">
+									<f:convertDateTime pattern="dd-MM-yyyy" />
+			</h:outputText>
+			<p:spacer width="10" height="1" />
+			<h:outputText value="#{ventaDirectaMB.programacionSelec.hSalida}"
+				style="color:green;font-weight:bold;font-size:14px;">
+			</h:outputText>
+								<br />
+								
+			#{"Fecha Postergacion Actual:"}
+			<h:outputText value="#{ventaDirectaMB.fechaActual}"
+									style="color:green;font-weight:bold;font-size:14px;">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+								</h:outputText>
+
+								<br />
+								
+			#{"Fecha Hora limite de Postergacion:"}
+			<h:outputText value="#{ventaDirectaMB.fechaHoraLimitePostergacion}"
+									style="color:green;font-weight:bold;font-size:14px;">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+								</h:outputText>
+								<br />
+								<br />
+			<hr/>
+			<h:panelGroup rendered="#{ventaDirectaMB.fechaAbierta}" >				
+			<h:outputText value="Fecha Caducidad" style="color:red;font-size:14px;font-weight:bold; " />
+
+			<p:calendar value="#{ventaDirectaMB.fechaCaducidad}" readonlyInput="true" 
+				pattern="dd-MM-yyyy HH:mm:ss " locale="es"  showOn="button" popupIconOnly="true"/>
+			</h:panelGroup>
+			
+			<h:panelGrid rendered="#{not ventaDirectaMB.fechaAbierta}" >
+				<h:outputText value="Anote la serie y numero del boleto:"/>				
+				<h:outputText value="#{ventaDirectaMB._Serie}-#{ventaDirectaMB._Numero}" style="font-weight:bold;font-size:24px; color:red;" />
+			</h:panelGrid>	
+			
+			
+			<br />
+			<br />
+			
+
+			<p:commandButton value="Postergar" style="width:150px;"
+				actionListener="#{ventaDirectaMB.realizarPostergacionFechaAbierta}"
+				update=":dlgDetVentaInfo :grwGlobal :frmBusClase :frmBus" oncomplete="dlgPostergar.hide();dlgMovimiento.hide();" />
+			<p:spacer width="50" />
+			<p:commandButton value="Cancelar" style="width:150px;"
+				oncomplete="dlgPostergar.hide();" />
+
+		</h:form>
+		</p:panel>
+
+		</p:dialog>
+
+
+
+
+
+					<!-- ######################################  popup activar postergacion fecha abierta de asiento #######################################-->
+
+					<p:dialog header="Realizar Activacion de Postergacion"
+						widgetVar="dlgActivar" appendToBody="true" resizable="false"
+						id="dlgDetActivar" modal="true" closable="false">
+
+						<span style="font-size: 16px; font-weight: bold; margin: auto;">ACTIVACION DE POSTERGACION DE BOLETO DE VIAJE</span>
+
+						<br />
+						<br />
+
+
+						<h:form id="frmActivar">
+			
+							#{"Nro documento:"}
+							<h:inputText value="#{ventaDirectaMB.persona.dni}" size="15"
+												maxlength="15" />
+
+							<p:commandButton value="Buscar"
+								actionListener="#{ventaDirectaMB.buscarPostergacion()}"
+								update="@form" style="font-size:10px;width:100px;" />
+							<p:spacer width="20" height="2" />
+							<p:commandButton value="Cerrar" type="button"
+								onclick="dlgActivar.hide();" icon="icon-cancel"
+								style="font-size:10px;" />
+
+							<br />
+							<hr />
+							#{"Pasajero:"}
+							<h:outputText value="#{ventaDirectaMB.persona.nombres}  #{ventaDirectaMB.persona.AMaterno}  #{ventaDirectaMB.persona.APaterno}" />
+							<br />
+							<p:dataTable id="dtPostergacion" var="post"
+								value="#{ventaDirectaMB.listaPostergacion}" paginator="true"
+								rows="5" emptyMessage="No hay postergaciones registradas."
+								rowIndexVar="nro" style="FONT-SIZE: 10px;width:1000px;">
+
+								<f:facet name="header">Postergacion de Boletos</f:facet>
+
+								<p:column headerText="Orden" style="width:50px;">
+									#{nro+1}
+								</p:column>
+
+								<p:column style="width:60px;" headerText="Origen">
+									<h:outputText value="#{post.origenstr}" />
+								</p:column>
+
+								<p:column style="width:60px;" headerText="Destino">
+									<h:outputText value="#{post.destinostr}" />
+								</p:column>
+
+								<p:column style="width:50px;" headerText="Monto">
+									<h:outputText value="#{post.monto}" />
+								</p:column>
+
+								<p:column style="width:150px;" headerText="Servicio">
+									<h:outputText value="#{post.serviciostr}" />
+								</p:column>
+
+								<p:column style="width:130px;" headerText="F. postergacion">
+									<h:outputText value="#{post.fechapostergacion}">
+										<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+									</h:outputText>
+								</p:column>
+
+								<p:column style="width:130px;" headerText="F. caducidad">
+									<h:outputText value="#{post.fechacaducidad}">
+										<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+									</h:outputText>
+								</p:column>
+
+								<p:column style="width:110px;" headerText="F. abierta">
+									<h:outputText value="#{post.fechaAbierta?'SI':'NO'}" />
+								</p:column>
+
+								<p:column style="width:80px;" headerText="Estado">
+									<h:outputText value="#{post.estado}"
+										style="font-weight:bold;color:#{post.estado eq 'ACTIVADO' ? 'green':'red'};" />
+								</p:column>
+
+								<p:column style="width:60px;" headerText="Seleccionar">
+									<h:commandLink id="lnkActiva" value="Seleccionar"
+										disabled="#{post.estado eq 'ACTIVADO'}">
+										<f:ajax event="action" execute="@this"
+											render="@this :frmActivar:pnConfirma" onevent="mostrar"
+											listener="#{ventaDirectaMB.setearPostergacion(post)}" />
+									</h:commandLink>
+								</p:column>
+							</p:dataTable>
+
+							<p:messages id="smsActivacion" showDetail="false"
+								showSummary="true" />
+							<br />
+							<h:panelGroup id="pnConfirma">
+
+								<div id="blkActivar"
+									style="display: none; margin: auto; width: 300px; border-color: #8C8473; border-style: solid; border-width: 1px; padding: 0px 20px 10px 20px; background-color: #D3C9B6;">
+									<h3>Esta seguro de autorizar</h3>
+									<h:panelGrid columns="2">
+						#{"Fecha Postergacion:"}
+						<h:outputText
+											value="#{ventaDirectaMB.postergacion.fechapostergacion}"
+											style="color:red;font-weight:bold;font-size:14px;">
+											<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+										</h:outputText>
+						
+						#{"Usuario Autorizante:"}
+						<h:outputText
+											value="#{loginMB.usuario.nombre} #{loginMB.usuario.apellido_paterno} #{loginMB.usuario.apellido_paterno}"
+											style="color:green;font-size:13px;font-weight:bold;" />
+
+									</h:panelGrid>
+
+									<br />
+									<p:commandButton style="width:120px;" value="Activar"
+										actionListener="#{ventaDirectaMB.realizarActivacion()}"
+										oncomplete="dlgActivar.hide();" update=":frmVenta" />
+
+									<p:spacer width="20" height="5" />
+
+									<p:commandButton style="width:120px;" value="Cancelar"
+										oncomplete="dlgActivar.hide();" />
+								</div>
+
+							</h:panelGroup>
+
+						</h:form>
+
+
+					</p:dialog>
+
+					<!-- ######################################  popup anular asiento #######################################-->
+
+					<p:dialog header="Realizar Anulacion de Asiento"
+						widgetVar="dlgAnular" appendToBody="true" resizable="false"
+						id="dlgDetAnular" modal="true" closable="true">
+
+						<span style="font-size: 16px; font-weight: bold; margin: auto;">ANULACION
+							DE BOLETO DE VIAJE <h:outputText
+								value="#{ventaDirectaMB._Serie}-#{ventaDirectaMB._Numero}"
+								style="font-weight:bold;font-size:18px; color:red;" />
+						</span>
+
+						<br />
+						<br />
+
+						<h:form>
+
+							<p:panel>
+								<br />
+					#{"Pasajero:"}
+					<h:outputText
+									value="#{ventaDirectaMB.asientoVenta.persona.APaterno} 
+					 #{ventaDirectaMB.asientoVenta.persona.AMaterno} #{ventaDirectaMB.asientoVenta.persona.nombres}"
+									style="font-weight:bold;font-size:13px;" />
+								<hr />
+								<h:panelGrid columns="2">		
+					#{"Responsable:"}
+					<h:outputText
+										value="#{ventaDirectaMB.asientoVenta.usuario.nombre} 
+					#{ventaDirectaMB.asientoVenta.usuario.apellido_paterno} #{ventaDirectaMB.asientoVenta.usuario.apellido_materno}"
+										style="font-weight:bold;font-size:13px;" />
+					
+					#{"Oficina:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.desOficina}"
+										style="font-weight:bold;font-size:13px;" />
+					
+					#{"Origen:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.desOrigen}"
+										style="font-weight:bold;font-size:13px;" />
+					
+					#{"Destino:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.desDestino}"
+										style="font-weight:bold;font-size:13px;" />
+					
+					#{"Razon Social:"}
+					<h:outputText
+										value="#{ventaDirectaMB.asientoVenta.empresa.RUC} - #{ventaDirectaMB.asientoVenta.empresa.razonSocial}"
+										style="font-weight:bold;font-size:13px;" />
+					
+					#{"Nro Asiento:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.numero}"
+										style="font-weight:bold;font-size:13px; color:red;" />
+					
+					#{"Fecha de viaje:"}
+					<h:outputText value="#{ventaDirectaMB.programacionSelec.fSalida}"
+										style="font-weight:bold;font-size:13px;">
+										<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+									</h:outputText>
+					
+					#{"Hora de viaje:"}
+					<h:outputText value="#{ventaDirectaMB.programacionSelec.hSalida}"
+										style="font-weight:bold;font-size:13px;" />
+					
+					#{"Fecha de Venta:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.fechaventa}"
+										style="font-weight:bold;font-size:13px;">
+										<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+									</h:outputText>
+					
+					#{"Servicio:"}
+					<h:outputText
+										value="#{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+										style="font-weight:bold;font-size:13px;" />
+					
+					#{"Monto S/.:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.monto}"
+										style="font-weight:bold;font-size:13px; color:red;" />
+					
+					#{"Piso:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.asiento.piso}"
+										style="font-weight:bold;font-size:13px;" />
+
+								</h:panelGrid>
+								<br />
+								<p:commandButton value="Anular" style="width:100px;"
+									update=":frmBusClase :frmBus" icon="icon-ok"
+									actionListener="#{ventaDirectaMB.registroAnulacion(ventaDirectaMB.asientoVenta)}"
+									oncomplete="dlgMovimiento.hide();dlgVentaInfo.hide(); dlgAnular.hide(); " />
+									
+								<p:spacer width="20" />
+								
+								<p:commandButton type="button" style="width:100px;" icon="icon-cancel"
+									value="Cancelar" onclick="dlgAnular.hide();" />
+							</p:panel>
+
+						</h:form>
+
+
+					</p:dialog>
+
+				
+				
+				<!-- ########################################popup inhabilitar################################################## -->
+
+					<p:dialog header="" widgetVar="dlgInhabilitar"
+						appendToBody="true" resizable="false" id="dlgDetInhabilitar"
+						modal="true" closable="false">
+
+						<span style="font-size: 16px; font-weight: bold; margin: auto;">INHABILITAR
+							BOLETO - <h:outputText
+								value="#{ventaDirectaMB._Serie} #{ventaDirectaMB._Numero}"
+								style="font-weight:bold;font-size:18px; color:red;" />
+						</span>
+						<!-- panel de informacion para hacer la inhabilitacion -->
+
+						<p:panel>
+							<h:panelGrid columns="8">
+				
+								#{"Origen:"}
+								<h:outputText value="#{ventaDirectaMB.agenciaOrigen.descripcion}"
+													style="font-weight:bold;font-size:12px;" />
+								
+								#{"Destino:"}
+								<h:outputText value="#{ventaDirectaMB.agenciaDestino.descripcion}"
+													style="font-weight:bold;font-size:12px;" />
+								
+								#{"Servicio:"}
+								<h:outputText
+													value="#{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+													style="font-weight:bold;font-size:12px;" />
+								
+								#{"Fecha viaje:"}
+								<h:outputText value="#{ventaDirectaMB.programacionSelec.fSalida}">
+													<f:convertDateTime type="date" pattern="dd-MM-yyyy" />
+												</h:outputText>
+								
+								#{"Hora viaje:"}
+								<h:outputText value="#{ventaDirectaMB.programacionSelec.hSalida}"
+													style="font-weight:bold;font-size:12px;" />
+								
+								#{"Asiento:"}
+								<h:outputText value="#{ventaDirectaMB.asientoSelec.numero}"
+													style="font-weight:bold;font-size:18px; color:red; " />
+								
+								#{"Piso:"}
+								<h:outputText value="#{ventaDirectaMB.asientoSelec.piso}"
+													style="font-weight:bold;font-size:18px;color:green" />
+								
+								#{"Total a pagar S/.:"}
+								<h:outputText value="#{ventaDirectaMB.precioAsiento}"
+													style="font-weight:bold;font-size:18px;" />
+
+							</h:panelGrid>
+
+						</p:panel>
+
+						<br />
+
+						<hr />
+						<span style="font-size: 12px; font-weight: bold; margin: auto;">
+						DATOS DE PASAJERO</span>
+						<br />
+
+						<h:panelGrid columns="8">
+								
+								<h:outputText value="#{ventaDirectaMB.persona.tipodocumento}"
+												style="font-weight:bold;font-size:14px;color:green" />
+								
+								<p:spacer width="5" height="1"/>
+								
+								<h:outputText value="#{ventaDirectaMB.persona.dni}"
+												style="font-weight:bold;font-size:14px;color:green" />
+								
+								<p:spacer width="5" height="1"/>
+												
+								<h:outputText
+											value="#{ventaDirectaMB.persona.APaterno} #{ventaDirectaMB.persona.AMaterno} #{ventaDirectaMB.persona.nombres}"
+											style="font-weight:bold;font-size:14px;" />
+
+								
+								#{"Sexo:"}
+								<h:outputText value="#{ventaDirectaMB.persona.sexo}"
+											style="font-weight:bold;font-size:14px;" />
+								
+
+						</h:panelGrid>
+
+						<span style="font-size: 12px; font-weight: bold; margin: auto;">DATOS
+							DE LA EMPRESA</span>
+								<br />
+								#{"Razon social:"}
+								<h:outputText
+												value="#{ventaDirectaMB.empresa.RUC} #{ventaDirectaMB.empresa.razonSocial}"
+												style="font-weight:bold;font-size:13px;" />
+								<hr />
+
+						<h:form id="frmInhabilita">
+
+							<p:messages showDetail="false" showSummary="true"
+								id="msgNuevoInha" />
+							<h:panelGrid columns="4">
+								
+								#{"Inhabilitacion por:"}
+								<h:selectOneMenu value="#{ventaDirectaMB.inhabilitacion.tipo}">
+										<f:selectItem itemLabel="Seleccionar" itemValue="#{null}"
+											noSelectionOption="true" />
+										<f:selectItem itemLabel="Cambio de datos" itemValue="CDATOS" itemDisabled="#{not ventaDirectaMB.consultaRapida}" />
+										<f:selectItem itemLabel="Cambio de pasajero" itemValue="CPASAJERO" itemDisabled="#{not ventaDirectaMB.consultaRapida}" />
+										<f:selectItem itemLabel="Devolucion" itemValue="CDEVOLUCION" itemDisabled="#{not ventaDirectaMB.consultaRapida}" />
+										<f:selectItem itemLabel="Cambio de servicio" itemValue="CSERVICIO" itemDisabled="#{ventaDirectaMB.consultaRapida}"/>
+										<f:selectItem itemLabel="Cambio de servicio y pasajero" itemValue="CSERVICIOPASAJ" itemDisabled="#{ventaDirectaMB.consultaRapida}"/>
+										<f:selectItem itemLabel="Cambio de servicio y datos" itemValue="CSERVICIODATOS"  itemDisabled="#{ventaDirectaMB.consultaRapida}"/>
+										<f:ajax event="valueChange" render="pnInhabilita"
+											execute="@this" />
+								</h:selectOneMenu>
+								
+								#{"Comentarios:"}
+								<h:inputTextarea value="#{ventaDirectaMB.inhabilitacion.motivo}" cols="14" rows="2" />
+							</h:panelGrid>	
+							<br />
+
+							<h:panelGroup id="pnInhabilita">
+							
+								<p:panel rendered="#{ventaDirectaMB.inhabilitacion.tipo eq 'CDATOS'}">
+
+										<h:panelGrid columns="4">		
+												#{"Documento:"}
+												<h:selectOneMenu
+																value="#{ventaDirectaMB.persona.tipodocumento}">
+																<f:selectItem itemLabel="DNI" itemValue="DNI" />
+																<f:selectItem itemLabel="PAS" itemValue="PAS" />
+																<f:selectItem itemLabel="CE" itemValue="CE" />
+												</h:selectOneMenu>
+												
+												#{"Numero Doc.:"}
+												<h:outputText value="#{ventaDirectaMB.persona.dni}"/>
+	
+										</h:panelGrid>
+										
+										<h:panelGrid columns="6">		
+												#{"Paterno:"}
+												<h:inputText value="#{ventaDirectaMB.persona.APaterno}"/>
+												
+												#{"Materno:"}
+												<h:inputText value="#{ventaDirectaMB.persona.AMaterno}"/>
+												
+												#{"Nombres:"}
+												<h:inputText value="#{ventaDirectaMB.persona.nombres}"/>
+												
+												#{"RUC:"}
+												<h:inputText value="#{ventaDirectaMB.empresa.RUC}"/>
+												
+												#{"Razon Social:"}
+												<h:inputText value="#{ventaDirectaMB.empresa.razonSocial}"/>
+
+										</h:panelGrid>
+
+								</p:panel>
+
+								<p:panel id="pnNuevaPersona"
+									rendered="#{ventaDirectaMB.inhabilitacion.tipo eq 'CPASAJERO'}">
+
+									<h:panelGrid columns="6">		
+											#{"Documento:"}
+											<h:selectOneMenu
+															value="#{ventaDirectaMB.personaNueva.tipodocumento}">
+															<f:selectItem itemLabel="DNI" itemValue="DNI" />
+															<f:selectItem itemLabel="PAS" itemValue="PAS" />
+															<f:selectItem itemLabel="CE" itemValue="CE" />
+											</h:selectOneMenu>
+											
+											#{"Numero Doc. Nuevo Pasajero:"}
+											<h:inputText value="#{ventaDirectaMB.personaNueva.dni}" size="10"
+															maxlength="14" required="true"
+															requiredMessage="se necesita un numero de documento">		
+											</h:inputText>
+											
+											<p:commandButton value="Buscar" icon="icon-search"  actionListener="#{ventaDirectaMB.buscarPersonaNueva()}"
+												 update="pnDatosNuevaPersona" />
+											
+									</h:panelGrid>
+
+									
+
+									<h:panelGrid columns="6" id="pnDatosNuevaPersona">		
+									
+											#{"Nuevo Pasajero:"}
+											<h:outputText value="#{ventaDirectaMB.personaNueva.nombres} #{ventaDirectaMB.personaNueva.APaterno} #{ventaDirectaMB.personaNueva.AMaterno}" style="color:red;"/>
+
+									</h:panelGrid>
+
+
+								</p:panel>
+
+							</h:panelGroup>
+
+
+
+							<p:commandButton value="Inhabilitar Boleto" icon="icon-ok"
+								actionListener="#{ventaDirectaMB.inhabilitarBoletoDatosPasajeroReembolso()}"
+								style="width:180px;" update=":frmBusClase :frmBus"
+								oncomplete="validarInhabilitar(xhr, status, args)" />
+
+							<p:spacer width="30" />
+
+
+							<p:commandButton value="Cerrar" type="button" icon="icon-cancel"
+								style="width:180px;" onclick="dlgInhabilitar.hide();" />
+
+						</h:form>
+
+						<p:ajaxStatus style="width:16px;height:16px;">
+							<f:facet name="start">
+								<h:graphicImage value="resources/img/Ajaxloading.gif" />
+							</f:facet>
+
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</p:dialog>
+				
+
+
+					<!-- ################           historial         ########################333 -->
+
+					<p:dialog header="Historial Pasajero" widgetVar="dlgHistorial" style="width:1000px;"
+						appendToBody="true" resizable="false" id="dlgDetHistorial"
+						modal="true" closable="true">
+						
+						<p:messages closable="true" id="smsHistorial" showDetail="false" showSummary="true" />
+						
+						
+						<h:form  id="fmTrackingBoleto">
+								<h:panelGrid  id="pnlg" columns="2" styleClass="foo">
+	
+								<h:panelGrid	columns="6" >
+									#{"Tipo:"}
+									
+									<h:selectOneMenu value="#{ventaDirectaMB.tipoVentaHistorial}">
+										<f:selectItem itemLabel="[--Seleccionar--]" itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItem  itemLabel="VENTA" itemValue="VENTA" />
+										<f:selectItem  itemLabel="RESERVA" itemValue="RESERVA" />
+										<f:selectItem  itemLabel="POSTERGADO" itemValue="POSTERGADO" />
+									</h:selectOneMenu>
+									
+									<p:spacer width="5" height="1" />
+									
+									#{"DNI:"}
+									<h:inputText value="#{ventaDirectaMB.persona.dni}" maxlength="10"
+												size="10" required="true" requiredMessage="Se necesita un DNI" />
+												
+									<p:commandButton value="Buscar" icon="icon-search"
+												actionListener="#{ventaDirectaMB.buscarPersonaHistorial()}"
+												update=":smsHistorial :fmTrackingBoleto:pnPersonaHistorial :frmListaPersonasHistorial"
+												onstart="blockUIWidget.block();blockUIWidget1.block();" 
+						        				oncomplete="blockUIWidget.unblock();wdtHst.getPaginator().setPage(0);blockUIWidget1.unblock()" />
+								</h:panelGrid>
+								<br/>
+								<h:panelGrid id="pnPersonaHistorial" columns="9">
+									<h:outputText value="Pasajero:" />
+									<p:spacer width="10" height="1" />
+									<h:outputText value="#{ventaDirectaMB.personaHistorial.dni}" />
+									<p:spacer width="5" height="1" />
+									<h:outputText value="#{ventaDirectaMB.personaHistorial.nombres}" />
+									<p:spacer width="3" height="1" />
+									<h:outputText value="#{ventaDirectaMB.personaHistorial.APaterno}" />
+									<p:spacer width="3" height="1" />
+									<h:outputText value="#{ventaDirectaMB.personaHistorial.AMaterno}" />
+								</h:panelGrid>
+
+								
+							</h:panelGrid>
+						</h:form>
+
+						<h:form id="frmListaPersonasHistorial">
+							
+							<p:dataTable id="dtHst" widgetVar="wdtHst" var="trac" value="#{ventaDirectaMB.listaHistorialPasajero}"
+								emptyMessage="No hay coincidencias" rows="4" rowIndexVar="nro" paginator="true" 
+								 style="font-size:10px;width:1000px;"  >
+
+								<f:facet name="header">Historial pasajero</f:facet>
+								
+								<p:column headerText="Ord." >
+									#{nro+1}
+								</p:column>
+								
+								<p:column width="60" headerText="Fecha viaje">
+									<h:outputText value="#{trac.programacion.fSalidaString}" 
+										style="color:red;font-size:13px;font-weight:bold;" />		
+								</p:column>
+
+								<p:column width="50" headerText="Hora">
+									<h:outputText value="#{trac.programacion.hSalida}" />
+								</p:column>
+								
+								<p:column width="70" headerText="Creacion" >
+									<h:outputText value="#{trac.fRegistro}">
+										<f:convertDateTime pattern="dd-MM-yyyy HH:mm" />
+									</h:outputText>
+								</p:column>
+
+								<p:column width="40" headerText="Costo">
+									<h:outputText value="#{trac.asientoVenta.monto}" />
+								</p:column>
+
+								<p:column width="40" headerText="Serie-Numero">
+									<h:outputText
+										value="#{trac.serieBoleto}-#{trac.numeroBoleto}" />
+								</p:column>
+
+								<p:column width="30" headerText="Asiento">
+									<h:outputText value="#{trac.asientoVenta.numero}"
+										style="color:green;font-size:14px;font-weight:bold;" />
+								</p:column>
+
+								<p:column width="80" headerText="Operacion" filterStyleClass="mayuscula"
+									filterBy="#{trac.operacion}" filterMatchMode="contains">
+									<h:outputText value="#{trac.operacion}" id="ope" />
+								</p:column>
+								
+								<p:column width="60" headerText="F. Caducidad" rendered="#{ventaDirectaMB.tipoVentaHistorial eq 'RESERVA'}" >
+									<h:outputText value="#{trac.fechaCaducidad}">
+										<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+									</h:outputText>
+								</p:column>
+								
+								<p:column width="60" headerText="T.Entrega">
+
+									<h:outputText value="#{trac.tipoEntrega}" />
+
+								</p:column>
+								
+								<p:column width="60" headerText="Prepagado">
+
+									<h:outputText value="#{trac.prepagado ? 'SI' : 'NO'}" />
+
+								</p:column>
+
+								<p:column width="80" headerText="Origen-Destino">
+									<h:outputText value="#{trac.agenciaOrigen.descripcion}-#{trac.agenciaDestino.descripcion}" />
+								</p:column>
+								
+								<p:column width="80" headerText="Ver boleto">
+									<p:commandLink value="Ver boleto" actionListener="#{ventaDirectaMB.recuperaAsiento(trac)}"  
+										update=":dlgDetVentaInfo" oncomplete="dlgVentaInfo.show();" />
+								</p:column>
+
+								
+							</p:dataTable>
+
+						</h:form>
+					</p:dialog>
+
+
+					
+					<!-- ################           Movimientos  tracking boleto       ########################333 -->
+
+                    <p:dialog header="Tracking Boleto" widgetVar="dlgMovimiento"
+                              appendToBody="true" resizable="false" id="dlgDetMovimiento"
+                              modal="true" closable="true">
+                        <p:messages showDetail="false" showSummary="true" id="msgMovimiento" closable="true" />
+                        <p:ajaxStatus>
+                            <f:facet name="start">
+                                    <h:graphicImage value="resources/img/Ajaxloading.gif" />
+                            </f:facet>
+                            <f:facet name="complete">
+                                    <h:outputText value="" />
+                            </f:facet>
+                        </p:ajaxStatus>
+                        <p:panel>
+                            <h:form>
+                                <h:panelGrid columns="5">
+                                    #{"Serie boleto:"}
+                                    <h:inputText value="#{ventaDirectaMB.serieBoletoMov}" maxlength="6" size="5"
+                                        required="true" requiredMessage="Ingrese la serie del boleto"/>
+
+                                    #{"Numero boleto:"}
+                                    <h:inputText value="#{ventaDirectaMB.numeroBoletoMov}" maxlength="6" size="5"
+                                        required="true" requiredMessage="Ingrese el número del boleto"/>
+                                    
+                                    <p:commandButton value="Buscar"
+                                                     widgetVar="wgBuscarMov"
+                                                    actionListener="#{ventaDirectaMB.buscarMovimientoBoleto()}"
+                                                    onstart="blockUIWidget2.block();" 
+						        					oncomplete="wgDtListaMovimiento.clearFilters();wgBuscarMov.enable();wgDtListaMovimiento.getPaginator().setPage(0);blockUIWidget2.unblock()"
+                                                    onclick="wgBuscarMov.disable()"
+                                                    update=":msgMovimiento :frmListaMovimiento" icon="icon-buscar"/>
+                                </h:panelGrid>
+
+                            </h:form>
+
+                            <h:form id="frmListaMovimiento">
+
+                                <p:dataTable var="trac" value="#{ventaDirectaMB.listaTracking}"
+                                             widgetVar="wgDtListaMovimiento" rows="5" paginator="true"
+                                             filteredValue="#{ventaDirectaMB.listaFiltroTracking}"
+                                             emptyMessage="No hay coincidencias" rowIndexVar="nro"
+                                             style="FONT-SIZE: 10px;">
+
+                                    <f:facet name="header">Tracking</f:facet>
+
+                                    <p:column headerText="Ord." style="width:40px;">
+										#{nro+1}
+                                    </p:column>
+
+                                    <p:column style="width:69px;" headerText="Fecha viaje">
+                                        <h:outputText value="#{trac.programacion.fSalida}">
+                                            <f:convertDateTime pattern="dd-MM-yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column style="width:69px;" headerText="Hora"
+                                              filterBy="#{trac.programacion.hSalida}"
+                                              filterMatchMode="contains">
+                                        <h:outputText value="#{trac.programacion.hSalida}" />
+                                    </p:column>
+
+                                    <p:column style="width:69px;" headerText="Costo">
+                                        <h:outputText value="#{trac.asientoVenta.monto}" />
+                                    </p:column>
+
+                                    <p:column style="width:69px;" headerText="Boleto">
+                                        <h:outputText value="#{trac.numeroBoleto}" />
+                                    </p:column>
+
+                                    <p:column style="width:69px;" headerText="Asiento">
+                                        <h:outputText value="#{trac.asientoVenta.numero}" />
+                                    </p:column>
+
+                                    <p:column style="width:69px;" headerText="Origen">
+                                        <h:outputText value="#{trac.agenciaOrigen.descripcion}" />
+                                    </p:column>
+
+                                    <p:column style="width:69px;" headerText="Destino">
+                                        <h:outputText value="#{trac.agenciaDestino.descripcion}" />
+                                    </p:column>
+
+                                    <p:column style="width:69px;" headerText="Estado">
+                                        <h:outputText value="#{trac.estado}" />
+                                    </p:column>
+                                    <p:column headerText="Registro">
+                                        <h:outputText value="#{trac.fregistro}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm aa" />
+                                        </h:outputText>
+                                    </p:column>
+                                    
+                                    <p:column width="60" headerText="F. Caducidad"  >
+										<h:outputText value="#{trac.fechaCaducidad}">
+											<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column width="80" headerText="Ver boleto"   >
+										<p:commandLink value="Ver boleto" rendered="#{trac.verBoleto}" actionListener="#{ventaDirectaMB.recuperaAsientoTracking(trac)}"  
+											update=":dlgDetVentaInfo" oncomplete="dlgVentaInfo.show();" />
+									</p:column>
+ 
+                                </p:dataTable>
+                            </h:form>
+
+                        </p:panel>
+                    </p:dialog>
+
+					<p:dialog header="Anular Boleto" widgetVar="dlgAnularBoleto"
+						appendToBody="true" resizable="false" id="dlgDetAnularBoleto"
+						modal="true" closable="true">
+						<p:panel>
+							<h:form>
+								<h:panelGrid columns="5">
+						#{"Serie boleto:"}
+						<h:inputText value="#{ventaDirectaMB.serieBoletoAnul}" />
+						
+						#{"Numero boleto:"}
+						<h:inputText value="#{ventaDirectaMB.numeroBoletoAnul}" />
+
+									<p:commandButton value="Buscar"
+										actionListener="#{ventaDirectaMB.buscarBoletoaAnular()}"
+										update=":fieldDatosBoleto" />
+
+
+								</h:panelGrid>
+							</h:form>
+
+							<p:fieldset legend="Datos del Boleto">
+								<h:panelGroup id="fieldDatosBoleto">
+									<br />
+								#{"Pasajero:"}
+								<h:outputText
+										value="#{ventaDirectaMB.trackingBoletoAnul.persona.APaterno} 
+								 #{ventaDirectaMB.trackingBoletoAnul.persona.AMaterno} #{ventaDirectaMB.trackingBoletoAnul.persona.nombres}"
+										style="font-weight:bold;font-size:13px;" />
+								#{"Dia(s):"}
+								<h:outputText
+										value="#{ventaDirectaMB.trackingBoletoAnul.diastranscurridos} "
+										style="font-weight:bold;font-size:13px;" />
+
+									<p:commandButton id="cbtEditar" title="Imprimir"
+										update=":dlgDetReimpr"
+										rendered="#{ventaDirectaMB.trackingBoletoAnul.flgdias}"
+										actionListener="#{ventaDirectaMB.setReprintBoleto(ventaDirectaMB.trackingBoletoAnul)}"
+										oncomplete="dlgReimpr.show();" icon="icon-printer">
+									</p:commandButton>
+									<hr />
+									<h:panelGrid columns="2">		
+											#{"Nro Asiento:"}
+											<h:outputText
+														value="#{ventaDirectaMB.trackingBoletoAnul.numeroBoleto}"
+														style="font-weight:bold;font-size:13px; color:red;" />
+											
+											#{"Fecha de viaje:"}
+											<h:outputText
+														value="#{ventaDirectaMB.trackingBoletoAnul.programacion.fSalida}"
+														style="font-weight:bold;font-size:13px;">
+														<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+											</h:outputText>
+											
+											#{"Hora de viaje:"}
+											<h:outputText
+														value="#{ventaDirectaMB.trackingBoletoAnul.programacion.hSalida}"
+														style="font-weight:bold;font-size:13px;" />
+											
+											#{"Fecha de Venta:"}
+											<h:outputText
+														value="#{ventaDirectaMB.trackingBoletoAnul.asientoVenta.fechaventa}"
+														style="font-weight:bold;font-size:13px;">
+														<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss a" />
+											</h:outputText>
+											
+											#{"Servicio:"}
+											<h:outputText
+														value="#{ventaDirectaMB.trackingBoletoAnul.servicio.descripcion}"
+														style="font-weight:bold;font-size:13px;" />
+											
+											#{"Monto S/.:"}
+											<h:outputText
+														value="#{ventaDirectaMB.trackingBoletoAnul.asientoVenta.monto}"
+														style="font-weight:bold;font-size:13px; color:red;" />
+			
+													<!-- 								#{"Piso:"} -->
+													<!-- 								<h:outputText value="#{ventaDirectaMB.trackingBoletoAnul.asientoVenta.asiento.piso}" style="font-weight:bold;font-size:13px;" /> -->
+
+									</h:panelGrid>
+									<br />
+								</h:panelGroup>
+								<h:form>
+									<p:commandButton value="Anular" style="width:100px;"
+										update=":frmBusClase :frmBus "
+										actionListener="#{ventaDirectaMB.anulacionBoleto()}" />
+									<p:spacer width="20" />
+									<p:commandButton type="button" style="width:100px;"
+										value="Cancelar" onclick="dlgAnularBoleto.hide();" />
+								</h:form>
+							</p:fieldset>
+
+						</p:panel>
+					</p:dialog>
+
+					<!-- liberar aiento -->
+					<p:confirmDialog id="dlgDetLiberar" appendToBody="true"
+						message="Â¿Desea liberar el asiento" header="Liberar Asiento"
+						severity="alert" widgetVar="dlgLiberar">
+						<h:form>
+			Asiento a liberar: <h:outputText
+								value="#{ventaDirectaMB.asientoSelec.numero}"
+								style="font-size:12px;font-weight: bold;" />
+							<br />
+							<p:ajaxStatus style="width:16px;height:16px;">
+								<f:facet name="start">
+									<h:graphicImage value="resources/img/Ajaxloading.gif" />
+								</f:facet>
+
+								<f:facet name="complete">
+									<h:outputText value="" />
+								</f:facet>
+							</p:ajaxStatus>
+							<p:commandButton value="Liberar" update=":frmBusClase :frmBus"
+								actionListener="#{ventaDirectaMB.venderAsiento('LIBERAR')}"
+								oncomplete="dlgLiberar.hide();" />
+
+							<p:spacer width="50" height="5" />
+
+							<p:commandButton type="button" value="Cancelar"
+								onclick="dlgLiberar.hide();" icon="icon-cancel" />
+						</h:form>
+					</p:confirmDialog>
+
+
+				</p:layoutUnit>
+			</p:layout>
+		</p:panel>
+
+		<p:dialog header="Forma de Pago" widgetVar="dlgFormaPago"
+			appendToBody="true" modal="true" resizable="false"
+			id="dlgDetFormaPago">
+			<h:form id="formFormaPago">
+
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="Elija Tarjeta:"
+						rendered="#{ventaDirectaMB._tipoPago eq 'TARJETA' or ventaDirectaMB._tipoPago eq 'MIXTO'}" />
+					
+					<p:selectOneMenu id="formaPago"
+						value="#{ventaDirectaMB.tipoTarjeta}"
+						style="margin-left:5px;margin-top:10px; width:180px"
+						rendered="#{ventaDirectaMB._tipoPago eq 'TARJETA' or ventaDirectaMB._tipoPago eq 'MIXTO'}">
+						<f:selectItem itemLabel="VISA" itemValue="V" />
+						<f:selectItem itemLabel="MasterCard" itemValue="M" />
+						<p:ajax event="change" />
+					</p:selectOneMenu>
+					
+					<!-- modificacion jtarazona -->
+					<h:panelGrid columns="2" rendered="#{ventaDirectaMB._tipoPago eq 'TRAN-BANCARIA'}" >
+							<h:outputText value="Elija Banco:"
+								rendered="#{ventaDirectaMB._tipoPago eq 'TRAN-BANCARIA'}" />
+								
+							<p:selectOneMenu id="Banco"
+								value="#{ventaDirectaMB.transferenciaBanco}"
+								style="margin-left:5px;margin-top:10px; width:270px"
+								rendered="#{ventaDirectaMB._tipoPago eq 'TRAN-BANCARIA'}" >
+								<f:selectItem itemLabel="Banco de Comercio" itemValue="B.COMERCIO" />
+								<f:selectItem itemLabel="Banco de Credito" itemValue="B.CREDITO" />
+								<f:selectItem itemLabel="Banco Interamericano de Finanzas(BanBif)" itemValue="B.BANBIF" />
+								<f:selectItem itemLabel="Banco Financiero" itemValue="B.FINANCIERO" />
+								<f:selectItem itemLabel="BBVA Banco Continental" itemValue="BBVA" />
+								<f:selectItem itemLabel="Citibank" itemValue="CITIBANK" />
+								<f:selectItem itemLabel="Interbank" itemValue="INTERBANK" />
+								<f:selectItem itemLabel="MiBanco" itemValue="MIBANCO" />
+								<f:selectItem itemLabel="Scotiabank Peru" itemValue="SCOTIABANK PERU" />
+								<f:selectItem itemLabel="Banco GNB Peru" itemValue="B.GNB PERU" />
+								<f:selectItem itemLabel="Banco Falabella" itemValue="B.FALABELLA" />
+								<f:selectItem itemLabel="Banco Ripley" itemValue="B.RIPLEY" />
+								<f:selectItem itemLabel="Banco Santander Peru S.A" itemValue="B.SANTANDER PERU S.A." />
+								<f:selectItem itemLabel="Banco Azteca" itemValue="B.AZTECA" />
+								<f:selectItem itemLabel="Deutsche Bank" itemValue="DEUTSCHE BANK" />
+								<f:selectItem itemLabel="Banco Cencosud" itemValue="B.CENCOSUD" />
+								<f:selectItem itemLabel="ICBC Peru Bank" itemValue="ICBC.PERU BANK" />
+								<f:selectItem itemLabel="Banco de la Nacion" itemValue="B.DE LA NACION" />
+								<p:ajax event="change" />
+							</p:selectOneMenu>
+					
+							<h:outputText value="Nro. Transferencia:"
+								rendered="#{ventaDirectaMB._tipoPago eq 'TRAN-BANCARIA'}" />
+							<p:inputText value="#{ventaDirectaMB.transferenciaNumero}"
+								style="margin-left:5px;margin-top:10px;width:260px"
+								rendered="#{ventaDirectaMB._tipoPago eq 'TRAN-BANCARIA'}" maxlength="16">
+								<pe:keyFilter mask="num"></pe:keyFilter>
+								<p:ajax event="blur" />
+							</p:inputText>
+							
+					</h:panelGrid>
+					<!-- fin modificacion -->
+
+					<h:outputText value="Monto Efectivo:"
+						rendered="#{ventaDirectaMB._tipoPago eq 'MIXTO'}" />
+						
+						
+					<p:inputText value="#{ventaDirectaMB.montoEfectivo}"
+						style="margin-left:5px;margin-top:10px;width:170px"
+						rendered="#{ventaDirectaMB._tipoPago eq 'MIXTO'}">
+						<p:ajax event="blur" />
+					</p:inputText>
+
+					<h:outputText value="Monto Tarjeta:"
+						rendered="#{ventaDirectaMB._tipoPago eq 'MIXTO'}" />
+					<p:inputText value="#{ventaDirectaMB.montoTarjeta}"
+						style="margin-left:5px;margin-top:10px;width:170px"
+						rendered="#{ventaDirectaMB._tipoPago eq 'MIXTO'}">
+						<p:ajax event="blur" />
+					</p:inputText>
+
+					<h:outputText value="Numero Referencia:"
+						rendered="#{ventaDirectaMB._tipoPago eq 'TARJETA'}" />
+					<p:inputText value="#{ventaDirectaMB.numeroReferenciaTarjeta}"
+						style="margin-left:5px;margin-top:10px;width:170px"
+						rendered="#{ventaDirectaMB._tipoPago eq 'TARJETA'}" />
+						
+				</h:panelGrid>
+
+				<p:commandButton value="Aceptar" oncomplete="dlgFormaPago.hide()"
+					style="margin-left:70px; margin-top:10px" />
+					
+				<p:commandButton value="Cancelar" oncomplete="dlgFormaPago.hide()"
+					style="margin-left:70px; margin-top:10px" />	
+			</h:form>
+		</p:dialog>
+
+
+
+		<p:dialog header="Búsqueda de cliente" widgetVar="dlgCliente"
+			appendToBody="true" modal="true" resizable="false" id="dlgDetCliente"
+			closable="true">
+
+
+			<p:messages showDetail="false" showSummary="true" id="msgCliente"
+				closable="true" />
+			<h:form>
+
+				<h:panelGrid columns="6">
+					#{"Apellido Paterno:"}
+					<h:inputText value="#{ventaDirectaMB.persona.APaterno}" size="15"
+						required="true" requiredMessage="Ingrese apellido paterno" />
+					
+					#{"Apellido Materno:"}
+					<h:inputText value="#{ventaDirectaMB.persona.AMaterno}" size="15"
+						required="true" requiredMessage="Ingrese apellido materno" />
+
+					<p:spacer width="30" height="2" />
+
+					<p:commandButton value="Buscar Persona"
+						actionListener="#{ventaDirectaMB.buscarPersonaPorApellidos()}"
+						oncomplete="dtListaPersona.clearFilters();"
+						update=":msgCliente :frmListaClientes" />
+				</h:panelGrid>
+				<br />
+			</h:form>
+
+			<h:form id="frmListaClientes">
+				<p:dataTable var="per"				
+					widgetVar="dtListaPersona"
+					value="#{ventaDirectaMB.listaPersonasPorApellido}" rows="5"
+					paginator="true"					
+					filteredValue="#{ventaDirectaMB.listaFiltroPersonasPorApellido}"
+					emptyMessage="No hay registros encontrados" rowIndexVar="nro"
+					style="FONT-SIZE: 10px;width:500px;">
+
+					<f:facet name="header">Clientes</f:facet>
+
+					<p:column headerText="Nro">
+						<h:outputText value="#{nro + 1}" />
+					</p:column>
+
+					<p:column headerText="Apellidos">
+						<h:outputText value="#{per.APaterno} #{per.AMaterno}" />
+					</p:column>
+
+					<p:column headerText="Nombres" filterBy="#{per.nombres}" filterStyleClass="mayuscula"
+						filterMatchMode="contains">
+						<h:outputText value="#{per.nombres}" />
+					</p:column>
+
+					<p:column headerText="DNI">
+						<h:outputText value="#{per.dni}" />
+					</p:column>
+
+					<p:column headerText="Seleccionar">
+						<p:commandLink
+							actionListener="#{ventaDirectaMB.seleccionarPersonaCliente(per)}"
+							oncomplete="dlgCliente.hide();" update=":frmVenta">
+							<h:graphicImage value="resources/img/icon-marker.png" height="20"
+								width="20" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog header="Aviso" widgetVar="dlgTomado" appendToBody="true"
+			modal="true" resizable="false" id="dlgDetTomado">
+			<h:form>
+				<h5>Esta asiento ya ha sido tomado, Refrescar el croquis</h5>
+				<p:commandButton value="Cerrar" oncomplete="dlgTomado.hide()"
+					style="margin-left:70px; margin-top:10px" />
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog header="Vista Calendario" widgetVar="dlgVistaCalendario"
+			appendToBody="true" modal="true" resizable="false"
+			id="dlgDetVistaCalendario">
+			<h:form style="height:530px;width:540px;">
+				<h:panelGrid columns="2">
+  							#{"Origen:"}
+  							<h:selectOneMenu 
+						value="#{ventaDirectaMB.agenciaOrigen.idagencia}">
+						<f:selectItem itemLabel="Seleccionar" itemValue="#{null}"
+							noSelectionOption="true" />
+						<f:selectItems itemLabel="#{ago.descripcion}"
+							itemValue="#{ago.idagencia}" var="ago"
+							value="#{ventaDirectaMB.listaAgOrigen}" />
+						<f:ajax event="valueChange" execute="@this" render="cmbDestino"
+							listener="#{ventaDirectaMB.listarDestinos()}" />
+					</h:selectOneMenu>
+			
+  							#{"Destino:"}
+  							<h:selectOneMenu id="cmbDestino"
+						value="#{ventaDirectaMB.agenciaDestino.idagencia}">
+						<f:selectItem itemLabel="Seleccionar" itemValue="#{null}"
+							noSelectionOption="true" />
+						<f:selectItems itemLabel="#{agd.descripcion}"
+							itemValue="#{agd.idagencia}" var="agd"
+							value="#{ventaDirectaMB.listaAgDestinos}" />
+						<f:ajax event="valueChange" execute="@this"
+							listener="#{ventaDirectaMB.seleccionarDestino()}"
+							render="calendario" />
+					</h:selectOneMenu>
+  							
+  							#{"Calendario:"}
+
+  						</h:panelGrid>
+
+				<h:panelGroup id="calendario" >
+
+					<p:calendar rendered="#{ventaDirectaMB.destinoSeleccionado}"
+						mode="inline" style="font-size:30px;"
+						value="#{ventaDirectaMB.temp}" size="7" readonlyInput="true"
+						pattern="dd-MM-yyyy" mindate="#{ventaDirectaMB.fechaActual}"
+						locale="es"  >
+						<p:ajax event="dateSelect" update=":frmBusClase :frmBus"  onsuccess="doCollapsed();"
+							listener="#{ventaDirectaMB.seleccionarFechaCalendario()}"
+							oncomplete="dlgVistaCalendario.hide();" />
+					</p:calendar>
+
+				</h:panelGroup>
+
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Rutas Compartidas" widgetVar="dlgRutasCompartidas" appendToBody="true" modal="true" resizable="false"
+                  id="dlgDetRutasCompartidas">
+					<p:dataTable widgetVar="dtCompartido" var="p" value="#{ventaDirectaMB.listaProgramacionCompartidas}"  
+							emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro" 
+							paginator="true"
+							rows="10" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20,30"
+							style="FONT-SIZE: 10px; ">
+							<f:facet name="header">Rutas Compartidas</f:facet>
+							
+							<p:column headerText="Orden" style="width:10px" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:25px" headerText="Hora Salida">
+								<h:outputText value="#{p.hSalida}" />
+							</p:column>
+							
+							<p:column style="width:100px" headerText="Origen">
+								<h:outputText value="#{p.desOrigen}" />
+							</p:column>
+							
+							<p:column style="width:100px" headerText="Destino">
+								<h:outputText value="#{p.desDestino}" />
+							</p:column>
+		
+					</p:dataTable>
+		</p:dialog>
+
+		<h:form id="formImprimir">
+				<h:commandLink id="cmdImprimir" 
+						actionListener="#{ventaDirectaMB.mandarImpresionBoletaPrepagado()}"/>
+						
+				<h:commandLink value="Imprimir Boleto" id="imprimirboletoAPPLE"
+									actionListener="#{ventaDirectaMB.mandarImpresionAPPLE()}">
+								</h:commandLink>
+		</h:form>
+
+
+    
+		<p:overlayPanel id="moviePanel" widgetVar="opBusqueda"
+			for=":formVentMult:movieBtn" hideEffect="fade" dynamic="true"
+			style="width:700px;">
+			
+
+			<p:scrollPanel style="width:680px;height:120px;">
+
+				<p:messages showDetail="false" showSummary="true"
+					id="msgClienteMultiple" closable="true" />
+				<h:form>
+
+					<h:panelGrid columns="6">
+						#{"Apellido Paterno:"}
+						<h:inputText value="#{ventaDirectaMB.persona.APaterno}" size="15"
+							required="true" requiredMessage="Se necesita ap. paterno" />
+												
+						#{"Apellido Materno:"}
+						<h:inputText value="#{ventaDirectaMB.persona.AMaterno}" size="15"
+							required="true" requiredMessage="Se necesita ap. materno" />
+
+						<p:spacer width="30" height="2" />
+
+						<p:commandButton value="Buscar Persona"
+							actionListener="#{ventaDirectaMB.buscarPersonaPorApellidos()}"
+							oncomplete="dtListaCl.clearFilters();"
+							update=":msgClienteMultiple :frmListaClientesMultiple" />
+					</h:panelGrid>
+
+				</h:form>
+
+				<h:form id="frmListaClientesMultiple" style="height:300px;">
+
+					<p:dataTable var="per" widgetVar="dtListaCl"
+						value="#{ventaDirectaMB.listaPersonasPorApellido}" rows="4"
+						paginator="true"
+						filteredValue="#{ventaDirectaMB.listaFiltroPersonasPorApellido}"
+						emptyMessage="No hay registros encontrados" rowIndexVar="nro"
+						style="FONT-SIZE: 10px;width:500px;">
+
+						<f:facet name="header">Clientes</f:facet>
+
+						<p:column headerText="Nro">
+							<h:outputText value="#{nro + 1}" />
+						</p:column>
+
+						<p:column headerText="Persona">
+							<h:outputText value="#{per.APaterno} #{per.AMaterno}" />
+						</p:column>
+
+						<p:column headerText="Persona" filterBy="#{per.nombres}" filterStyleClass="mayuscula"
+							filterMatchMode="contains">
+							<h:outputText value="#{per.nombres}" />
+						</p:column>
+
+						<p:column headerText="DNI">
+							<h:outputText value="#{per.dni}" />
+						</p:column>
+
+						<p:column headerText="Seleccionar">
+							<p:commandLink
+								actionListener="#{ventaDirectaMB.seleccionarPersonaCliente(per)}"
+								oncomplete="opBusqueda.hide();"
+								update=":formVentMult:dtMultiple">
+								<h:graphicImage value="resources/img/icon-marker.png"
+									height="20" width="20" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+
+				</h:form>
+			</p:scrollPanel>
+
+		</p:overlayPanel>
+		
+		
+		
+		<p:dialog  widgetVar="dlgNoProgramacion" appendToBody="true" modal="true" resizable="false"
+                  id="dlgDetNoProgramacion"  >
+					<div class="aviso" style="font-size: 14px;" >
+						<h:panelGrid columns="2" >							
+							No hay programaciones para la  fecha seleccionada
+						</h:panelGrid>	
+						  
+					</div>
+		</p:dialog>
+		
+		<!-- ################      Postergar un asiento, postergacion normal    ########################## -->
+		<p:dialog  widgetVar="wdlgRecuperarPostergado" appendToBody="true" modal="true" resizable="false"  header="Activar Postergacion" style="font-size:16px;"
+                  id="dlgRecuperarPostergado"  >
+        	<p:messages id="smsRecuperarPostergado" showDetail="false" showSummary="true" closable="true" />
+        	<h:form>
+        		
+        		<h:panelGrid columns="6">
+					#{"Serie:"}
+					<h:inputText value="#{ventaDirectaMB.boletoSerieBuscado}" size="4" 
+						maxlength="5" required="true" requiredMessage="Se necesita una serie" />
+					
+					#{"Numero:"}
+					<h:inputText value="#{ventaDirectaMB.boletoNumeroBuscado}" size="4" 
+						maxlength="5"  required="true" requiredMessage="Se necesit un numero" />
+					
+					<p:spacer width="5" height="1"/>
+					
+					<p:commandButton value="Buscar boleto" actionListener="#{ventaDirectaMB.buscarBoletoAPostergar()}"
+						update=":smsRecuperarPostergado  @form" icon="icon-search" />
+					 
+				</h:panelGrid>
+				<br/>
+				<hr/>
+				<h:panelGroup rendered="#{ventaDirectaMB.buscarResultado}">
+					
+					<h:panelGrid  columns="5" >
+					
+						#{"DNI:"} 
+						<h:outputText  value="#{ventaDirectaMB.persona.dni}"
+						 style="color:red;font-size:14px;" />
+						
+						<p:spacer width="5" height="1"/>
+						
+						#{"Pasajero:"} 
+						<h:outputText  value="#{ventaDirectaMB.persona.nombres} #{ventaDirectaMB.persona.APaterno} #{ventaDirectaMB.persona.AMaterno}"
+						 style="color:red;font-size:14px;" />
+
+					</h:panelGrid>
+					
+					
+					<h:panelGrid  columns="5" >
+					
+						#{"Nuevo Servicio:"} 
+						<h:outputText  value="#{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+						 style="color:red;font-size:14px;" />
+						
+						<p:spacer width="5" height="1"/>
+						
+						#{"Nuevo Asiento:"} 
+						<h:outputText  value="#{ventaDirectaMB.asientoSelec.numero}"
+						 style="color:red;font-size:14px;" />
+
+					</h:panelGrid>
+					
+					<br/>
+	        		<div>
+	        		<div style="width:260px;margin:auto;">
+	        		<p:commandButton  value="Aceptar" icon="icon-ok" actionListener="#{ventaDirectaMB.realizarPostergacion()}" 
+	        			oncomplete="wdlgRecuperarPostergado.hide();"  rendered="#{not ventaDirectaMb.diferenciaPostergacion}"
+	        			update=":frmBus"  />
+	        			
+	        		<p:spacer width="10" height="1"/>
+	        		
+	        		<p:commandButton  value="Cancelar" icon="icon-cancel" update=":frmBus"   actionListener="#{ventaDirectaMB.cancelarRecuperarPostergacion()}"
+	        			 oncomplete="wdlgRecuperarPostergado.hide();" />	
+	        		</div>
+	        		</div>
+					
+				</h:panelGroup>
+				
+				
+        	</h:form>          
+					
+		</p:dialog>
+
+
+		<!-- ################      inhabilitar un asiento, inhabilitacion por cambio de servicio y sus variaciones    ########################## -->
+		
+		<p:dialog  widgetVar="wdlgRecuperarInhabilitado" appendToBody="true" modal="true" resizable="false"
+                  id="dlgRecuperarInhabilitado"  width="800" height="410" >
+                  
+        	<p:messages id="smsRecuperarInhabilitado" showDetail="false" showSummary="true" closable="false" />
+        	
+        	<h:form>
+        		
+        		<h:panelGrid columns="6">
+					#{"Serie:"}
+					<h:inputText value="#{ventaDirectaMB.boletoSerieBuscado}" size="4" 
+						maxlength="5" required="true" requiredMessage="Se necesita una serie" />
+					
+					#{"Numero:"}
+					<h:inputText value="#{ventaDirectaMB.boletoNumeroBuscado}" size="4" 
+						maxlength="5"  required="true" requiredMessage="Se necesit un numero" />
+					
+					<p:spacer width="5" height="1"/>
+					
+					<p:commandButton value="Buscar boleto" actionListener="#{ventaDirectaMB.buscarBoletoInhabilitado()}"
+						update=":smsRecuperarInhabilitado :pnGeneral" icon="icon-search" />
+					 
+				</h:panelGrid>
+			</h:form>
+				
+				<br/>
+				<hr/>
+			<h:panelGroup id="pnGeneral">	
+				<h:panelGroup rendered="#{ventaDirectaMB.buscarInhabilitado}" >
+				
+					<h:panelGrid  columns="5" >
+						#{"DNI:"} 
+						<h:outputText  value="#{ventaDirectaMB.persona.dni}"
+						 style="color:red;font-size:14px;" />
+						
+						<p:spacer width="5" height="1"/>
+						
+						#{"Pasajero:"} 
+						<h:outputText  value="#{ventaDirectaMB.persona.nombres} #{ventaDirectaMB.persona.APaterno} #{ventaDirectaMB.persona.AMaterno}"
+						 style="color:red;font-size:14px;" />
+					</h:panelGrid>
+				
+					<h:form id="frmOpInhabilita">
+						<h:panelGrid columns="4">
+									
+								#{"Motivo:"}
+								<h:selectOneMenu value="#{ventaDirectaMB.inhabilitacion.tipo}"  required="true" requiredMessage="Se necesita tipo de inhabilitacion" >
+										<f:selectItem itemLabel="Seleccionar" itemValue="#{null}"
+											noSelectionOption="true" />
+										<f:selectItem itemLabel="Cambio de datos" itemValue="CDATOS" itemDisabled="#{not ventaDirectaMB.consultaRapida}" />
+										<f:selectItem itemLabel="Cambio de pasajero" itemValue="CPASAJERO" itemDisabled="#{not ventaDirectaMB.consultaRapida}" />
+										<f:selectItem itemLabel="Devolucion" itemValue="CDEVOLUCION" itemDisabled="#{not ventaDirectaMB.consultaRapida}" />
+										<f:selectItem itemLabel="Cambio de servicio" itemValue="CSERVICIO" itemDisabled="#{ventaDirectaMB.consultaRapida}"/>
+										<f:selectItem itemLabel="Cambio de servicio y pasajero" itemValue="CSERVICIOPASAJ" itemDisabled="#{ventaDirectaMB.consultaRapida}"/>
+										<f:selectItem itemLabel="Cambio de servicio y datos" itemValue="CSERVICIODATOS"  itemDisabled="#{ventaDirectaMB.consultaRapida}"/>
+										<f:ajax event="valueChange" render=":smsRecuperarInhabilitado pnInhabilita pnBotonInh"  listener="#{ventaDirectaMB.calcularMontoBoletoInhabilitacion()}"
+											execute="@this" />
+								</h:selectOneMenu>
+								
+								#{"Comentarios:"}
+								<h:inputTextarea value="#{ventaDirectaMB.inhabilitacion.motivo}" cols="30" rows="2"  styleClass="mayuscula" />
+								
+						</h:panelGrid>
+					
+					
+						<br />
+					
+					
+						<h:panelGroup id="pnInhabilita">
+						
+								<h:panelGrid  columns="11" >
+						
+									#{"Servicio Anterior:"} 
+									<h:outputText  value="#{ventaDirectaMB.servicioInhabilitado.descripcion}"
+									 style="color:red;font-size:14px;" />
+									 
+									<p:spacer width="3" height="1"/>
+									 
+									#{"Costo AnteriorS/. :"} 
+									<h:outputText  value="#{ventaDirectaMB.trackingBoleto.get(0).montoReal}"
+									 style="color:red;font-size:14px;" /> 
+									 
+									<p:spacer width="3" height="1"/>
+									
+									#{"Nuevo Servicio:"} 
+									<h:outputText  value="#{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+									 style="color:red;font-size:14px;" />
+				
+									 <p:spacer width="3" height="1"/>
+									 
+									 #{"Costo Actual S/.:"} 
+									<h:outputText  value="#{ventaDirectaMB.asientoSelec.piso eq 1 ? ventaDirectaMB.programacionSelec.servicio.precio1 : ventaDirectaMB.programacionSelec.servicio.precio2 }"
+									 style="color:red;font-size:14px;" />
+									 
+									
+									 
+									 #{"Nuevo Asiento:"} 
+									<h:outputText  value="#{ventaDirectaMB.asientoSelec.numero}"
+									 style="color:red;font-size:14px;" />
+					
+									<p:spacer width="3" height="1"/>
+									 
+									#{"Diferencia:"}
+									<h:outputText  value="S/. #{ventaDirectaMB.diferencia}"
+									 style="color:red;font-size:14px;" />
+									 
+									 <p:spacer width="3" height="1"/>
+									
+									#{"Valor del Boleto S/.:"}
+									<h:inputText  value="#{ventaDirectaMB.valorBoletoInhabilitado}"
+									 style="color:red;font-size:14px;" size="6" maxlength="6"/>
+								
+								</h:panelGrid>
+						
+								
+								<p:panel rendered="#{ventaDirectaMB.inhabilitacion.tipo eq 'CSERVICIODATOS'}">
+	
+										<h:panelGrid columns="4">		
+												#{"Documento:"}
+												<h:selectOneMenu value="#{ventaDirectaMB.persona.tipodocumento}">
+																<f:selectItem itemLabel="DNI" itemValue="DNI" />
+																<f:selectItem itemLabel="PAS" itemValue="PAS" />
+																<f:selectItem itemLabel="CE" itemValue="CE" />
+												</h:selectOneMenu>
+												
+												#{"Numero Doc.:"}
+												<h:outputText value="#{ventaDirectaMB.persona.dni}"/>
+	
+										</h:panelGrid>
+											
+										<h:panelGrid columns="6">		
+												#{"Paterno:"}
+												<h:inputText value="#{ventaDirectaMB.persona.APaterno}"/>
+												
+												#{"Materno:"}
+												<h:inputText value="#{ventaDirectaMB.persona.AMaterno}"/>
+												
+												#{"Nombres:"}
+												<h:inputText value="#{ventaDirectaMB.persona.nombres}"/>
+	
+										</h:panelGrid>
+										
+										<h:panelGrid  columns="2">
+											#{"Boleto con RUC"}
+											<p:selectBooleanCheckbox value="#{ventaDirectaMB.boletoRuc}" id="chckRucInh">
+												<f:ajax execute="@this" render="pnRucInh" event="valueChange"/>
+											</p:selectBooleanCheckbox>
+										</h:panelGrid>
+										
+
+
+										<h:panelGroup id="pnRucInh">
+		                                                                    
+											<h:panelGrid rendered="#{ventaDirectaMB.boletoRuc}" columns="3">
+												#{"RUC:"}
+												<h:inputText value="#{ventaDirectaMB.empresa.RUC}" maxlength="11" size="11">
+													<f:ajax event="blur" listener="#{ventaDirectaMB.buscarEmpresaInhabilitado()}" execute="@this"
+													 render="pnRCRZ" />
+												</h:inputText>
+												
+												<h:panelGrid id="pnRCRZ" columns="4">
+													#{"Razon Social:"}
+													<h:inputText value="#{ventaDirectaMB.empresa.razonSocial}" />
+													
+													<h:outputText rendered="#{not ventaDirectaMB.empresaEncontrada}" 
+													value="Empresa no registrada"  style="color:red;font-weight:bold; " />
+												</h:panelGrid>		
+												
+											</h:panelGrid>
+										</h:panelGroup>
+
+								</p:panel>
+	
+								<p:panel rendered="#{ventaDirectaMB.inhabilitacion.tipo eq 'CSERVICIOPASAJ'}">
+	
+										<h:panelGrid columns="6">		
+												#{"Documento:"}
+												<h:selectOneMenu
+																value="#{ventaDirectaMB.personaNueva.tipodocumento}">
+																<f:selectItem itemLabel="DNI" itemValue="DNI" />
+																<f:selectItem itemLabel="PAS" itemValue="PAS" />
+																<f:selectItem itemLabel="CE" itemValue="CE" />
+												</h:selectOneMenu>
+												
+												#{"Numero Doc. Nuevo Pasajero:"}
+												<h:inputText value="#{ventaDirectaMB.personaNueva.dni}" size="9"
+																maxlength="8" required="true"
+																requiredMessage="se necesita un numero de documento">		
+												</h:inputText>
+												
+												<p:commandButton value="Buscar" icon="icon-search"  actionListener="#{ventaDirectaMB.buscarPersonaNueva()}"
+													 update="pnDatosNuevaPersona" />
+												
+										</h:panelGrid>
+	
+										
+	
+										<h:panelGrid columns="6" id="pnDatosNuevaPersona">		
+										
+												#{"Nuevo Pasajero:"}
+												<h:outputText value="#{ventaDirectaMB.personaNueva.nombres} #{ventaDirectaMB.personaNueva.APaterno} #{ventaDirectaMB.personaNueva.AMaterno}" style="color:red;"/>
+	
+										</h:panelGrid>
+	
+	
+								</p:panel>
+	
+					</h:panelGroup>
+					
+					
+					<div>
+		        		<div style="width: 260px;margin:auto;">
+		        			<h:panelGrid id="pnBotonInh"  columns="3" >
+				        		<p:commandButton  value="Aceptar" icon="icon-ok" actionListener="#{ventaDirectaMB.realizarInhabilitacion()}" 
+				        			oncomplete="wdlgRecuperarInhabilitado.hide();" 
+				        			update=":frmBus"  disabled="#{empty ventaDirectaMB.inhabilitacion.tipo}"  />
+				        			
+				        		<p:spacer width="10" height="1"/>
+				        		
+				        		<p:commandButton  value="Cancelar" icon="icon-cancel" onclick="wdlgRecuperarInhabilitado.hide();" 
+				        			actionListener="#{ventaDirectaMB.cancelarRecuperarInhabilitado()}"  update=":frmBus"  />
+			        		</h:panelGrid>	
+		        		</div>
+	        		</div>
+        	    </h:form>    
+					
+				
+					</h:panelGroup>
+				</h:panelGroup>
+				<br/>
+			
+	        	 
+					
+		</p:dialog>
+		
+		
+		<p:dialog id="dlgDelivery" widgetVar="wdlgDelivery" header="Venta Delivery" 
+			appendToBody="true" modal="true" resizable="false">
+			
+			<p:messages showDetail="false" showSummary="true" id="smsDelivery" />
+			
+			<!-- Panel Delivery -->
+			<h:form>
+				<h:panelGrid columns="6">
+				
+					<h:outputText value="Datos del Pagador de Delivery"
+								style="font-weight:bold;" />
+				
+					#{"Tip.Doc:"}
+					<h:selectOneMenu value="#{ventaDirectaMB.delivery.tipoDoc}">
+								<f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true" />
+								<f:selectItem itemLabel="DNI" itemValue="DNI" />
+								<f:selectItem itemLabel="RUC" itemValue="RUC" />
+								<f:ajax execute="@this" event="valueChange"
+									render="txtDocPagador2"
+									listener="#{ventaDirectaMB.limpiarDocDelivery()}" />
+					</h:selectOneMenu>
+							
+					#{"Documento:"}
+					<h:inputText id="txtDocPagador2"
+								value="#{ventaDirectaMB.delivery.nroDoc}" size="18"
+								maxlength="14">
+								<f:ajax event="blur"
+									listener="#{ventaDirectaMB.buscarPagadorDelivery()}"
+									execute="@this" render="pnDatosPagador2" />
+					</h:inputText>
+					<ui:remove>	
+					<h:graphicImage name="icon-marker.png" library="img" height="24" width="24" onclick="pegarDNI();" />
+					</ui:remove>			
+				</h:panelGrid>
+				
+				<h:panelGroup id="pnDatosPagador2">
+					<h:panelGrid columns="2" >	
+				
+						#{"Nombre:"}
+						<h:inputText value="#{ventaDirectaMB.delivery.nombre}"
+									size="48" maxlength="100" />
+						
+						#{"Monto S/.:"}
+						<h:inputText value="#{ventaDirectaMB.montoDelivery}" size="5"
+									maxlength="6" />
+
+					</h:panelGrid>
+					
+					<h:panelGrid columns="4" >	
+						
+						#{"Hora Entrega"}
+						
+						<h:selectOneMenu value="#{ventaDirectaMB.fechaStringEntregaDelivery}">
+							<f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true" />
+							<f:selectItem itemLabel="Mañana" itemValue="MANANA" />
+							<f:selectItem itemLabel="Tarde" itemValue="TARDE" />
+							<f:selectItem itemLabel="Noche" itemValue="NOCHE" />
+						</h:selectOneMenu>
+						
+						#{"Fecha de Entrega:"}
+						<p:calendar readonlyInput="true" value="#{ventaDirectaMB.fechaEntregaDelivery}" pattern="dd-MM-yyyy" size="8" />
+			
+
+					</h:panelGrid>
+				</h:panelGroup>
+				
+
+				<h:panelGrid columns="6">
+					#{"Direccion:"}
+					<h:inputText id="txtDireccion"
+								value="#{ventaDirectaMB.delivery.direccion}" size="14"
+								maxlength="50" style="width:200px ">
+							</h:inputText>
+	
+					#{"Referencia:"}
+					<h:inputText id="txtReferencia"
+								value="#{ventaDirectaMB.delivery.referencia}" size="14"
+								maxlength="50" style="width:200px ">
+							</h:inputText>
+	
+					#{"Telefono:"}
+					<h:inputText id="txtTelDel"
+								value="#{ventaDirectaMB.delivery.telefono}" size="14"
+								maxlength="50" style="width:100px ">
+					</h:inputText>
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="3">
+					
+					<p:commandButton  value="Aceptar" icon="icon-ok" oncomplete="wdlgDelivery.hide();" update=":frmVenta:pnInfoDelivery"/>
+					<p:spacer width="20" height="1" />
+					<p:commandButton actionListener="#{ventaDirectaMB.cancelarVentaDelivery()}" value="Cancelar" 
+						oncomplete="wdlgDelivery.hide();" icon="icon-cancel" update=":frmVenta:pnInfoDelivery"/>
+				</h:panelGrid>
+					
+
+			</h:form>	
+		
+		</p:dialog>
+		
+		<p:dialog id="dlgPrepagado" widgetVar="wdlgPrepagado" header="Venta Prepagado" 
+			appendToBody="true" modal="true" resizable="false">
+			<p:messages id="msgPrepagado"  showDetail="true" showSummary="false" closable="true" />
+			<h:form>
+			
+				<h:outputText value="Datos del Pagador" style="font-weight:bold;" />
+				
+				<h:panelGrid columns="8">
+					#{"Tip.Doc:"}
+					<h:selectOneMenu id="cmbTipDocPagador"
+								value="#{ventaDirectaMB.pagador.tipoDoc}">
+								<f:selectItem itemLabel="DNI" itemValue="DNI" />
+								<f:selectItem itemLabel="RUC" itemValue="RUC" />
+								<f:ajax event="valueChange" />
+					</h:selectOneMenu>
+					
+					#{"Documento:"}
+					<h:inputText id="txtDocPagador"
+								value="#{ventaDirectaMB.pagador.nroDoc}" size="8"
+								maxlength="15">
+								<f:ajax event="blur"
+									listener="#{ventaDirectaMB.buscarPagador()}"
+									execute="cmbTipDocPagador @this"
+									render=":msgPrepagado  pnDatosPagador" />
+					</h:inputText>
+					
+					#{"Monto S/.:"}
+					<h:inputText value="#{ventaDirectaMB.montoPrepagado}"
+											size="3" maxlength="7" />
+					#{"Boleta:"}
+					<h:outputText value="#{ventaDirectaMB.asientoVenta.codigoBoleta}" />
+				
+					
+				</h:panelGrid>
+				
+				<h:panelGrid id="pnDatosPagador" columns="2">
+					#{"Nombre:"}
+					<h:inputText id="nombrePagador"	value="#{ventaDirectaMB.pagador.nombre}" size="70" />
+				</h:panelGrid>
+	
+				<p:commandButton value="Aceptar" icon="icon-ok" actionListener="#{ventaDirectaMB.aceptarPrepagado()}" 
+					update=":txtNumeroSerieBoleto :frmVenta:pnBoletoPrepag" oncomplete="wdlgPrepagado.hide();" />
+				<p:spacer width="20" height="1" />
+				<p:commandButton value ="Cancelar" icon="icon-cancel"  update=":frmVenta:pnBoletoPrepag"
+					actionListener="#{ventaDirectaMB.cancelaPrepagado()}" oncomplete="wdlgPrepagado.hide()" /> 
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog  widgetVar="dlgSeleccionNoValido" appendToBody="true" modal="true" resizable="false"
+                  id="dlgDetSeleccionNoValido"  >
+					<div class="aviso" style="font-size: 14px;" >
+						<h:panelGrid columns="2" >							
+							Operacion incorrecta
+						</h:panelGrid>	
+						  
+					</div>
+		</p:dialog>
+		
+		
+		<!-- ################      Postergar un asiento, postergacion Fecha Abierta    ########################## -->
+		<p:dialog  widgetVar="wdlgRecuperarPostergadoFA" appendToBody="true" modal="true" resizable="false" header="Activar Postergacion con Fecha Abierta"
+                  id="dlgRecuperarPostergadoFA"  style="font-size:16px;" >
+        	<p:messages id="smsRecuperarPostergadoFA" showDetail="false" showSummary="true" closable="true" />
+        	<h:form>
+        		
+        		<h:panelGrid columns="6">
+					#{"Serie:"}
+					<h:inputText value="#{ventaDirectaMB.boletoSerieBuscado}" size="4" 
+						maxlength="5" required="true" requiredMessage="Se necesita una serie" />
+					
+					#{"Numero:"}
+					<h:inputText value="#{ventaDirectaMB.boletoNumeroBuscado}" size="4" 
+						maxlength="5"  required="true" requiredMessage="Se necesita un numero" />
+					
+					<p:spacer width="5" height="1"/>
+					
+					<p:commandButton value="Buscar boleto" actionListener="#{ventaDirectaMB.buscarBoletoFechaAbierta()}"
+						update=":smsRecuperarPostergadoFA  @form" icon="icon-search" />
+					 
+				</h:panelGrid>
+				<br/>
+				<hr/>
+				<h:panelGroup   rendered="#{ventaDirectaMB.buscarResultado}" >
+					
+					<h:panelGrid  columns="5" >
+					
+						#{"DNI:"} 
+						<h:outputText  value="#{ventaDirectaMB.persona.dni}"
+						 style="color:red;font-size:14px;" />
+						
+						<p:spacer width="5" height="1"/>
+						
+						#{"Pasajero:"} 
+						<h:outputText  value="#{ventaDirectaMB.persona.nombres} #{ventaDirectaMB.persona.APaterno} #{ventaDirectaMB.persona.AMaterno}"
+						 style="color:red;font-size:14px;" />
+
+					</h:panelGrid>
+					
+					
+					<h:panelGrid  columns="5" >
+					
+						#{"Nuevo Servicio:"} 
+						<h:outputText  value="#{ventaDirectaMB.programacionSelec.servicio.descripcion}"
+						 style="color:red;font-size:14px;" />
+						
+						<p:spacer width="5" height="1"/>
+						
+						#{"Nuevo Asiento:"} 
+						<h:outputText  value="#{ventaDirectaMB.asientoSelec.numero}"
+						 style="color:red;font-size:14px;" />
+
+					</h:panelGrid>
+					
+					
+					
+					<br/>
+        		<div>
+        		<div style="width:260px;margin:auto;">
+        		<p:commandButton  value="Aceptar" icon="icon-ok" actionListener="#{ventaDirectaMB.realizarRecuperacionFechaAbierta()}" 
+        			oncomplete="wdlgRecuperarPostergadoFA.hide();"  rendered="#{not ventaDirectaMb.diferenciaPostergacion}"
+        			update=":frmBus"  />
+        			
+        		<p:spacer width="10" height="1"/>
+        		
+        		<p:commandButton  value="Cancelar" icon="icon-cancel"  update=":frmBus"   actionListener="#{ventaDirectaMB.cancelarRecuperarFechaAbierta()}" 
+        			oncomplete="wdlgRecuperarPostergadoFA.hide();"   />	
+        		</div>
+        		</div>
+					
+					
+				</h:panelGroup>
+				
+				
+        	</h:form>          
+					
+		</p:dialog>
+
+		<!-- Js -->
+		<script language="javascript"  type="text/javascript" >
+		
+			function doCollapsed(){
+            	//if(!colapsed){
+                	layoutV.toggle('west');
+            	//}
+        	}
+		
+			function validarFormaPago(xhr, status, args) {
+				console.log("entro -- ")
+				if (args.esFormaPago) {
+					console.log("dentro del if")
+					dlgFormaPago.show();
+				}
+			}
+
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+
+				} else {
+					
+					if (args.prepagado) 
+					{
+						document.getElementById("formImprimir:cmdImprimir").click();
+					}
+					dlgVender.hide();
+				}
+			}
+			//Agregado 03/10/2015
+			function validarBoleto(xhr, status, args) {
+				if (args.validationFailed) {
+
+				} else {
+					if(args.esVenta)
+					{	console.log(args.esVenta);
+						document.getElementById("formImprimir:imprimirboletoAPPLE").click();
+					}
+					dlgVender.hide();
+				}
+			}
+			
+			function validarPrepago(xhr, status, args) {
+				document.getElementById("formImprimir:cmdImprimir").click();
+				//dlgVender.hide();
+			}
+			
+			function validarMultiple(xhr, status, args) {
+				if (args.validationFailed) {
+
+				} else {
+					//document.getElementById("formImprimir:imprimirboletoAPPLE").click();//03/10/2015 Agregado
+					dlgVentaMulti.hide();
+					
+				}
+			}
+
+			function validarInhabilitar(xhr, status, args) {
+				if (args.validationFailed) {
+
+				} else {
+					dlgVentaInfo.hide();
+					dlgInhabilitar.hide();
+					dlgMovimiento.hide();
+				}
+			}
+
+			function validarCambio(xhr, status, args) {
+				if (args.validationFailed) {
+
+				} else {
+					dlgCambiar.hide();
+				}
+			}
+
+			function ocultar() {
+				jQuery('#blkActivar').hide();
+
+			}
+
+			function mostrar(data) {
+				if (data.status == "success") {
+					jQuery('#blkActivar').show();
+				}
+
+			}
+
+			
+			function pintarAviso()
+			{
+				//alert("pintando aviso");
+				jQuery("#boxAviso").show();
+			}
+			
+			
+			function pegarDNI()
+			{
+				var DNI = jQuery("[id$='txtDocPagador2']").val();	
+				jQuery("[id$='txtDocDniIndiv']").attr("value",DNI);
+				
+				var telef = jQuery("[id$='txtTelDel']").val();
+				jQuery("[id$='txtTelefFinal']").attr("value",telef);
+				//
+				
+			}
+                        
+            function reservarAsientoButtonHandler() {
+                var fechaActual = $('#frmVenta\\:fechaActual').val();
+                fechaCaducidadWidget.jqEl.datepicker('option', {
+                    'minDateTime': $.datepicker.parseDateTime('dd-mm-yy', 'hh:mm TT', fechaActual),
+                    'minDate': fechaActual,
+                    'maxDateTime': fechaCaducidadWidget.getDate(),
+                    'maxDate': fechaCaducidadWidget.jqEl.val()
+                });
+            }
+			
+			
+		</script>
+
+
+		<!--<ui:debug />-->
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		
+		<p:panel style="width:1100px;" >
+			<h:form>
+				<h:panelGrid columns="11" >
+				
+					#{"Categoria:"}
+					<h:selectOneMenu disabled="true" value="#{nuevaClaseServicioMB.busClase.idCatServicio}">
+						<f:selectItems var="item" value="#{nuevaClaseServicioMB.listaCategoriaServicio}" 
+									   itemValue="#{item.idCatServicio}" itemLabel="#{item.descripcion}" />
+					</h:selectOneMenu>
+					
+					<p:spacer width="20" />	
+										
+					#{"Nombre:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.descripcion}"   />
+					
+					<p:spacer width="20" />		
+					
+					#{"Nombre Corto:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.nombreCorto}"  />
+					
+					<p:spacer width="20" />		
+					
+					#{"Nro Pisos:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.nroPisos}"  size="4"  />
+					
+					<p:spacer width="20" />	
+					<p:spacer width="20" />
+					<p:spacer width="20" />
+					
+					#{"Nro Asientos:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.asientos}"  size="4"  />
+						
+					<p:spacer width="20" />	
+  					
+					#{"Atn bordo:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.atnBordo}"  size="4"  />
+					
+					<p:spacer width="20" />	
+					
+					#{"Tipo Asiento P1:"}
+					<h:outputText value="#{nuevaClaseServicioMB.tipoAsientop1.nombre}"  size="4"  />
+					
+					<p:spacer width="20" />	
+					<p:spacer width="20" />	
+					<p:spacer width="20" />	
+					
+					<h:outputText value="Tipo Asiento P2:"  rendered="#{nuevaClaseServicioMB.busClase.nroPisos eq 2}"/>
+					<h:outputText rendered="#{nuevaClaseServicioMB.busClase.nroPisos eq 2}" value="#{nuevaClaseServicioMB.tipoAsientop2.nombre}"  size="4"  />
+					
+				</h:panelGrid>
+
+			</h:form>
+			</p:panel>
+			<br/>
+			
+			<h:panelGroup id="pnBus"> 
+				<p:panel  rendered="#{nuevaClaseServicioMB.busClase.idCatServicio eq '4'}" >
+				
+					<h:form>
+						<h:panelGrid columns="3">
+							<h3>Establecer Configuracion del Bus </h3>
+							<p:spacer  width="50" height="5" />
+							<p:commandButton value="Volver al listado" action="pretty:claseservicio" ajax="false"/>
+						</h:panelGrid>
+					</h:form>
+				
+					<h:form style="width:#{nuevaClaseServicioMB.anchoBusDos}px;" >
+    					<h:panelGroup rendered="#{nuevaClaseServicioMB.busClase.nroPisos eq '1' or nuevaClaseServicioMB.busClase.nroPisos eq '2'}" >
+    		
+    						<h:panelGrid columns="3">
+    							<h:graphicImage url="/resources/img/front.png" height="330" />
+    							<h:panelGroup>
+    								<div  style="text-align:center;font-size:15px;font-weight:bold;" >
+										<h:outputText value="Piso Uno: #{nuevaClaseServicioMB.tipoAsientop1.nombre}" />
+									</div>
+    								<p:dataGrid var="as" value="#{nuevaClaseServicioMB.listaAsientosPisoUno}"  
+    										columns="#{nuevaClaseServicioMB.nroColumnasPisoUno}" rows="#{nuevaClaseServicioMB.nroColumnasPisoUno*nuevaClaseServicioMB.nroFilasPisoUno}">
+				
+										<div style="height:55px; width:55px; font-size:10px; padding 3px;">
+											<h:inputText value="#{as.numero}" size="3"/><br/>
+						 					<p:selectBooleanButton value="#{as.estado}" onLabel="Si" offLabel="No" onIcon="ui-icon-check" offIcon="ui-icon-close"/>  
+										</div>
+					
+									</p:dataGrid>
+								</h:panelGroup>
+								<h:graphicImage  url="/resources/img/back.png" height="300" />
+								
+    						</h:panelGrid>
+    			
+    						<h:panelGrid columns="12" style="width:230" >
+    							
+    							<p:spacer width="80"  height="5" />
+    							
+    							<h:graphicImage value="resources/img/escalera.png"  width="20" height="20" />
+    							<h:outputText value="200" style="font-weight:bold;" />
+    							
+    							
+    							<p:spacer width="20"  height="5"/>
+    							
+    							<h:graphicImage value="resources/img/tv.png" width="20" height="20" />
+    							<h:outputText value="300" style="font-weight:bold;" />
+    							
+    							<p:spacer width="20"  height="5"/>
+    							
+    							<h:graphicImage value="resources/img/cafe.png" width="20" height="20" />
+    							<h:outputText value="400" style="font-weight:bold;" />
+    							
+    							<p:spacer width="20"  height="5"/>
+    							
+    							<h:graphicImage value="resources/img/wc.png"  width="20" height="20"/>
+    							<h:outputText value="500" style="font-weight:bold;" />
+    						</h:panelGrid>
+    						<br/>
+    						<p:commandButton value="Agregar Columna P1" actionListener="#{nuevaClaseServicioMB.agregarColumna(1)}" update="@form"  />
+							<p:spacer width="20" />
+							<p:commandButton value="Quitar Columna P1" actionListener="#{nuevaClaseServicioMB.quitarColumna(1)}" update="@form" />
+							<p:spacer width="20" />
+							<p:commandButton value="Agregar Fila P1" actionListener="#{nuevaClaseServicioMB.agregarFila(1)}" update="@form" />
+							<p:spacer width="20" />
+							<p:commandButton value="Quitar Fila P1" actionListener="#{nuevaClaseServicioMB.quitarFila(1)}" update="@form" />
+							
+							
+						</h:panelGroup>
+						
+						<br/><br/>
+						<hr size="4" style=" background-color: black; " width="800" />
+						
+						
+						<h:panelGroup rendered="#{nuevaClaseServicioMB.busClase.nroPisos eq '2'}">
+    						<h:panelGrid columns="3" >
+    							<h:graphicImage url="/resources/img/front.png" height="330" />
+    							<h:panelGroup>
+    								<div  style="text-align:center;font-size:15px;font-weight:bold;" >
+										<h:outputText value="Piso Dos: #{nuevaClaseServicioMB.tipoAsientop2.nombre}" />
+									</div>
+									<p:dataGrid  var="as" value="#{nuevaClaseServicioMB.listaAsientosPisoDos}"  
+    									columns="#{nuevaClaseServicioMB.nroColumnasPisoDos}" rows="#{nuevaClaseServicioMB.nroColumnasPisoDos*nuevaClaseServicioMB.nroFilasPisoDos}">
+				
+										<div style="height:55px;width:55px; font-size:10px; padding 3px;">
+											<h:inputText value="#{as.numero}" size="3"/><br/>
+								 			<p:selectBooleanButton value="#{as.estado}" onLabel="Si" offLabel="No" onIcon="ui-icon-check" offIcon="ui-icon-close" />  
+										</div>
+					
+									</p:dataGrid>
+    							</h:panelGroup>
+    							<h:graphicImage  url="/resources/img/back.png" height="300" />
+    							
+    							
+    						</h:panelGrid>
+    				
+    						<h:panelGrid columns="12" style="width:230" >
+    							
+    							<p:spacer width="80"  height="5" />
+    							
+    							<h:graphicImage value="resources/img/escalera.png"  width="20" height="20" />
+    							<h:outputText value="200" style="font-weight:bold;" />
+    							
+    							
+    							<p:spacer width="20"  height="5"/>
+    							
+    							<h:graphicImage value="resources/img/tv.png" width="20" height="20" />
+    							<h:outputText value="300" style="font-weight:bold;" />
+    							
+    							<p:spacer width="20"  height="5"/>
+    							
+    							<h:graphicImage value="resources/img/cafe.png" width="20" height="20" />
+    							<h:outputText value="400" style="font-weight:bold;" />
+    							
+    							<p:spacer width="20"  height="5"/>
+    							
+    							<h:graphicImage value="resources/img/wc.png"  width="20" height="20"/>
+    							<h:outputText value="500" style="font-weight:bold;" />
+    						</h:panelGrid>
+    						<br/>
+    					
+	    					<p:commandButton value="Agregar Asientos P2" actionListener="#{nuevaClaseServicioMB.agregarColumna(2)}" update="@form"  />
+							<p:spacer width="20" />
+							<p:commandButton value="Quitar Asientos P2" actionListener="#{nuevaClaseServicioMB.quitarColumna(2)}" update="@form" />
+							<p:spacer width="20" />
+							<p:commandButton value="Agregar Fila P2" actionListener="#{nuevaClaseServicioMB.agregarFila(2)}" update="@form" />
+							<p:spacer width="20" />
+							<p:commandButton value="Quitar Fila P2" actionListener="#{nuevaClaseServicioMB.quitarFila(2)}" update="@form" />
+						
+						</h:panelGroup>	
+						<br/><br/>	
+						<p:commandButton ajax="false" id="btnGuardar"  value="Guardar Configuracion"  action="#{nuevaClaseServicioMB.guardarConfiguracion()}"  />
+						 	
+   			 </h:form>
+  			
+  			
+			<p:ajaxStatus style="width:16px;height:16px;" id="ajaxStatusPanel">  
+    			<f:facet name="start">  
+        			<h:graphicImage value="resources/img/Ajaxloading.gif" />  
+    			</f:facet>  
+      
+    			<f:facet name="complete">  
+        			<h:outputText value="" />  
+    			</f:facet>  
+			</p:ajaxStatus>  
+   			 
+   			</p:panel>
+		</h:panelGroup>
+
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.OficinaMapper">
+
+<resultMap id="oficinaResult" type="com.certicom.ittsa.domain.Oficina">
+	<id column="IdOficina" property="idOficina"/>
+	<result column="IdAgencia" property="idAgencia"/>
+	<result column="Tipo" property="tipo"/>
+	<result column="Nombre" property="nombre"/>
+	<result column="Direccion" property="direccion"/>
+	<result column="Telefono1" property="telefono1"/>
+	<result column="Telefono2" property="telefono2"/>
+	<result column="Email" property="email"/>
+	<result column="SerieBoletoManual" property="serieBoletoManual"/>
+	<result column="UltimoNumero" property="ultimoNumero"/>
+	<result column="Estado" property="estado"/>
+	<result column="Prefijo" property="prefijo"/>
+	<result column="UltimoGiroTel" property="ultimoGiroTel"/>
+	<result column="IdUsuarioAdm" property="idUsuarioAdm"/>
+	<result column="EsTerminal" property="esTerminal"/>
+	<result column="desAgencia" property="desAgencia"/>
+</resultMap>
+
+
+<select id="listaOficinas" resultType="com.certicom.ittsa.domain.Oficina" resultMap="oficinaResult">
+		select o.IdOficina, a.Idagencia as IdAgencia,
+		a.Descripcion as desAgencia,
+		o.Tipo,o.Nombre,o.Direccion,
+		o.Telefono1,o.Telefono2,o.Email,
+		o.SerieBoletoManual,o.UltimoNumero,
+		o.Estado,o.EsTerminal 
+		from t_agenciaoficina o ,
+			t_agencia a	
+			where o.IdAgencia = a.Idagencia ORDER BY desAgencia, O.Nombre
+	</select>
+
+</mapper>	

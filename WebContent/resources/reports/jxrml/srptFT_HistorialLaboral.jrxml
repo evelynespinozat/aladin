@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="srptFT_HistorialLaboral" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="057a661b-e334-4c93-8271-024fd08d7546">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="ultimaEmpresa" class="java.lang.String"/>
+	<field name="ultimoCargo" class="java.lang.String"/>
+	<field name="anioUltimaEmpresa" class="java.lang.String"/>
+	<field name="mesIniUltimaEmpresa" class="java.lang.String"/>
+	<field name="anioFinUltimaEmpresa" class="java.lang.String"/>
+	<field name="mesFinUltimaEmpresa" class="java.lang.String"/>
+	<field name="modalidadContrato" class="java.lang.String"/>
+	<field name="telefonoUltimaEmpresa" class="java.lang.String"/>
+	<field name="remuneracionUltimaEmpresa" class="java.lang.String"/>
+	<field name="motivoCese" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="53e1038f-5031-4924-a2cc-da39e8abc5e3" x="0" y="0" width="528" height="14" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="e162f9ad-67aa-452a-ad0a-9c4985cc9d9f" x="12" y="0" width="58" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EMPRESA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e2c8f46c-8eb7-49ee-81eb-b29f7b91cd42" x="80" y="0" width="76" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CARGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ea4ff92e-8beb-4ea4-a6ce-5ca389a641d1" x="166" y="0" width="39" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="48d47d57-6923-45a9-9855-47a5fa6d501d" x="242" y="0" width="67" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0f128f76-9586-4a49-a6cd-acaf14517b86" x="320" y="0" width="61" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MODALIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aa75a19e-7b79-46f2-96c6-a54875fe2056" x="383" y="0" width="62" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ TELEFONO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e3842c77-bd0f-4981-a752-648a2aaf65b8" x="454" y="0" width="74" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTIVO CESE]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="7b1a58c8-1af8-4e71-a76b-16569f4aa904" x="154" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="e79c73ad-d177-484d-b42e-1faf4150f5d0" x="71" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="4afa22e9-6098-40d0-a0f3-05f6d86cbd4a" x="230" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="0c3b7bf1-ea3d-4dc4-9b04-66e1bd788af8" x="309" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="ae95cadf-8595-4b19-9573-6ebd77bb3c0c" x="382" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="0ecfa56c-8e70-48e9-ad18-d155d33f7da9" x="444" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="19c4ff34-ca2a-4198-aef6-050c911cce4c" x="0" y="0" width="528" height="14"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="e2f9ed35-b089-437e-8dd9-f4b7fbfc7c0d" x="12" y="0" width="58" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ultimaEmpresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6b374117-ebb1-48eb-8342-6d68d6ff2d2e" x="80" y="0" width="76" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ultimoCargo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6fa42a50-01c6-40cb-abb8-92f18b089d44" x="205" y="0" width="26" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anioUltimaEmpresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="47ba0f69-2164-4187-885a-94195015ee5f" x="166" y="0" width="39" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mesIniUltimaEmpresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="390ee99a-ece3-471b-9def-9740b200ac04" x="282" y="0" width="27" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anioFinUltimaEmpresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1bdf6512-1ab2-430d-966c-d22ad280c4ef" x="242" y="0" width="40" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mesFinUltimaEmpresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7b940112-3f2c-4240-b97b-8dc0ecc4149b" x="320" y="0" width="62" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{modalidadContrato}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ea2093f4-8a38-4461-94ea-bdfeb156faae" x="392" y="0" width="51" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telefonoUltimaEmpresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="56288429-04d6-4c20-b0c7-2cb0e1ecd60e" x="454" y="0" width="74" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{motivoCese}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="36688b19-434e-4c65-8ff5-7247aa477c7c" x="71" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="bcf2ff9a-9891-4b9b-b2df-4a1cc75ff1e8" x="154" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="43a50a22-b529-4580-be8f-81fc780ee6ff" x="230" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="83f1f43f-a3f8-48af-9731-3307f9f3b1f5" x="309" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="94aaf6b9-14a3-4293-b80a-340d5660a5a7" x="381" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="42e6a5a1-1650-4eb3-a586-0f9b59ad1aac" x="444" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Sub Manifiesto de Carga" url="#" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="5" id="datareg">
+				 
+				<h:outputLabel value="Origen:" />  
+			        <p:selectOneMenu id="cmbOrigen"  value="#{subManifiestoCargaMB.filterEnc.idOrigen}" style=" width:140px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{subManifiestoCargaMB.listaAgencias}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							<p:ajax listener="#{subManifiestoCargaMB.listarDestinosxOri()}" update="Busqueda:cmbDestinox Busqueda:cmbOficina"/>
+					</p:selectOneMenu>
+					
+					<h:outputLabel  value="Destino:" /> 
+					<p:selectOneMenu id="cmbDestinox" style="width:150px" value="#{subManifiestoCargaMB.filterEnc.idDestino}">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="ag" value="#{subManifiestoCargaMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" /> 
+					</p:selectOneMenu>
+					
+				<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{subManifiestoCargaMB.consultarEncomiendas()}"  
+					 		update=":formLista :sms" style=" width:160px;"/>
+				
+				<h:outputLabel  value="Oficina:" /> 
+					<p:selectOneMenu id="cmbOficina"  value="#{subManifiestoCargaMB.filterEnc.idOficina}" style=" width:140px;"
+			        		required="true" requiredMessage="Se necesita un oficina"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{subManifiestoCargaMB.listaOficinas}" itemValue="#{o.idOficina}" itemLabel="#{o.nombre}"/>
+					</p:selectOneMenu>
+
+					<h:outputLabel value="F.Envio "  /> 
+					<p:calendar style="width:200px"  value="#{subManifiestoCargaMB.filterEnc.fRegistro}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"  requiredMessage="Se necesita una fecha de envio">
+					</p:calendar>					 
+					</h:panelGrid>
+				
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+			<h:panelGrid columns="2">
+			
+				<p:dataTable id="dataTable" var="l" value="#{subManifiestoCargaMB.listaEncomienda}" 
+					paginator="true" rowIndexVar="nro" filteredValue="#{subManifiestoCargaMB.listaEncomiendaFilter}"
+					emptyMessage="No hay encomiendas seleccionadas"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Encomiendas Recibidas </f:facet>
+					
+					<p:column style="width:50px;" headerText="Doc." filterStyleClass="mayuscula" filterBy="#{l.comprobante}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{l.tipoDocAbr}-#{l.comprobante}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{l.desOrigen}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{l.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Ofic. Origen" filterStyleClass="mayuscula" filterBy="#{l.desOficinaOrigen}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{l.desOficinaOrigen}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{l.desDestino}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{l.desDestino}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Ofic. Destino" filterStyleClass="mayuscula" filterBy="#{l.desOficinaDestino}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{l.desOficinaDestino}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Remitente">
+						<h:outputText value="#{l.remitcompleto}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Detalle">
+						<h:outputText value="#{l.detalle}" />
+					</p:column>
+
+					<p:column style="width:30px;;text-align:right" headerText="Nro bultos">
+						<h:outputText value="#{l.nroBultos}" />
+					</p:column>
+
+					<p:column style="width:50px;text-align:right" headerText="Peso (kg)">
+						<h:outputText value="#{l.pesoTotal}" style="text-align:right"/>
+					</p:column>
+					
+					<p:column style="width:50px;text-align:right" headerText="Importe">
+						<h:outputText value="#{l.totalCobrado}" style="text-align:right"/>
+					</p:column>
+					
+					<p:column style="width:50px" headerText="T.Entrega">
+						<h:outputText value="#{'NORMAL'}" rendered="#{l.servicioEntrega  == null ? true :false}" />
+						<h:outputText value="#{'REPARTO'}" rendered="#{l.servicioEntrega  =='R' ? true :false}"/>
+						<h:outputText value="#{'REP/CONTR'}" rendered="#{l.servicioEntrega  =='RC' ? true :false}"/>
+						<h:outputText value="#{'CONTRAENTREGA'}"  rendered="#{l.servicioEntrega  =='C' ? true :false}"/>
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Estado">
+						<h:outputText value="#{l.desEstado}" style="text-align:right"/>
+					</p:column>
+					
+					<p:column  style="width:25px" headerText="">
+						<p:selectBooleanCheckbox value="#{l.seleccionado}">
+							<p:ajax listener="#{subManifiestoCargaMB.realizarCalculos(l)}" event="change" update=":formLista"></p:ajax>	
+						</p:selectBooleanCheckbox>
+					</p:column>
+					
+						<p:columnGroup type="footer">  
+								<p:row>  
+								   <p:column colspan="3" footerText="Total: " style="text-align:right"/>  
+								   <p:column footerText="#{subManifiestoCargaMB.totalBultosGral}" style="text-align:right" />  
+								   <p:column footerText="#{subManifiestoCargaMB.totalPesoGral} Kg." style="text-align:right" />  
+								   <p:column footerText="S/.#{subManifiestoCargaMB.totalImporteGral}"  style="text-align:right"/>
+								   <p:column colspan="3" footerText=" " style="text-align:right"/>  
+								</p:row>  
+						</p:columnGroup> 
+					
+				</p:dataTable>
+				<p:dataTable id="dtBuses" widgetVar="dtBuses" var="b" value="#{subManifiestoCargaMB.listaBuses}" filteredValue="#{subManifiestoCargaMB.listaBusesFilter}"
+								 emptyMessage="No hay Flota Disponibles."  paginatorPosition="bottom" paginator="true" rows="10"
+								  style="FONT-SIZE: 10px; " rowKey="#{b.numeroBus}" 
+								>
+							
+							<f:facet name="header">Flota de Buses</f:facet>
+							
+							<p:column style="width:70px;text-align: center;" headerText="Nro. Bus" filterBy="#{b.numeroBus}" filterMatchMode="contains" filterStyle="width:50px">
+								<h:outputText value="#{b.numeroBus}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Servicio">
+								<h:outputText value="#{b.descServicio}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Hora">
+								<h:outputText value="#{b.hSalida}" />
+							</p:column>
+
+							<p:column style="width:100px;text-align: center;" headerText="Piloto">
+								<h:outputText value="#{b.nomPiloto}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Copiloto">
+								<h:outputText value="#{b.nomCopiloto}" />
+							</p:column>
+
+							<p:column style="width:10px;text-align: center;" >
+								<p:commandButton title="Asignar"  icon="icon-add" oncomplete="validarEncomiendas(xhr, status, args)" update=":dlgdetImprimir" 
+											actionListener="#{subManifiestoCargaMB.showSubCarga(b)}"/>
+							</p:column>
+							
+						</p:dataTable>
+				
+				
+				</h:panelGrid>
+			
+		
+		<h:panelGrid columns="6" id="pnl1">
+<!-- 			<p:commandButton  value="Listar Buses" actionListener="#{subManifiestoCargaMB.listarBusesDisponibles()}"   -->
+<!-- 					 		update=":formLista " style=" width:160px;"/> -->
+			#{"Nro Bultos:"}
+			<h:outputText value="#{subManifiestoCargaMB.totalBultosSel}" style="font-weight:bold;color:#E50808;font-size:1.2em;" />
+			#{"P. Total"}
+			<h:outputText value="#{subManifiestoCargaMB.totalPesoSel} Kg." style="font-weight:bold;color:#E50808;font-size:1.2em" />
+			#{"Importe"}
+			<h:outputText value="S/. #{subManifiestoCargaMB.totalImporteSel}" style="font-weight:bold;color:#E50808;font-size:1.2em" />		 		
+		</h:panelGrid>
+			</h:form>
+			
+			<p:dialog id="dlgdetImprimir" appendToBody="true" resizable="false" modal="true"
+					 widgetVar="dlgImprimir" closable="true" header="Generar SubManifiesto">
+						
+					<h:form id="formImprimir" style="text-algin:center">
+						
+						<p:messages  id="mensaje" showDetail="false" showSummary="true"  closable="true"/>	
+						<p:panel>
+						<h:panelGrid columns="4">
+							#{"Origen:"}
+							<h:outputText value="#{subManifiestoCargaMB.progSelected.desOrigen}" style="font-weight:bold;font-size:1.2em" />
+							#{"Destino:"}
+							<h:outputText value="#{subManifiestoCargaMB.progSelected.desDestino}" style="font-weight:bold;font-size:1.2em" />
+							#{"Bus:"}
+							<h:outputText value="#{subManifiestoCargaMB.progSelected.numeroBus}" style="font-weight:bold;font-size:1.2em" />
+							#{"Fecha:"}
+							<h:outputText value="#{subManifiestoCargaMB.progSelected.fSalida}" style="font-weight:bold;font-size:1.2em" >
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+							</h:outputText>
+							#{"Hora:"}
+							<h:outputText value="#{subManifiestoCargaMB.progSelected.hSalida}" style="font-weight:bold;font-size:1.2em" />
+							#{"Nro Bultos:"}
+							<h:outputText value="#{subManifiestoCargaMB.totalBultos}" style="font-weight:bold;color:#E50808;font-size:1.2em;" />
+							#{"P. Total"}
+							<h:outputText value="#{subManifiestoCargaMB.totalPeso} Kg." style="font-weight:bold;color:#E50808;font-size:1.2em" />
+							#{"Importe"}
+							<h:outputText value="S/. #{subManifiestoCargaMB.totalImporte}" style="font-weight:bold;color:#E50808;font-size:1.2em" />
+							
+						</h:panelGrid>
+						<h:panelGrid columns="4">	
+							#{"Piloto:"}
+							<h:outputText value="#{subManifiestoCargaMB.progSelected.nomPiloto}" style="font-weight:bold;font-size:1.2em" />
+							#{"Copiloto:"}
+							<h:outputText value="#{subManifiestoCargaMB.progSelected.nomCopiloto}" style="font-weight:bold;font-size:1.2em" />
+						</h:panelGrid>	
+						</p:panel>
+						<br/>
+					<h:panelGrid columns="4">
+						<p:commandButton  value="Guardar " actionListener="#{subManifiestoCargaMB.crearSubManifiesto()}"  
+					 		update=":formImprimir :formLista" style=" width:160px;" disabled="#{subManifiestoCargaMB.btnGuardar}" />
+						
+						<h:commandLink update=":mensaje :formLista"  disabled="#{subManifiestoCargaMB.btnImprimir}"  id="imprimir" value="Imprimir SubManifiesto" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{subManifiestoCargaMB.imprimirPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						<h:commandLink update=":mensaje :formLista"  disabled="#{subManifiestoCargaMB.btnImprimirGuia}"  id="imprimirGuia" value="Imprimir Guia Remision" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{subManifiestoCargaMB.imprimirGuiaRemisionPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						<h:commandLink update=":mensaje :formLista"  disabled="#{subManifiestoCargaMB.btnImprimirGuia}"  id="imprimirCB" value="Imprimir Codigo Barras" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{subManifiestoCargaMB.imprimirCodigoBarraPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						
+					</h:panelGrid>	 	
+							
+					</h:form>
+			</p:dialog>
+			
+			<script>
+			
+			function validarEncomiendas(xhr, status, args) {
+				if (args.hayEncomiendas) {
+					dlgImprimir.show();
+				} 
+			}
+			</script>
+			
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

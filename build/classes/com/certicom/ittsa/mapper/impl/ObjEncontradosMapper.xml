@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ObjEncontradosMapper">
+
+<resultMap id="objEncontradosResult" type="com.certicom.ittsa.domain.ObjEncontrados">
+	<id column="idObjeto" property="idObjeto"/>
+	<result column="descripcion" property="descripcion"/>
+	<result column="observacion" property="observacion"/>
+	<result column="nroAsiento" property="nroAsiento"/>
+	<result column="dniEntregado" property="dniEntregado"/>
+	<result column="nomEntregado" property="nomEntregado"/>
+	<result column="estado" property="estado"/>
+	<result column="IdProgramacion" property="IdProgramacion"/>
+	<result column="IdManifiesto" property="IdManifiesto"/>
+	<result column="fechaEntrega" property="fechaEntrega"/>
+	<result column="fRegistro" property="fRegistro"/>
+	<result column="fCreacion" property="fCreacion"/>
+	<result column="usuarioEntrega" property="usuarioEntrega"/>
+	
+	<result column="hSalida" property="hSalida"/>
+	<result column="fSalida" property="fSalida"/>
+	<result column="numero" property="numero"/>
+</resultMap>
+
+<insert id="crearObjEncontrados" parameterType="com.certicom.ittsa.domain.ObjEncontrados">
+	insert into t_objetosencontrados(descripcion,observacion,nroAsiento,dniEntregado,nomEntregado,estado,
+									IdProgramacion,IdManifiesto,fechaEntrega,fRegistro,fCreacion,usuarioEntrega)
+					values(#{descripcion},#{observacion},#{nroAsiento},#{dniEntregado},#{nomEntregado},#{estado},
+								#{IdProgramacion},#{IdManifiesto},#{fechaEntrega},#{fRegistro},#{fCreacion},#{usuarioEntrega})
+</insert>
+
+<update id="actualizarObjEncontrados" parameterType="com.certicom.ittsa.domain.ObjEncontrados">
+	update t_objetosencontrados set descripcion=#{descripcion},observacion=#{observacion},nroAsiento=#{nroAsiento},dniEntregado=#{dniEntregado},
+								nomEntregado=#{nomEntregado},estado=#{estado},IdProgramacion=#{IdProgramacion},IdManifiesto=#{IdManifiesto},
+								fechaEntrega=#{fechaEntrega},fRegistro=#{fRegistro},fCreacion=#{fCreacion},usuarioEntrega=#{usuarioEntrega}
+						where idObjeto=#{idObjeto}
+</update>
+
+<!-- <select id="listarObjetosEncontrados" parameterType="com.certicom.ittsa.domain.ObjEncontrados" resultType="objEncontradosResult"> -->
+<!-- select o.idObjeto, o.descripcion, o.nroAsiento, o.dniEntregado, o.nomEntregado, o.fechaEntrega,  -->
+<!-- 	   o.estado, p.HSalida as hSalida, p.FSalida as fSalida, f.Numero as numero    -->
+<!-- 	  	from t_objetosencontrados o inner join t_programacion p on o.IdProgramacion = p.IdProgramacion  -->
+<!-- 	  								inner join t_flota f on p.IdBus = f.IdBus  -->
+<!-- 	  	where p.Origen = 3 and p.Destino = #{idDestino} -->
+<!-- </select> -->
+
+</mapper>	

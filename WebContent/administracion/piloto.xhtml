@@ -1,0 +1,1197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<!-- css especifico -->
+		<style type="text/css">
+    		/*
+    		.ui-fileupload .start {
+        		display: none;
+    		}
+    		.ui-fileupload .cancel {
+        		display: none;
+    		}
+    		*/
+    		.ui-fileupload .progress {
+        		display: none;
+    		}
+    		
+		</style>
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Piloto" url="piloto" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Piloto/Copiloto" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{pilotoMB.nuevoPiloto()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de PILOTOS -->
+			<h:form id="formListaPiloto">
+				<p:dataTable widgetVar="dtPiloto" var="p" value="#{pilotoMB.listaPiloto}" filteredValue="#{pilotoMB.listaFiltroPiloto}"  
+					emptyMessage="No hay Pilotos Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="15" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Pilotos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					
+					
+				    <p:column style="width:20%;text-align: center;" headerText="Apellidos" filterStyleClass="mayuscula" filterBy="#{p.apellidoPaterno}  #{p.apellidoMaterno}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.apellidoPaterno}  #{p.apellidoMaterno}" />
+					</p:column>
+					
+					
+					<p:column style="width:15%" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{p.nombres}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.nombres}" />
+					</p:column>
+					
+					<p:column style="width:150%;text-align: center;" headerText="DNI" filterStyleClass="mayuscula" filterBy="#{p.dNI}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.dNI}" />
+					</p:column>
+				
+					
+					<p:column style="width:20%;text-align: center;" headerText="Licencia">
+						<h:outputText value="#{p.licencia}" />
+					</p:column>
+				
+					<p:column style="width:20%;text-align: center;" headerText="Fecha Nacimiento">
+						<h:outputText value="#{p.fNacimiento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+						</h:outputText>
+					</p:column>
+					
+					
+					
+					<p:column style="width:150%;text-align: center;" headerText="Telefono" filterStyleClass="mayuscula" filterBy="#{p.telefono}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.telefono}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Fecha Ingreso">
+						<h:outputText value="#{p.fingreso}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Condicion" filterStyleClass="mayuscula" filterBy="#{p.condicion}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.condicion}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Residencia">
+						<h:outputText value="#{p.residencia}" />
+					</p:column>
+					
+					<p:column headerText="Imagen"  >
+						<h:graphicImage value="/imagen/servletWill/?codigo=P#{p.idPiloto}" width="60" height="60"/>
+					</p:column>
+
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{pilotoMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim./Impr." style="width:20%;text-align: center">
+					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit" actionListener="#{pilotoMB.editarPiloto(p)}" />
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+						
+						<ui:remove>
+						<p:commandButton id="cbtEliminar"  disabled="true" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{pilotoMB.piloto}" value="#{p}" />
+						</p:commandButton>
+						
+						
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+						</ui:remove>
+						<p:commandLink ajax="false" id="Imprimir" style="padding: 8px 2px 0px 2px ;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							   color: #1C190A;" action="#{pilotoMB.generarPDF(p)}" > 
+    							   <p:graphicImage value="/resources/img/icon-printer.png"/>
+						</p:commandLink>
+						<p:tooltip  for="Imprimir" value="Imprimir"/>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{pilotoMB.titulo}" widgetVar="dlgNuevo" appendToBody="true" position="left,top"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					  
+					<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+
+					
+					<h:panelGrid columns="2">
+
+					<h:form id="frmGneral" enctype="multipart/form-data">
+					<p:panel  header="Datos del piloto"  >  
+						
+						<p:accordionPanel>  
+						    <p:tab title="Datos Personales">  
+						        <h:panelGrid columns="2">  
+						            #{"Nombre: (*)"}
+									<p:inputText style="width:200px" value="#{pilotoMB.piloto.nombres}" styleClass="mayuscula" required="true" requiredMessage="Se necesita un nombre" />
+									
+									#{"Apellido Paterno: (*)"}
+									<p:inputText style="width:200px" value="#{pilotoMB.piloto.apellidoPaterno}" styleClass="mayuscula" maxlength="30" required="true" requiredMessage="Ingrese el apellido paterno" />
+									
+									#{"Apellido Materno: (*)"}
+									<p:inputText style="width:200px" value="#{pilotoMB.piloto.apellidoMaterno}" styleClass="mayuscula" maxlength="30" required="true" requiredMessage="Ingrese el apellido materno" />
+									
+									#{"DNI: (*)"}
+									<p:inputText style="width:200px" value="#{pilotoMB.piloto.dNI}" maxlength="8" required="true" requiredMessage="Ingrese un DNI" dir="rtl">
+										<pe:keyFilter mask="num"/>
+									</p:inputText>
+									
+									#{"Sexo: (*)"}						
+									<p:selectOneMenu style="width:209px" value="#{pilotoMB.piloto.sexo}">
+										<f:selectItem  itemLabel="Masculino" itemValue="M" />
+										<f:selectItem  itemLabel="Femenino" itemValue="F"/>
+									</p:selectOneMenu>
+									
+									#{"Fecha Nacimiento: (*)"}
+									<p:calendar 
+										value="#{pilotoMB.piloto.fNacimiento}"
+										mode="popup" showOn="button" locale="es"
+										pattern="dd/MM/yyyy"
+										readOnlyInputText="false" navigator="true"
+										yearRange="c-74:c+74"
+										required="true" requiredMessage="ingrese la fecha">
+									</p:calendar>
+									
+                    				
+									#{"Telefono:"}
+									<p:inputText style="width:200px" value="#{pilotoMB.piloto.telefono}" maxlength="20" dir="rtl">
+										<pe:keyFilter mask="num"/>
+									</p:inputText>
+									
+									#{"Movil: (*)"}
+									<p:inputText style="width:200px" value="#{pilotoMB.piloto.nroCell}" maxlength="10" required="true" requiredMessage="Se necesita un movil" dir="rtl">
+										<pe:keyFilter mask="num"/>
+									</p:inputText>
+									
+									#{"Correo:"}
+									<p:inputText style="width:200px" value="#{pilotoMB.piloto.correo}" maxlength="50" validatorMessage="Formato de email inválido" >
+										<f:validateRegex 
+		                                    pattern="^\s*|([_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,}))$" />
+									</p:inputText>
+									
+						           
+						        </h:panelGrid>  
+						    </p:tab>  
+						     <p:tab title="Datos Ubicacion">  
+						        <h:panelGrid columns="2"> 
+						            #{"Departamento: (*)"}						
+									<p:selectOneMenu style="width:209px" value="#{pilotoMB.sdepartamento}" required="true" requiredMessage="Seleccione un Departamento">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{pilotoMB.listaDepartamentos}" itemValue="#{ag.sdepartamento}" itemLabel="#{ag.sdepartamento}" /> 
+										<p:ajax update="cboProvincias" listener="#{pilotoMB.listarProvincias()}"  event="change"/> 
+									</p:selectOneMenu>
+									
+									#{"Provincia: (*)"}						
+									<p:selectOneMenu id="cboProvincias" style="width:209px" value="#{pilotoMB.sprovincia}" required="true" requiredMessage="Seleccione una Provincia">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{pilotoMB.listaProvincias}" itemValue="#{ag.sprovincia}" itemLabel="#{ag.sprovincia}" /> 
+										<p:ajax update="cboDistritos" listener="#{pilotoMB.listarDistritos()}"  event="change"/> 
+									</p:selectOneMenu>
+									
+									#{"Distritos: (*)"}						
+									<p:selectOneMenu id="cboDistritos" style="width:209px" value="#{pilotoMB.piloto.sid_ubigeo}" required="true" requiredMessage="Seleccione un Distrito">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{pilotoMB.listaDistritos}" itemValue="#{ag.sid_ubigeo}" itemLabel="#{ag.sdistrito}" /> 
+									</p:selectOneMenu>
+								
+									
+									#{"Direccion: (*)"}
+									<p:inputText style="width:200px" value="#{pilotoMB.piloto.residencia}"  styleClass="mayuscula" required="true" requiredMessage="Se necesita una residencia" />
+									
+						        </h:panelGrid>  
+						    </p:tab>  
+						        
+						    <p:tab title="Datos Corporativos">  
+						        <h:panelGrid columns="2">  
+						           	#{"Licencia: (*)"}
+									<p:inputText style="width:200px" styleClass="mayuscula" value="#{pilotoMB.piloto.licencia}" maxlength="10" required="true" requiredMessage="Ingrese una licencia" dir="rtl"/>
+		
+									#{"Fecha Ingreso: (*)"}
+									<p:calendar 
+										value="#{pilotoMB.piloto.fingreso}"
+										mode="popup" showOn="button" locale="es"
+										pattern="dd/MM/yyyy"
+										readOnlyInputText="false" navigator="true"	
+										yearRange="c-74:c+74"									
+										required="true" requiredMessage="ingrese la fecha de Ingreso">
+									</p:calendar>
+
+		
+									#{"Cargo: (*)"}
+									<p:selectOneMenu style="width:209px" value="#{pilotoMB.piloto.cargo}">
+										<f:selectItem  itemLabel="Piloto" itemValue="PILOTO" />
+										<f:selectItem  itemLabel="Copiloto" itemValue="COPILOTO"/>
+									</p:selectOneMenu>
+
+									#{"Ocupacion: (*)"}
+									<p:inputText  style="width:200px" styleClass="mayuscula" value="#{pilotoMB.piloto.ocupacion}"  />
+									
+									#{"Grado Instruccion:"}
+									<p:selectOneMenu style="width:209px" value="#{pilotoMB.piloto.terminal}">
+										<f:selectItem  itemLabel="Primaria" itemValue="PRIMARIA" />
+										<f:selectItem  itemLabel="Secundaria" itemValue="SECUNDARIA"/>
+										<f:selectItem  itemLabel="Superior Tecnica" itemValue="TECNICA"/>
+										<f:selectItem  itemLabel="Superior Universitaria" itemValue="UNIVERSITARIA"/>
+									</p:selectOneMenu>
+									
+									#{"Condicion: (*)"}
+									<p:selectOneMenu style="width:209px" value="#{pilotoMB.piloto.condicion}">
+										<f:selectItem  itemLabel="Postulante" itemValue="POSTULANTE" />
+										<f:selectItem  itemLabel="Prueba" itemValue="PRUEBA"/>
+										<f:selectItem  itemLabel="Contratado" itemValue="CONTRATADO"/>
+										<f:selectItem  itemLabel="Vetado" itemValue="VETADO"/>
+									</p:selectOneMenu>
+						        </h:panelGrid>  
+						    </p:tab>   
+						</p:accordionPanel>
+						
+						<h:panelGrid columns="4">
+							#{"Imagen:"}
+							<p:fileUpload label="seleccionar" cancelLabel="Cancelar" uploadLabel="Subir"  
+								fileUploadListener="#{pilotoMB.subirImagen}"
+								 mode="advanced" dragDropSupport="false"  style="font-size:10px;"
+                 				update="pnImagen :msgNuevo" sizeLimit="10000000" fileLimit="1" allowTypes="/(\.|\/)(jpe?g|png)$/" /> 
+							
+							#{"Foto:"}
+							<h:panelGroup id="pnImagen">
+				 				<p:graphicImage value="#{loginMB.piloto.archivoFoto}" rendered="#{not pilotoMB.editarImagen}" cache="false"  width="80" height="80" />
+				 				<p:graphicImage value="/imagen/servletWill/?codigo=#{pilotoMB.codigo_Obtener_Foto}" rendered="#{pilotoMB.editarImagen}"  cache="false"  width="80" height="80" />
+				 			</h:panelGroup>
+						</h:panelGrid>
+						<br/>	
+						<p:commandButton value="Guardar" actionListener="#{pilotoMB.guardarPiloto()}"
+									 update=":formListaPiloto :msgNuevo :pnAdicional"
+									  icon="icon-disk" />
+									 
+						<p:commandButton type="button" value="Cerrar" onclick="dlgNuevo.hide();" actionListener="#{pilotoMB.limpiarValores()}"  icon="icon-cancel" />
+				</p:panel>			
+				</h:form>
+				
+				
+				<h:panelGroup id="pnAdicional" >
+				
+					<p:tabView id="tabPiloto" rendered="#{pilotoMB.pilotoGuardado}" >  
+    					
+    					<p:tab id="tab1" title="Laboral"> 
+    						<h:form id="formHL">
+        					<h:panelGrid columns="4">
+        						<h:outputText value="Empresa: (*)" style="width:200px"/>           						
+           						<p:inputText style="width:150px" value="#{pilotoMB.historial.ultimaEmpresa}" styleClass="mayuscula" requiredMessage="Debe registrar el nombre de la empresa" required="true" />
+           						
+           						<h:outputText value="Ultimo cargo: (*)"/>
+           						<p:inputText style="width:190px" value="#{pilotoMB.historial.ultimoCargo}" styleClass="mayuscula"  requiredMessage="Debe registra el  cargo" required="true" />
+           						 
+           						<h:outputText value="Año Inicio: (*)"/>
+           						<p:inputMask style="width:150px" value="#{pilotoMB.historial.anioUltimaEmpresa}" mask="9999" requiredMessage="Debe registrar el año de inicio" required="true" />
+           						
+           						<h:outputText value="Mes Inicio: (*)"/>
+           						<p:selectOneMenu style="width:200px" value="#{pilotoMB.historial.mesIniUltimaEmpresa}" requiredMessage="Debe registrar el mes de inicio" required="true" >
+										<f:selectItem  itemLabel="ENERO" itemValue="1" />
+										<f:selectItem  itemLabel="FEBRERO" itemValue="2"/>
+										<f:selectItem  itemLabel="MARZO" itemValue="3" />
+										<f:selectItem  itemLabel="ABRIL" itemValue="4"/>
+										<f:selectItem  itemLabel="MAYO" itemValue="5" />
+										<f:selectItem  itemLabel="JUNIO" itemValue="6"/>
+										<f:selectItem  itemLabel="JULIO" itemValue="7" />
+										<f:selectItem  itemLabel="AGOSTO" itemValue="8"/>
+										<f:selectItem  itemLabel="SETIEMBRE" itemValue="9" />
+										<f:selectItem  itemLabel="OCTUBRE" itemValue="10"/>
+										<f:selectItem  itemLabel="NOVIEMBRE" itemValue="11" />
+										<f:selectItem  itemLabel="DICIEMBRE" itemValue="12"/>
+								</p:selectOneMenu>
+           						
+           						<h:outputText value="Año Fin: (*)"/>
+           						<p:inputMask style="width:150px" value="#{pilotoMB.historial.anioFinUltimaEmpresa}" mask="9999" requiredMessage="Debe registrar el año de Fin" required="true" />
+           						
+           						<h:outputText value="Mes Fin: (*)"/>
+           						<p:selectOneMenu style="width:200px" value="#{pilotoMB.historial.mesFinUltimaEmpresa}" requiredMessage="Debe registrar el mes de Fin" required="true" >
+										<f:selectItem  itemLabel="ENERO" itemValue="1" />
+										<f:selectItem  itemLabel="FEBRERO" itemValue="2"/>
+										<f:selectItem  itemLabel="MARZO" itemValue="3" />
+										<f:selectItem  itemLabel="ABRIL" itemValue="4"/>
+										<f:selectItem  itemLabel="MAYO" itemValue="5" />
+										<f:selectItem  itemLabel="JUNIO" itemValue="6"/>
+										<f:selectItem  itemLabel="JULIO" itemValue="7" />
+										<f:selectItem  itemLabel="AGOSTO" itemValue="8"/>
+										<f:selectItem  itemLabel="SETIEMBRE" itemValue="9" />
+										<f:selectItem  itemLabel="OCTUBRE" itemValue="10"/>
+										<f:selectItem  itemLabel="NOVIEMBRE" itemValue="11" />
+										<f:selectItem  itemLabel="DICIEMBRE" itemValue="12"/>
+								</p:selectOneMenu>
+           						
+           						<h:outputText value="Modalidad Contrato: (*)"/>
+           						<p:inputText style="width:150px" value="#{pilotoMB.historial.modalidadContrato}" styleClass="mayuscula" requiredMessage="Debe registrar la modalidad de contrato" required="true" />
+           						
+           						<h:outputText value="Nombre Jefe:"/>
+           						<p:inputText style="width:190px" value="#{pilotoMB.historial.nombreUltimoJefe}" styleClass="mayuscula" />
+           						
+           						<h:outputText value="Remuneracion: (*)"/>
+           						<p:inputText style="width:150px" value="#{pilotoMB.historial.remuneracionUltimaEmpresa}" dir="rtl">
+           								<pe:keyFilter  mask="num"/> 
+           						</p:inputText>
+           						
+           						<h:outputText value="Telefono:"/>
+           						<p:inputText style="width:190px" value="#{pilotoMB.historial.telefonoUltimaEmpresa}" dir="rtl">
+           						         <pe:keyFilter  mask="num"/> 
+           						</p:inputText>
+           						
+           						<h:outputText value="Motivo cese: (*)"/> 
+           						<p:selectOneMenu value="#{pilotoMB.historial.motivoCese}" required="true" requiredMessage="debe registrar el motivo de cese">
+									<f:selectItem  itemLabel="Renuncia voluntaria" itemValue="RENUNCIA" />
+									<f:selectItem  itemLabel="Fin de contrato" itemValue="FIN-CONTRATO"/>
+									<f:selectItem  itemLabel="Otros" itemValue="OTROS"/>
+								</p:selectOneMenu> 
+								
+								<h:outputText value="Observacion:"/>
+								<p:inputTextarea value="#{pilotoMB.historial.observacion}" styleClass="mayuscula" cols="29" >
+								</p:inputTextarea> 
+   
+        					</h:panelGrid> 
+        					<p:commandButton value="Guardar datos laborales" update="formHL :msgNuevo :tabPiloto:formHistorial" actionListener="#{pilotoMB.guardarHistorial()}" />   
+        					</h:form> 
+        					<br/>
+        					<h:form id="formHistorial">
+        						<p:dataTable widgetVar="dtHistorial" var="h" 
+        							value="#{pilotoMB.listaHistorial}"  
+									emptyMessage="No hay Evaluaciones Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Historial Laboral</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Empresa" >
+										<h:outputText value="#{h.ultimaEmpresa}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Mes Inicio" >
+										<h:outputText value="#{h.mesIniUltimaEmpresa}" />
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Anio Inicio" >
+										<h:outputText value="#{h.anioUltimaEmpresa}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Mes Fin" >
+										<h:outputText value="#{h.mesFinUltimaEmpresa}" />
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Anio Fin" >
+										<h:outputText value="#{h.anioFinUltimaEmpresa}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Cargo" >
+										<h:outputText value="#{h.ultimoCargo}" />
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Remuneracion" >
+										<h:outputText value="#{h.remuneracionUltimaEmpresa}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Observacion" >
+										<h:outputText value="#{h.observacion}" />
+									</p:column>
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar" oncomplete="dlgEliminarHistorial.show();" 
+											update=":dlgDetEliminarHistorial"  icon="icon-delete">
+											<f:setPropertyActionListener target="#{pilotoMB.historial}" value="#{h}" />
+										</p:commandButton>												
+									</p:column>			
+									
+								</p:dataTable>
+								<br/>
+    						 
+    						   
+        					</h:form>
+    					</p:tab>  
+    					
+    					 
+  
+    					<p:tab id="tab2" title="Familiar"> 
+    						<h:form id="formdf">
+        					<h:panelGrid columns="2">  
+            					
+            					#{"Apellidos: (*)"}
+            					<p:inputText value="#{pilotoMB.datosF.apellidos}" styleClass="mayuscula" required="true" requiredMessage="ingrese los apellidos" />
+            					
+            					#{"Nombres: (*)"}
+            					<p:inputText value="#{pilotoMB.datosF.nombres}" styleClass="mayuscula" required="true" requiredMessage="ingrese el nombre" /> 
+            					
+            					#{"DNI: (*)"} 
+            					<p:inputText value="#{pilotoMB.datosF.dni}" maxlength="8" required="true" requiredMessage="ingrese el dni" dir="rtl">
+            						<pe:keyFilter mask="num"/>
+            					</p:inputText> 
+            					
+            					#{"Parentesco: (*)"}
+	            				<p:selectOneMenu style="width:160px" value="#{pilotoMB.datosF.parentesco}" required="true" requiredMessage="Seleccione un parentesco">
+	            					<f:selectItem  itemLabel="PADRES" itemValue="PADRES"/>
+	            					<f:selectItem  itemLabel="HERMANOS" itemValue="HERMANOS"/>
+									<f:selectItem  itemLabel="HIJO(A)" itemValue="HIJO(A)"/>
+									<f:selectItem  itemLabel="ESPOSO(A)" itemValue="ESPOSO(A)" />	
+									<f:selectItem  itemLabel="OTROS" itemValue="OTROS"/>																
+								</p:selectOneMenu>
+								
+								#{"Fec. Nacimiento: (*)"}
+								<p:calendar 
+									value="#{pilotoMB.datosF.fechaNac}"
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true"
+									yearRange="c-80:c+80"
+									required="true" requiredMessage="ingrese la fecha">
+								</p:calendar>
+            					
+            					
+            					#{"Nro. Telefono:"}
+            					<p:inputText value="#{pilotoMB.datosF.nroContacto}" dir="rtl">
+            						<pe:keyFilter mask="num"/>
+            					</p:inputText>
+   
+        					</h:panelGrid> 
+        					<p:commandButton value="Guardar datos Familiares"  style="margin-left:300px"  update="formdf :msgNuevo :tabPiloto:formDatosF123" actionListener="#{pilotoMB.guardarDatosF()}"/> 
+        					</h:form> 
+        					<br/>
+        					<h:form id="formDatosF123">
+        						<p:dataTable widgetVar="dtDatosF" var="dat" 
+        							value="#{pilotoMB.listaDatosF}" 
+									emptyMessage="No hay Evaluaciones Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Lista Familiares</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Parentesco" >
+										<h:outputText value="#{dat.parentesco}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="DNI" >
+										<h:outputText value="#{dat.dni}" />
+									</p:column>
+								
+									<p:column style="width:30%" headerText="Nombre" >
+										<h:outputText value="#{dat.apellidos} #{dat.nombres}" />
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Nro Contacto" >
+										<h:outputText value="#{dat.nroContacto}" />
+									</p:column>
+									
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar"
+											update="@form"
+											actionListener="#{pilotoMB.eliminarDatosF(dat)}"
+											icon="icon-delete" />												
+									</p:column>												
+								</p:dataTable>
+								<br/>
+    						 
+    						   
+        					</h:form>
+    					</p:tab>   
+  
+
+        					<p:tab id="tab3" title="Evaluaciones">  
+    						<h:form id="formEvaluacion">
+    						<h:panelGrid columns="2">
+        					#{"Tipo: (*)"}
+        					<p:selectOneMenu style="width:200px" value="#{pilotoMB.evaluacion.nombre}" required="true" requiredMessage="Debe seleccionar un tipo">
+								<f:selectItem  itemLabel="TECNICO" itemValue="tecnico" />
+								<f:selectItem  itemLabel="MEDICO" itemValue="medico"/>
+							</p:selectOneMenu>
+							
+							#{"Evaluacion: (*)"}
+								<p:fileUpload label="seleccionar" cancelLabel="Cancelar" uploadLabel="Subir"  
+									fileUploadListener="#{pilotoMB.subirEvaluacion}"  
+									 mode="advanced" dragDropSupport="false" invalidSizeMessage="El archivo es muy pesado" 
+									 invalidFileMessage = "solo se permiten archivos pdf"
+                 					update=":msgNuevo formEvaluacion:btnSvEval" sizeLimit="30000000" fileLimit="1" 
+                 					allowTypes="/(\.|\/)(pdf)$/" style="width:330px; font-size:10px;" 
+                 					required="true" requiredMessage="Seleccione el documento"/> 
+            				
+            				#{"Observacion:"}
+            				<p:inputTextarea value="#{pilotoMB.evaluacion.observacion}" styleClass="mayuscula" cols="25" rows="3"  style="width:330px; height:100px;"/>
+
+							</h:panelGrid>
+							<p:commandButton id="btnSvEval" disabled="#{pilotoMB.actBtnEvaluacion}" value="Guardar Evaluaciones" update=":tabPiloto:formEvaluacion123, :tabPiloto:formEvaluacion, :msgNuevo" actionListener="#{pilotoMB.guardarEvaluacion()}" />
+        					<br/>
+        					<br/>
+        					</h:form>
+        					
+        					
+        					
+        					<h:form id="formEvaluacion123">
+        						<p:dataTable widgetVar="dtEvaluacion" var="eva" 
+        							value="#{pilotoMB.listaEvauacion}" 
+									emptyMessage="No hay Evaluaciones Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Lista Evaluaciones</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Nombre" >
+										<h:outputText value="#{eva.nombre}" />
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Observacion" >
+										<h:outputText value="#{eva.observacion}" />
+									</p:column>
+									
+									<p:column headerText="Documento"  style="width:15%;text-align: center">
+									 <p:commandButton id="downloadLink"  ajax="false" icon="icono-pdf" actionListener="#{pilotoMB.recuperarEvaluacion(eva)}">   
+									</p:commandButton> 
+									</p:column>
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar"
+											update="@form"
+											actionListener="#{pilotoMB.eliminarEvaluacion(eva)}"
+											icon="icon-delete" />
+												
+									</p:column>			
+									
+								</p:dataTable>
+								<br/>
+    						 
+    						   
+        					</h:form>
+    					</p:tab>
+    					
+    					
+    					<p:tab id="tab4" title="Documentos">
+    					  
+    					<h:form id="frmDocu">
+    						
+    							<br/>
+        						<h:panelGrid columns="2">  
+            						#{"Nombre: (*)"}
+            						<p:inputText value="#{pilotoMB.documento.nombre}" styleClass="mayuscula" requiredMessage="Debe registrar un nombre" required="true"/>
+            						
+            						#{"Fecha Caducidad: (*)"}
+            						<p:calendar 
+										value="#{pilotoMB.documento.fechaCaducidad}"
+										mode="popup" showOn="button" locale="es"
+										pattern="dd/MM/yyyy"
+										readOnlyInputText="false" navigator="true"
+										yearRange="c-20:c+50"
+										required="true" requiredMessage="ingrese la fecha de caducidad">
+									</p:calendar>
+            					
+            						#{"Documento: (*)"}
+									<p:fileUpload label="seleccionar" cancelLabel="Cancelar" uploadLabel="Subir"  
+									fileUploadListener="#{pilotoMB.subirDocumento}"
+									 mode="advanced" dragDropSupport="false" 
+                 					update=":msgNuevo frmDocu:btnSvDoc" sizeLimit="30000000" fileLimit="1" allowTypes="/(\.|\/)(pdf)$/" style="width:330px; font-size:10px;" /> 
+            					
+            						#{"Observacion:"}
+            						<p:inputTextarea value="#{pilotoMB.documento.observacion}" styleClass="mayuscula" cols="25" rows="3" />
+
+        						</h:panelGrid>	
+        						<p:commandButton id="btnSvDoc" disabled="#{pilotoMB.actBtnDocumentos}"  value="Guardar Documentos" update=":tabPiloto:frmDocumento123, :tabPiloto:frmDocu , :msgNuevo" actionListener="#{pilotoMB.guardarDocumentos()}" />
+        						<br/>
+        						<br/>
+        				</h:form> 
+        				<h:form id="frmDocumento123">
+        						<p:dataTable widgetVar="dtDocumento" var="doc" 
+        							value="#{pilotoMB.listaDocumentos}" 
+									emptyMessage="No hay Documentos Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Lista Documentos</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Nombre" >
+										<h:outputText value="#{doc.nombre}" />
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Observacion" >
+										<h:outputText value="#{doc.observacion}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Fecha caducidad" >
+										<h:outputText value="#{doc.fechaCaducidad}" >
+											<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+										</h:outputText>
+									</p:column>
+					
+									<p:column headerText="Documento"  style="width:15%;text-align: center">
+										  <p:commandButton id="downloadLink"  ajax="false" icon="icono-pdf" actionListener="#{pilotoMB.recuperarDocumuento(doc)}">   
+									</p:commandButton> 
+									</p:column>
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar"
+											update="@form"
+											actionListener="#{pilotoMB.eliminarDocumento(doc)}"
+											icon="icon-delete" />
+												
+									</p:column>
+
+								</p:dataTable>
+								<br/>
+        					
+        				</h:form> 
+    					</p:tab> 
+    					
+    					<p:tab id="tab5" title="Formacion"> 
+    						<h:form id="formForma">
+    						
+    						<h:panelGrid columns="2">  
+           						#{"Tipo Formacion: (*)"}
+           						<p:selectOneMenu value="#{pilotoMB.formacion.tipoFormacion}" style="width:180px" required="true" requiredMessage="debe seleccionar una formacion">
+									<f:selectItem  itemLabel="Academica" itemValue="ACADEMICA" />
+									<f:selectItem  itemLabel="Tecnica" itemValue="TECNICA"/>
+								</p:selectOneMenu>
+           						
+           						#{"Nivel Academico: (*)"}
+           						<p:inputText value="#{pilotoMB.formacion.nivelAcademico}" styleClass="mayuscula"  requiredMessage="Debe registra un nivel academico" required="true"  />
+           						
+           						#{"Anio: (*)"} 
+           						<p:inputMask value="#{pilotoMB.formacion.anio}" requiredMessage="Debe registrar un anio" required="true" mask="9999"/>
+           						
+           						#{"Especialidad:"} 
+           						<p:inputText value="#{pilotoMB.formacion.especialidad}" styleClass="mayuscula"  />
+           						
+           						#{"Titulo:"} 
+           						<p:inputText value="#{pilotoMB.formacion.titulo}" styleClass="mayuscula"  />
+           						
+           						#{"Centro Estudios: (*)"} 
+           						<p:inputText value="#{pilotoMB.formacion.centroEstudios}" styleClass="mayuscula" requiredMessage="Debe registrar un centro de estudios" required="true"  />
+           						
+           						#{"Documento: (*)"}
+                 				<p:fileUpload label="seleccionar" cancelLabel="Cancelar" uploadLabel="Subir"  
+									fileUploadListener="#{pilotoMB.subirFormacion}" 
+									 mode="advanced" dragDropSupport="false" invalidSizeMessage="El archivo es muy pesado" 
+									 invalidFileMessage = "solo se permiten archivos pdf"
+                 					update=":msgNuevo formForma:btnFForm" sizeLimit="30000000" fileLimit="1" 
+                 					allowTypes="/(\.|\/)(pdf)$/" style="width:330px; font-size:10px;" 
+                 					required="true" requiredMessage="Seleccione el documento"/> 
+           						
+        					</h:panelGrid> 
+        					
+        					<p:commandButton id="btnFForm" disabled="#{pilotoMB.actBtnFormacion}" value="Guardar Formacion"  style="margin-left:300px"  update=":tabPiloto:formForma123, :tabPiloto:formForma, :msgNuevo" actionListener="#{pilotoMB.guardarFormacion()}" />
+        						<br/>
+        						<br/>
+        						
+        					</h:form> 
+							<h:form id="formForma123">	
+        						<p:dataTable id="formFor2" widgetVar="dtFormacion" var="forma" 
+        							value="#{pilotoMB.listaFormacion}" 
+									emptyMessage="No hay Formaciones Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Lista Fomracion Educativa</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Tipo Formacion" >
+										<h:outputText value="#{forma.tipoFormacion}" />
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Nivel Academico" >
+										<h:outputText value="#{forma.nivelAcademico}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Anio" >
+										<h:outputText value="#{forma.anio}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Titulo" >
+										<h:outputText value="#{forma.titulo}" />
+									</p:column>
+					
+									<p:column style="width:15%" headerText="Centro Estudios" >
+										<h:outputText value="#{forma.centroEstudios}" />
+									</p:column>
+
+									<p:column headerText="Documento"  style="width:15%;text-align: center">
+									 <p:commandButton id="downloadLink"  ajax="false" icon="icono-pdf" actionListener="#{pilotoMB.recuperarFormacion(forma)}">   
+									</p:commandButton> 
+									</p:column>
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar"
+											update="@form"
+											actionListener="#{pilotoMB.eliminarFormacion(forma)}"
+											icon="icon-delete" />
+												
+									</p:column>
+									
+									</p:dataTable>
+        					
+        					</h:form> 
+    					</p:tab>
+    					
+    					<p:tab id="tab6" title="Capacitacion"> 
+    						<h:form id="formCapa">
+        					<h:panelGrid columns="2">  
+           						#{"Curso: (*)"}
+           						<p:inputText value="#{pilotoMB.capacitacion.curso}" styleClass="mayuscula" requiredMessage="Debe registrar la ultima empresa donde trabajo" required="true" />
+           						
+           						#{"Fecha: (*)"}
+           						<p:calendar 
+									value="#{pilotoMB.capacitacion.fecha}"
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true"
+									yearRange="c-20:c+0"
+									required="true" requiredMessage="ingrese la fecha">
+								</p:calendar>
+							
+           						
+           						#{"Titulo:"}
+           						<p:inputText value="#{pilotoMB.capacitacion.titulo}" styleClass="mayuscula"/>
+           						
+           						#{"Centro de Estudios: (*)"}
+           						<p:inputText value="#{pilotoMB.capacitacion.centroEstudios}" styleClass="mayuscula" requiredMessage="Debe registrar un centro de estudios" required="true" />
+
+                 				#{"Documento: (*)"}							
+                 				<p:fileUpload label="seleccionar" cancelLabel="Cancelar" uploadLabel="Subir"  
+									fileUploadListener="#{pilotoMB.subirCapacitacion}" 
+									 mode="advanced" dragDropSupport="false" invalidSizeMessage="El archivo es muy pesado" 
+									 invalidFileMessage = "solo se permiten archivos pdf"
+                 					update=":msgNuevo formCapa:btnFCap" sizeLimit="30000000" fileLimit="1" 
+                 					allowTypes="/(\.|\/)(pdf)$/" style="width:330px; font-size:10px;" 
+                 					required="true" requiredMessage="Seleccione el documento"/>  
+            					
+        					</h:panelGrid> 
+        					
+								<p:commandButton id="btnFCap" disabled="#{pilotoMB.actBtnCapacitacion}" value="Guardar Capacitacion" update=":tabPiloto:formCapacitacion123, :tabPiloto:formCapa, :msgNuevo" actionListener="#{pilotoMB.guardarCapacitacion()}" />
+        						<br/>
+        						<br/>
+        					</h:form> 
+        					<h:form id="formCapacitacion123">
+        						<p:dataTable widgetVar="dtCapacitacion" var="cap" 
+        							value="#{pilotoMB.listaCapacitacion}" 
+									emptyMessage="No hay Capacitacion Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Lista Capacitacion</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+								
+							    	<p:column style="width:15%" headerText="Curso" >
+										<h:outputText value="#{cap.curso}" />
+									</p:column>
+									
+								   <p:column style="width:15%" headerText="Fecha" >
+										<h:outputText value="#{cap.fecha}" >
+											<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+										</h:outputText>
+									</p:column>						
+									
+									<p:column style="width:15%" headerText="Titulo" >
+										<h:outputText value="#{cap.titulo}" />
+									</p:column>
+					
+									<p:column headerText="Documento"  style="width:15%;text-align: center">
+									 <p:commandButton id="downloadLink"  ajax="false" icon="icono-pdf" actionListener="#{pilotoMB.recuperarCapacitacion(cap)}">   
+									</p:commandButton> 
+									</p:column>
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar"
+											update="@form"
+											actionListener="#{pilotoMB.eliminarCapacitacion(cap)}"
+											icon="icon-delete" />
+												
+									</p:column>
+
+									</p:dataTable>
+
+        					</h:form> 
+    					</p:tab>  
+    					
+    					<p:tab id="tab7" title="Papeletas"> 
+    						<h:form id="formPape">
+        					<h:panelGrid columns="2">  
+           						#{"Fecha Papeleta: (*)"}
+           						<p:calendar 
+									value="#{pilotoMB.papeleta.fechaPapeleta}"
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true"
+									yearRange="c-20:c+0"
+									required="true" requiredMessage="ingrese la fecha">
+								</p:calendar>
+							
+           						#{"Lugar:"}
+           						<p:inputText value="#{pilotoMB.papeleta.lugar}" styleClass="mayuscula"/>
+           						
+           						#{"Bus: (*)"} 
+								<p:selectOneMenu style="width:178px" value="#{pilotoMB.papeleta.idBus}" required="true" requiredMessage="Seleccione un Bus">
+									<f:selectItem itemLabel="Seleccione..." itemValue="" />
+									<f:selectItems var="bu" value="#{pilotoMB.listaBuses}" itemValue="#{bu.idBus}" itemLabel="#{bu.numero}" /> 
+								</p:selectOneMenu>
+								
+								
+  								#{"Motivo: (*)"}
+           						<p:inputText value="#{pilotoMB.papeleta.motivo}" styleClass="mayuscula" requiredMessage="Debe registra un Motivo" required="true" />
+           						
+           						#{"Policia:"}
+           						<p:inputText value="#{pilotoMB.papeleta.policia}" styleClass="mayuscula" />
+           						
+           						#{"Documento: (*)"}
+								<p:fileUpload label="seleccionar" cancelLabel="Cancelar" uploadLabel="Subir"  
+									fileUploadListener="#{pilotoMB.subirPapeleta}" 
+									 mode="advanced" dragDropSupport="false" invalidSizeMessage="El archivo es muy pesado" 
+									 invalidFileMessage = "solo se permiten archivos pdf"
+                 					update=":msgNuevo formPape:btnPapel" sizeLimit="30000000" fileLimit="1" 
+                 					allowTypes="/(\.|\/)(pdf)$/" style="width:330px; font-size:10px;" 
+                 					required="true" requiredMessage="Seleccione el documento"/>  
+            					
+        					</h:panelGrid> 
+        					
+        						<p:commandButton id="btnPapel" disabled="#{pilotoMB.actBtnPapeletas}" value="Guardar Papeleta" update=":tabPiloto:formPapeleta123, :tabPiloto:formPape, :msgNuevo" actionListener="#{pilotoMB.guardarPapeleta()}" />
+        						<br/>
+        						<br/>
+        					</h:form> 
+        					<h:form id="formPapeleta123">
+        						<p:dataTable widgetVar="dtPapeleta" var="pap" 
+        							value="#{pilotoMB.listaPapeleta}" 
+									emptyMessage="No hay Papeletas Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Lista Papeleta</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+								
+								   <p:column style="width:15%" headerText="Fecha" >
+										<h:outputText value="#{pap.fechaPapeleta}" >
+											<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+										</h:outputText>
+									</p:column>
+								
+									<p:column style="width:15%" headerText="Lugar" >
+										<h:outputText value="#{pap.lugar}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="N° Bus" >
+										<h:outputText value="#{pap.idBus}" />
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Motivo" >
+										<h:outputText value="#{pap.motivo}" />
+									</p:column>
+					
+									<p:column style="width:15%" headerText="Policia" >
+										<h:outputText value="#{pap.policia}" />
+									</p:column>
+
+									<p:column headerText="Documento"  style="width:15%;text-align: center">
+									 <p:commandButton id="downloadLink"  ajax="false" icon="icono-pdf" actionListener="#{pilotoMB.recuperarPapeleta(pap)}">   
+									</p:commandButton> 
+									</p:column>
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar"
+											update="@form"
+											actionListener="#{pilotoMB.eliminarPapeleta(pap)}"
+											icon="icon-delete" />
+												
+									</p:column>
+
+									</p:dataTable>
+        					 
+        					</h:form> 
+    					</p:tab>
+						
+						<p:tab id="tab8" title="Incidencias"> 
+    						<h:form id="formInc">
+        					<h:panelGrid columns="2">  
+            					
+            					#{"Fecha: (*)"}
+								<p:calendar 
+									value="#{pilotoMB.incidencia.fecha}"
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true"									
+									required="true" requiredMessage="ingrese la fecha">
+								</p:calendar>
+								
+								#{"Tipo: (*)"}
+	            				<p:selectOneMenu style="width:160px" value="#{pilotoMB.incidencia.tipo}" required="true" requiredMessage="Seleccione un tipo de incidencia">
+	            					<f:selectItem  itemLabel="BUENA" itemValue="BUENA"/>
+									<f:selectItem  itemLabel="MALA" itemValue="MALA"/>																	
+								</p:selectOneMenu>
+								
+								#{"Descripcion: (*)"}
+								<p:inputTextarea style="width:400px" styleClass="mayuscula" value="#{pilotoMB.incidencia.descripcion}" required="true" requiredMessage="Seleccione una descripcion"/>
+   
+        					</h:panelGrid> 
+        					<p:commandButton value="Guardar Incidencia" update="formInc :msgNuevo :tabPiloto:formInc123" actionListener="#{pilotoMB.guardarIncidencia()}"/> 
+        					</h:form>  
+        					<br/>
+        					<h:form id="formInc123">
+        						<p:dataTable widgetVar="dtInc" var="inc" 
+        							value="#{pilotoMB.listaIncidencias}"   
+									emptyMessage="No hay Incidencias Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Lista Incidencias</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Fecha" >
+										<h:outputText value="#{inc.fecha}" >
+										  <f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+										</h:outputText>
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Tipo" >
+										<h:outputText value="#{inc.tipo}" />
+									</p:column>
+								
+									<p:column style="width:30%" headerText="Descripcion" >
+										<h:outputText value="#{inc.descripcion}" />
+									</p:column>								
+									
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar"
+											update="@form"
+											actionListener="#{pilotoMB.eliminarIncidencia(inc)}"
+											icon="icon-delete" />												
+									</p:column>												
+								</p:dataTable>
+								<br/>
+    						 
+    						   
+        					</h:form>
+    					</p:tab> 
+    					
+    					<p:tab id="tab9" title="Cese"> 
+    						<h:form id="formCes">
+        					<h:panelGrid columns="2">  
+            					
+            					#{"Fecha: (*)"}
+								<p:calendar 
+									value="#{pilotoMB.cese.fecha}" 
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true"									
+									required="true" requiredMessage="Ingrese la fecha">
+								</p:calendar>
+								
+								#{"Motivo: (*)"}
+	            				<p:inputText style="width:160px" value="#{pilotoMB.cese.motivo}" styleClass="mayuscula" required="true" requiredMessage="Ingrese un motivo"/>
+	            				
+								
+								#{"Observacion: (*)"}
+								<p:inputTextarea value="#{pilotoMB.cese.observacion}" styleClass="mayuscula" required="true" requiredMessage="Ingrese una Observacion"/>
+   
+        					</h:panelGrid> 
+        					<p:commandButton value="Guardar Cese" style="margin-left:300px" update="formCes :msgNuevo :tabPiloto:formCes123" actionListener="#{pilotoMB.guardarCese()}"/> 
+        					
+        					</h:form>  
+        					<br/>
+        					<h:form id="formCes123">
+        						<p:dataTable widgetVar="dtcEs" var="ces" 
+        							value="#{pilotoMB.listaCeses}"   
+									emptyMessage="No hay Ceses Disponibles." rowIndexVar="nro" 
+									style="FONT-SIZE: 10px; width: 600px; ">
+									
+									<f:facet name="header">Lista Ceses</f:facet>
+					
+									<p:column headerText="Orden" width="25" style="width:3%" >
+										#{nro+1}
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Fecha" >
+										<h:outputText value="#{ces.fecha}" >
+										  <f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+										</h:outputText>
+									</p:column>
+									
+									<p:column style="width:15%" headerText="Motivo" >
+										<h:outputText value="#{ces.motivo}" />
+									</p:column>
+								
+									<p:column style="width:30%" headerText="Observacion" >
+										<h:outputText value="#{ces.observacion}" />
+									</p:column>								
+									
+									
+									<p:column headerText="Eliminar" style="width:10%;text-align: center">
+										<p:commandButton value="Eliminar"
+											update="@form"
+											actionListener="#{pilotoMB.eliminarCese(ces)}"
+											icon="icon-delete" />												
+									</p:column>												
+								</p:dataTable>
+								<br/>
+    						 
+    						   
+        					</h:form>
+    					</p:tab>  
+
+   
+					</p:tabView>  
+				
+				</h:panelGroup>
+				</h:panelGrid>
+			</p:dialog>
+			
+			
+			<p:dialog header="Historial de Piloto: #{pilotoMB.piloto.apellidoPaterno} #{pilotoMB.piloto.apellidoMaterno}  #{pilotoMB.piloto.nombres}"  widgetVar="dlgHistorial" appendToBody="true"
+					  resizable="false" id="dlgDetHistorial" modal="true">
+					  
+					<h:form>
+						<p:outputLabel value="Fecha Inicio: " style="margin-left:5px"></p:outputLabel>
+						<p:calendar value="#{pilotoMB.fechaInicio}" pattern="dd/MM/yyyy"  mode="popup" showOn="button" locale="es"  
+							 	    navigator="true"  required="true" requiredMessage="Se necesita una fecha de inicio" />
+						
+						<p:outputLabel value="Fecha Fin: " style="margin-left:20px"></p:outputLabel>
+						<p:calendar value="#{pilotoMB.fechaFin}" pattern="dd/MM/yyyy" mode="popup" showOn="button" locale="es"
+							 	    navigator="true"  required="true" requiredMessage="Se necesita una fecha de Fin" />
+						
+						<p:commandButton value="Consultar" actionListener="#{pilotoMB.obtenerHistorial()}" update=":formHistorial" style="margin-left:20px"/> 	     
+					</h:form>					
+					<h:form id="formHistorial"> 
+					
+						<p:dataTable widgetVar="dtHistorial" var="p" value="#{pilotoMB.listaHistorial_asig}" 
+							emptyMessage="No hay Historial para este bus." rowIndexVar="nro" 
+							paginator="true"
+							rows="10" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20,30"
+							style="FONT-SIZE: 10px; margin-top:10px">
+							<f:facet name="header">Historial de Bus</f:facet>
+					
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:15%;text-align: center;" headerText="Piloto" filterStyleClass="mayuscula" filterBy="#{p.numeroBus}" filterMatchMode="contains" filterStyle="width:60px;">
+								<h:outputText value="#{p.numeroBus}" />
+							</p:column>
+							
+							<p:column style="width:15%;text-align: center;" headerText="Funcion" filterStyleClass="mayuscula" filterBy="#{p.funcion}" filterMatchMode="contains" filterStyle="width:60px;">
+								<h:outputText value="#{p.funcion}"/>
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Fecha" >
+								<h:outputText value="#{p.fecha}" >
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="date" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</h:form>
+					
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este piloto?" header="Eliminar Piloto"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Piloto: <h:outputText value="#{pilotoMB.piloto.nombres}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaPiloto :sms"
+						actionListener="#{pilotoMB.eliminarPiloto()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide();" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgDetEliminarHistorial" appendToBody="true"
+					message="¿Desea eliminar este Historial?" header="Eliminar Historial"
+					severity="alert" widgetVar="dlgEliminarHistorial">
+				<h:form>
+					
+					<p:commandButton value="Eliminar"
+						update=":tabPiloto:formHistorial"
+						actionListener="#{pilotoMB.eliminarHistorial()}" 
+						oncomplete="dlgEliminarHistorial.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminarHistorial.hide();" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

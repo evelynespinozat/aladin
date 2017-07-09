@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ListaNegraMapper">
+
+<resultMap id="listaNegraResult" type="com.certicom.ittsa.domain.ListaNegra">
+	<id column="idListaNegra" property="idListaNegra"/>
+	<result column="DNI" property="DNI"/>
+	<result column="nombreCompleto" property="nombreCompleto"/>
+	<result column="motivo" property="motivo"/>
+	<result column="fRegistro" property="fRegistro"/>
+	<result column="usuarioAutorizante" property="usuarioAutorizante"/>
+	<result column="flagAutorizacion" property="flagAutorizacion"/>
+	<result column="estado" property="estado"/>
+	<result column="usuarioRegistro" property="usuarioRegistro"/>
+	<result column="nomUsuAutoizante" property="nomUsuAutoizante"/>
+	
+	
+</resultMap>
+
+
+</mapper>	

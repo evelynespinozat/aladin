@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ConceptoMapper">
+
+	<resultMap id="ConceptoServicioResult"
+		type="com.certicom.ittsa.domain.Concepto">
+		<id column="IdConcepto" property="IdConcepto" />
+		<result column="Codigo" property="Codigo" />
+		<result column="Descripcion" property="descripcion" />
+		<result column="Importe" property="Importe" />
+		<result column="FRegistro" property="FRegistro" />
+		<result column="Estado" property="Estado" />
+	</resultMap>
+	
+	
+	<update id="actualizarConcepto" parameterType="com.certicom.ittsa.domain.Concepto">
+		update
+		dbo.t_concepto
+		SET
+		Codigo = #{Codigo},
+		Descripcion = #{Descripcion},
+		Importe = #{Importe},
+		FRegistro = #{FRegistro},
+		Estado = #{estado}
+		WHERE IdConcepto = #{IdConcepto}
+	</update>
+
+	<insert id="registrarConcepto" parameterType="com.certicom.ittsa.domain.Concepto">
+		insert into
+		dbo.t_concepto(Codigo,Descripcion,Importe,FRegistro,Estado)
+		values
+		(#{Codigo},#{Descripcion},#{Importe},#{FRegistro},#{Estado})
+	</insert>
+
+</mapper>	

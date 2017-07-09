@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="boletaVentaCopia" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62c40109-c191-49e4-bad4-429e1fc7f22a">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="48"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_FECHA" class="java.lang.String"/>
+	<parameter name="P_BUS" class="java.lang.String"/>
+	<parameter name="P_INGRESO" class="java.lang.String"/>
+	<parameter name="P_EGRESO" class="java.lang.String"/>
+	<parameter name="P_SALDO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<variable name="ctotalxLiq" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="82" splitType="Stretch">
+			<image vAlign="Middle">
+				<reportElement x="19" y="13" width="128" height="31" uuid="4d137074-6eb1-4c70-a18e-3f612cd68969"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="165" y="24" width="340" height="20" uuid="6fa2634b-9525-4607-9857-de6de1d0d8ea"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Boleta de venta boleto Prepagado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="58" width="40" height="20" uuid="e88c80ba-4d24-4721-8c1c-94bc62f4573a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha: ]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="122" splitType="Stretch">
+			<staticText>
+				<reportElement x="22" y="4" width="75" height="14" uuid="cde395a3-85b7-42c0-806c-ba3e121f3a15"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dni Pagador:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="218" y="23" width="50" height="13" uuid="32247a06-2d2c-42c6-94aa-11f8a7f06cd5"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pasajero:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="50" width="61" height="15" uuid="30679c52-134a-487f-84cd-c1e4c913c4d6"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Asiento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="65" width="61" height="12" uuid="30497eab-4620-4beb-9f7a-359080babaa6"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Origen:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="38" width="55" height="12" uuid="47708b14-3ed0-4a92-afa9-de4e01f66939"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Boleto: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="77" width="61" height="12" uuid="93744d6d-4f01-4130-840b-4b446237f3ba"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Destino:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="89" width="78" height="12" uuid="6b681b73-583b-448d-9657-50e64d00ddd1"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha salida:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="101" width="80" height="12" uuid="4116bfd3-6c1e-4cb1-8f6e-06d59080057a"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora salida:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="318" y="40" width="61" height="12" uuid="f54cbf8f-f5c9-4488-bbbd-adae69d9da4b"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ruc:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="318" y="54" width="61" height="12" uuid="c3925612-9f54-47c4-80aa-6f275664b428"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Razon :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="318" y="79" width="61" height="12" uuid="1ff8f07a-54c4-4de7-bd0a-aa0dc0215462"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="19" y="23" width="83" height="14" uuid="e479afab-4242-4be0-a897-5fdace97dfbc"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dni Pasajero:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="4" width="75" height="14" uuid="32e69a28-f257-4ace-9d3e-5c670bfbc591"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pagador:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="100" width="50" height="13" uuid="c9eb6b8e-8549-4880-aa6e-2437421b2bc0"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Concepto:]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<elementGroup/>
+			<elementGroup/>
+			<elementGroup/>
+			<elementGroup/>
+			<elementGroup/>
+			<elementGroup/>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="127">
+			<line>
+				<reportElement x="360" y="98" width="166" height="1" uuid="3ab88dd5-b68c-422c-8a83-ef6cda47b6c1"/>
+			</line>
+			<staticText>
+				<reportElement x="395" y="102" width="90" height="21" uuid="e4787cd0-e3f4-4dfa-9cd7-25d312f786b2"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIRMA]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="15" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

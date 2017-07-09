@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Operaciones" url="#" />
+    				<p:menuitem value="Gestion de Consolidado Kilometraje" url="consolidadokmbus" /> 
+    				<p:menuitem value="Consolidado por Fecha" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+		<br/>		
+	<div>
+		<p:panel id="cabCabecera">			    
+		<h:panelGrid columns="14">
+				#{"Numero:"}
+				<h:outputText value=" #{consolidadoMB.flota.numero}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				#{"Placa:"}
+				<h:outputText value=" #{consolidadoMB.flota.placa}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Marca:"}
+				<h:outputText value=" #{consolidadoMB.flota.marca}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Modelo:"}
+				<h:outputText value=" #{consolidadoMB.flota.modelo}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+				
+				#{"Clase:"}
+				<h:outputText value=" #{consolidadoMB.flota.descClase}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+				#{"Tipo Flota:"}
+				<h:outputText value=" #{consolidadoMB.flota.desTipoFlota}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Kilometraje:"}
+				<h:outputText value=" #{consolidadoMB.flota.recorrido}"  
+					style="font-weight:bold;font-size: 1.2em;" />						
+				
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+	</div>	
+	 <p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+     <h:panelGroup id="pnAdicional" >
+			 				<h:form id="formFilter"> 
+						         <h:panelGrid columns="6">
+							        #{"Fecha Origen:"}
+									<p:calendar value="#{consolidadoMB.fecInicio}" pattern="dd/MM/yyyy" locale="es" navigator="true"  required="true" requiredMessage="Seleccione una fecha" />
+									
+									#{"Fecha Fin:"}
+									<p:calendar value="#{consolidadoMB.fecFin}" pattern="dd/MM/yyyy" locale="es" navigator="true"  required="true" requiredMessage="Seleccione una fecha" />
+	
+									<p:commandButton value="Buscar" actionListener="#{consolidadoMB.buscarConsumoCombustible()}" update="formFilter :form" oncomplete="validar(xhr, status, args)" />
+									
+									<h:commandLink value="Imprimir" style="padding: 6px 30px;background:#FCC14D; text-decoration:none;border: solid 1px #624B1E;font-weight: bold;color: #1C190A;"
+									actionListener="#{consolidadoMB.imprimirPDF}"/>	
+						         </h:panelGrid>
+						         
+							</h:form> 
+							<br/>
+							         <h:form id="form">
+							         
+										<p:dataTable widgetVar="dtProgramacion" var="p" value="#{consolidadoMB.listaCombustible}" filteredValue="#{consolidadoMB.listaFilterCombustible}"  
+											emptyMessage="No hay Almacenes Disponibles." rowIndexVar="nro" 
+											paginator="true"
+											rows="10" paginatorPosition="bottom" 
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+											rowsPerPageTemplate="10,20,30"
+											style="FONT-SIZE: 10px; ">
+											<f:facet name="header">Lista Consumo de Gasolina por Bus</f:facet>
+											
+											<p:column headerText="Orden" width="25" style="width:3%" >
+												#{nro+1}
+											</p:column>
+											<p:column style="width:100px;text-align: center;" headerText="N° Bus" >
+												<h:outputText value="#{p.numBus}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Fecha Combustible" >
+												<h:outputText value="#{p.fecRegCombus}" >
+													<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+												</h:outputText>
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Km Inicial">
+												<h:outputText value="#{p.kmInicial}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Km Final">
+												<h:outputText value="#{p.kmFinal}" />
+											</p:column>
+										
+											<p:column style="width:100px;text-align: center;" headerText="Km Recorridos">
+												<h:outputText value="#{p.kmRecorridos}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Consumo">
+												<h:outputText value="#{p.consumo}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Km/Gal." >
+												<h:outputText value="#{p.kmGalon}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Codigo">
+												<h:outputText value="#{p.desAgen}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Precio Unit.">
+												<h:outputText value="#{p.precioComb}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Costo Total">
+												<h:outputText value="#{p.costoTotal}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Costo por Km">
+												<h:outputText value="#{p.costoKm}" />
+											</p:column>
+											
+											<p:column style="width:200px;text-align: center;" headerText="Consumo">
+												<h:outputText style="width:100px;font-size: 1.2em;font-weight:bold" value="#{p.consumo}" maxlength="4" disabled="#{p.activar}"/>
+											</p:column>	
+											
+											<p:column style="width:100px;text-align: center;" headerText="Recargo en">
+												<h:outputText style="width:100px" value="#{p.desAgenRecarga}" maxlength="4" disabled="#{p.activar}"/>
+											</p:column>	
+											
+											<p:column style="width:100px;text-align: center;" headerText="Piloto">
+												<h:outputText value="#{p.piloto1}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Copiloto">
+												<h:outputText value="#{p.piloto2}" />
+											</p:column>
+											
+											<p:columnGroup type="footer">  
+								                <p:row>  
+								                    <p:column colspan="5" footerText="Consolidado: " style="text-align:right"/>  
+								                    <p:column footerText="#{consolidadoMB.sumaRecorrido}" />  
+								                    <p:column footerText="#{consolidadoMB.sumaConsumo}" />  
+								                    <p:column footerText="#{consolidadoMB.promedioKmGal}" />
+								                    <p:column colspan="2" footerText="Total: " style="text-align:right"/>  
+								                    <p:column footerText="#{consolidadoMB.costoTotal}" />
+								                </p:row>  
+								            </p:columnGroup> 
+							
+										</p:dataTable>
+										</h:form> 
+						    	
+     </h:panelGroup>
+
+	</p:panel>
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					
+				} else {
+					
+				}
+			}
+
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

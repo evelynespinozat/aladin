@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Atencion a Bordo" url="#" />
+				<p:menuitem value="Proveedor" url="proveedor" />
+				<p:menuitem value="Productos Vendidos" url="#" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="4" id="datareg">
+				 
+				   <h:outputLabel value="Proveedor:" />  
+			       <h:outputText value=" #{productosProveedorMB.proveedor.razonSocial}"  
+							style="font-weight:bold;font-size: 1.2em;" />
+					
+				   <h:outputLabel value="RUC:" />  
+			       <h:outputText value=" #{productosProveedorMB.proveedor.RUC}"  
+							style="font-weight:bold;font-size: 1.2em;" />
+					
+				</h:panelGrid>
+					 
+					
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+			
+			<ui:remove>
+			
+				<p:dataTable id="dtBuses" widgetVar="dtBuses" var="b" value="#{productosProveedorMB.listaCompra}" filteredValue="#{productosProveedorMB.listaCompraFilter}"
+								 emptyMessage="No hay ventas de este proveedor."  paginatorPosition="bottom" paginator="true" rows="10"
+								  style="FONT-SIZE: 10px;width:700px " rowKey="#{b.idCompra}">
+							
+							<f:facet name="header">Ventas del Proveedor</f:facet>
+							
+							<p:column style="width:70px;text-align: center;" headerText="Nro Compra" filterStyleClass="mayuscula" filterBy="#{b.ordenCompra}" filterMatchMode="contains" filterStyle="width:50px">
+								<h:outputText value="#{b.ordenCompra}" />
+							</p:column>
+
+							<p:column style="width:70px;text-align: center;" headerText="T.Documento">
+								<h:outputText value="#{b.tipDocumento}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Fecha">
+								<h:outputText value="#{b.fechaCompra}" >
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+								</h:outputText>
+							</p:column>
+
+							<p:column style="width:70px;text-align: center;" headerText="Agencia" filterStyleClass="mayuscula" filterBy="#{b.desAgencia}" filterMatchMode="contains" filterStyle="width:50px">
+								<h:outputText value="#{b.desAgencia}" />
+							</p:column>
+
+							<p:column style="width:70px;text-align: center;" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{b.desOficina}" filterMatchMode="contains" filterStyle="width:50px">
+								<h:outputText value="#{b.desOficina}" />
+							</p:column>
+
+							<p:column style="width:10px;text-align: center;" >
+							<p:commandButton title="ver detalle" icon="icon-search" update=":formLista" actionListener="#{productosProveedorMB.listarCompraDetalle(b)}">
+							</p:commandButton>
+
+							</p:column>
+							
+				</p:dataTable>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Compra: " style="font-weight:bold;font-size:1.2em"/>
+					<h:outputText value="#{productosProveedorMB.ordenCompra}" style="font-weight:bold;color:blue;font-size:1.2em" />
+				</h:panelGrid>
+				
+				</ui:remove>
+			
+			
+				<p:dataTable id="dataTable" var="l" value="#{productosProveedorMB.listaCompraDetalle}" 
+					paginator="true" rowIndexVar="nro" filteredValue="#{productosProveedorMB.listaCompraDetalleFilter}"
+					emptyMessage="No hay productos en la compra"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px;width:700px ">
+					
+					<f:facet name="header">Productos Comprados </f:facet>
+					
+					<p:column style="width:200px;" headerText="Producto" filterStyleClass="mayuscula" filterBy="#{l.desProducto}" filterMatchMode="contains" filterStyle="width:100px">
+						<h:outputText value="#{l.desProducto}" />
+					</p:column>
+					
+					<ui:remove>
+					<p:column style="width:70px" headerText="Cantidad">
+						<h:outputText value="#{l.cantIngreso}" />
+					</p:column>
+
+					<p:column style="width:200px" headerText="Costo Uni.">
+						<h:outputText value="#{l.costoUni}" />
+					</p:column>
+					</ui:remove>
+				</p:dataTable>
+				
+				<br/>
+				
+				
+		
+			</h:form>
+			<script>
+			
+			function validarEncomiendas(xhr, status, args) {
+				if (args.hayEncomiendas) {
+					dlgImprimir.show();
+				} 
+			}
+			</script>
+			
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

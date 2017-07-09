@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="srptLCC_Ingresos" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f8a390f9-cdf8-4f1a-b77e-7d13908e2641">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="formaPago" class="java.lang.String"/>
+	<field name="totalxFPago" class="java.lang.Double"/>
+	<field name="proceso" class="java.lang.String"/>
+	<variable name="varStotal" class="java.lang.Double" resetType="Group" resetGroup="Proceso" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalxFPago}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="Proceso">
+		<groupExpression><![CDATA[$F{proceso}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement uuid="ac96f4ac-c67c-4d97-a791-a954b23c1939" x="0" y="0" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{proceso}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="25">
+				<textField>
+					<reportElement uuid="18496bb0-a36e-43cd-9e55-f12377e87198" x="170" y="5" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$V{varStotal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="20382625-2545-485f-af43-aad0cad20047" x="100" y="0" width="53" height="20"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[Total  ]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="8955a523-4095-4e27-a7cb-91d8bc62eb14" x="53" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{formaPago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="909892c2-0083-497b-89ec-eb54866b10d2" x="170" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{totalxFPago}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

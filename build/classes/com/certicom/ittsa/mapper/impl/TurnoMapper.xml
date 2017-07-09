@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.TurnoMapper">
+
+<resultMap id="turnoResult" type="com.certicom.ittsa.domain.Turno">
+	<id column="IdTurno" property="idTurno"/>
+	<result column="Descripcion" property="descripcion"/>
+	<result column="HInicio" property="hInicio"/>
+	<result column="HFin" property="hFin"/>
+	<result column="Estado" property="estado"/>
+	<result column="horaInicio" property="horaInicio"/>
+	<result column="horaFin" property="horaFin"/>
+</resultMap>
+
+<update id="actualizarTurno" parameterType="com.certicom.ittsa.domain.Turno">
+		update dbo.t_turno
+		SET
+		Descripcion = #{descripcion},
+		HInicio = #{hInicio},
+		HFin  = #{hFin},
+		horaInicio  = #{horaInicio},
+		horaFin  = #{horaFin},
+		Estado  = #{estado}
+		WHERE IdTurno = #{idTurno}
+	</update>
+
+</mapper>	

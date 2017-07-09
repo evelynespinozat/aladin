@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.Tarifa_ProductoMapper">
+
+<resultMap id="tarifa_productoResult" type="com.certicom.ittsa.domain.Tarifa_Producto">
+	<id column="IdTarifa_Producto" property="idTarifa_Producto"/>
+	<result column="Descripcion" property="descripcion"/>
+	<result column="PrecioEnvio" property="precioEnvio"/>
+	<result column="IdAgencia" property="idAgencia"/>
+	<result column="PrecioEmbalaje" property="precioEmbalaje"/>
+</resultMap>
+
+
+</mapper>	

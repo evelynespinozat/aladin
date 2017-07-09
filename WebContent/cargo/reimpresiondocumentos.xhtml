@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Reimpresión de Encomiendas" url="tarifaGiro" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<h:panelGrid columns="5" >
+				 
+				<h:outputLabel value="Origen:"  />  
+			        <p:selectOneMenu id="cmbOrigen"  value="#{reimpresionDocumentosMB.encomiendaFilter.idOrigen}" style=" width:150px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{reimpresionDocumentosMB.listaAgeOrigen}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							<p:ajax listener="#{reimpresionDocumentosMB.listarDestinosxOri()}" update="cmbDestino cmbOficinaOri"/>
+					</p:selectOneMenu>
+					
+					<h:outputLabel  value="Ofic. Origen:" /> 
+					<p:selectOneMenu id="cmbOficinaOri" style="width:150px" value="#{reimpresionDocumentosMB.encomiendaFilter.idPuntoVentaOrigen}" >
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="o" value="#{reimpresionDocumentosMB.listOficinaOri}" itemValue="#{o.idOficina}" itemLabel="#{o.nombre}" />
+					</p:selectOneMenu>
+
+					<p:commandButton id="btnBusqueda" value="Buscar" actionListener="#{reimpresionDocumentosMB.consultarEncomiendas()}"  
+					 		update=":formLista :sms" style=" width:160px;"/>
+					 		
+					<h:outputLabel  value="Destino:" /> 
+					<p:selectOneMenu id="cmbDestino" style="width:150px" value="#{reimpresionDocumentosMB.encomiendaFilter.idDestino}" >
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="ag" value="#{reimpresionDocumentosMB.listaAgeDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" />
+						<p:ajax listener="#{reimpresionDocumentosMB.listarOficinasDestino()}" update="cmbOficinaDes"/> 
+					</p:selectOneMenu> 	
+					
+					<h:outputLabel  value="Ofic. Destino:" /> 
+					<p:selectOneMenu id="cmbOficinaDes" style="width:150px" value="#{reimpresionDocumentosMB.encomiendaFilter.idPuntoVentaDestino}" required="true"
+								requiredMessage="Se necesita una oficina">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="o" value="#{reimpresionDocumentosMB.listOficinaDes}" itemValue="#{o.idOficina}" itemLabel="#{o.nombre}" />
+					</p:selectOneMenu>	
+
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2">					        
+						<h:outputText value="Tipo Comprobante:" />
+						<p:selectOneMenu id="optionsPago"  value="#{reimpresionDocumentosMB.encomiendaFilter.tipoDocumento}" style="margin-left:5px;width:150px" >  
+							<f:selectItem itemLabel="BOLETA" itemValue="BOLETA" />
+							<f:selectItem itemLabel="FACTURA" itemValue="FACTURA" />
+							<p:ajax event="change" update="pnAdicionalesNN "  actionListener="#{reimpresionDocumentosMB.limpiarValores()}"/> 
+						</p:selectOneMenu>
+					</h:panelGrid>
+					
+				<h:panelGroup id="pnAdicionalesNN">
+					<h:panelGrid columns="4"   rendered="#{reimpresionDocumentosMB.encomiendaFilter.tipoDocumento eq 'BOLETA' }" >					        
+						  	#{"Tipo Doc.: (*)"}
+							<p:selectOneMenu id="tipoDoc"
+							value="#{encomiendaMB.remitente.idtipodoc}"
+							style="width:200px;margin-left:5px">
+							<f:selectItems var="item" value="#{reimpresionDocumentosMB.listaTipoDoc}"
+								itemValue="#{item.idtipodoc}" itemLabel="#{item.descripcion}" style="width:200px"/>
+							<p:ajax event="valueChange" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Documento: (*)" style="margin-left:10px" />
+						<p:inputText id="dni" value="#{reimpresionDocumentosMB.encomiendaFilter.dniRemitente}" style="width:80px;" maxlength="11" />
+					</h:panelGrid>
+					
+				
+						<h:panelGrid columns="4"  rendered="#{reimpresionDocumentosMB.encomiendaFilter.tipoDocumento eq 'FACTURA'}">					        
+						
+
+						<p:outputLabel value="Ruc.: (*)" style="margin-left:10px" />
+						<p:inputText id="ruclll" value="#{reimpresionDocumentosMB.encomiendaFilter.rucRemitente}" style="width:200px;" maxlength="11" />
+					</h:panelGrid>
+				</h:panelGroup>	
+				 
+					
+					
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formLista">
+			<br/>
+				<p:dataTable widgetVar="dtEncomiendas" var="e" value="#{reimpresionDocumentosMB.listaEncomienda}"   filteredValue="#{reimpresionDocumentosMB.listaEncomiendaFilter}" 
+					emptyMessage="No hay encomiendas registradas" rowIndexVar="nro" 
+					paginator="true" rows="5" paginatorPosition="bottom" rowKey="#{e.idEncomienda}"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,100" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista de Encomiendas  </f:facet>
+					
+					<p:column headerText="Ord." width="18" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column width="48" headerText="Documento" filterStyleClass="mayuscula" filterBy="#{e.formapago}" filterMatchMode="contains" filterStyle="width:47px;text-transform: uppercase">
+						<h:outputText value="#{e.formapago}" />
+					</p:column> 
+					
+					<p:column width="49" headerText="Fecha Envío" filterBy="#{e.fRegistro}" filterMatchMode="contains"
+					 filterStyle="width:48px;text-transform: uppercase">
+						<h:outputText value="#{e.fRegistro}" />
+					</p:column>
+				<!--  
+					<p:column width="48" headerText="Tip. Doc" filterBy="#{e.tipoDocumento}" filterMatchMode="contains" filterStyle="width:47px;text-transform: uppercase">
+						<h:outputText value="#{e.tipoDocumento}" />
+					</p:column>-->	
+					<!--  
+					<p:column width="48" headerText="Tip. Doc" filterBy="#{e.tipoDocumento}" filterMatchMode="contains" filterStyle="width:47px;text-transform: uppercase">
+						<h:outputText value="#{e.tipoDocumento}" />
+					</p:column>
+					
+					<p:column width="48" headerText="Documento" filterBy="#{e.comprobante}" filterMatchMode="contains" filterStyle="width:47px;text-transform: uppercase">
+						<h:outputText value="#{e.comprobante}" />
+					</p:column> -->	
+					
+					
+					<p:column width="46" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{e.desOrigen}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.desOrigen}" />
+					</p:column>
+					
+					<p:column width="46" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{e.desDestino}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.desDestino}" />
+					</p:column>
+					
+					<p:column width="46" headerText="DNI R." filterBy="#{e.dniRemitente}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.dniRemitente}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{e.remitente}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.remitente}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Empresa Remit." filterStyleClass="mayuscula" filterBy="#{e.razonSocialRemitente}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.razonSocialRemitente}" />
+					</p:column>
+					
+					<p:column width="46" headerText="DNI D1" filterBy="#{e.dniDestinatario1}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.dniDestinatario1}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Destinatario 1" filterStyleClass="mayuscula" filterBy="#{e.destinatario1}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.destinatario1}" />
+					</p:column>
+				<!--  	
+					<p:column width="70" headerText="Empresa D1" filterBy="#{e.razonSocialDestinatario1}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.razonSocialDestinatario1}" />
+					</p:column>
+					-->	
+					<p:column width="46" headerText="DNI D2" filterBy="#{e.dniDestinatario2}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.dniDestinatario2}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Destinatario 2" filterStyleClass="mayuscula" filterBy="#{e.destinatario2}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.destinatario2}" />
+					</p:column>
+					<!--
+					<p:column width="70" headerText="Empresa D2" filterBy="#{e.razonSocialDestinatario2}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.razonSocialDestinatario2}" />
+					</p:column>
+                    -->	
+                    <p:column width="60" headerText="Detalle" filterStyleClass="mayuscula" filterBy="#{e.detalle}" filterMatchMode="contains" filterStyle="width:55px;text-transform: uppercase">
+						<h:outputText value="#{e.detalle}" />
+					</p:column>
+                    
+					<p:column width="60" headerText="Estado" filterStyleClass="mayuscula" filterBy="#{e.desEstado}" filterMatchMode="contains" filterStyle="width:55px;text-transform: uppercase">
+						<h:outputText value="#{e.desEstado}" />
+					</p:column>
+				 
+				<p:column width="65" headerText="Imprimir">
+						<p:commandButton value="Imprimir" actionListener="#{reimpresionDocumentosMB.setearEncomienda(e)}" oncomplete="dlgImprimirPdf.show();" update=":dlgImprimir" />
+				</p:column>
+					
+				</p:dataTable>
+			</h:form>
+			
+			<h:form id="formImprimir">
+				<h:commandLink id="cmdImprimir" 
+						actionListener="#{reimpresionDocumentosMB.imprimirPDF()}"/>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+				<p:confirmDialog id="dlgImprimir" appendToBody="true"
+					message="¿Desea imprimir comprobante? " header="Imprimir Comprobante"
+					severity="alert" widgetVar="dlgImprimirPdf">
+				<h:form>
+				<!--	Comprobante a Imprimir: <h:outputText value="#{agenciaMB.agencia.descripcion}" style="font-size:12px;font-weight: bold;" /> -->
+					<br/>
+					<p:commandButton value="Imprimir"
+						
+						oncomplete="dlgImprimirPdf.hide(); imprimirDocumentos(); " icon="icon-printer" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgImprimirPdf.hide()"  icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			
+			
+		
+	</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+			
+			function imprimirDocumentos() {
+			       document.getElementById("formImprimir:cmdImprimir").click();
+			}
+
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

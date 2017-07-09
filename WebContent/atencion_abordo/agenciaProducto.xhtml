@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Productos" url="productos" /> 
+    				<p:menuitem value="Agregar Producto a Oficina" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="4">
+				#{"Producto Seleccionado:"}
+				<h:outputText value=" #{agenciaProductoMB.producto.descripcion}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Medida:"}
+				<h:outputText value=" #{agenciaProductoMB.producto.desMedida}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+		<h:form id="fm">
+		<p:panel>
+		<h:panelGrid columns="6">
+				#{"Agencia:"}
+				<p:selectOneMenu style="width:200px" value="#{agenciaProductoMB.agenciaProducto.idagencia}" 
+				required="true" requiredMessage="Seleccione una Agencia" disabled="#{agenciaProductoMB.cmbAgencia}">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{agenciaProductoMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{agenciaProductoMB.getOficinasxAgencia()}" /> 
+				</p:selectOneMenu>
+	
+				#{"Oficina:"}
+				<p:selectOneMenu style="width:200px" id="cmbOfi"  value="#{agenciaProductoMB.agenciaProducto.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{agenciaProductoMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					<p:ajax update="cmbAlm" listener="#{agenciaProductoMB.listarAlmacen()}" />  
+				</p:selectOneMenu>
+				
+				#{"Almacen:"}
+				<p:selectOneMenu style="width:300px" id="cmbAlm" value="#{agenciaProductoMB.agenciaProducto.idAlmacen}" required="true" requiredMessage="Seleccione un Almacen ">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="ag" value="#{agenciaProductoMB.listAlmacen}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.descripcion}" /> 
+				</p:selectOneMenu>
+				
+				#{"Stock Inicial:"}
+				<p:inputText id="txtStock" style="width:150px"  value="#{agenciaProductoMB.agenciaProducto.stock}" required="true" requiredMessage="Se necesita un stock ">
+					<pe:keyFilter mask="num"/>
+				</p:inputText>
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>		
+		<!-- toolbar -->
+		
+			<h:panelGrid columns="2">
+				<p:commandButton value="Agregar Producto a Oficina" icon="icon-add" 
+				actionListener="#{agenciaProductoMB.addProductoToOficina()}" update="txtStock :msgGeneral :frmListaAgP"/>
+			</h:panelGrid>
+		</h:form>		
+			
+		<br/>
+		
+		
+		
+		<h:form id="frmListaAgP">
+					
+			<p:dataTable value="#{agenciaProductoMB.listAgProducto}" var="per" style="width:950px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+    			<f:facet name="header">Oficinas Asignadas del Producto</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Agencia">
+    				#{per.desAgencia}
+    			</p:column>
+    			
+    			<p:column headerText="Oficina">
+    				#{per.desOficina}
+    			</p:column>
+    		
+    			<p:column headerText="Almacen">
+    				#{per.desAlmacen}
+    			</p:column>
+
+    			<p:column headerText="Producto">
+    				#{per.desProducto}
+    			</p:column>
+    		
+    			<p:column headerText="Stock">
+    				#{per.stock}
+    			</p:column>
+    			
+    			<p:column  headerText="Costo" >
+						<h:outputText value="#{per.costo}" />
+				</p:column>
+				
+				<p:column  headerText="Costo Unitario">
+						<h:outputText value="#{per.costoUni}" />
+				</p:column>
+				<p:column  headerText="Cant Distribuida" >
+						<h:outputText value="#{per.cantDist}" />
+				</p:column>
+				
+				<p:column  headerText="Costo x Psjro">
+						<h:outputText value="#{per.costoxPasj}" />
+				</p:column>
+    			
+				<p:column headerText="Elim." style="width:10%;text-align: center">
+
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+				<f:setPropertyActionListener target="#{agenciaProductoMB.agenciaProducto}"	value="#{per}" />
+				</p:commandButton>
+				
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+		
+		
+		
+		<p:confirmDialog id="confirmDialog" message="Seguro de eliminar esta asignacion"   appendToBody="true"
+             		header="Eliminar Asignacion" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaAgP :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{agenciaProductoMB.deleteOficinaFromProduct()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    	</p:confirmDialog> 
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

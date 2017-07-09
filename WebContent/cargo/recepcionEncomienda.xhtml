@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Recepcion de Encomiendas a Almacen" url="#" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="8" id="datareg">
+				 
+				<h:outputLabel value="Origen:"  />  
+			        <p:selectOneMenu id="cmbOrigen"  value="#{recepcionEncomiendaMB.filterEnc.idOrigen}" style=" width:140px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{recepcionEncomiendaMB.listaAgencias}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							<p:ajax listener="#{recepcionEncomiendaMB.listarDestinosxOri()}" update="cmbDestinox"/>
+					</p:selectOneMenu>
+					
+					<h:outputLabel  value="Destino:" /> 
+					<p:selectOneMenu id="cmbDestinox" style="width:150px" value="#{recepcionEncomiendaMB.filterEnc.idDestino}"
+							required="true" requiredMessage="Se necesita un destino">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="ag" value="#{recepcionEncomiendaMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" />
+						<p:ajax listener="#{recepcionEncomiendaMB.listarOficinasAgencia()}" update="cmbOficina"/> 
+					</p:selectOneMenu>
+					
+					<h:outputLabel  value="Nro Bus:" /> 
+					<p:selectOneMenu  style="width:150px" value="#{recepcionEncomiendaMB.filterEnc.idBus}" required="true"
+								requiredMessage="Se necesita el numero de bus">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="ag" value="#{recepcionEncomiendaMB.listaFlotas}" itemValue="#{ag.idBus}" itemLabel="#{ag.numero}" /> 
+					</p:selectOneMenu>
+					
+					<h:outputLabel value="F.Envio "  /> 
+					<p:calendar style="width:200px"  value="#{recepcionEncomiendaMB.filterEnc.fRegistro}" pattern="dd/MM/yyyy" locale="es"
+							  	navigator="true"  requiredMessage="Se necesita una fecha de envio">
+					</p:calendar>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="5" >
+					<h:outputLabel  value="Oficina:" /> 
+					<p:selectOneMenu id="cmbOficina" style="width:250px" value="#{recepcionEncomiendaMB.filterEnc.idOficina}" required="true"
+								requiredMessage="Se necesita un almacen">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="o" value="#{recepcionEncomiendaMB.listaOficinaxAgencia}" itemValue="#{o.idOficina}" itemLabel="#{o.nombre}" />
+						<p:ajax listener="#{recepcionEncomiendaMB.listarAlmacenesxOficina()}" update="cmbAlmacen"/>  
+					</p:selectOneMenu>
+					
+					<h:outputLabel  value="Almacen:" /> 
+					<p:selectOneMenu id="cmbAlmacen" style="width:250px" value="#{recepcionEncomiendaMB.filterEnc.idAlmacen}" required="true"
+								requiredMessage="Se necesita un almacen">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="ag" value="#{recepcionEncomiendaMB.listaAlmacen}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.desAlmacen}" /> 
+					</p:selectOneMenu>
+							
+
+				<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{recepcionEncomiendaMB.consultarEncomiendas()}"  
+					 		update=":formLista :sms" style=" width:160px;"/>
+				</h:panelGrid>
+					 
+					
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+			
+				<p:dataTable id="dataTable" var="l" value="#{recepcionEncomiendaMB.listaEncomienda}" 
+					paginator="true" rowIndexVar="nro" filteredValue="#{recepcionEncomiendaMB.listaEncomiendaFilter}"
+					emptyMessage="No hay encomiendas seleccionadas"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Encomiendas Embarcadas </f:facet>
+					
+					<p:column style="width:50px;" headerText="Doc." filterStyleClass="mayuscula" filterBy="#{l.comprobante}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{l.tipoDocAbr}-#{l.comprobante}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Agencia Origen" filterStyleClass="mayuscula" filterBy="#{l.desOrigen}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{l.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Ofi. Origen" filterStyleClass="mayuscula" filterBy="#{l.desOficinaOrigen}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{l.desOficinaOrigen}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Agencia Destino" filterStyleClass="mayuscula" filterBy="#{l.desDestino}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{l.desDestino}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Ofi. Destino" filterStyleClass="mayuscula" filterBy="#{l.desOficinaDestino}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{l.desOficinaDestino}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{l.remitcompleto}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:outputText value="#{l.remitcompleto}" />
+					</p:column>
+
+					<p:column style="width:200px" headerText="Dest. 1">
+						<h:outputText value="#{l.destinatario1}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Dest. 2">
+						<h:outputText value="#{l.destinatario2}" />
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Direccion">
+						<h:outputText value="#{l.direccionEnvio}" />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Detalle">
+						<h:outputText value="#{l.detalle}" />
+					</p:column>
+
+					<p:column style="width:40px" headerText="Nro bultos">
+						<h:outputText value="#{l.nroBultos}" />
+					</p:column>
+
+					<p:column style="width:50px" headerText="Peso (kg)">
+						<h:outputText value="#{l.pesoTotal}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Importe">
+						<h:outputText value="#{l.totalCobrado}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="T.Entrega">
+						<h:outputText value="#{'NORMAL'}" rendered="#{e.servicioEntrega  == null ? true :false}" />
+						<h:outputText value="#{'REPARTO'}" rendered="#{e.servicioEntrega  =='R' ? true :false}"/>
+						<h:outputText value="#{'REP/CONTR'}" rendered="#{e.servicioEntrega  =='RC' ? true :false}"/>
+						<h:outputText value="#{'CONTRAENTREGA'}"  rendered="#{e.servicioEntrega  =='C' ? true :false}"/>
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Bus">
+						<h:outputText value="#{l.nroBus}" />
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Piloto">
+						<h:outputText value="#{l.piloto}" />
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Copiloto">
+						<h:outputText value="#{l.copiloto}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Estado">
+						<h:outputText value="#{l.desEstado}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Ubicacion">
+						<h:outputText value="#{l.ubicacionAlmacen}" />
+					</p:column>
+					
+					<p:column style="width:25px" headerText="Ubic.">
+					     <p:commandButton title="Registrar Ubicacion"  update=":dlgDetUbicacion" actionListener="#{recepcionEncomiendaMB.setearUbicacion(l)}"
+										 oncomplete="dlgUbicacion.show();" icon="icon-disk">
+						</p:commandButton>
+					</p:column>
+
+					<p:column style="width:20px"  headerText="Incidencia">
+					<p:commandButton title="Registrar Incidencia"  update=":dlgDetInc" actionListener="#{recepcionEncomiendaMB.selectEnco(l)}" disabled="#{l.estado == 7}"
+										 oncomplete="dlgInc.show();" icon="icon-add">
+					</p:commandButton>
+					</p:column>
+					
+					<p:column  style="width:25px" headerText="Selec.">
+						<p:selectBooleanCheckbox value="#{l.seleccionado}" disabled="#{l.estado == 7}">	
+						</p:selectBooleanCheckbox>
+					</p:column>
+				</p:dataTable>
+				
+			
+		
+		<h:panelGrid columns="2">
+			<p:commandButton  value="Recepcionar Encomienda(s)"  actionListener="#{recepcionEncomiendaMB.desembarcarEncomiendas()}"
+					 		update=":formLista :sms" style=" width:160px;"/>
+		</h:panelGrid>
+		</h:form>
+		
+		<p:dialog id="dlgDetInc" appendToBody="true" resizable="false" modal="true"
+					 widgetVar="dlgInc" closable="true" header="Registrar Incidencia">
+						
+					<h:form id="formImprimir" style="text-algin:center">
+						
+						<p:messages  id="mensaje" showDetail="false" showSummary="true"  closable="true"/>	
+						
+						<p:panel>
+						<h:panelGrid columns="2">
+							#{"Comprobante:"}
+							<h:outputText value="#{recepcionEncomiendaMB.encoSelect.comprobante}" style="font-weight:bold;font-size:1.2em" />
+							#{"Remitente:"}
+							<h:outputText value="#{recepcionEncomiendaMB.encoSelect.remitente}" style="font-weight:bold;font-size:1.2em" />
+							#{"Destinatario 1:"}
+							<h:outputText value="#{recepcionEncomiendaMB.encoSelect.destinatario1}" style="font-weight:bold;font-size:1.2em" />
+							#{"Destinatario 2:"}
+							<h:outputText value="#{recepcionEncomiendaMB.encoSelect.destinatario2}" style="font-weight:bold;font-size:1.2em" />
+							#{"Origen:"}
+							<h:outputText value="#{recepcionEncomiendaMB.encoSelect.desOrigen}" style="font-weight:bold;font-size:1.2em" />
+							#{"Oficina Origen:"}
+							<h:outputText value="#{recepcionEncomiendaMB.encoSelect.desOficinaOrigen}" style="font-weight:bold;font-size:1.2em" />
+							#{"Destino:"}
+							<h:outputText value="#{recepcionEncomiendaMB.encoSelect.desDestino}" style="font-weight:bold;font-size:1.2em"/>
+							#{"Oficina Destino:"}
+							<h:outputText value="#{recepcionEncomiendaMB.encoSelect.desOficinaDestino}" style="font-weight:bold;font-size:1.2em" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							#{"Incidencia:"}
+							<h:inputTextarea  value="#{recepcionEncomiendaMB.encomiendaIncidencia.observacion}"  cols="30" rows="4" required="true"
+									requiredMessage="Se necesita una observacion"/>
+							#{"Estado:"}
+							<p:selectOneMenu value="#{recepcionEncomiendaMB.encomiendaIncidencia.tipo}">
+								<f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+								<f:selectItem itemValue="MALOGRADO" itemLabel="MALOGRADO"/>
+								<f:selectItem itemValue="EXTRAVIADO" itemLabel="EXTRAVIADO"/>
+								<f:selectItem itemValue="INCOMPLETO" itemLabel="INCOMPLETO"/>
+								<f:selectItem itemValue="NO LLEGO" itemLabel="NO LLEGO"/>
+							</p:selectOneMenu>
+						</h:panelGrid>	
+						</p:panel>
+						<br/>
+						<p:commandButton  value="Guardar " oncomplete="validar(xhr, status, args)" actionListener="#{recepcionEncomiendaMB.registrarIncidencia()}"  
+					 		update=":formLista mensaje"  />
+					 	<p:commandButton  value="Cancelar" type="button" onclick="dlgInc.hide();"  icon="icon-cancel"
+					 		  />	
+							
+					</h:form>
+			</p:dialog>
+			
+			
+			<p:dialog id="dlgDetUbicacion" appendToBody="true" resizable="false" modal="true"
+					 widgetVar="dlgUbicacion" closable="true" header="Registrar Ubicacion Almacen">
+						
+					<h:form style="text-algin:center">
+						
+						<p:messages  id="mensaje2" showDetail="false" showSummary="true"  closable="true"/>
+						<p:panel>
+						
+						<table>
+						<tr><td>#{"Comprobante:"}</td>
+						<td colspan="3"><h:outputText value="#{recepcionEncomiendaMB.encoSelect.comprobante}" style="font-weight:bold;font-size:1.2em" /></td></tr>
+						<tr><td>#{"Remitente:"}</td>
+						<td colspan="3"><h:outputText value="#{recepcionEncomiendaMB.encoSelect.remitente}" style="font-weight:bold;font-size:1.2em" /></td></tr>
+						<tr><td>#{"Origen:"}</td>
+						<td><h:outputText value="#{recepcionEncomiendaMB.encoSelect.desOrigen}" style="font-weight:bold;font-size:1.2em" /></td>
+						<td>#{"Oficina:"}</td>
+						<td><h:outputText value="#{recepcionEncomiendaMB.encoSelect.desOficinaOrigen}" style="font-weight:bold;font-size:1.2em" /></td></tr>
+						<tr><td>#{"Destino:"}</td>
+						<td><h:outputText value="#{recepcionEncomiendaMB.encoSelect.desDestino}" style="font-weight:bold;font-size:1.2em"/></td>
+						<td>#{"Oficina:"}</td>
+						<td><h:outputText value="#{recepcionEncomiendaMB.encoSelect.desOficinaDestino}" style="font-weight:bold;font-size:1.2em" /></td>
+						</tr>
+						</table>
+						
+						<h:panelGrid columns="2">
+					    #{"Ubicacion:"}
+						<h:inputTextarea  value="#{recepcionEncomiendaMB.encoSelect.ubicacionAlmacen}"  cols="30" rows="4" required="true"
+									requiredMessage="Se necesita una Ubicacion"/> 
+						</h:panelGrid>	
+						</p:panel>
+						<br/>
+						<p:commandButton  value="Guardar " oncomplete="validarUbicacion(xhr, status, args)" actionListener="#{recepcionEncomiendaMB.registrarUbicacionEncomiendas()}"  
+					 		update=":formLista mensaje2"  />
+					 	<p:commandButton  value="Cancelar" type="button" onclick="dlgUbicacion.hide();"  icon="icon-cancel"/>	
+							
+					</h:form>
+			</p:dialog>
+			
+			
+			
+			
+			
+		</p:panel>
+		<script>
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetInc').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				dlgInc.hide();
+			}
+		}
+		
+		function validarUbicacion(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetUbicacion').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				dlgUbicacion.hide();
+			}
+		}
+		</script>
+		
+
+	</ui:define>
+
+</ui:composition>
+</html>

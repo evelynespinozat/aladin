@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Atencion a Bordo" url="#" />
+				<p:menuitem value="Salida de Productos" url="salidaProductos" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel >
+				
+				<h:panelGroup>
+			 	<h:panelGrid columns="7" id="datareg">
+
+						#{"Origen:"}
+						 <p:selectOneMenu id="cmbOrigen"  value="#{salidaMB.progFilter.origen}" style=" width:150px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{salidaMB.listaOrigen}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							<p:ajax listener="#{salidaMB.listarDestinosxOri()}"  event="change" update="cmbDestino "/>
+						</p:selectOneMenu>
+					
+						#{"Destino:"}
+						<p:selectOneMenu id="cmbDestino" value="#{salidaMB.progFilter.destino}" style=" width:150px;"
+							required="true" requiredMessage="Se necesita un destino"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+							<f:selectItems var="d" value="#{salidaMB.listaDestino}" itemValue="#{d.destino}" itemLabel="#{d.desDestino}"/>
+						</p:selectOneMenu>
+			 	
+						#{"Servicio:"}
+						<p:selectOneMenu id="cmbServicio" value="#{salidaMB.progFilter.idClase}" style=" width:200px;"
+							required="true" requiredMessage="Se necesita una clase de servicio"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+							<f:selectItems var="d" value="#{salidaMB.listaCServicio}" itemValue="#{d.idclase}" itemLabel="#{d.descripcion}"/>
+						</p:selectOneMenu>
+
+						<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{salidaMB.obtenerProgramacion()}"  
+					 		update=":sms :frmListaAgP :frmListaDeTp"	style=" width:160px;"/>
+					 		
+					 	</h:panelGrid>
+			
+					<h:panelGrid columns="6" >
+			 			#{"Agencia:"}
+						<p:selectOneMenu style="width:150px" value="#{salidaMB.progFilter.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+								<f:selectItems var="ag" value="#{salidaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cmbOfi" event="change" listener="#{salidaMB.getOficinasxAgencia()}" /> 
+						</p:selectOneMenu>
+	
+						#{"Oficina:"}
+						<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{salidaMB.progFilter.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="of" value="#{salidaMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+						</p:selectOneMenu>
+						
+							
+						<h:outputLabel value="F.Inicio "  /> 
+						<p:calendar style="width:200px"  mindate="#{salidaMB.fechaActual}" value="#{salidaMB.progFilter.fecInicio}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita una Fecha inicial">
+						</p:calendar>
+				
+			
+					
+					
+				</h:panelGrid>
+				
+				</h:panelGroup>
+	
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		<p:separator></p:separator>			 
+		<h:panelGrid id="pntables" columns="3" >
+		
+		<h:form id="frmListaAgP">
+					
+		<h:panelGroup>
+			
+			<h:outputText style="font-weight:bold" value="Programaciones"/>
+			<br/>
+			<p:dataTable value="#{salidaMB.listaProg}" var="per" 
+						style="width:580px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" 
+						 paginator="true"
+						 rows="5" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						>
+    			<f:facet name="header">Lista de Programacion</f:facet>
+    			
+    			<p:column headerText="ID" >
+    				#{nro+1}
+    			</p:column>
+    		
+    			<p:column headerText="Id">
+    				#{per.idProgramacion}
+    			</p:column>
+    		
+    			<p:column  headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{per.descServicio}" filterMatchMode="contains">
+					<h:outputText value="#{per.descServicio}" />
+				</p:column>
+					
+				<p:column  headerText="Fecha Salida">
+						<h:outputText value="#{per.fSalida}" rendered="#{per.fSalida != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+				</p:column>
+
+				<p:column  headerText="Hora Salida">
+						<h:outputText value="#{per.hSalida}" />
+				</p:column>
+				
+				<p:column  headerText="Asientos Vendidos">
+						<h:outputText value="#{per.cantAsiVen}" />
+				</p:column>
+				
+				<p:column headerText="Seleccionar" style="width:10%;text-align: center">
+
+				<p:commandButton title="Seleccionar"  update=":sms :frmListaDeTp" icon="icon-delete"
+						actionListener="#{salidaMB.listarPlantillaProductos(per)}"/>
+				</p:column>
+
+				</p:dataTable>
+				
+		</h:panelGroup>		
+   		</h:form>
+   		
+   		
+		
+		<p:spacer height="10px"></p:spacer>
+		
+		<h:form id="frmListaDeTp">
+
+		<h:panelGroup id="pngPD" rendered="#{salidaMB.showPD}">
+		
+		<h:panelGrid >
+		<h:outputText value="Programacion"/>
+		<h:outputText style="font-weight:bold" value="#{salidaMB.infoProg}"/>
+		
+		</h:panelGrid>
+				
+		<p:dataTable id="dtPlanDet" value="#{salidaMB.listdetallePlantilla}" var="per" style="width:580px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" 
+						 paginator="true"
+						 editable="true"
+						 editMode="cell"
+						 rows="5" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						 >
+    			<f:facet name="header">Productos Asignados a la Plantilla</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    		
+    			<p:column headerText="Producto" >
+    				#{per.desProducto}
+    			</p:column>
+    		
+    			<p:column headerText="Medida">
+    				#{per.desMedida}
+    			</p:column>
+
+    			<p:column headerText="Stock Actual">
+    				#{per.stock}
+    			</p:column>
+    			
+    			 <p:column headerText="Cantidad" style="width:20px">  
+           	 	
+                <p:spinner value="#{per.cantSalida}"  min="0" max="#{per.stock}" label="Cantidad">
+                </p:spinner>
+                	
+            	
+        </p:column> 
+		</p:dataTable>
+		
+		<br/>
+		<h:panelGroup style="text-align:rigth">
+			<p:commandButton value="Registrar Salida de Productos" update="frmListaDeTp :frmListaAgP :sms" actionListener="#{salidaMB.registrarSalidaProductos()}" icon="icon-add"/>
+		</h:panelGroup>
+				
+		</h:panelGroup>
+	</h:form>
+	</h:panelGrid>
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

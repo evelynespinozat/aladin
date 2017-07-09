@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="srptFT_Evaluaciones" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="057a661b-e334-4c93-8271-024fd08d7546">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="observacion" class="java.lang.String"/>
+	<field name="fechaCadString" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="53e1038f-5031-4924-a2cc-da39e8abc5e3" x="0" y="0" width="528" height="14" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="85d7a74e-77e5-4524-8951-93f742072d08" x="32" y="0" width="64" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="07f0712e-0551-458d-b1a0-e361c5f8b754" x="217" y="0" width="102" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5e5a3e98-373f-4861-aaac-caf188b9e134" x="120" y="0" width="87" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CADUCIDAD]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="ab185441-d113-4be7-a935-50dd1760f015" x="106" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="dfacac1b-3e6a-4226-a9c2-1c7624e40446" x="207" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="19c4ff34-ca2a-4198-aef6-050c911cce4c" x="0" y="0" width="528" height="14"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="53232106-3b44-4360-b45c-1c75f35603b1" x="32" y="0" width="64" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="509f2230-cd83-4d2a-a30f-603219c07f1e" x="217" y="0" width="281" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="17eb44ba-3e40-475d-8e40-baa0bd545681" x="121" y="0" width="76" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaCadString}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="cf178965-f827-436f-b4b1-2eb9f8777153" x="106" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="97955005-7fd1-4a9e-b663-1e6cff1edf49" x="207" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

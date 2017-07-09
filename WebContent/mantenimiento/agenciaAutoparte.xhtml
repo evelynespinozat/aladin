@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Autopartes" url="autoparte" /> 
+    				<p:menuitem value="Agregar Autoparte a Oficina" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="4">
+				#{"Producto Seleccionado:"}
+				<h:outputText value="#{agenciaAutoparteMB.autoparte.descripcion}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Medida:"}
+				<h:outputText value="#{agenciaAutoparteMB.autoparte.desMedida}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+		<h:form id="fm">
+		<h:panelGrid columns="6">
+				#{"Agencia:"}
+				<p:selectOneMenu style="width:150px" value="#{agenciaAutoparteMB.agenciaAutoparte.idagencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{agenciaAutoparteMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{agenciaAutoparteMB.getOficinasxAgencia()}" /> 
+				</p:selectOneMenu>
+	
+				#{"Oficina:"}
+				<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{agenciaAutoparteMB.agenciaAutoparte.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{agenciaAutoparteMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					<p:ajax update="cmbAlm" listener="#{agenciaAutoparteMB.listarAlmacen()}" />  
+				</p:selectOneMenu>
+				
+				#{"Almacen:"}
+				<p:selectOneMenu style="width:250px" id="cmbAlm" value="#{agenciaAutoparteMB.agenciaAutoparte.idAlmacen}" required="true" requiredMessage="Seleccione un Almacen ">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="ag" value="#{agenciaAutoparteMB.listAlmacen}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.descripcion}" /> 
+				</p:selectOneMenu>
+				
+				#{"Stock Inicial:"}
+				<p:inputText  style="width:150px"  value="#{agenciaAutoparteMB.agenciaAutoparte.stock}" required="true" requiredMessage="Se necesita un stock ">
+					<pe:keyFilter mask="num"/>
+				</p:inputText>
+					
+		</h:panelGrid>
+		
+		<br/>		
+		<!-- toolbar -->
+		
+			<h:panelGrid columns="2">
+				<p:commandButton value="Agregar autoparte a Oficina" icon="icon-add" 
+				actionListener="#{agenciaAutoparteMB.addProductoToOficina()}" update="fm :msgGeneral :frmListaAgP"/>
+			</h:panelGrid>
+		</h:form>		
+			
+		<br/>
+		
+		
+		
+		<h:form id="frmListaAgP">
+					
+			<p:dataTable value="#{agenciaAutoparteMB.listAgProducto}" var="per" style="width:750px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+    			<f:facet name="header">Oficinas Asignadas del Autoparte</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Agencia">
+    				#{per.desAgencia}
+    			</p:column>
+    			
+    			<p:column headerText="Oficina">
+    				#{per.desOficina}
+    			</p:column>
+    		
+    			<p:column headerText="Almacen">
+    				#{per.desAlmacen}
+    			</p:column>
+
+    			<p:column headerText="Producto">
+    				#{per.desProducto}
+    			</p:column>
+    		
+    			<p:column headerText="Stock">
+    				#{per.stock}
+    			</p:column>
+
+    			<p:column headerText="Precio">
+    				#{per.precioCompra}
+    			</p:column>
+    			
+				<p:column headerText="Elim." style="width:10%;text-align: center">
+
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+				<f:setPropertyActionListener target="#{agenciaAutoparteMB.agenciaAutoparte}"	value="#{per}" />
+				</p:commandButton>
+				
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+		
+		
+		
+		<p:confirmDialog id="confirmDialog" message="Seguro de eliminar esta asignacion"   appendToBody="true"
+             		header="Eliminar Asignacion" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaAgP :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{agenciaAutoparteMB.deleteOficinaFromProduct()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    	</p:confirmDialog> 
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.DetalleGuiaRemisionMapper">
+
+<resultMap id="detalleGuiaRemisionResult" type="com.certicom.ittsa.domain.DetalleGuiaRemision">
+	<id column="IdDetGuiaRemision" property="idDetGuiaRemision"/>
+	<result column="IdGuiaRemision" property="idGuiaRemision"/>
+	<result column="Descripcion" property="descripcion"/>
+	<result column="Peso" property="peso"/>
+	<result column="Cantidad" property="cantidad"/>
+	<result column="PrecioEnvio" property="precioEnvio"/>
+</resultMap>
+
+
+</mapper>	

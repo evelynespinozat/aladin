@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.FlotaAutomotorMapper">
+
+<resultMap id="agenciaResult" type="com.certicom.ittsa.domain.FlotaAutomotor">
+	<id column="IdFlotaAutomotor" property="idFlotaAutomotor"/>
+	<result column="IdBus" property="idBus"/>
+	<result column="IdAutomotor" property="idAutomotor"/>
+</resultMap>
+
+
+</mapper>	

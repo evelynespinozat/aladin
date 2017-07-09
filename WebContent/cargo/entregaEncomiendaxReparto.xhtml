@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel>
+	<h:form>
+		<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Reparto de Encomiendas" url="#" />
+		</p:breadCrumb>
+	</h:form>
+	
+	<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />	
+	<br/>
+		<h:form>
+			<p:panel style="width:800px;">	
+					<table><tr><td>
+					<h:panelGrid columns="2">	
+						#{"Origen:"}  
+			       	 	<p:selectOneMenu id="cmbOrigen"  value="#{entEncomiendaxRepMB.encomiendaFilter.idOrigen}" style=" width:150px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="0" />
+							<f:selectItems var="o" value="#{entEncomiendaxRepMB.listaAgencias}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							<p:ajax listener="#{entEncomiendaxRepMB.listarDestinosxOri()}" update="cmbDestino"/>
+						</p:selectOneMenu>
+					
+						#{"Destino:"}
+						<p:selectOneMenu id="cmbDestino" style="width:150px" value="#{entEncomiendaxRepMB.encomiendaFilter.idDestino}"
+									required="true" requiredMessage="Se necesita un destino">
+							<f:selectItem itemLabel="Seleccione..." itemValue="0" />
+							<f:selectItems var="ag" value="#{entEncomiendaxRepMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" /> 
+						</p:selectOneMenu>						
+						
+					</h:panelGrid>
+					</td><td>
+					<h:panelGrid columns="2">
+						#{"Fecha Inicio:"}
+						<p:calendar value="#{entEncomiendaxRepMB.encomiendaFilter.fecIni}"
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true">
+						</p:calendar>
+						
+						#{"Fecha Fin:"}
+						<p:calendar value="#{entEncomiendaxRepMB.encomiendaFilter.fecFin}"
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true">
+						</p:calendar>
+						
+					</h:panelGrid>
+					</td><td>
+					<p:commandButton value="Buscar Encomiendas" style="margin-left:40px" actionListener="#{entEncomiendaxRepMB.buscarEncomiendas()}" update=":formEncomiendaxEntregar :sms"/>
+					</td></tr></table>
+				</p:panel>
+			</h:form>
+				<br/>
+				<h:form id="formEncomiendaxEntregar">
+					
+					<p:dataTable widgetVar="dtGiros" var="e" value="#{entEncomiendaxRepMB.encomiendaModel}"  
+					emptyMessage="No hay encomiendas por entregar." rowIndexVar="nro" selection="#{entEncomiendaxRepMB.listaEncomiendaSelected}" rowKey="#{e.idEncomienda}"
+					paginator="true" filteredValue="#{entEncomiendaxRepMB.listaEncomiendaFilter}"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Lista Encomiendas por repartir</f:facet>
+					
+					<p:column style="width:50px;" headerText="Doc." filterStyleClass="mayuscula" filterBy="#{e.comprobante}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{e.tipoDocAbr}-#{e.comprobante}" />
+					</p:column>
+						
+					<p:column style="width:200px" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{e.remitcompleto}" filterMatchMode="contains" filterStyle="width:100px">
+						<h:outputText value="#{e.remitcompleto}" />
+					</p:column>
+						
+						<p:column style="width:200px;" headerText="Dest. 1" filterStyleClass="mayuscula" filterBy="#{e.dest1}" filterMatchMode="contains" filterStyle="width:100px;">
+							<h:outputText value="#{e.dest1}" />
+						</p:column>
+						
+						<p:column style="width:200px" headerText="Dest. 2" filterStyleClass="mayuscula" filterBy="#{e.dest2}" filterMatchMode="contains" filterStyle="width:100px;">
+							<h:outputText value="#{e.dest2}" />
+						</p:column>
+						
+						
+						<p:column style="width:100px" headerText="Direccion">
+							<h:outputText value="#{e.direccionEnvio}" />
+						</p:column>
+						
+						<p:column style="width:80px" headerText="Distrito">
+							<h:outputText value="#{e.sdistrito}" />
+						</p:column>
+						
+						<p:column style="width:100px" headerText="Detalle">
+							<h:outputText value="#{e.detalle}" />
+						</p:column>
+
+						<p:column style="width:40px" headerText="Nro bultos">
+							<h:outputText value="#{e.nroBultos}" />
+						</p:column>
+						
+						<p:column style="width:50px" headerText="Peso (kg)">
+							<h:outputText value="#{e.pesoTotal}" />
+						</p:column>
+						
+						<p:column style="width:50px" headerText="Importe">
+							<h:outputText value="#{e.totalCobrado}" />
+						</p:column>
+						
+						<p:column style="width:50px" headerText="Bus">
+							<h:outputText value="#{e.nroBus}" />
+						</p:column>
+						
+						<p:column style="width:50px" headerText="T.Entrega">
+							<h:outputText value="#{'REPARTO'}" rendered="#{e.servicioEntrega  =='R' ? true :false}"/>
+							<h:outputText value="#{'REP/CONTR'}" rendered="#{e.servicioEntrega  =='RC' ? true :false}"/>
+						</p:column>
+						
+						<p:column selectionMode="multiple"  style="width:5px;text-align:center">
+						
+						</p:column>
+						
+						<p:column style="width:50px" headerText="Recog. Oficina">
+							<p:commandButton value="Entrega" title="Recg. Oficina" update=":dlgDetRecogoOfi" actionListener="#{entEncomiendaxRepMB.recogerOficina(e)}"
+										 oncomplete="dlgRecogoOfi.show();"/>
+						</p:column>
+					
+					</p:dataTable>
+					<br/>
+					
+					<p:commandButton value="Asignar" style="margin-left:1px"  actionListener="#{entEncomiendaxRepMB.addRepartidor()}" oncomplete="validarEncoSele(xhr, status, args)" update=":dlgDetRep" />
+			
+				</h:form>			
+
+				<p:confirmDialog id="dlgDetEntregar" appendToBody="true"
+					message="¿Esta seguro que desea entregar esta encomienda?" header="Entrega de  Encomienda"
+					severity="alert" widgetVar="dlgEntregar">
+					<h:form>
+					<p:commandButton value="Aceptar" actionListener="#{entEncomiendaxRepMB.confirmarEntrega()}"
+						oncomplete="dlgEntregar.hide();" icon="icon-disk" update=":formEncomiendaxEntregar"/>
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEntregar.hide()" icon="icon-cancel"/>
+
+					</h:form>
+				</p:confirmDialog>
+				
+				
+				<p:dialog header="Asignar Repartidor" widgetVar="dlgRep" appendToBody="true"
+					  resizable="false" id="dlgDetRep" modal="true">
+					
+					<h:form id="fm">
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+						#{"Responsable:"}
+						<p:selectOneMenu style="width:250px" value="#{entEncomiendaxRepMB.idPersonal}" required="true" requiredMessage="Debe Asignar un reponsable" >
+							<f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+							<f:selectItems var="r" value="#{entEncomiendaxRepMB.listaRepartidor}" itemLabel="#{r.nomcompleto}" itemValue="#{r.idPersonal}"/>
+						</p:selectOneMenu>
+						
+						#{"Nro Bultos"}
+						<h:outputLabel value="#{entEncomiendaxRepMB.bultosReparto}" style="font-weight:bold;color:#E50808;font-size:1.2em"/>
+						
+						#{"Peso Total"}
+						<h:outputLabel value="#{entEncomiendaxRepMB.pesototalReparto}" style="font-weight:bold;color:#E50808;font-size:1.2em"/>
+
+						#{"Importe Total"}
+						<h:outputLabel value="#{entEncomiendaxRepMB.totalcobradoReparto}" style="font-weight:bold;color:#E50808;font-size:1.2em"/>
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Asignar" actionListener="#{entEncomiendaxRepMB.asignarRepartidorEncomienda()}"
+									 	icon="icon-disk" disabled="#{entEncomiendaxRepMB.btnAsigEnc}" update="fm :formEncomiendaxEntregar"/>
+									 	
+						<h:commandLink  disabled="#{entEncomiendaxRepMB.btnImprimir}"  id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{entEncomiendaxRepMB.imprimirPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						
+						<p:spacer height="0" width="2"/>			 	
+
+						<h:commandLink  disabled="#{entEncomiendaxRepMB.btnImprimir}"  id="imprimir2" value="Imprimir Detallado" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{entEncomiendaxRepMB.imprimirDetalladoPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>			 	
+				
+					</h:form>	
+			</p:dialog>
+			
+			<p:dialog header="Recoger En Oficina" widgetVar="dlgRecogoOfi" appendToBody="true"
+					  resizable="false" id="dlgDetRecogoOfi" modal="true">
+					
+					<h:form id="formEntrega">
+					
+					<p:messages showDetail="false" showSummary="true" id="msgEntrega" closable="true"/>
+					
+					<h:panelGrid columns="2">
+						#{"Tipo Documento:"}
+						<p:selectOneMenu style="width:200px" value="#{entEncomiendaxRepMB._tipoDocumento}" required="true" requiredMessage="Seleccione un Tipo Documento">
+							<f:selectItem itemLabel="DNI" itemValue="DNI"/>
+							<f:selectItem itemLabel="RUC" itemValue="RUC"/> 
+							<p:ajax update="formEntrega" event="change" listener="#{entEncomiendaxRepMB.evaluaTipDoc()}" />
+						</p:selectOneMenu>
+						
+						#{"Numero Documento:"}
+						<p:inputText style="width:200px" value="#{entEncomiendaxRepMB.encomienda.numeroDocRecoge}" required="true" maxlength="11" requiredMessage="Se necesita un numero documento" >
+							<pe:keyFilter mask="num"/>
+							<p:ajax event="blur" listener="#{entEncomiendaxRepMB.buscarPersona()}" update="txtNomUsuReco"/>
+						</p:inputText>
+						
+						<h:outputText  value="Nombre:" rendered="#{entEncomiendaxRepMB._nombre}"></h:outputText>
+						<h:outputText value="Razon Social:" rendered="#{entEncomiendaxRepMB._razonSocial}"></h:outputText>
+						<p:inputText id="txtNomUsuReco" style="width:200px" value="#{entEncomiendaxRepMB.encomienda.nombreRecoge}" required="true" maxlength="50" requiredMessage="Se necesita el usuario que recibe" />
+						
+						<p:separator></p:separator>
+						<p:separator></p:separator>
+						
+						#{"Usuario Entrega:"}
+						<p:selectOneMenu style="width:200px" value="#{entEncomiendaxRepMB.encomienda.idUsuarioEntrega}" required="true" requiredMessage="Seleccione el usuario que entrega ">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="a" value="#{entEncomiendaxRepMB.listaUsuarioRec}" itemValue="#{a.idusuario}" itemLabel="#{a.nombre_completo}" /> 
+						</p:selectOneMenu>
+						
+						<p:commandButton value="Aceptar" actionListener="#{entEncomiendaxRepMB.confirmarEntregaOficina()}"
+							oncomplete="validarEntregOfi(xhr, status, args)" icon="icon-disk" update=":formEncomiendaxEntregar msgEntrega"/>
+	
+						<p:commandButton value="Cancelar"  type="button" 
+							onclick="dlgRecogoOfi.hide()" icon="icon-cancel" />
+							
+					</h:panelGrid>
+					</h:form>	
+			</p:dialog>
+
+				
+	</p:panel>
+	<script>
+			
+		function validarEncoSele(xhr, status, args) {
+			if (args.hayEncomiendas) {
+				dlgRep.show();
+			} 
+		}
+		
+		function validarEntregOfi(xhr, status, args) {
+			if (args.hayEncomiendas) {
+				dlgRecogoOfi.show();
+			} 
+		}
+		
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

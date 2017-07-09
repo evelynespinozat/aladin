@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Operaciones" url="#" />
+    				<p:menuitem value="Gestion de Kilometraje" url="kilometraje" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+
+			
+				<!-- listado de flotas -->
+			<h:form id="formflota">
+				<p:dataTable widgetVar="dtFlota" var="p" value="#{flotaMB.listaFlotas}" filteredValue="#{flotaMB.listaFiltroFlotas}"  
+					emptyMessage="No hay Flota Vehicular Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Flota Vehicular</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:200px;text-align: center;" headerText="Numero" filterBy="#{p.numero}" filterMatchMode="contains" >
+						<h:outputText value="#{p.numero}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Placa">
+						<h:outputText value="#{p.placa}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Marca" filterStyleClass="mayuscula" filterBy="#{p.marca}" filterMatchMode="contains" >
+						<h:outputText value="#{p.marca}" />
+					</p:column>
+				
+					<p:column style="width:200px;text-align: center;" headerText="Modelo">
+						<h:outputText value="#{p.modelo}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Fabricacion">
+						<h:outputText value="#{p.fabricacion}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Clase" filterStyleClass="mayuscula" filterBy="#{p.descClase}" filterMatchMode="contains" >
+						<h:outputText value="#{p.descClase}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="Tipo Flota" filterStyleClass="mayuscula" filterBy="#{p.desTipoFlota}" filterMatchMode="exact" filterOptions="#{flotaMB.listaFiltroTipoFlota}" filterStyle="width:200px;">
+						<h:outputText value="#{p.desTipoFlota}" />
+					</p:column>
+
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Kilometraje" style="width:10%;text-align: center">
+						<p:commandButton title="Mantenimiento" action="#{flotaMB.kilometraje(p)}" icon="icon-mantenimiento"/>		
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

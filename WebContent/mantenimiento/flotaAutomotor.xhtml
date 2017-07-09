@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Flota" url="flotaVehicular" /> 
+    				<p:menuitem value="Asociar Sistema Automotor - Flota" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="12">
+				#{"Numero:"}
+				<h:outputText value=" #{flotaAutomotorMB.flota.numero}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				#{"Placa:"}
+				<h:outputText value=" #{flotaAutomotorMB.flota.placa}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Marca:"}
+				<h:outputText value=" #{flotaAutomotorMB.flota.marca}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Modelo:"}
+				<h:outputText value=" #{flotaAutomotorMB.flota.modelo}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+				
+				#{"Clase:"}
+				<h:outputText value=" #{flotaAutomotorMB.flota.descClase}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+				#{"Tipo Flota:"}
+				<h:outputText value=" #{flotaAutomotorMB.flota.desTipoFlota}"  
+					style="font-weight:bold;font-size: 1.2em;" />					
+				
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+	
+		<p:panel>	
+		<h:panelGrid columns="3" style="text-align: center">
+		
+		<h:form id="fm">
+		<p:dataTable widgetVar="dtAuto" var="o" value="#{flotaAutomotorMB.listaAutomotor}"  style="width:500px;FONT-SIZE: 10px;" 
+						    rowIndexVar="nro" filteredValue="#{flotaAutomotorMB.listaFilterAutomotor}" 
+							emptyMessage="No hay Sistemas Automotor Disponibles." 
+							paginator="true"
+							rows="10" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="10,20,30">
+    			<f:facet name="header">Lista de Sistema Automotor</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Sistema Automotor" filterStyleClass="mayuscula" filterBy="#{o.descripcion}" filterMatchMode="contains" filterStyle="width:200px;">
+    				#{o.descripcion}
+    			</p:column>
+    			
+				<p:column headerText="Agregar" style="width:10%;text-align: center">
+					<p:commandButton value="Agregar" title="Agregar" update=":msgGeneral :frmListaAgP" 
+								     actionListener="#{flotaAutomotorMB.addSistemaAutomotor(o)}" icon="icon-add" >	
+					</p:commandButton>
+				</p:column>
+
+		</p:dataTable>	
+		</h:form>		
+
+		<p:spacer width="50px"></p:spacer>
+
+			<p:dataTable id="frmListaAgP" value="#{flotaAutomotorMB.listaFlotaAutomotor}" var="o" style="width:500px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" filteredValue="#{flotaAutomotorMB.listaFlotaAutomotorFilter}" 
+						emptyMessage="No hay Sistemas Automotor Disponibles." 
+						paginator="true"
+						rows="10" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="10,20,30">
+    			<f:facet name="header">Sistema Automotor Asignadas al Bus</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Sistema Automotor" filterStyleClass="mayuscula" filterBy="#{o.desAutomotor}" filterMatchMode="contains" filterStyle="width:200px;">
+    				#{o.desAutomotor}
+    			</p:column>
+    			
+				<p:column headerText="Elim." style="width:10%;text-align: center">
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+				<f:setPropertyActionListener target="#{flotaAutomotorMB.flotaAutomotor}" value="#{o}" />
+				</p:commandButton>
+				</p:column>
+
+				</p:dataTable>
+		</h:panelGrid>
+		</p:panel>
+		
+		
+		<p:confirmDialog id="confirmDialog" message="Seguro de eliminar el Sistema Automotor del Bus"   appendToBody="true"
+             		header="Eliminar Sistema Automotor" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaAgP :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{flotaAutomotorMB.deleteAutomotorxFlota()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    	</p:confirmDialog> 
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

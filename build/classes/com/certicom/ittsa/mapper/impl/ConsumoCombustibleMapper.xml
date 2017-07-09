@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ConsumoCombustibleMapper">
+
+<resultMap id="consumoCombustibleResult" type="com.certicom.ittsa.domain.ConsumoCombustible">
+	<id column="IdConCombus" property="idConCombus"/>
+	<result column="IdProgramacion" property="idProgramacion"/>
+	<result column="FecRegistro" property="fecRegistro"/>
+	<result column="KmInicial" property="kmInicial"/>
+	<result column="KmFinal" property="kmFinal"/>
+	<result column="KmRecorridos" property="kmRecorridos"/>
+	<result column="Consumo" property="consumo"/>
+	<result column="KmGalon" property="kmGalon"/>
+	<result column="Idagencia" property="idagencia"/>
+	<result column="PrecioComb" property="precioComb"/>
+	<result column="CostoTotal" property="costoTotal"/>
+	<result column="CostoKm" property="costoKm"/>
+	<result column="IdPiloto" property="idPiloto"/>
+	<result column="IdCopiloto" property="idCopiloto"/>
+	
+	<result column="desServicio" property="desServicio"/>
+	<result column="piloto1" property="piloto1"/>
+	<result column="piloto2" property="piloto2"/>
+	<result column="numBus" property="numBus"/>
+	<result column="desAgen" property="desAgen"/>
+</resultMap>
+
+<select id="listarProgramacionescnKilometro55" resultMap="consumoCombustibleResult">
+
+		select cc.IdConCombus, cc.IdProgramacion, cc.fecRegistro, 
+			   cc.KmInicial, cc.KmFinal, cc.KmRecorridos, cc.Consumo, 
+			   cc.KmGalon, cc.Idagencia, cc.PrecioComb, cc.CostoTotal, 
+			   cc.CostoKm, cc.IdPiloto, cc.IdCopiloto, s.Descripcion as desServicio, 
+			   pt.Nombres +' '+ pt.ApellidoPaterno + ' '+pt.ApellidoMaterno as piloto1, 
+			   f.Numero as numBus, pt2.Nombres +' '+ pt2.ApellidoPaterno + ' '+pt2.ApellidoMaterno as piloto2,
+			   a.Descripcion as desAgen 
+		from (((((t_consumocombustible cc inner join t_programacion p on cc.IdProgramacion = p.IdProgramacion) 
+									   inner join t_servicio s on p.IdServicio = s.IdServicio) 
+									   inner join t_piloto pt on cc.IdPiloto = pt.IdPiloto) 
+									   inner join t_flota f on cc.IdBus = f.IdBus) 
+									   inner join t_piloto pt2 on cc.IdCopiloto = pt2.IdPiloto) 
+									   inner join t_agencia a on cc.Idagencia = a.Idagencia 
+							   
+</select>
+</mapper>	

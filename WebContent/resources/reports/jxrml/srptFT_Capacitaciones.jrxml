@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="srptFT_Capacitaciones" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="057a661b-e334-4c93-8271-024fd08d7546">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="curso" class="java.lang.String"/>
+	<field name="fechaString" class="java.lang.String"/>
+	<field name="titulo" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="53e1038f-5031-4924-a2cc-da39e8abc5e3" x="0" y="0" width="528" height="14" forecolor="#000000" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="01bebc62-b8e3-4bef-a2de-70f5dacf9d17" x="22" y="0" width="121" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CURSO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="85a412ab-f797-4f7f-916d-a15f5e22d3cb" x="186" y="0" width="79" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff7bf133-55db-4f20-93fa-b5727bb5b892" x="298" y="0" width="100" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TITULO]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="6edb313a-5dd6-4108-9efb-34131b9b73a0" x="167" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="f81844b2-bff2-447d-a2f7-99f24679bee3" x="265" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="19c4ff34-ca2a-4198-aef6-050c911cce4c" x="0" y="0" width="528" height="14"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="60622b1d-2787-4709-91f8-ef16f5148c25" x="22" y="0" width="145" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{curso}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="dffd1fb1-8047-4512-a116-44ef2066a760" x="186" y="0" width="79" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaString}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a4ee676a-2830-49e8-9935-d33651c265bb" x="298" y="0" width="152" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="2aa8a8d7-ddfe-4513-a238-ee2fd374156e" x="167" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="3f350184-2354-4595-bb59-c886528f7281" x="265" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

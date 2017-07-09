@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.IngresoEgresoMapper">
+
+<resultMap id="ingresoEgresoResult" type="com.certicom.ittsa.domain.IngresoEgreso">
+	<id column="idingresoegreso" property="idingresoegreso"/>
+	<result column="fechareg" property="fechareg"/>
+	<result column="operacion" property="operacion"/>
+	<result column="usuario" property="usuario"/>
+	<result column="usuarioreg" property="usuarioreg"/>
+	<result column="monto" property="monto"/>
+	<result column="idagencia" property="idagencia"/>
+	<result column="idoficina" property="idoficina"/>
+	<result column="motivo" property="motivo"/>
+	<result column="estado" property="estado"/>
+	
+	
+</resultMap>
+
+<select id="listaIngresoEgresoxFechasOperacion" parameterType="com.certicom.ittsa.domain.IngresoEgreso" resultMap="ingresoEgresoResult">
+	select * from t_ingresoegreso where idoficina = #{idoficina} 
+	and idagencia = #{idagencia} 
+	 <if test="operacion != 0">
+	 and operacion = #{operacion}
+	 </if>
+</select>
+
+</mapper>	

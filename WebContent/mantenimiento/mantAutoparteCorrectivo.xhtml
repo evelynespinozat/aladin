@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Servicio Correctivo" url="servicioCorrectivo" />
+    				<p:menuitem value="Mantenimiento de Autopartes" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="6" cellspacing="5">
+				#{"Bus:"}
+				<h:outputText value=" #{mantAutoparteCorrectivoMB.flota.numero}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+
+				#{"Km Real:"}
+				<h:outputText value=" #{mantAutoparteCorrectivoMB.flota.recorrido}"  
+					style="font-weight:bold;font-size: 1.2em;" />		
+					
+				#{"Piloto:"}
+				<h:outputText value=" #{mantAutoparteCorrectivoMB.flota.nombPiloto}"  
+					style="font-weight:bold;font-size: 1.2em;" />			
+
+				#{"Placa:"}
+				<h:outputText value=" #{mantAutoparteCorrectivoMB.flota.placa}"  
+					style="font-weight:bold;font-size: 1.2em;" />		
+					
+				#{"Km Aproximado:"}
+				<h:outputText value=" #{mantAutoparteCorrectivoMB.flota.kmAproximado}"  
+					style="font-weight:bold;font-size: 1.2em;" />			
+				
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+		<h:panelGrid columns="3" cellspacing="10">
+		<h:outputText value="Autopartes sin Mecanico"  
+					style="font-weight:bold;font-size: 1.2em;" />
+		<p:spacer width="25px"></p:spacer>
+		<h:outputText value="Autopartes con Mecanico"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+		
+		<h:form id="fm">
+				      <h:panelGrid columns="10" cellspacing="5">
+						<p:dataTable widgetVar="dtAutoparteCorrectivo" var="p" value="#{mantAutoparteCorrectivoMB.listaAutopartesBus}" 
+						emptyMessage="No hay Autpartes Disponibles." rowIndexVar="nro"  
+						paginator="true"
+						rows="10" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,20,30"
+						style="FONT-SIZE: 10px;width:600px">
+						<f:facet name="header">Lista Autopartes Km.</f:facet>
+						
+						<p:column headerText="Orden" style="width:25px" >
+							#{nro+1}
+						</p:column>
+						<p:column style="width:150px" headerText="Sistema">
+							<h:outputText value="#{p.desAutomotor}" />
+						</p:column>
+						
+						<p:column style="width:200px" headerText="Componente">
+							<h:outputText value="#{p.desAutoparte}" />
+						</p:column>
+						
+						<p:column style="width:100px" headerText="Km Cambio">
+							<h:outputText value="#{p.kmCambio}" />
+						</p:column>
+						
+						<p:column style="width:100px" headerText="Km Recorrido">
+							<h:outputText value="#{p.kmActual}" />
+						</p:column>
+						
+						<p:column style="width:100px" headerText="Asignar">
+
+						<p:commandButton title="Asignar"  update=":dlgDetNuevo" actionListener="#{mantAutoparteCorrectivoMB.asignarMecanico(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						</p:column>
+						
+					</p:dataTable>
+			      </h:panelGrid>
+		</h:form>
+		<p:spacer width="25px"></p:spacer>		
+		
+		<h:form id="fm3">
+				      <h:panelGrid columns="10" cellspacing="5">
+						<p:dataTable widgetVar="dtAgencia" var="p" value="#{mantAutoparteCorrectivoMB.listaHistorialAuto}" 
+						emptyMessage="No hay Autopartes Disponibles." rowIndexVar="nro"  
+						paginator="true"
+						rows="10" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,20,30"
+						style="FONT-SIZE: 10px;width:600px">
+						<f:facet name="header">Lista Autopartes con Mecanico</f:facet>
+						
+						<p:column headerText="Orden" style="width:25px" >
+							#{nro+1}
+						</p:column>
+						
+						<p:column style="width:150px" headerText="Sistema">
+							<h:outputText value="#{p.desAutomotor}" />
+						</p:column>
+						
+						<p:column style="width:200px" headerText="Componente">
+							<h:outputText value="#{p.desAutoparte}" />
+						</p:column>
+						
+						<p:column style="width:100px" headerText="Km Cambio">
+							<h:outputText value="#{p.kmCambio}" />
+						</p:column>
+						
+						<p:column style="width:100px" headerText="Km Recorrido">
+							<h:outputText value="#{p.kmActual}" />
+						</p:column>
+						
+						<p:column style="width:100px" headerText="Mecanico">
+							<h:outputText value="#{p.nombreMeca}" />
+						</p:column>
+						
+						<p:column style="width:100px" headerText="Asignar">
+						
+						<p:commandButton title="Mantnimiento"  update=":fm4" actionListener="#{mantAutoparteCorrectivoMB.mostrarObservaciones(p)}"
+										 icon="icon-disk">
+						</p:commandButton>
+						
+						</p:column>
+						
+					</p:dataTable>
+			      </h:panelGrid>
+		</h:form>
+	  </h:panelGrid>
+	  
+		 <h:panelGroup id="fm4">
+		 <h:form id="formObs">
+		       <p:panel>
+				   <h:panelGrid columns="2" rendered="#{mantAutoparteCorrectivoMB.mostrarDet}">
+				   		#{"Tipo Mantenimiento:"}
+				   		<h:panelGroup>
+				   		<p:selectOneMenu style="width:200px" value="#{mantAutoparteCorrectivoMB.historialMantenimiento2.tipMantEfectuado}" 
+										 required="true" requiredMessage="Seleccione un Tipo de Mantenimiento Brindado" >
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItem itemLabel="REMPLAZADO" itemValue="REMPLAZADO" />
+										<f:selectItem itemLabel="MANTENIMIENTO" itemValue="MANTENIMIENTO" />
+										<f:selectItem itemLabel="REVISION" itemValue="REVISION" />
+						</p:selectOneMenu>
+						
+						#{"Tipo Accion:"}
+						<p:selectOneMenu style="width:200px" value="#{mantAutoparteCorrectivoMB.historialMantenimiento2.tipoAccion}" 
+										 required="true" requiredMessage="Seleccione un Tipo de Accion" >
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItem itemLabel="MECANICO" itemValue="MECANICO" />
+										<f:selectItem itemLabel="OTROS" itemValue="OTROS" />
+						</p:selectOneMenu>			
+									
+				   		#{"Cantidad:"}
+				   		<p:inputText style="width:200px" value="#{mantAutoparteCorrectivoMB.historialMantenimiento2.cantidad}" maxlength="2">
+											<pe:keyFilter  mask="num"/> 
+						</p:inputText>
+						</h:panelGroup>
+						
+						#{"Observacion:"}
+						<p:inputTextarea style="width:500px;height:100px" value="#{mantAutoparteCorrectivoMB.historialMantenimiento2.observacion}"/>
+						
+						<p:commandButton value="Guardar" update=":msgGeneral, :formObs, :fm2, :fm3" actionListener="#{mantAutoparteCorrectivoMB.guardarObservaciones()}" icon="icon-disk" />
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+						
+				   </h:panelGrid>
+		       </p:panel>
+		     </h:form>  
+		  </h:panelGroup>
+		  
+		  
+		  
+		  <p:dialog header="Asignar Mecanico" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					<p:messages showDetail="false" showSummary="true" id="msg" closable="true"/>		
+	
+					<h:form id="fm2">	
+			<p:panel>
+				      <h:panelGrid columns="2" >
+					    #{"Autoparte:"}
+						<h:outputText value=" #{mantAutoparteCorrectivoMB.desAutoparte}"  
+						    style="font-weight:bold;font-size: 1.2em;" />
+							
+				      	#{"Mecanico:"}
+						<p:selectOneMenu style="width:200px" value="#{mantAutoparteCorrectivoMB.historialMantenimiento.idMecanico}" 
+							 required="true" requiredMessage="Seleccione un Mecanico">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{mantAutoparteCorrectivoMB.listaMecanicos}"
+								itemValue="#{item.idMecanico}" itemLabel="#{item.nombre} #{item.apePaterno} #{item.apeMaterno}" />
+						</p:selectOneMenu>
+		
+						#{"Fec. Inicio:"}
+						<p:calendar style="width:230px" value="#{mantAutoparteCorrectivoMB.historialMantenimiento.fecInicio}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita selecionar una fecha inicio">
+						</p:calendar>	
+							
+						#{"Fec. Fin:"}
+						<p:calendar style="width:230px" value="#{mantAutoparteCorrectivoMB.historialMantenimiento.fecFin}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita selecionar una fecha fin">
+						</p:calendar>			
+		
+						#{"Tipo Mantenimiento:"}
+						<p:selectOneMenu style="width:200px" value="#{mantAutoparteCorrectivoMB.historialMantenimiento.tipMantenimiento}" 
+							 required="true" requiredMessage="se necesita un Tipo Mantenimiento" >
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItem itemLabel="PREDICTIVO" itemValue="PREDICTIVO" />
+							<f:selectItem itemLabel="CORRECTIVO" itemValue="CORRECTIVO" />
+						</p:selectOneMenu>
+				       <p:commandButton value="Guardar" actionListener="#{mantAutoparteCorrectivoMB.guardarHistorial()}"
+									 update=":fm3 :fm :msg"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+									 
+				        <p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+				        
+				      </h:panelGrid>
+			</p:panel>		
+		</h:form>
+					
+			</p:dialog>
+		  
+	 </p:panel>
+	 
+	 <script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

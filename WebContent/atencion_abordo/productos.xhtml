@@ -1,0 +1,229 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Productos" url="productos" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Producto" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{productoMB.nuevaProducto()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaProducto">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{productoMB.listaProductos}" filteredValue="#{productoMB.listaFiltroProductos}"  
+					emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Productos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:150px" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:50px;text-align: center;" headerText="Medida">
+						<h:outputText value="#{p.medida}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Costo" >
+						<h:outputText value="#{p.costo}" />
+					</p:column>
+				
+					<p:column style="width:20%;text-align: center;" headerText="Costo Unitario">
+						<h:outputText value="#{p.costoUni}" />
+					</p:column>
+					<p:column style="width:20%;text-align: center;" headerText="Desgregado" >
+						<h:outputText value="#{p.desgregacion}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Cant Disg" >
+						<h:outputText value="#{p.cantDist}" />
+					</p:column>
+				
+					<p:column style="width:20%;text-align: center;" headerText="Costo x Psjro">
+						<h:outputText value="#{p.costoxPasj}" />
+					</p:column>
+					
+					<p:column style="width:20%;text-align: center;" headerText="Categoria" filterStyleClass="mayuscula" filterBy="#{p.desCatProducto}" filterMatchMode="contains">
+						<h:outputText value="#{p.desCatProducto}" />
+					</p:column>
+
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{productoMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim./Asociar" style="width:10%;text-align: center">
+					
+						<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{productoMB.editarProducto(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+							
+						</p:commandButton>
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{productoMB.producto}" value="#{p}" />
+						</p:commandButton>
+						
+						<p:commandButton title="Asociar" action="#{productoMB.asociarOficina(p)}" icon="icon-asociarproductoalmacen"/>
+						
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{productoMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form id="fmReg">
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Categoria:"}
+							<p:selectOneMenu style="width:200px" value="#{productoMB.producto.idCatProducto}" required="true" requiredMessage="Se necesita una categoria" >
+								<f:selectItem itemLabel="--Seleccione--" itemValue=""></f:selectItem>
+								<f:selectItems value="#{productoMB.listaCategoriaProducto}" var="p" itemLabel="#{p.descripcion}" itemValue="#{p.idCatProducto}"></f:selectItems>
+							</p:selectOneMenu>
+						
+							#{"Medida:"}
+							<p:selectOneMenu style="width:200px" value="#{productoMB.producto.medida}" maxlength="3" required="true" requiredMessage="Se necesita una medida" >
+								<f:selectItem itemLabel="--Seleccione--" itemValue=""></f:selectItem>
+								<f:selectItem itemLabel="CIENTO" itemValue="100"></f:selectItem>
+								<f:selectItem itemLabel="CAJA X 12" itemValue="C12"></f:selectItem>
+								<f:selectItem itemLabel="MILLAR" itemValue="MIL"></f:selectItem>
+								<f:selectItem itemLabel="UNIDAD" itemValue="UNI"></f:selectItem>
+							</p:selectOneMenu>
+
+							#{"Descripcion:"}
+							<p:inputText  style="width:190px;text-transform: uppercase" value="#{productoMB.producto.descripcion}" required="true" maxlength="50" 
+							requiredMessage="Se necesita una descripcion" />
+
+							#{"Desgregado:"}
+							<p:selectOneMenu style="width:200px" value="#{productoMB.producto.desgregacion}"  >
+								<f:selectItem itemLabel="NO" itemValue="NO"></f:selectItem>
+								<f:selectItem itemLabel="SI" itemValue="SI"></f:selectItem>
+								<p:ajax event="change" update="fmReg:pnlDesg" listener="#{productoMB.activarCamposDesgregado()}"/>
+							</p:selectOneMenu>
+							
+							
+							#{"Costo:"}
+							<pe:inputNumber decimalPlaces="2"  decimalSeparator="." minValue="0.00" style="width:190px"  
+								value="#{productoMB.producto.costo}" maxlength="50" required="true"  requiredMessage="Se necesita un costo"  dir="rtl">
+								</pe:inputNumber>
+								
+			
+							#{"Costo Uni.:"}
+							<pe:inputNumber decimalPlaces="2"  decimalSeparator="." minValue="0.00" style="width:190px" 
+							value="#{productoMB.producto.costoUni}" maxlength="50" required="true"  requiredMessage="Se necesita un costo Unitario"  dir="rtl">
+							 <p:ajax event="change" update=":fmReg:lblCstxPsj" listener="#{productoMB.calcularCostxPsj}" />
+							</pe:inputNumber>
+
+						</h:panelGrid>
+						
+						<h:panelGroup id="pnlDesg">
+						<h:panelGrid columns="3" rendered="#{productoMB.bandDesgregado}">
+							
+							<p:outputLabel value="Cantidad:" id="lbl"/>
+							<p:spacer height="0" width="4"/>
+							
+							<p:inputText  style="width:190px;text-transform: uppercase" value="#{productoMB.producto.cantDist}"  required="true" maxlength="50" 
+							requiredMessage="Se necesita una cantidad" >
+							<pe:keyFilter mask="num"/>
+							<p:ajax event="change" update=":fmReg:lblCstxPsj" listener="#{productoMB.calcularCostxPsj}" />
+							</p:inputText>
+							
+							<p:outputLabel value="Cst x Psjro.:" />
+							<p:spacer height="0" width="4"/>
+							<p:outputLabel id="lblCstxPsj" style="width:190px;text-transform: uppercase" value="#{productoMB.producto.costoxPasj}" required="true" maxlength="50" />
+						</h:panelGrid>
+						</h:panelGroup>
+							
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{productoMB.guardarProducto()}"
+									 update=":formListaProducto msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este producto?" header="Eliminar Producto"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Producto: <h:outputText value="#{productoMB.producto.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaProducto :sms"
+						actionListener="#{productoMB.eliminarProducto()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

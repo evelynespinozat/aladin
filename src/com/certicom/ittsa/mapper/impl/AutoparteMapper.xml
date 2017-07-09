@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.AutoparteMapper">
+
+<resultMap id="autoparteResult" type="com.certicom.ittsa.domain.Autoparte">
+	<id column="IdAutoparte" property="idAutoparte"/>
+	<result column="IdAlmacen" property="idAlmacen"/>
+	<result column="IdProveedor" property="idProveedor"/>
+	<result column="IdAutomotor" property="idAutomotor"/>
+	<result column="Descripcion" property="descripcion"/>
+	<result column="Valorizacion" property="valorizacion"/>
+	<result column="Stock" property="stock"/>
+	<result column="KmCambio" property="kmCambio"/>
+	<result column="Estado" property="estado"/>
+</resultMap>
+
+
+</mapper>	

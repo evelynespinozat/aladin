@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Servicio Preventivo" url="servicioPreventivo" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			<!-- cabecera filtro -->
+			<p:panel>
+			  <h:form>
+				<h:panelGrid columns="5">
+					#{"Desde (Fecha):"} 
+						<p:calendar style="width:200px" value="#{servicioPreventivoMB.fechaFiltro}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita selecionar una fecha de inicio">
+						</p:calendar>
+					#{"Tipo Kilometraje:"}
+						 <p:selectOneMenu value="#{servicioPreventivoMB.tipoKilometraje}" style=" width:150px;"
+			        		required="true" requiredMessage="Se necesita un Tipo de Kilometraje"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItem itemLabel="Operaciones" itemValue="O" />
+							<f:selectItem itemLabel="Trafico" itemValue="T" />
+						</p:selectOneMenu>
+						
+					<p:commandButton value="Consultar" update=":formListaBuses :sms" actionListener="#{servicioPreventivoMB.filtrarAutopartes()}" />
+						
+				</h:panelGrid>
+			  </h:form>	
+			</p:panel>
+			<br/>
+				<!-- listado de agencias -->
+			<h:form id="formListaBuses">
+				<p:dataTable widgetVar="dtBuses" var="p" value="#{servicioPreventivoMB.listaBusesCambio}" 
+					emptyMessage="No hay Buses Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Buses Km Vencidos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Fecha" >
+						<h:outputText value="#{p.fecFiltro}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Bus" >
+						<h:outputText value="#{p.numero}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Placa" >
+						<h:outputText value="#{p.placa}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Km. Actual" >
+						<h:outputText value="#{p.recorrido}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Km. Aproximado">
+						<h:outputText value="#{p.kmAproximado}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Piloto" >
+						<h:outputText value="#{p.nombPiloto}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Asignar">
+						<p:commandButton title="Taller" action="#{servicioPreventivoMB.asignarMecanico(p)}" icon="icon-asociarsistemabus"/>
+					</p:column>
+					
+					
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

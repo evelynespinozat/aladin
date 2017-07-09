@@ -1,0 +1,1266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<!-- css especifico -->
+		<style type="text/css">
+/*
+    		.ui-fileupload .start {
+        		display: none;
+    		}
+    		.ui-fileupload .cancel {
+        		display: none;
+    		}
+    		*/
+.ui-fileupload .progress {
+	display: none;
+}
+</style>
+
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Administracion" url="#" />
+					<p:menuitem value="Gestion de Terramoza" url="terramoza" />
+				</p:breadCrumb>
+			</h:form>
+
+
+			<br />
+			<!-- sms general -->
+			<p:messages id="sms" showDetail="false" showSummary="true"
+				closable="true" />
+
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nueva Terramoza" icon="icon-add"
+						update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+						actionListener="#{terramozaMB.nuevoTerramoza()}" />
+				</p:toolbarGroup>
+			</h:form>
+
+			<!-- listado de Terramozas -->
+			<h:form id="formListaPiloto">
+				<p:dataTable widgetVar="dtPiloto" var="p"
+					value="#{terramozaMB.listaTerramoza}"
+					filteredValue="#{terramozaMB.listaFiltroTerramoza}"
+					emptyMessage="No hay Terramozas Disponibles." rowIndexVar="nro"
+					paginator="true" rows="5" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Terramoza</f:facet>
+
+					<p:column headerText="Orden" width="25" style="width:3%">
+						#{nro+1}
+					</p:column>
+
+
+
+					<p:column style="width:20%;text-align: center;"
+						headerText="Apellidos" filterStyleClass="mayuscula"
+						filterBy="#{p.apellidos}" filterMatchMode="contains"
+						filterStyle="width:100px;">
+						<h:outputText value="#{p.apellidos}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Nombre"
+						filterStyleClass="mayuscula" filterBy="#{p.nombres}"
+						filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.nombres}" />
+					</p:column>
+
+					<p:column style="width:20%;text-align: center;" headerText="DNI"
+						filterStyleClass="mayuscula" filterBy="#{p.dNI}"
+						filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.dNI}" />
+					</p:column>
+
+
+
+					<p:column style="width:20%;text-align: center;"
+						headerText="Fecha Nacimiento">
+						<h:outputText value="#{p.fNacimiento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:10%;text-align: center;"
+						headerText="Telefono" filterStyleClass="mayuscula"
+						filterBy="#{p.telefono}" filterMatchMode="contains"
+						filterStyle="width:50px;">
+						<h:outputText value="#{p.telefono}" />
+					</p:column>
+
+					<p:column style="width:20%;text-align: center;"
+						headerText="Fecha Ingreso">
+						<h:outputText value="#{p.fIngreso}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:20%;text-align: center;"
+						headerText="Condicion" filterStyleClass="mayuscula"
+						filterBy="#{p.condicion}" filterMatchMode="contains"
+						filterStyle="width:100px;">
+						<h:outputText value="#{p.condicion}" />
+					</p:column>
+
+					<p:column style="width:20%;text-align: center;"
+						headerText="Residencia">
+						<h:outputText value="#{p.residencia}" />
+					</p:column>
+
+					<p:column headerText="Imagen">
+						<h:graphicImage
+							value="/imagen/servletWill/?codigo=T#{p.idTerramoza}" width="60"
+							height="60" />
+					</p:column>
+
+					<p:column style="width:7%" headerText="Estado"
+						filterStyleClass="mayuscula" filterBy="#{p.estadoString}"
+						filterMatchMode="exact" filterOptions="#{terramozaMB.listEstados}"
+						filterStyle="width:50px;">
+						<p:commandLink update="@form :sms"
+							actionListener="#{terramozaMB.cambiarEstado(p)}">
+							<h:graphicImage
+								value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}"
+								title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+
+					</p:column>
+
+					<ui:remove>
+						<p:column headerText="Act/Desc" filterStyleClass="mayuscula"
+							filterBy="#{p.estadoString}" filterMatchMode="exact"
+							filterOptions="#{terramozaMB.listEstados}"
+							filterStyle="width:50px;">
+							<h:outputText value="#{p.estadoString}" />
+						</p:column>
+					</ui:remove>
+
+					<ui:remove>
+						<p:column style="width:7%" headerText="Estado">
+							<p:commandLink update="@form :sms"
+								actionListener="#{terramozaMB.cambiarEstado(p)}">
+								<h:graphicImage
+									value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}"
+									title="#{p.estado?'Activo':'Bloqueado'}" />
+							</p:commandLink>
+						</p:column>
+					</ui:remove>
+
+					<p:column headerText="Editar/Elim./Impr."
+						style="width:20%;text-align: center">
+
+						<p:commandButton id="cbtEditar" title="Editar"
+							update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+							icon="icon-edit"
+							actionListener="#{terramozaMB.editarTerramoza(p)}" />
+						<p:tooltip for="cbtEditar" value="Editar" />
+
+
+						<ui:remove>
+							<p:commandButton id="cbtEliminar" disabled="true"
+								title="Eliminar" oncomplete="dlgEliminar.show();"
+								update=":dlgDetEliminar" icon="icon-delete">
+								<f:setPropertyActionListener target="#{terramozaMB.terramoza}"
+									value="#{p}" />
+							</p:commandButton>
+							<p:tooltip for="cbtEliminar" value="Eliminar" />
+						</ui:remove>
+
+						<ui:remove>
+							<p:commandButton title="Imprimir Ficha Personal"
+								icon="icon-print" actionListener="#{terramozaMB.generarPDF(p)}" />
+						</ui:remove>
+
+						<p:commandLink ajax="false" id="Imprimir"
+							style="padding: 8px 2px 0px 2px ;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							   color: #1C190A;"
+							action="#{terramozaMB.generarPDF(p)}">
+							<p:graphicImage value="/resources/img/icon-printer.png" />
+						</p:commandLink>
+						<p:tooltip for="Imprimir" value="Imprimir" />
+
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+			<!-- #############    Dialogos      ################ -->
+
+			<!-- dialogo nuevo/editar perfil -->
+
+			<p:dialog header="#{terramozaMB.titulo}" widgetVar="dlgNuevo"
+				appendToBody="true" position="left,top" resizable="false"
+				id="dlgDetNuevo" modal="true">
+
+				<p:messages showDetail="false" showSummary="true" id="msgNuevo"
+					closable="true" />
+
+				<h:panelGrid columns="2">
+
+					<h:form id="frmGneral" enctype="multipart/form-data">
+						<p:panel header="Datos de la Terramoza">
+
+							<p:accordionPanel>
+								<p:tab title="Datos Personales">
+									<h:panelGrid columns="2">  
+						        	#{"Apellidos: (*)"}
+									<p:inputText style="width:200px"
+											value="#{terramozaMB.terramoza.apellidos}" maxlength="30"
+											styleClass="mayuscula" required="true"
+											requiredMessage="Ingrese el apellido paterno" />
+									
+						            #{"Nombres: (*)"}
+									<p:inputText style="width:200px"
+											value="#{terramozaMB.terramoza.nombres}" required="true"
+											styleClass="mayuscula"
+											requiredMessage="Se necesita un nombre" />
+																		
+									#{"DNI: (*)"}
+									<p:inputText style="width:200px"
+											value="#{terramozaMB.terramoza.dNI}" maxlength="8"
+											required="true" requiredMessage="Se necesita un DNI"
+											dir="rtl">
+											<pe:keyFilter mask="num" />
+										</p:inputText>
+									
+									#{"Sexo: (*)"}						
+									<p:selectOneMenu style="width:200px"
+											value="#{terramozaMB.terramoza.sexo}">
+											<f:selectItem itemLabel="Femenino" itemValue="F" />
+											<f:selectItem itemLabel="Masculino" itemValue="M" />
+										</p:selectOneMenu>
+									
+									#{"Fecha Nacimiento: (*)"}
+									<p:calendar value="#{terramozaMB.terramoza.fNacimiento}"
+											mode="popup" showOn="button" locale="es" pattern="dd/MM/yyyy"
+											readOnlyInputText="false" navigator="true"
+											yearRange="c-74:c+74" required="true"
+											requiredMessage="ingrese la fecha de nacimiento">
+										</p:calendar>
+									
+									#{"Telefono:"}
+									<p:inputText style="width:200px"
+											value="#{terramozaMB.terramoza.telefono}" maxlength="20"
+											dir="rtl">
+											<pe:keyFilter mask="num" />
+										</p:inputText>
+									
+									#{"Movil: (*)"}
+									<p:inputText style="width:200px"
+											value="#{terramozaMB.terramoza.nroCell}" maxlength="10"
+											dir="rtl">
+											<pe:keyFilter mask="num" />
+										</p:inputText>
+									
+									#{"Correo:"}
+									<p:inputText style="width:200px"
+											value="#{terramozaMB.terramoza.correo}" />
+
+
+									</h:panelGrid>
+								</p:tab>
+								<p:tab title="Datos Ubicacion">
+									<h:panelGrid columns="2"> 
+						            #{"Departamento: (*)"}						
+									<p:selectOneMenu style="width:150px"
+											value="#{terramozaMB.sdepartamento}" required="true"
+											requiredMessage="Seleccione un Departamento">
+											<f:selectItem itemLabel="Seleccione..." itemValue="" />
+											<f:selectItems var="ag"
+												value="#{terramozaMB.listaDepartamentos}"
+												itemValue="#{ag.sdepartamento}"
+												itemLabel="#{ag.sdepartamento}" />
+											<p:ajax update="cboProvincias"
+												listener="#{terramozaMB.listarProvincias()}" event="change" />
+										</p:selectOneMenu>
+									
+									#{"Provincia: (*)"}						
+									<p:selectOneMenu id="cboProvincias" style="width:150px"
+											value="#{terramozaMB.sprovincia}" required="true"
+											requiredMessage="Seleccione una Provincia">
+											<f:selectItem itemLabel="Seleccione..." itemValue="" />
+											<f:selectItems var="ag"
+												value="#{terramozaMB.listaProvincias}"
+												itemValue="#{ag.sprovincia}" itemLabel="#{ag.sprovincia}" />
+											<p:ajax update="cboDistritos"
+												listener="#{terramozaMB.listarDistritos()}" event="change" />
+										</p:selectOneMenu>
+									
+									#{"Distritos: (*)"}						
+									<p:selectOneMenu id="cboDistritos" style="width:150px"
+											value="#{terramozaMB.terramoza.sid_ubigeo}" required="true"
+											requiredMessage="Seleccione un Distrito">
+											<f:selectItem itemLabel="Seleccione..." itemValue="" />
+											<f:selectItems var="ag" value="#{terramozaMB.listaDistritos}"
+												itemValue="#{ag.sid_ubigeo}" itemLabel="#{ag.sdistrito}" />
+										</p:selectOneMenu>
+								
+									#{"Direccion: (*)"}
+									<p:inputText style="width:200px"
+											value="#{terramozaMB.terramoza.residencia}"
+											styleClass="mayuscula" required="true"
+											requiredMessage="Se necesita una residencia" />
+
+									</h:panelGrid>
+								</p:tab>
+								<p:tab title="Datos Corporativos">
+									<h:panelGrid columns="2">  						           
+		
+									#{"Fecha Ingreso: (*)"}
+									<p:calendar value="#{terramozaMB.terramoza.fIngreso}"
+											pattern="dd/MM/yyyy" locale="es" navigator="true"
+											required="true"
+											requiredMessage="Se necesita una fecha de ingreso" />
+									
+									#{"Cargo:"}
+									<p:inputText style="width:200px"
+											value="#{terramozaMB.terramoza.ocupacion}"
+											styleClass="mayuscula" />
+									
+									#{"Grado Instruccion: (*)"}
+									<p:selectOneMenu style="width:200px"
+											value="#{terramozaMB.terramoza.terminal}">
+											<f:selectItem itemLabel="Primaria" itemValue="PRIMARIA" />
+											<f:selectItem itemLabel="Secundaria" itemValue="SECUNDARIA" />
+											<f:selectItem itemLabel="Superior Tecnica"
+												itemValue="TECNICA" />
+											<f:selectItem itemLabel="Superior Universitaria"
+												itemValue="UNIVERSITARIA" />
+										</p:selectOneMenu>
+									
+									#{"Condicion: (*)"}
+									<p:selectOneMenu style="width:200px"
+											value="#{terramozaMB.terramoza.condicion}">
+											<f:selectItem itemLabel="Prueba" itemValue="PRUEBA" />
+											<f:selectItem itemLabel="Contratado" itemValue="CONTRATADO" />
+											<f:selectItem itemLabel="Vetado" itemValue="VETADO" />
+										</p:selectOneMenu>
+									</h:panelGrid>
+								</p:tab>
+							</p:accordionPanel>
+
+							<h:panelGrid columns="4">
+							#{"Imagen: (*)"}
+							<p:fileUpload label="seleccionar" cancelLabel="Cancelar"
+									uploadLabel="Subir"
+									fileUploadListener="#{terramozaMB.subirImagen}" mode="advanced"
+									dragDropSupport="false" style="font-size:10px;"
+									update="pnImagen :msgNuevo" sizeLimit="10000000" fileLimit="1"
+									allowTypes="/(\.|\/)(jpe?g|png)$/" /> 
+							
+							#{"Foto:"}
+							<h:panelGroup id="pnImagen">
+									<p:graphicImage value="#{loginMB.terramoza.archivoFoto}"
+										rendered="#{not terramozaMB.editarImagen}" cache="false"
+										width="80" height="80" />
+									<p:graphicImage
+										value="/imagen/servletWill/?codigo=#{terramozaMB.codigo_Obtener_Foto}"
+										rendered="true" cache="false" width="80" height="80" />
+								</h:panelGroup>
+							</h:panelGrid>
+
+
+							<br />
+							<p:commandButton value="Guardar"
+								actionListener="#{terramozaMB.guardarTerramoza()}"
+								update=":formListaPiloto :msgNuevo :pnAdicional"
+								icon="icon-disk" />
+
+							<p:commandButton type="button" value="Cerrar"
+								onclick="dlgNuevo.hide();" icon="icon-cancel" />
+						</p:panel>
+					</h:form>
+
+					<h:panelGroup id="pnAdicional">
+						<p:tabView id="tabPiloto"
+							rendered="#{terramozaMB.terramozaGuardado}">
+							<p:tab id="tab1" title="Historial Laboral">
+								<h:form id="formHL">
+									<h:panelGrid columns="4" width="700">  
+           						#{"Empresa: (*)"}
+           						<p:inputText
+											value="#{terramozaMB.historial.ultimaEmpresa}"
+											styleClass="mayuscula"
+											requiredMessage="Debe registrar el nombre de la empresa"
+											required="true" />
+           						
+           						#{"Ultimo cargo: (*)"}
+           						<p:inputText
+											value="#{terramozaMB.historial.ultimoCargo}"
+											styleClass="mayuscula"
+											requiredMessage="Debe registra el  cargo" required="true" />
+           						
+           						#{"Anio: (*)"}
+           						<p:inputMask
+											value="#{terramozaMB.historial.anioUltimaEmpresa}"
+											mask="9999" requiredMessage="Debe registrar el anio"
+											required="true" />
+           						
+           						#{"Mes Inicio: (*)"}
+           						<p:selectOneMenu style="width:200px"
+											value="#{terramozaMB.historial.mesIniUltimaEmpresa}"
+											requiredMessage="Debe registrar el mes de inicio"
+											required="true">
+											<f:selectItem itemLabel="ENERO" itemValue="1" />
+											<f:selectItem itemLabel="FEBRERO" itemValue="2" />
+											<f:selectItem itemLabel="MARZO" itemValue="3" />
+											<f:selectItem itemLabel="ABRIL" itemValue="4" />
+											<f:selectItem itemLabel="MAYO" itemValue="5" />
+											<f:selectItem itemLabel="JUNIO" itemValue="6" />
+											<f:selectItem itemLabel="JULIO" itemValue="7" />
+											<f:selectItem itemLabel="AGOSTO" itemValue="8" />
+											<f:selectItem itemLabel="SETIEMBRE" itemValue="9" />
+											<f:selectItem itemLabel="OCTUBRE" itemValue="10" />
+											<f:selectItem itemLabel="NOVIEMBRE" itemValue="11" />
+											<f:selectItem itemLabel="DICIEMBRE" itemValue="12" />
+										</p:selectOneMenu>
+								
+           						#{"Anio Fin: (*)"}
+           						<p:inputMask
+											value="#{terramozaMB.historial.anioFinUltimaEmpresa}"
+											mask="9999" requiredMessage="Debe registrar el año de Fin"
+											required="true" />
+           						
+           						#{"Mes Fin: (*)"}
+           						<p:selectOneMenu style="width:200px"
+											value="#{terramozaMB.historial.mesFinUltimaEmpresa}"
+											requiredMessage="Debe registrar el mes de Fin"
+											required="true">
+											<f:selectItem itemLabel="ENERO" itemValue="1" />
+											<f:selectItem itemLabel="FEBRERO" itemValue="2" />
+											<f:selectItem itemLabel="MARZO" itemValue="3" />
+											<f:selectItem itemLabel="ABRIL" itemValue="4" />
+											<f:selectItem itemLabel="MAYO" itemValue="5" />
+											<f:selectItem itemLabel="JUNIO" itemValue="6" />
+											<f:selectItem itemLabel="JULIO" itemValue="7" />
+											<f:selectItem itemLabel="AGOSTO" itemValue="8" />
+											<f:selectItem itemLabel="SETIEMBRE" itemValue="9" />
+											<f:selectItem itemLabel="OCTUBRE" itemValue="10" />
+											<f:selectItem itemLabel="NOVIEMBRE" itemValue="11" />
+											<f:selectItem itemLabel="DICIEMBRE" itemValue="12" />
+										</p:selectOneMenu>
+								
+           						#{"Modalidad Contrato: (*)"}
+           						<p:inputText
+											value="#{terramozaMB.historial.modalidadContrato}"
+											styleClass="mayuscula"
+											requiredMessage="Debe registrar la modalidad de contrato"
+											required="true" />
+           						
+           						#{"Nombre Jefe:"}
+           						<p:inputText
+											value="#{terramozaMB.historial.nombreUltimoJefe}"
+											styleClass="mayuscula" />
+           						
+           						#{"Remuneracion: (*)"}
+           						<p:inputText
+											value="#{terramozaMB.historial.remuneracionUltimaEmpresa}"
+											maxlength="6" dir="rtl">
+											<pe:keyFilter mask="num" />
+										</p:inputText>
+           						
+           						#{"Telefono:"}
+           						<p:inputText
+											value="#{terramozaMB.historial.telefonoUltimaEmpresa}"
+											dir="rtl">
+											<pe:keyFilter mask="num" />
+										</p:inputText>
+           						
+           						#{"Motivo cese: (*)"} 
+           						<p:selectOneMenu
+											value="#{terramozaMB.historial.motivoCese}" required="true"
+											requiredMessage="debe registrar el motivo de cese">
+											<f:selectItem itemLabel="Renuncia voluntaria"
+												itemValue="RENUNCIA" />
+											<f:selectItem itemLabel="Fin de contrato"
+												itemValue="FIN-CONTRATO" />
+											<f:selectItem itemLabel="Otros" itemValue="OTROS" />
+										</p:selectOneMenu>
+								
+								#{"Observacion:"}
+								<p:inputTextarea value="#{terramozaMB.historial.observacion}"
+											styleClass="mayuscula">
+										</p:inputTextarea>
+
+									</h:panelGrid>
+									<p:commandButton value="Guardar datos laborales"
+										update="formHL :msgNuevo :tabPiloto:formHistorial"
+										actionListener="#{terramozaMB.guardarHistorial()}" />
+								</h:form>
+								<br />
+								<h:form id="formHistorial">
+									<p:dataTable widgetVar="dtHistorial" var="h"
+										value="#{terramozaMB.listaHistorial}"
+										emptyMessage="No hay Evaluaciones Disponibles."
+										rowIndexVar="nro" style="FONT-SIZE: 10px; width: 600px; ">
+
+										<f:facet name="header">Historial Laboral</f:facet>
+
+										<p:column headerText="Orden" width="25" style="width:3%">
+										#{nro+1}
+									</p:column>
+
+										<p:column style="width:20%" headerText="Empresa">
+											<h:outputText value="#{h.ultimaEmpresa}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Mes Inicio">
+											<h:outputText value="#{h.mesIniUltimaEmpresa}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Anio Inicio">
+											<h:outputText value="#{h.anioUltimaEmpresa}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Mes Fin">
+											<h:outputText value="#{h.mesFinUltimaEmpresa}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Anio Fin">
+											<h:outputText value="#{h.anioFinUltimaEmpresa}" />
+										</p:column>
+
+										<p:column style="width:200px" headerText="Cargo">
+											<h:outputText value="#{h.ultimoCargo}" />
+										</p:column>
+
+										<p:column style="width:20%" headerText="Remuneracion">
+											<h:outputText value="#{h.remuneracionUltimaEmpresa}" />
+										</p:column>
+
+										<p:column style="width:25%" headerText="Observacion">
+											<h:outputText value="#{h.observacion}" />
+										</p:column>
+
+										<p:column headerText="Eliminar"
+											style="width:10%;text-align: center">
+											<p:commandButton value="Eliminar"
+												oncomplete="dlgEliminarHistorial.show();"
+												update=":dlgDetEliminarHistorial" icon="icon-delete">
+												<f:setPropertyActionListener
+													target="#{terramozaMB.historial}" value="#{h}" />
+											</p:commandButton>
+										</p:column>
+
+									</p:dataTable>
+									<br />
+
+
+								</h:form>
+							</p:tab>
+
+
+							<p:tab id="tab2" title="Datos Familiares">
+								<h:form id="formdf">
+									<h:panelGrid columns="2">  
+            					
+            					#{"Apellidos: (*)"}
+            					<p:inputText value="#{terramozaMB.datosF.apellidos}"
+											styleClass="mayuscula" required="true"
+											requiredMessage="ingrese los apellidos" />
+            					
+            					#{"Nombres: (*)"}
+            					<p:inputText value="#{terramozaMB.datosF.nombres}"
+											styleClass="mayuscula" required="true"
+											requiredMessage="ingrese el nombre" />
+            					
+            					#{"DNI: (*)"} 
+            					<p:inputText value="#{terramozaMB.datosF.dni}"
+											maxlength="8" required="true"
+											requiredMessage="ingrese el dni" dir="rtl">
+											<pe:keyFilter mask="num" />
+										</p:inputText>
+            					
+            					#{"Parentesco: (*)"}
+	            				<p:selectOneMenu style="width:160px"
+											value="#{terramozaMB.datosF.parentesco}" required="true"
+											requiredMessage="Seleccione un parentesco">
+											<f:selectItem itemLabel="PADRES" itemValue="PADRES" />
+											<f:selectItem itemLabel="HERMANOS" itemValue="HERMANOS" />
+											<f:selectItem itemLabel="HIJO(A)" itemValue="HIJO(A)" />
+											<f:selectItem itemLabel="ESPOSO(A)" itemValue="ESPOSO(A)" />
+											<f:selectItem itemLabel="OTROS" itemValue="OTROS" />
+										</p:selectOneMenu>
+            					
+            					#{"Fec. Nacimiento: (*)"}
+            					<p:calendar value="#{terramozaMB.datosF.fechaNac}"
+											mode="popup" showOn="button" locale="es" pattern="dd/MM/yyyy"
+											readOnlyInputText="false" navigator="true"
+											yearRange="c-74:c+74" required="true"
+											requiredMessage="ingrese la fecha">
+										</p:calendar>
+            					
+            					
+            					#{"Nro. Contacto:"}
+            					<p:inputText value="#{terramozaMB.datosF.nroContacto}"
+											dir="rtl">
+											<pe:keyFilter mask="num" />
+										</p:inputText>
+
+									</h:panelGrid>
+									<p:commandButton value="Guardar datos Familiares"
+										style="margin-left:300px"
+										update="formdf :msgNuevo :tabPiloto:formDatosF123"
+										actionListener="#{terramozaMB.guardarDatosF()}" />
+								</h:form>
+								<br />
+								<h:form id="formDatosF123">
+									<p:dataTable widgetVar="dtDatosF" var="dat"
+										value="#{terramozaMB.listaDatosF}"
+										emptyMessage="No hay Evaluaciones Disponibles."
+										rowIndexVar="nro" style="FONT-SIZE: 10px; width: 600px; ">
+
+										<f:facet name="header">Lista Familiares</f:facet>
+
+										<p:column headerText="Orden" width="25" style="width:3%">
+										#{nro+1}
+									</p:column>
+
+										<p:column style="width:15%" headerText="Parentesco">
+											<h:outputText value="#{dat.parentesco}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="DNI">
+											<h:outputText value="#{dat.dni}" />
+										</p:column>
+
+										<p:column style="width:30%" headerText="Nombre">
+											<h:outputText value="#{dat.apellidos} #{dat.nombres}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Nro Contacto">
+											<h:outputText value="#{dat.nroContacto}" />
+										</p:column>
+
+
+										<p:column headerText="Eliminar"
+											style="width:10%;text-align: center">
+											<p:commandButton value="Eliminar" update="@form"
+												actionListener="#{terramozaMB.eliminarDatosF(dat)}"
+												icon="icon-delete" />
+
+										</p:column>
+
+									</p:dataTable>
+									<br />
+
+
+								</h:form>
+							</p:tab>
+
+							<p:tab id="tab3" title="Evaluaciones">
+								<h:form id="formEvaluacion">
+									<h:panelGrid columns="2">
+        					#{"Tipo: (*)"}
+        					<p:selectOneMenu style="width:200px"
+											value="#{terramozaMB.evaluacion.nombre}" required="true"
+											requiredMessage="Debe seleccionar un tipo">
+											<f:selectItem itemLabel="PRACTICA BUS"
+												itemValue="practica bus" />
+											<f:selectItem itemLabel="TECNICO" itemValue="tecnico" />
+											<f:selectItem itemLabel="MEDICO" itemValue="medico" />
+										</p:selectOneMenu>
+							
+							#{"Evaluacion: (*)"}
+								<p:fileUpload label="seleccionar" cancelLabel="Cancelar"
+											uploadLabel="Subir"
+											fileUploadListener="#{terramozaMB.subirEvaluacion}"
+											mode="advanced" dragDropSupport="false"
+											invalidSizeMessage="El archivo es muy pesado"
+											invalidFileMessage="solo se permiten archivos pdf"
+											update=":msgNuevo formEvaluacion:btnSvEval"
+											sizeLimit="30000000" fileLimit="1"
+											allowTypes="/(\.|\/)(pdf)$/"
+											style="width:330px; font-size:10px;" required="true"
+											requiredMessage="Seleccione el documento" /> 
+            				
+            				#{"Observacion:"}
+            				<p:inputTextarea
+											value="#{terramozaMB.evaluacion.observacion}" cols="25"
+											rows="3" style="width:330px; height:100px;" />
+
+									</h:panelGrid>
+									<p:commandButton id="btnSvEval"
+										disabled="#{terramozaMB.actBtnEvaluacion}"
+										value="Guardar Evaluaciones" style="margin-left:300px"
+										update=":tabPiloto:formEvaluacion123, :tabPiloto:formEvaluacion, :msgNuevo"
+										actionListener="#{terramozaMB.guardarEvaluacion()}" />
+
+								</h:form>
+								<br />
+
+
+								<h:form id="formEvaluacion123">
+									<p:dataTable widgetVar="dtEvaluacion" var="eva"
+										value="#{terramozaMB.listaEvaluacion}"
+										emptyMessage="No hay Evaluaciones Disponibles."
+										rowIndexVar="nro" style="FONT-SIZE: 10px; width: 600px; ">
+
+										<f:facet name="header">Lista Evaluaciones</f:facet>
+
+										<p:column headerText="Orden" width="25" style="width:3%">
+										#{nro+1}
+									</p:column>
+
+										<p:column style="width:15%" headerText="Nombre">
+											<h:outputText value="#{eva.nombre}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Observacion">
+											<h:outputText value="#{eva.observacion}" />
+										</p:column>
+
+										<p:column headerText="Documento"
+											style="width:15%;text-align: center">
+											<p:commandButton id="downloadLink" ajax="false"
+												icon="icono-pdf"
+												actionListener="#{terramozaMB.recuperarEvaluacion(eva)}">
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="Eliminar"
+											style="width:10%;text-align: center">
+											<p:commandButton value="" update="@form"
+												actionListener="#{terramozaMB.eliminarEvaluacion(eva)}"
+												icon="icon-delete" />
+
+										</p:column>
+
+									</p:dataTable>
+									<br />
+
+
+								</h:form>
+							</p:tab>
+
+							<p:tab id="tab4" title="Documentos">
+
+								<h:form id="frmDocu">
+
+									<br />
+									<h:panelGrid columns="2">  
+            						#{"Nombre: (*)"}
+            						<p:inputText value="#{terramozaMB.documento.nombre}"
+											styleClass="mayuscula"
+											requiredMessage="Debe registrar un nombre" required="true" />
+            						
+            						#{"Fecha Caducidad: (*)"}
+            						<p:calendar
+											value="#{terramozaMB.documento.fechaCaducidad}" mode="popup"
+											showOn="button" locale="es" pattern="dd/MM/yyyy"
+											style="width:150px;" readOnlyInputText="false"
+											navigator="true" yearRange="c-20:c+50" required="true"
+											requiredMessage="ingrese la fecha de caducidad">
+										</p:calendar>
+            					
+            						#{"Documento: (*)"}
+									<p:fileUpload label="seleccionar" cancelLabel="Cancelar"
+											uploadLabel="Subir"
+											fileUploadListener="#{terramozaMB.subirDocumento}"
+											mode="advanced" dragDropSupport="false"
+											update=":msgNuevo frmDocu:btnSvDoc" sizeLimit="30000000"
+											fileLimit="1" allowTypes="/(\.|\/)(pdf)$/"
+											style="width:330px; font-size:10px;" /> 
+            					
+            						#{"Observacion:"} 
+            						<p:inputTextarea
+											value="#{terramozaMB.documento.observacion}" cols="25"
+											rows="3" />
+
+									</h:panelGrid>
+									<p:commandButton id="btnSvDoc"
+										disabled="#{terramozaMB.actBtnDocumentos}"
+										value="Guardar Documentos" style="margin-left:300px"
+										update=":tabPiloto:frmDocumento123, :tabPiloto:frmDocu , :msgNuevo"
+										actionListener="#{terramozaMB.guardarDocumentos()}" />
+
+								</h:form>
+								<br />
+								<h:form id="frmDocumento123">
+									<p:dataTable widgetVar="dtDocumento" var="doc"
+										value="#{terramozaMB.listaDocumentos}"
+										emptyMessage="No hay Documentos Disponibles."
+										rowIndexVar="nro" style="FONT-SIZE: 10px; width: 600px; ">
+
+										<f:facet name="header">Lista Documentos</f:facet>
+
+										<p:column headerText="Orden" width="25" style="width:3%">
+										#{nro+1}
+									</p:column>
+
+										<p:column style="width:15%" headerText="Nombre">
+											<h:outputText value="#{doc.nombre}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Observacion">
+											<h:outputText value="#{doc.observacion}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Fecha caducidad">
+											<h:outputText value="#{doc.fechaCaducidad}">
+												<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+											</h:outputText>
+										</p:column>
+
+										<p:column headerText="Documento"
+											style="width:15%;text-align: center">
+											<p:commandButton id="downloadLink" ajax="false"
+												icon="icono-pdf"
+												actionListener="#{terramozaMB.recuperarDocumuento(doc)}">
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="Eliminar"
+											style="width:10%;text-align: center">
+											<p:commandButton value="Eliminar" update="@form"
+												actionListener="#{terramozaMB.eliminarDocumento(doc)}"
+												icon="icon-delete" />
+
+										</p:column>
+
+									</p:dataTable>
+									<br />
+
+								</h:form>
+							</p:tab>
+
+
+							<p:tab id="tab5" title="Formacion">
+								<h:form id="formForma">
+
+									<h:panelGrid columns="2">  
+           						#{"Tipo Formacion: (*)"}
+           						<p:selectOneMenu
+											value="#{terramozaMB.formacion.tipoFormacion}"
+											style="width:180px" required="true"
+											requiredMessage="debe seleccionar una formacion">
+											<f:selectItem itemLabel="Academica" itemValue="ACADEMICA" />
+											<f:selectItem itemLabel="Tecnica" itemValue="TECNICA" />
+										</p:selectOneMenu>
+           						
+           						#{"Nivel Academico: (*)"}
+           						<p:inputText
+											value="#{terramozaMB.formacion.nivelAcademico}"
+											styleClass="mayuscula"
+											requiredMessage="Debe registra un nivel academico"
+											required="true" />
+           						
+           						#{"Anio: (*)"}
+           						<p:inputMask value="#{terramozaMB.formacion.anio}"
+											requiredMessage="Debe registrar un anio" required="true"
+											mask="9999"></p:inputMask> 
+           						
+           						
+           						#{"Especialidad:"} 
+           						<p:inputText
+											value="#{terramozaMB.formacion.especialidad}"
+											styleClass="mayuscula" />
+           						
+           						#{"Titulo:"} 
+           						<p:inputText value="#{terramozaMB.formacion.titulo}"
+											styleClass="mayuscula" />
+           						
+           						#{"Centro Estudios: (*)"} 
+           						<p:inputText
+											value="#{terramozaMB.formacion.centroEstudios}"
+											styleClass="mayuscula"
+											requiredMessage="Debe registrar un centro de estudios"
+											required="true" />
+           						
+           						#{"Documento: (*)"}
+                 				<p:fileUpload label="seleccionar"
+											cancelLabel="Cancelar" uploadLabel="Subir"
+											fileUploadListener="#{terramozaMB.subirFormacion}"
+											mode="advanced" dragDropSupport="false"
+											invalidSizeMessage="El archivo es muy pesado"
+											invalidFileMessage="solo se permiten archivos pdf"
+											update=":msgNuevo formForma:btnFForm" sizeLimit="30000000"
+											fileLimit="1" allowTypes="/(\.|\/)(pdf)$/"
+											style="width:330px; font-size:10px;" required="true"
+											requiredMessage="Seleccione el documento" />
+
+									</h:panelGrid>
+
+									<p:commandButton id="btnFForm"
+										disabled="#{terramozaMB.actBtnFormacion}"
+										value="Guardar Formacion" style="margin-left:300px"
+										update=":tabPiloto:formForma123, :tabPiloto:formForma, :msgNuevo"
+										actionListener="#{terramozaMB.guardarFormacion()}" />
+
+								</h:form>
+
+								<br />
+								<h:form id="formForma123">
+									<p:dataTable id="formFor2" widgetVar="dtFormacion" var="forma"
+										value="#{terramozaMB.listaFormacion}"
+										emptyMessage="No hay Formaciones Disponibles."
+										rowIndexVar="nro" style="FONT-SIZE: 10px; width: 600px; ">
+
+										<f:facet name="header">Lista Formacion Educativa</f:facet>
+
+										<p:column headerText="Orden" width="25" style="width:3%">
+										#{nro+1}
+									</p:column>
+
+										<p:column style="width:15%" headerText="Tipo Formacion">
+											<h:outputText value="#{forma.tipoFormacion}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Nivel Academico">
+											<h:outputText value="#{forma.nivelAcademico}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Anio">
+											<h:outputText value="#{forma.anio}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Titulo">
+											<h:outputText value="#{forma.titulo}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Centro Estudios">
+											<h:outputText value="#{forma.centroEstudios}" />
+										</p:column>
+
+										<p:column headerText="Documento"
+											style="width:15%;text-align: center">
+											<p:commandButton id="downloadLink" ajax="false"
+												icon="icono-pdf"
+												actionListener="#{terramozaMB.recuperarFormacion(forma)}">
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="Eliminar"
+											style="width:10%;text-align: center">
+											<p:commandButton value="Eliminar" update="@form"
+												actionListener="#{terramozaMB.eliminarFormacion(forma)}"
+												icon="icon-delete" />
+
+										</p:column>
+
+									</p:dataTable>
+
+								</h:form>
+							</p:tab>
+
+							<p:tab id="tab6" title="Capacitacion">
+								<h:form id="formCapa">
+									<h:panelGrid columns="2">  
+	           						#{"Curso: (*)"}
+	           						<p:inputText value="#{terramozaMB.capacitacion.curso}"
+											styleClass="mayuscula"
+											requiredMessage="Debe registrar la ultima empresa donde trabajo"
+											required="true" />
+	           						
+	           						#{"Fecha: (*)"}
+	           						<p:calendar value="#{terramozaMB.capacitacion.fecha}"
+											mode="popup" showOn="button" locale="es" pattern="dd/MM/yyyy"
+											readOnlyInputText="false" navigator="true"
+											yearRange="c-20:c+5" required="true"
+											requiredMessage="ingrese la fecha de capacitacion">
+										</p:calendar>
+									
+								
+	           						#{"Titulo:"}
+	           						<p:inputText
+											value="#{terramozaMB.capacitacion.titulo}"
+											styleClass="mayuscula" />
+	           						
+	           						#{"Centro de Estudios: (*)"}
+	           						<p:inputText
+											value="#{terramozaMB.capacitacion.centroEstudios}"
+											styleClass="mayuscula"
+											requiredMessage="Debe registrar un centro de estudios"
+											required="true" />
+	
+									#{""}
+	                 				<p:fileUpload label="seleccionar"
+											cancelLabel="Cancelar" uploadLabel="Subir"
+											fileUploadListener="#{terramozaMB.subirCapacitacion}"
+											mode="advanced" dragDropSupport="false"
+											invalidSizeMessage="El archivo es muy pesado"
+											invalidFileMessage="solo se permiten archivos pdf"
+											update=":msgNuevo formCapa:btnFCap" sizeLimit="30000000"
+											fileLimit="1" allowTypes="/(\.|\/)(pdf)$/"
+											style="width:330px; font-size:10px;" required="true"
+											requiredMessage="Seleccione el documento" />
+
+									</h:panelGrid>
+
+									<p:commandButton id="btnFCap"
+										disabled="#{terramozaMB.actBtnCapacitacion}"
+										value="Guardar Capacitacion" style="margin-left:300px"
+										update=":tabPiloto:formCapacitacion123, :tabPiloto:formCapa, :msgNuevo"
+										actionListener="#{terramozaMB.guardarCapacitacion()}" />
+
+								</h:form>
+								<br />
+								<h:form id="formCapacitacion123">
+									<p:dataTable widgetVar="dtCapacitacion" var="cap"
+										value="#{terramozaMB.listaCapacitacion}"
+										emptyMessage="No hay Capacitacion Disponibles."
+										rowIndexVar="nro" style="FONT-SIZE: 10px; width: 600px; ">
+
+										<f:facet name="header">Lista Capacitacion</f:facet>
+
+										<p:column headerText="Orden" width="25" style="width:3%">
+										#{nro+1}
+									</p:column>
+
+										<p:column style="width:15%" headerText="Curso">
+											<h:outputText value="#{cap.curso}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Fecha">
+											<h:outputText value="#{cap.fecha}">
+												<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+											</h:outputText>
+										</p:column>
+
+										<p:column style="width:15%" headerText="Anio">
+											<h:outputText value="#{cap.anio}" />
+										</p:column>
+
+										<p:column style="width:15%" headerText="Titulo">
+											<h:outputText value="#{cap.titulo}" />
+										</p:column>
+
+										<p:column headerText="Documento"
+											style="width:15%;text-align: center">
+											<p:commandButton id="downloadLink" ajax="false"
+												icon="icono-pdf"
+												actionListener="#{terramozaMB.recuperarCapacitacion(cap)}">
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="Eliminar"
+											style="width:10%;text-align: center">
+											<p:commandButton value="Eliminar" update="@form"
+												actionListener="#{terramozaMB.eliminarCapacitacion(cap)}"
+												icon="icon-delete" />
+
+										</p:column>
+
+									</p:dataTable>
+
+								</h:form>
+							</p:tab>
+
+							<p:tab id="tab7" title="Incidencias">
+								<h:form id="formInc">
+									<h:panelGrid columns="2">  
+            					
+            					#{"Fecha: (*)"}
+								<p:calendar value="#{terramozaMB.incidencia.fecha}" mode="popup"
+											showOn="button" locale="es" pattern="dd/MM/yyyy"
+											readOnlyInputText="false" navigator="true" required="true"
+											requiredMessage="ingrese la fecha">
+										</p:calendar>
+								
+								#{"Tipo: (*)"}
+	            				<p:selectOneMenu style="width:160px"
+											value="#{terramozaMB.incidencia.tipo}" required="true"
+											requiredMessage="Seleccione un tipo de incidencia">
+											<f:selectItem itemLabel="BUENA" itemValue="BUENA" />
+											<f:selectItem itemLabel="MALA" itemValue="MALA" />
+										</p:selectOneMenu>
+								
+								#{"Descripcion: (*)"}
+								<p:inputTextarea value="#{terramozaMB.incidencia.descripcion}"
+											styleClass="mayuscula" required="true"
+											requiredMessage="Seleccione una descripcion" />
+
+									</h:panelGrid>
+									<p:commandButton value="Guardar Incidencia"
+										style="margin-left:300px"
+										update="formInc :msgNuevo :tabPiloto:formInc123"
+										actionListener="#{terramozaMB.guardarIncidencia()}" />
+
+								</h:form>
+								<br />
+								<h:form id="formInc123">
+									<p:dataTable widgetVar="dtInc" var="inc"
+										value="#{terramozaMB.listaIncidencias}"
+										emptyMessage="No hay Incidencias Disponibles."
+										rowIndexVar="nro" style="FONT-SIZE: 10px; width: 600px; ">
+
+										<f:facet name="header">Lista Incidencias</f:facet>
+
+										<p:column headerText="Orden" width="25" style="width:3%">
+										#{nro+1}
+									</p:column>
+
+										<p:column style="width:15%" headerText="Fecha">
+											<h:outputText value="#{inc.fecha}">
+												<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+													dateStyle="short" />
+											</h:outputText>
+										</p:column>
+
+										<p:column style="width:15%" headerText="Tipo">
+											<h:outputText value="#{inc.tipo}" />
+										</p:column>
+
+										<p:column style="width:30%" headerText="Descripcion">
+											<h:outputText value="#{inc.descripcion}" />
+										</p:column>
+
+
+										<p:column headerText="Eliminar"
+											style="width:10%;text-align: center">
+											<p:commandButton value="Eliminar" update="@form"
+												actionListener="#{terramozaMB.eliminarIncidencia(inc)}"
+												icon="icon-delete" />
+										</p:column>
+									</p:dataTable>
+									<br />
+
+
+								</h:form>
+							</p:tab>
+
+							<p:tab id="tab8" title="Cese">
+								<h:form id="formCes">
+									<h:panelGrid columns="2">  
+            					
+            					#{"Fecha: (*)"}
+								<p:calendar value="#{terramozaMB.cese.fecha}" mode="popup"
+											showOn="button" locale="es" pattern="dd/MM/yyyy"
+											readOnlyInputText="false" navigator="true" required="true"
+											requiredMessage="Ingrese la fecha">
+										</p:calendar>
+								
+								#{"Motivo: (*)"}
+	            				<p:inputText style="width:200px"
+											value="#{terramozaMB.cese.motivo}" styleClass="mayuscula"
+											required="true" requiredMessage="Ingrese un motivo" />
+	            				
+								
+								#{"Observacion: (*)"}
+								<p:inputTextarea style="width:400px"
+											value="#{terramozaMB.cese.observacion}"
+											styleClass="mayuscula" required="true"
+											requiredMessage="Ingrese una Observacion" />
+
+									</h:panelGrid>
+									<p:commandButton value="Guardar Cese" style="margin-left:300px"
+										update="formCes :msgNuevo :tabPiloto:formCes123"
+										actionListener="#{terramozaMB.guardarCese()}" />
+
+								</h:form>
+								<br />
+								<h:form id="formCes123">
+									<p:dataTable widgetVar="dtcEs" var="ces"
+										value="#{terramozaMB.listaCeses}"
+										emptyMessage="No hay Incidencias Disponibles."
+										rowIndexVar="nro" style="FONT-SIZE: 10px; width: 600px; ">
+
+										<f:facet name="header">Lista Ceses</f:facet>
+
+										<p:column headerText="Orden" width="25" style="width:3%">
+										#{nro+1}
+									</p:column>
+
+										<p:column style="width:15%" headerText="Fecha">
+											<h:outputText value="#{ces.fecha}">
+												<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+													dateStyle="short" />
+											</h:outputText>
+										</p:column>
+
+										<p:column style="width:15%" headerText="Motivo">
+											<h:outputText value="#{ces.motivo}" />
+										</p:column>
+
+										<p:column style="width:30%" headerText="Observacion">
+											<h:outputText value="#{ces.observacion}" />
+										</p:column>
+
+
+										<p:column headerText="Eliminar"
+											style="width:10%;text-align: center">
+											<p:commandButton value="Eliminar" update="@form"
+												actionListener="#{terramozaMB.eliminarCese(ces)}"
+												icon="icon-delete" />
+										</p:column>
+									</p:dataTable>
+									<br />
+
+
+								</h:form>
+							</p:tab>
+
+
+						</p:tabView>
+
+					</h:panelGroup>
+				</h:panelGrid>
+			</p:dialog>
+
+
+			<!-- dialogo eliminar -->
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+				message="¿Desea eliminar esta terramoza?"
+				header="Eliminar Terramoza" severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Terramoza: <h:outputText value="#{terramozaMB.terramoza.nombres}"
+						style="font-size:12px;font-weight: bold;" />
+					<br />
+					<p:commandButton value="Eliminar" update=":formListaPiloto :sms"
+						actionListener="#{terramozaMB.eliminarTerramoza()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide();" icon="icon-cancel" />
+
+				</h:form>
+			</p:confirmDialog>
+
+			<p:confirmDialog id="dlgDetEliminarHistorial" appendToBody="true"
+				message="¿Desea eliminar este Historial?"
+				header="Eliminar Historial" severity="alert"
+				widgetVar="dlgEliminarHistorial">
+				<h:form>
+
+					<p:commandButton value="Eliminar" update=":tabPiloto:formHistorial"
+						actionListener="#{terramozaMB.eliminarHistorial()}"
+						oncomplete="dlgEliminarHistorial.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminarHistorial.hide();" icon="icon-cancel" />
+
+				</h:form>
+			</p:confirmDialog>
+
+
+
+		</p:panel>
+
+		<script>
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
+</html>

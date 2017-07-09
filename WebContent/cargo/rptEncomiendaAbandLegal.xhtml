@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Reporte de Encomiendas por Almacen y Abandono Legal" url="#" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="6" id="datareg">
+			 	
+			 	#{"Agencia:"}
+				<p:selectOneMenu style="width:150px" value="#{rptAbandonoLegalMB.filterEnc.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{rptAbandonoLegalMB.listaAgenciasMP.values()}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{rptAbandonoLegalMB.getOficinasxAgencia()}" /> 
+				</p:selectOneMenu>
+	
+				#{"Oficina:"}
+				<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{rptAbandonoLegalMB.filterEnc.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{rptAbandonoLegalMB.listaOficinasMP.values()}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					<p:ajax update="cmbAlm" listener="#{rptAbandonoLegalMB.listarAlmacen()}" />  
+				</p:selectOneMenu>
+				
+				#{"Almacen:"}
+				<p:selectOneMenu style="width:250px" id="cmbAlm" value="#{rptAbandonoLegalMB.filterEnc.idAlmacen}" required="true" requiredMessage="Seleccione un Almacen ">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="ag" value="#{rptAbandonoLegalMB.listAlmacenMP.values()}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.descripcion}" /> 
+				</p:selectOneMenu>
+			 	
+				</h:panelGrid>
+			 	<h:panelGrid columns="2" >
+				<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{rptAbandonoLegalMB.consultarEncomiendas()}"  
+					 		update=":formLista :sms" style=" width:160px;"/>
+				<h:commandLink update=":sms "   id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{rptAbandonoLegalMB.imprimirPDF}" ajax="false" >   
+				</h:commandLink> 
+				</h:panelGrid>	
+					
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="l" value="#{rptAbandonoLegalMB.listaEncomienda}" 
+					paginator="true" rowIndexVar="nro" filteredValue="#{rptAbandonoLegalMB.listaEncomiendaFilter}"
+					emptyMessage="No hay encomiendas seleccionadas"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; width:700px">
+					
+					<f:facet name="header">Encomiendas Embarcadas </f:facet>
+					
+					<p:column style="width:50px;" headerText="Doc." filterStyleClass="mayuscula" filterBy="#{l.comprobante}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{l.tipoDocAbr}-#{l.comprobante}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{l.remitcompleto}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{l.remitcompleto}" />
+					</p:column>
+					
+					<p:column style="width:250px" headerText="Dest. 1">
+						<h:outputText value="#{l.dest1}" />
+					</p:column>
+
+					<p:column style="width:20px" headerText="Dest. 2">
+						<h:outputText value="#{l.dest2}" />
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Direccion">
+						<h:outputText value="#{l.direccionEnvio}" />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Detalle">
+						<h:outputText value="#{l.detalle}" />
+					</p:column>
+
+					<p:column style="width:40px" headerText="Nro bultos">
+						<h:outputText value="#{l.nroBultos}" />
+					</p:column>
+
+					<p:column style="width:50px" headerText="Peso (kg)">
+						<h:outputText value="#{l.pesoTotal}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Importe">
+						<h:outputText value="#{l.totalCobrado}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="T.Entrega">
+						<h:outputText value="#{'NORMAL'}" rendered="#{e.servicioEntrega  == null ? true :false}" />
+						<h:outputText value="#{'REPARTO'}" rendered="#{e.servicioEntrega  =='R' ? true :false}"/>
+						<h:outputText value="#{'REP/CONTR'}" rendered="#{e.servicioEntrega  =='RC' ? true :false}"/>
+						<h:outputText value="#{'CONTRAENTREGA'}"  rendered="#{e.servicioEntrega  =='C' ? true :false}"/>
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Bus">
+						<h:outputText value="#{l.nroBus}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Estado">
+						<h:outputText value="#{l.desEstado}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="FEnvio">
+						<h:outputText value="#{l.fRegistro}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:50px" headerText="F.LLegada">
+						<h:outputText value="#{l.fRegAlmacen}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short"/>
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:50px" headerText="F.Aband Legal">
+						<h:outputText value="#{l.fVencimiento}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short"/>
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:30px" headerText="Dias A. L.">
+						<h:outputText value="#{l.diasVencimiento}"/>
+					</p:column>
+
+					<p:column style="width:70px" headerText="Ubi. Almacen">
+						<h:outputText value="#{l.ubicacionAlmacen}"/>
+					</p:column>
+					
+
+				</p:dataTable>
+				
+		</h:form>
+		
+		<ui:remove>
+		<p:dialog id="dlgDetInc" appendToBody="true" resizable="false" modal="true"
+					 widgetVar="dlgInc" closable="true" header="Registrar Incidencia">
+						
+					<h:form id="formImprimir" style="text-algin:center">
+						
+						<p:messages  id="mensaje" showDetail="false" showSummary="true"  closable="true"/>	
+						
+						<p:panel>
+						<h:panelGrid columns="2">
+							#{"Comprobante:"}
+							<h:outputText value="#{rptAbandonoLegalMB.encoSelect.comprobante}" style="font-weight:bold;font-size:1.2em" />
+							#{"Remitente:"}
+							<h:outputText value="#{rptAbandonoLegalMB.encoSelect.remitente}" style="font-weight:bold;font-size:1.2em" />
+							#{"Origen:"}
+							<h:outputText value="#{rptAbandonoLegalMB.encoSelect.desOrigen}" style="font-weight:bold;font-size:1.2em" />
+							#{"Destino:"}
+							<h:outputText value="#{rptAbandonoLegalMB.encoSelect.desDestino}" style="font-weight:bold;font-size:1.2em"/>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							#{"Incidencia:"}
+							<h:inputTextarea  value="#{rptAbandonoLegalMB.encomiendaIncidencia.observacion}"  cols="30" rows="4" required="true"
+									requiredMessage="Se necesita una observacion"/>
+							#{"Estado:"}
+							<p:selectOneMenu value="#{rptAbandonoLegalMB.encomiendaIncidencia.tipo}">
+								<f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+								<f:selectItem itemValue="MALOGRADO" itemLabel="MALOGRADO"/>
+								<f:selectItem itemValue="EXTRAVIADO" itemLabel="EXTRAVIADO"/>
+								<f:selectItem itemValue="INCOMPLETO" itemLabel="INCOMPLETO"/>
+								<f:selectItem itemValue="NO LLEGO" itemLabel="NO LLEGO"/>
+							</p:selectOneMenu>
+						</h:panelGrid>	
+						</p:panel>
+						<br/>
+						<p:commandButton  value="Guardar " oncomplete="validar(xhr, status, args)" actionListener="#{rptAbandonoLegalMB.registrarIncidencia()}"  
+					 		update=":formLista mensaje"  />
+					 	<p:commandButton  value="Cancelar" type="button" onclick="dlgInc.hide();"  icon="icon-cancel"
+					 		  />	
+							
+					</h:form>
+			</p:dialog>
+			</ui:remove>
+		</p:panel>
+		<script>
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetInc').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				dlgInc.hide();
+			}
+		}
+		
+		</script>
+		
+
+	</ui:define>
+
+</ui:composition>
+</html>

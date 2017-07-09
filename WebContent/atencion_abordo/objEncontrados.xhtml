@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Registro de Llegado de Bus" url="registroLlegadaBus" /> 
+    				<p:menuitem value="Objetos encontrados" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >		
+		<h:panelGrid columns="8">
+				#{"Origen :"}
+				<h:outputText value=" #{objEncontradosMB.programacion.desOrigen}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Destino:"}
+				<h:outputText value=" #{objEncontradosMB.programacion.desDestino}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Servicio:"}
+				<h:outputText value=" #{objEncontradosMB.programacion.descServicio}" 
+					style="font-weight:bold;font-size: 1.2em;" />	
+				#{"FLLegada:"}
+				<h:outputText value=" #{objEncontradosMB.programacion.fLlegadaReal}" 
+					style="font-weight:bold;font-size: 1.2em;" rendered="#{objEncontradosMB.programacion.fLlegadaReal !=null}" >
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short"/>
+				</h:outputText>	
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>		
+		<!-- toolbar -->
+		
+		<h:form>
+			<h:panelGrid columns="2">
+				<p:commandButton value="Agregar Objeto Encontrado" icon="icon-add"  oncomplete="perfilDialog.show();" 
+				actionListener="#{objEncontradosMB.nuevoObjEncontrados()}" update=":detPerfilDialog"	/>
+			</h:panelGrid>
+		</h:form>		
+			
+		<br/>
+		
+		<!-- listado de Componentes -->
+		<h:form id="frmListaComp">
+					
+			<p:dataTable value="#{objEncontradosMB.listaObjEncontrados}" var="per" style="width:900px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+						 
+    			<f:facet name="header">Lista de Objetos Encontrados</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Objeto">
+    				<h:outputText value="#{per.descripcion}" />
+    			</p:column>
+    			
+    			<p:column headerText="Nro Asiento">
+    				<h:outputText value="#{per.nroAsiento}" />
+    			</p:column>
+    			
+    			<p:column headerText="Entregado a">
+    				<h:outputText value="#{per.dniEntregado} - #{per.nomEntregado}" />
+    			</p:column>
+    			
+    			<p:column headerText="Fecha Registro">
+    				<h:outputText value="#{per.fRegistro}"  rendered="#{per.fRegistro !=null}"  >
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short"/>
+				</h:outputText>	
+    			</p:column>
+    			
+    			<p:column headerText="Fecha Entrega">
+    				<h:outputText value=" #{per.fechaEntrega}" rendered="#{per.fechaEntrega !=null}"  >
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short"/>
+					</h:outputText>	
+    			</p:column>
+    			
+    			<p:column headerText="Entregado por">
+    				<h:outputText value="#{per.usuarioEntrega}" />
+    				
+    			</p:column>
+    			
+    			
+    			<p:column style="width:20px" headerText="Estado">
+						<h:outputText value="#{per.estado}" />
+				</p:column>
+
+
+				<p:column headerText="Entregar/Elim." style="width:100px;text-align: center">
+
+				<p:commandButton title="Entregar" update=":dlgDetDevOE"
+							actionListener="#{objEncontradosMB.editarObjEncontrados(per)}"
+							oncomplete="dlgDevOE.show();" icon="icon-edit">
+				</p:commandButton>
+
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+							<f:setPropertyActionListener target="#{objEncontradosMB.objEncontrados}"
+								value="#{per}" />
+				</p:commandButton>
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+   			<!-- dilogo eliminar -->
+   
+			<p:confirmDialog id="confirmDialog" message="Seguro de eliminar este objeto"   appendToBody="true"
+             		header="Eliminar Objeto Encontrado" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaComp :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{objEncontradosMB.eliminarObjEncontrados()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    		</p:confirmDialog> 
+					
+				
+		<!-- dialogo nuevo perfil -->
+		<p:dialog header="Registrar Objeto Encontrado"
+			  		widgetVar="perfilDialog" resizable="false"
+			  		id="detPerfilDialog" showEffect="fade" hideEffect="explode"
+			 		appendToBody="true" modal="true" >
+			<h:form>
+				<p:messages showDetail="false" showSummary="true" id="mgsNuevo" closable="true" />
+				<h:panelGrid columns="2">
+				
+					#{"Objeto:"}		
+					<p:inputText style="width:200px" value="#{objEncontradosMB.objEncontrados.descripcion}" 
+					required="true" requiredMessage="Se necesita un nombre"/>
+
+					#{"Observacion:"}		
+					<p:inputTextarea cols="16" rows="4" style="width:200px" value="#{objEncontradosMB.objEncontrados.observacion}"/> 
+					
+					#{"Nro Asiento:"}		
+					<p:inputText style="width:200px" value="#{objEncontradosMB.objEncontrados.nroAsiento}" 
+					required="true" requiredMessage="Se necesita un numero de asiento de Referencia"/>
+					
+					#{"Fecha Registro:"}
+					<p:calendar value="#{objEncontradosMB.objEncontrados.fRegistro}"  pattern="dd/MM/yyyy hh:mm a" locale="es"
+							 	navigator="true"  required="true" requiredMessage="Se necesita una fecha de registro"/>  		
+					
+			<ui:remove>
+					#{"DNI Entregado:"}		
+					<p:inputText style="width:100px" value="#{objEncontradosMB.objEncontrados.dniEntregado}" />
+					
+					#{"Usuario Entregado:"}		
+					<p:inputText style="width:200px" value="#{objEncontradosMB.objEncontrados.nomEntregado}" />
+
+					#{"Fecha Entrega:"}
+					<p:calendar value="#{objEncontradosMB.objEncontrados.fechaEntrega}"  pattern="dd/MM/yyyy hh:mm a" locale="es"
+							 	navigator="true" />  		
+					#{"Usuario Registro:"}
+					<p:inputText value="#{objEncontradosMB.objEncontrados.usuarioEntrega}" required="true" 
+					requiredMessage="Se necesita un usuario de registro"/>  		
+							 	
+					#{"Estado:"}
+					<p:selectOneMenu value="#{objEncontradosMB.objEncontrados.estado}">
+						<f:selectItem itemLabel="NO DEVUELTO" itemValue="NO DEVUELTO"></f:selectItem>
+						<f:selectItem itemLabel="DEVUELTO" itemValue="DEVUELTO"></f:selectItem>
+					</p:selectOneMenu>
+					
+			</ui:remove>		
+							
+					<p:commandButton value="Grabar" actionListener="#{objEncontradosMB.guardarObjEncontrados()}"
+								 oncomplete="validarCampos(xhr, status, args)" update=":frmListaComp mgsNuevo" />
+							
+					<p:commandButton value="Cerrar" onclick="perfilDialog.hide();" type="button" />
+							
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		
+		
+		
+		<p:dialog header="Devolver Objeto Encontrado"
+			  		widgetVar="dlgDevOE" resizable="false"
+			  		id="dlgDetDevOE" showEffect="fade" closable="true"
+			 		appendToBody="true" modal="true" >
+			<h:form>
+				<p:messages showDetail="false" showSummary="true" id="mgsNuevo" closable="true" />
+				<h:panelGrid columns="2">
+				
+					#{"Objeto:"}		
+					<h:outputText style="width:200px" value="#{objEncontradosMB.objEncontrados.descripcion}" 
+					required="true" requiredMessage="Se necesita un nombre"/>
+
+					#{"Observacion:"}		
+					<h:outputText cols="16" rows="4" style="width:200px" value="#{objEncontradosMB.objEncontrados.observacion}"/> 
+					
+					#{"Nro Asiento:"}		
+					<h:outputText style="width:200px" value="#{objEncontradosMB.objEncontrados.nroAsiento}" 
+					required="true" requiredMessage="Se necesita un numero de asiento de Referencia"/>
+					
+					#{"Fecha Registro:"}
+					<p:calendar disabled="true" value="#{objEncontradosMB.objEncontrados.fRegistro}"  pattern="dd/MM/yyyy hh:mm a" locale="es"
+							 	navigator="true"  required="true" requiredMessage="Se necesita una fecha de registro"/>  		
+					
+					#{"Propietario:"}		
+					<p:inputText style="width:200px" value="#{objEncontradosMB.objEncontrados.nomEntregado}" required="true" 
+						requiredMessage="Se necesita el nombre del propietario"/>
+			
+					#{"DNI:"}		
+					<p:inputText style="width:100px" value="#{objEncontradosMB.objEncontrados.dniEntregado}" required="true"
+						requiredMessage="Se necesita el dni del propietario"/>
+		
+							
+					<p:commandButton value="Guardar" actionListener="#{objEncontradosMB.guardarObjEncontrados()}"
+								 oncomplete="validarCampos2(xhr, status, args)" update=":frmListaComp mgsNuevo" />
+							
+					<p:commandButton value="Cerrar" onclick="dlgDevOE.hide();" type="button" />
+							
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		
+		
+		<!-- js  -->		
+		<script>
+
+			function validarCampos(xhr, status, args) {  
+    			if(args.validationFailed) {  
+      				jQuery('#detPerfilDialog').effect("shake", { times:1 }, 100);  
+    			} else {  
+    				
+      				perfilDialog.hide();  
+    			}  
+			}  
+			
+			function validarCampos2(xhr, status, args) {  
+    			if(args.validationFailed) {  
+      				jQuery('#dlgDetDevOE').effect("shake", { times:1 }, 100);  
+    			} else {  
+    				
+    				dlgDevOE.hide();  
+    			}  
+			}
+
+		</script>
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

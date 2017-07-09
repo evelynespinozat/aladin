@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="formatoboleto" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3177de52-2fc2-4702-9e65-ca7c4991d142">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="fechaEmision" class="java.lang.String"/>
+	<field name="ruc" class="java.lang.String"/>
+	<field name="pasajero" class="java.lang.String"/>
+	<field name="dni" class="java.lang.String"/>
+	<field name="origen" class="java.lang.String"/>
+	<field name="destino" class="java.lang.String"/>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="fechaViaje" class="java.lang.String"/>
+	<field name="numeroAsiento" class="java.lang.String"/>
+	<field name="valorTotal" class="java.lang.String"/>
+	<field name="totalLetras" class="java.lang.String"/>
+	<field name="horaViaje" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="168" splitType="Stretch">
+			<textField>
+				<reportElement uuid="daf1340f-9117-4b8f-90de-6974c396bbf2" x="66" y="20" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="86ab57dc-f3a4-4bfb-b546-a466f39edc74" x="66" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fechaEmision}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="14390da9-8cf6-4855-9130-38f9b060c8c7" x="66" y="40" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{ruc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="85537fe3-f929-4e08-9880-183b44b0c1af" x="67" y="62" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{pasajero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="dbb5b082-068a-412b-9ed7-a8f14b5e89bc" x="65" y="83" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{dni}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1c4055d9-8917-4278-b945-9f4edc55d362" x="67" y="103" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{origen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0af8c415-7113-463e-bca2-d8176d54b8e7" x="67" y="123" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{destino}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="362d6af1-d971-42e4-8630-2246a9a01a01" x="187" y="47" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1f49d27e-bcc5-46ab-a32a-b74b4e422dc8" x="188" y="70" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fechaViaje}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="46bb43c4-cfe7-4e4e-8065-6d191c7a4110" x="187" y="93" width="91" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{horaViaje}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="956289a8-cd1d-43b0-a379-2ba2404b616b" x="188" y="105" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{numeroAsiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2316318e-7270-4c25-82be-0f72cb020f49" x="67" y="143" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{totalLetras}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8ac4d3a5-c89b-4078-aaa4-395822e0e1ea" x="193" y="132" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{valorTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="52647c8e-c3d8-47a5-b3e3-862d6732b351" x="390" y="1" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fechaEmision}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="19243455-e32e-4525-8ba2-328e9a117d74" x="391" y="28" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fechaViaje}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3719e527-5787-4c19-86f8-785babe318d3" x="390" y="52" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{horaViaje}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="baa050f0-539b-4785-b957-7f6cc94ecf09" x="389" y="75" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{numeroAsiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="02efb841-99ea-42de-8a0b-4f9e540e31d3" x="389" y="98" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{origen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8f0ca71e-70b0-4a11-98c8-d534d7dc9dae" x="388" y="118" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{destino}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ce54b9e8-6888-451f-883c-658cda2ad007" x="388" y="141" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{valorTotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

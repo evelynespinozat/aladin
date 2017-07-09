@@ -1,0 +1,816 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.EncomiendaMapper">
+
+<resultMap id="encomiendaResult" type="com.certicom.ittsa.domain.Encomienda">
+	<id column="idEncomienda" property="idEncomienda"/>
+	<result column="idOrigen" property="idOrigen"/>
+	<result column="desOrigen" property="desOrigen"/>
+	<result column="idDestino" property="idDestino"/>
+	<result column="desDestino" property="desDestino"/>
+	<result column="dniRemitente" property="dniRemitente"/>
+	<result column="remitente" property="remitente"/>
+	<result column="dniDestinatario1" property="dniDestinatario1"/>
+	<result column="destinatario1" property="destinatario1"/>
+	<result column="dniDestinatario2" property="dniDestinatario2"/>
+	<result column="destinatario2" property="destinatario2"/>
+	<result column="fEnvio" property="fEnvio"/>
+	<result column="estado" property="estado"/>
+	<result column="tipoPersona" property="tipoPersona"/>
+	<result column="comprobante" property="comprobante"/>
+	<result column="rucRemitente" property="rucRemitente"/>
+	<result column="razonSocialRemitente" property="razonSocialRemitente"/>
+	<result column="remitcompleto" property="remitcompleto"/>
+	<result column="totalCobrado" property="totalCobrado"/>
+	<result column="totalCobrado" property="totalCobrado"/>
+	<result column="desEstado" property="desEstado"/>
+	<result column="pesoTotal" property="pesoTotal"/>
+	<result column="nroBultos" property="nroBultos"/>
+	<result column="direccionEnvio" property="direccionEnvio"/>
+	<result column="tipoDocumento" property="tipoDocumento"/>
+	<result column="idBus" property="idBus"/>
+	<result column="nroBus" property="nroBus"/>
+	<result column="detalle" property="detalle"/>
+	<result column="tipoDocAbr" property="tipoDocAbr"/>
+	<result column="piloto" property="piloto"/>
+	<result column="copiloto" property="copiloto"/>
+	<result column="dest1" property="dest1"/>
+	<result column="dest2" property="dest2"/>
+	<result column="servicioEntrega" property="servicioEntrega"/>
+	<result column="sdistrito" property="sdistrito"/>
+	<result column="fRegAlmacen" property="fRegAlmacen"/>
+	<result column="fVencimiento" property="fVencimiento"/>
+	<result column="diasVencimiento" property="diasVencimiento"/>
+	<result column="fRegistro" property="fRegistro"/>
+	<result column="nombreRecoge" property="nombreRecoge"/>
+	<result column="usuarioEntrega" property="usuarioEntrega"/>
+	<result column="ubicacionAlmacen" property="ubicacionAlmacen"/>
+	<result column="desEstadoTrack" property="desEstadoTrack"/>
+	<result column="estadoActual" property="estadoActual"/>
+	<result column="hSalida" property="hSalida"/>
+	<result column="codigoBarrasStringPD" property="codigoBarrasStringPD"/>
+	<result column="idProducto_detalleEnc" property="idProducto_detalleEnc"/>
+	<result column="desProducto" property="desProducto"/>
+	<result column="obsReparto" property="obsReparto"/>
+	<result column="condicionReparto" property="condicionReparto"/>
+	<result column="idOficina" property="idOficina"/>
+	<result column="desOficinaDestino" property="desOficinaDestino"/>
+	<result column="desOficinaOrigen" property="desOficinaOrigen"/>
+	<result column="DireccionRemitente" property="DireccionRemitente"/>
+	<result column="DireccionDestinatario1" property="DireccionDestinatario1"/>
+	<result column="DireccionDestinatario2" property="DireccionDestinatario2"/>
+		
+</resultMap>
+
+
+<select id="listarEncomiendasporFiltros" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+			CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.ApellidosRemitente + ' ' +e.ApellidosDestinatario1)+'-DNI:'+e.DniRemitente end as remitcompleto,
+			case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+		   e.TotalCobrado as totalCobrado,
+		   (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		    ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	e.FRecojo as fRecojo,
+          	e.NombreRecoge as nombreRecoge,
+          	(select nombre + ' ' +apellido_paterno + ' ' +apellido_materno  from t_usuario where idusuario = e.IdUsuarioEntrega) as usuarioEntrega
+	from t_encomienda e
+	where  cast(e.FRegistro as date) &gt;= #{fecIni} and cast(e.FRegistro as date) &lt;= #{fecFin}  
+	<if test="idOrigen !=0">
+ 		and e.idOrigen = #{idOrigen}  
+	</if>
+	<if test="idDestino !=0">
+ 		and e.idDestino = #{idDestino} 
+	</if>
+	order by e.FEnvio desc 
+</select>
+
+
+<select id="listarEncomiendasRecibidas" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		   CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' + ApellidosRemitente)+'-DNI: '+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC: '+e.RucRemitente  end as remitcompleto,
+		   e.TotalCobrado as totalCobrado,
+		   e.PesoTotal as pesoTotal,
+		   e.TipoDocumento as tipoDocumento,
+		   (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		   (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos,
+		   e.DireccionEnvio as direccionEnvio,
+		   ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed 
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	e.ServicioEntrega as servicioEntrega, 
+          	ad.Nombre as desOficinaDestino,
+			ao.Nombre as desOficinaOrigen   
+			 from ((((t_encomienda e inner join t_puntoventa pv on e.IdPuntoVentaOrigen = pv.IdPuntoVenta )  
+			                       inner join t_agenciaoficina o on o.IdOficina = pv.IdOficina)      
+			                        left join t_agenciaoficina ad on ad.idOficina = e.idOficina) 
+							        left join t_agenciaoficina ao on ao.idOficina = pv.IdOficina) 
+			                       
+			where cast(e.FRegistro as date) = #{fRegistro}
+		 		and e.idOrigen = #{idOrigen}  
+		 		and e.idDestino = #{idDestino}
+		 		and e.Estado = 1
+		 		and pv.IdOficina = #{idOficina}
+			order by e.FRegistro asc 
+</select>
+
+<!-- 220/03/2014 -->
+<select id="listarEncomiendasEmbarcadas" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+		select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		   CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' + ApellidosRemitente)+'-DNI: '+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC: '+e.RucRemitente  end as remitcompleto,
+		   e.TotalCobrado as totalCobrado,
+		   e.PesoTotal as pesoTotal,
+		   e.TipoDocumento as tipoDocumento,
+		   (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		   (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos,
+		   e.DireccionEnvio as direccionEnvio,
+		   te.IdBus as idBus,
+		   (select f.Numero from t_flota f where f.IdBus = te.IdBus ) as nroBus,
+		    ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	(select Nombres + ' ' +ApellidoMaterno + ' ' +ApellidoPaterno from t_piloto where IdPiloto = (select IdPiloto from t_tripulacion where IdProgramacion = e.idProgramacion)) as piloto,
+          	(select Nombres + ' ' +ApellidoMaterno + ' ' +ApellidoPaterno from t_piloto where IdPiloto = (select IdCopiloto from t_tripulacion where IdProgramacion = e.idProgramacion)) as copiloto,
+          	e.idProgramacion,
+          	e.ServicioEntrega as servicioEntrega,
+          	e.UbicacionAlmacen, 
+          	ad.Nombre as desOficinaDestino,
+			ao.Nombre as desOficinaOrigen   
+	from ((((t_encomienda e inner join t_trackingEncomienda te on e.IdEncomienda = te.IdEncomienda) 
+						    left join t_agenciaoficina ad on ad.idOficina = e.idOficina) 
+					        left join t_puntoventa pv on pv.IdPuntoVenta = e.idPuntoVentaOrigen) 
+					        left join t_agenciaoficina ao on ao.idOficina = pv.IdOficina) 
+	where  
+	cast(e.FRegistro as date) = #{fRegistro}
+ 		and e.idOrigen = #{idOrigen}
+ 		and e.idDestino = #{idDestino}
+ 		and e.Estado in (2,7)
+ 		and te.IdBus = #{idBus}
+ 		and te.EstadoActual = 1
+ 		and te.IdEstado in (2,7)
+	order by e.FRegistro asc;
+</select>
+
+
+
+<select id="listarEncomiendasDesembarcadasReparto" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + e.ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado,
+		   e.TipoDocumento as tipoDocumento,
+		    (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		    (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente end as remitcompleto,
+		   	e.TotalCobrado as totalCobrado,
+		   	e.DireccionEnvio as direccionEnvio,
+		    e.PesoTotal as pesoTotal,
+		    ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	e.idProgramacion ,
+          	case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+			e.ServicioEntrega as servicioEntrega,
+			(select Sdistrito from t_tarifa where IdTarifa = e.IdTarifa) as sdistrito
+	from t_encomienda e
+	where  e.Estado in (4) 
+	and (e.ServicioEntrega = 'R' OR  e.ServicioEntrega = 'RC')
+	<if test="fecIni !=null">
+		and cast(e.FRegistro as date) &gt;= #{fecIni}
+	</if>
+	<if test="fecFin !=null">
+	 and cast(e.FRegistro as date) &lt;= #{fecFin}  
+	</if>
+	<if test="idOrigen !=0">
+ 		and e.idOrigen = #{idOrigen}  
+	</if>
+	
+	<if test="idDestino !=0">
+ 		and e.idDestino = #{idDestino} 
+	</if>
+	order by e.FEnvio desc 
+</select>
+
+
+<select id="listarEncomiendasDesembarcadas" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   a1.Descripcion as desOrigen,
+		   e.IdDestino as idDestino, 
+		   a2.Descripcion as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado,
+		   e.TipoDocumento,
+		    (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		    (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente end as remitcompleto,
+		   	e.TotalCobrado as totalCobrado,
+		   	e.DireccionEnvio as direccionEnvio,
+		    e.PesoTotal as pesoTotal,
+		    ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	e.idProgramacion ,
+          	case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+			e.ServicioEntrega as servicioEntrega,
+			(select Sdistrito from t_tarifa where IdTarifa = e.IdTarifa) as sdistrito,
+			e.ubicacionAlmacen,
+			e.obsReparto as obsReparto,
+			e.condicionReparto, 
+			ad.Nombre as desOficinaDestino,
+			ao.Nombre as desOficinaOrigen 
+	from (((((t_encomienda e inner join t_agencia a1 on e.IdOrigen = a1.Idagencia)
+					      inner join t_agencia a2 on e.IdDestino = a2.Idagencia)
+					      left join t_agenciaoficina ad on ad.idOficina = e.idOficina)
+					      left join t_puntoventa pv on pv.IdPuntoVenta = e.idPuntoVentaOrigen)
+					      left join t_agenciaoficina ao on ao.idOficina = pv.IdOficina)
+	where  e.Estado in (4,5) 
+	<if test="fecIni !=null">
+		and cast(e.FRegistro as date) &gt;= #{fecIni}
+	</if>
+	<if test="fecFin !=null">
+	 and cast(e.FRegistro as date) &lt;= #{fecFin}  
+	</if>
+	<if test="idOrigen !=0">
+ 		and e.idOrigen = #{idOrigen}   
+	</if>
+	<if test="idDestino !=0">
+ 		and e.idDestino = #{idDestino}  
+	</if>
+	<if test="idOficina !=0">
+ 		and e.idOficina = #{idOficina}  
+	</if>
+	order by e.FEnvio desc  
+</select>
+
+
+<select id="rptListarEncomiendasEmbarcadas" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado,
+		    (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		    (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente end as remitcompleto,
+		   	e.TotalCobrado as totalCobrado,
+		   	e.DireccionEnvio as direccionEnvio,
+		    e.PesoTotal as pesoTotal,
+		    ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	e.idProgramacion ,
+          	case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+			e.ServicioEntrega as servicioEntrega,
+			(select Sdistrito from t_tarifa where IdTarifa = e.IdTarifa) as sdistrito,
+			ea.fRegistro as fRegAlmacen,
+			ea.fVencimiento as fVencimiento,
+			DATEDIFF(day, GETDATE(),ea.fVencimiento) as diasVencimiento,
+			e.UbicacionAlmacen as ubicacionAlmacen
+	from t_encomienda e inner join t_encomienda_almacen ea
+	on e.IdEncomienda = ea.idEncomienda
+	where  e.Estado in (4,7) 
+	and e.IdDestino = #{idAgencia}
+	and ea.idoficina= #{idOficina}
+	and ea.idAlmacen = #{idAlmacen}
+	order by e.fRegistro desc 
+</select>
+
+<select id="listarTrackingEncomiendas" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+			CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.ApellidosRemitente + ' ' +e.ApellidosDestinatario1)+'-DNI:'+e.DniRemitente end as remitcompleto,
+			case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+		   e.TotalCobrado as totalCobrado,
+		   (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	(select HSalida from t_programacion where IdProgramacion =e.idProgramacion) as hSalida,
+          	e.FRecojo as fRecojo,
+          	e.NombreRecoge as nombreRecoge,
+          	(select nombre + ' ' +apellido_paterno + ' ' +apellido_materno  from t_usuario where idusuario = e.IdUsuarioEntrega) as usuarioEntrega,
+          	(select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = te.IdEstado) as desEstadoTrack,
+          	te.EstadoActual as estadoActual
+	from t_encomienda e inner join t_trackingEncomienda te 
+		on e.IdEncomienda = te.IdEncomienda
+		where  e.IdEncomienda = #{idEncomienda} 	
+</select>
+
+<select id="encomiendasxRepartidor" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + e.ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado,
+		   e.TipoDocumento as tipoDocumento,
+		    (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		    (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente end as remitcompleto,
+		   	e.TotalCobrado as totalCobrado,
+		   	e.DireccionEnvio as direccionEnvio,
+		    e.PesoTotal as pesoTotal,
+		    ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	e.idProgramacion ,
+          	case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+			e.ServicioEntrega as servicioEntrega,
+			(select Sdistrito from t_tarifa where IdTarifa = e.IdTarifa) as sdistrito,
+			e.obsReparto as obsReparto
+	from t_encomienda e
+	where  e.Estado =#{estado} 
+	and (e.ServicioEntrega = 'R' OR  e.ServicioEntrega = 'RC')
+	and e.idPersonalReparto = #{idPersonalReparto}
+	order by e.FEnvio desc 
+</select>
+
+<select id="obtenerDatosEncomienda" parameterType="int" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado,
+		    (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		    (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente end as remitcompleto,
+		   	e.TotalCobrado as totalCobrado,
+		   	e.DireccionEnvio as direccionEnvio,
+		    e.PesoTotal as pesoTotal,
+		    ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	e.idProgramacion ,
+          	case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+			e.ServicioEntrega as servicioEntrega,
+			(select Sdistrito from t_tarifa where IdTarifa = e.IdTarifa) as sdistrito,
+			e.ubicacionAlmacen 
+	from t_encomienda e
+	where e.IdEncomienda = #{idEncomienda}
+</select>
+
+
+<select id="listarEncomiendasInventario" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+			CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.ApellidosRemitente + ' ' +e.ApellidosDestinatario1)+'-DNI:'+e.DniRemitente end as remitcompleto,
+			case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+		   e.TotalCobrado as totalCobrado,
+		   (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	e.FRecojo as fRecojo,
+          	e.NombreRecoge as nombreRecoge,
+          	e.TipoDocumento as tipoDocumento,
+          	REPLACE(pde.CodigoBarrasString,' ','') as codigoBarrasStringPD,
+          	pde.IdProducto_detalleEnc as idProducto_detalleEnc,
+          	ed.Descripcion as desProducto
+	from t_encomienda e inner join t_encomienda_almacen ea
+	on e.IdEncomienda = ea.idEncomienda
+	inner join t_productos_detalleEnc pde
+	on e.IdEncomienda = pde.IdEncomienda
+	inner join t_encomiendaDetalle ed
+	on pde.IdDetalle = ed.IdDetalle
+		where ea.idoficina = #{idOficina}
+		and ea.idAlmacen = #{idAlmacen}
+		and e.Estado = 4
+		order by e.FEnvio desc 
+</select>
+
+
+<select id="listarEncomiendaSubManifiesto" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		   CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' + ApellidosRemitente)+'-DNI: '+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC: '+e.RucRemitente  end as remitcompleto,
+		   e.TotalCobrado as totalCobrado,
+		   	CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.ApellidosRemitente + ' ' +e.ApellidosDestinatario1)+'-DNI:'+e.DniRemitente end as remitcompleto,
+			case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+		   e.PesoTotal as pesoTotal,
+		   e.TipoDocumento as tipoDocumento,
+		   (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		   (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos,
+		   e.DireccionEnvio as direccionEnvio,
+		   ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	e.ServicioEntrega as servicioEntrega
+	from t_encomienda e 
+	where e.idSubmanifiesto = #{idSubmanifiesto}
+	order by e.FRegistro desc 
+	</select>
+	
+	
+	<select id="rptEncomiendasContraEntrega" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+	select e.IdEncomienda as idEncomienda, 
+		   e.IdOrigen as idOrigen,
+		   (select Descripcion from t_agencia a where e.IdOrigen = a.Idagencia) as desOrigen,
+		   e.IdDestino as idDestino, 
+		   (select Descripcion from t_agencia a where e.IdDestino = a.Idagencia) as desDestino, 
+		   e.DniRemitente as dniRemitente, 
+		   (e.NombresRemitente + ' ' + ApellidosRemitente)  as remitente, 
+		   e.DniDestinatario1 as dniDestinatario1, 
+		   (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+		   e.DniDestinatario2 as dniDestinatario2, 
+		   (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+		   e.FEnvio as fEnvio,
+		   e.FRegistro as fRegistro,
+		   e.Estado as estado,
+		   e.TipoDocumento,
+		    (case when e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+		    (select count(pde.IdProducto_detalleEnc) from t_productos_detalleEnc pde where pde.IdEncomienda = e.IdEncomienda ) as nroBultos, 
+		   (select es.descripcion from t_estado es where es.modulo = 'ENCOMIENDA' and es.valor = e.Estado) as desEstado,
+		   e.Comprobante as comprobante,
+		   e.TipoPersona as tipoPersona,
+		   e.RucRemitente as rucRemitente,
+		   e.RazonSocialRemitente as razonSocialRemitente, 
+		CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente end as remitcompleto,
+		   	e.TotalCobrado as totalCobrado,
+		   	e.DireccionEnvio as direccionEnvio,
+		    e.PesoTotal as pesoTotal,
+		    ( SELECT    
+      		STUFF((
+          	SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion 
+          	FROM t_encomiendaDetalle ed
+          	WHERE ed.IdEncomienda = e.IdEncomienda
+          	FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+          	e.idProgramacion ,
+          	case when e.RucDestinatario1 IS not null then(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') else '' end + 
+			e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+			case when e.RucDestinatario2 IS not null then(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') else '' end + 
+			e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+			e.ServicioEntrega as servicioEntrega,
+			(select Sdistrito from t_tarifa where IdTarifa = e.IdTarifa) as sdistrito,
+			e.ubicacionAlmacen,
+			e.obsReparto as obsReparto,
+			e.condicionReparto
+	from t_encomienda e
+	where e.idOrigen = #{idOrigen}  
+ 		and e.idDestino = #{idDestino}
+ 		<choose>
+			<when test="estado !=0">
+				and e.estado = #{estado}
+			</when>
+			<otherwise>
+				and e.estado in (1,2)
+			</otherwise>
+		</choose>	
+		and (e.ServicioEntrega = 'RC' or e.ServicioEntrega = 'C')
+	order by e.FEnvio desc 
+</select>
+
+<select id="listaEncomiendasxOficinas" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+			select e.IdEncomienda as idEncomienda, 
+				   e.IdOrigen as idOrigen,
+				   a.Descripcion as desOrigen,
+				   ao2.Nombre as desOficinaOrigen, 
+				   e.IdDestino as idDestino, 
+				   a2.Descripcion as desDestino,
+				   ao.Nombre as desOficinaDestino,
+				   e.DniRemitente as dniRemitente, 
+				   e.NombresRemitente,
+				   e.ApellidosRemitente,
+				  (e.NombresRemitente + ' ' + e.ApellidosRemitente)  as remitente, 
+				   e.DniDestinatario1 as dniDestinatario1, 
+				   e.NombresDestinatario1,
+				   e.ApellidosDestinatario1,
+				  (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+				   e.DniDestinatario2 as dniDestinatario2, 
+				   e.NombresDestinatario2,
+				   e.ApellidosDestinatario2,
+				  (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+				   e.FEnvio as fEnvio,
+				   e.FRegistro as fRegistro,
+				   e.Estado as estado, 
+				   es.descripcion  as desEstado,
+				   e.Comprobante as comprobante,
+				   e.TipoPersona as tipoPersona,
+				   e.RucRemitente as rucRemitente,
+				   e.RazonSocialRemitente as razonSocialRemitente, 
+					CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.ApellidosRemitente + ' ' +e.ApellidosDestinatario1)+'-DNI:'+e.DniRemitente end as remitcompleto,
+					CASE WHEN e.RucDestinatario1 IS not null THEN(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') ELSE '' END + 
+					e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+					CASE WHEN e.RucDestinatario2 IS not null THEN(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') ELSE '' END + 
+					e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+				    e.TotalCobrado as totalCobrado,
+				   (CASE WHEN e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+				    ( SELECT STUFF((SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion FROM t_encomiendaDetalle ed WHERE ed.IdEncomienda = e.IdEncomienda FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+		          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+		          	e.FRecojo as fRecojo,
+		          	e.NombreRecoge as nombreRecoge,
+		          	(u.nombre + ' ' +u.apellido_paterno + ' ' +u.apellido_materno) as usuarioEntrega
+		from (((((((t_encomienda e left join t_agencia a on e.IdOrigen = a.Idagencia) 
+							   left join t_agencia a2 on e.IdDestino = a2.Idagencia)
+							   left join t_estado es on es.valor = e.Estado)
+							   left join t_usuario u on u.idusuario = e.IdUsuarioEntrega)
+							   left join t_puntoventa p on p.IdPuntoVenta = e.IdPuntoVentaOrigen)
+							   left join t_agenciaoficina ao on e.idOficina = ao.idOficina)
+							   left join t_agenciaoficina ao2 on p.idOficina = ao2.idOficina)
+		where es.modulo = 'ENCOMIENDA'	
+					and e.Estado in (1,7) 
+					and e.IdOrigen = #{idOrigen}
+					and e.IdDestino = #{idDestino} 
+					and e.idOficina = #{idPuntoVentaDestino}
+					and p.IdOficina = #{idPuntoVentaOrigen}
+</select>
+
+<select id="listaEncomiendasxOficinasxPersona" parameterType="com.certicom.ittsa.domain.Encomienda" resultMap="encomiendaResult">
+			select e.IdEncomienda as idEncomienda, e.TipoDocumento as formapago, 
+				   e.IdOrigen as idOrigen,
+				   a.Descripcion as desOrigen,
+				   ao2.Nombre as desOficinaOrigen, 
+				   e.IdDestino as idDestino, 
+				   a2.Descripcion as desDestino,
+				   ao.Nombre as desOficinaDestino,
+				   e.DniRemitente as dniRemitente, 
+				   e.NombresRemitente,
+				   e.ApellidosRemitente,
+				  (e.NombresRemitente + ' ' + e.ApellidosRemitente)  as remitente, 
+				   e.DniDestinatario1 as dniDestinatario1, 
+				   e.NombresDestinatario1,
+				   e.ApellidosDestinatario1,
+				  (e.NombresDestinatario1 + ' ' +e.ApellidosDestinatario1)  as destinatario1,
+				   e.DniDestinatario2 as dniDestinatario2, 
+				   e.NombresDestinatario2,
+				   e.ApellidosDestinatario2,
+				  (e.NombresDestinatario2 + ' ' +e.ApellidosDestinatario2) as destinatario2,  
+				   e.FEnvio as fEnvio,
+				   e.FRegistro as fRegistro,
+				   e.Estado as estado, 
+				   es.descripcion  as desEstado,
+				   e.Comprobante as comprobante,
+				   e.TipoPersona as tipoPersona,
+				   e.RucRemitente as rucRemitente,
+				   e.RazonSocialRemitente as razonSocialRemitente, 
+					CASE WHEN (e.tipoPersona = 'N') THEN  (e.NombresRemitente + ' ' +e.ApellidosRemitente)+'-DNI:'+e.DniRemitente ELSE  e.RazonSocialRemitente +'-RUC:'+e.RucRemitente +' | '+ (e.ApellidosRemitente + ' ' +e.ApellidosDestinatario1)+'-DNI:'+e.DniRemitente end as remitcompleto,
+					CASE WHEN e.RucDestinatario1 IS not null THEN(e.RazonSocialDestinatario1 + ' RUC:' +e.RucDestinatario1 + ' ') ELSE '' END + 
+					e.NombresDestinatario1 + ' ' + e.ApellidosDestinatario1 + ' DNI:'+ e.DniDestinatario1 as dest1, 
+					CASE WHEN e.RucDestinatario2 IS not null THEN(e.RazonSocialDestinatario2 + ' RUC:' +e.RucDestinatario2 + ' ') ELSE '' END + 
+					e.NombresDestinatario2 + ' ' + e.ApellidosDestinatario2 + ' DNI:'+ e.DniDestinatario2 as dest2,
+				    e.TotalCobrado as totalCobrado,
+				   (CASE WHEN e.TipoDocumento = 'BOLETA' THEN 'B' ELSE 'F' END) as tipoDocAbr,
+				    ( SELECT STUFF((SELECT ',' + cast(cast(ed.Cantidad as int)as varchar) + ' ' + ed.Descripcion FROM t_encomiendaDetalle ed WHERE ed.IdEncomienda = e.IdEncomienda FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') ) as detalle,
+		          	(select  Numero from t_flota where IdBus = (select IdBus from t_programacion where IdProgramacion =e.idProgramacion)) as nroBus,
+		          	e.FRecojo as fRecojo,
+		          	e.NombreRecoge as nombreRecoge,
+		          	(u.nombre + ' ' +u.apellido_paterno + ' ' +u.apellido_materno) as usuarioEntrega
+		from (((((((t_encomienda e left join t_agencia a on e.IdOrigen = a.Idagencia) 
+							   left join t_agencia a2 on e.IdDestino = a2.Idagencia)
+							   left join t_estado es on es.valor = e.Estado)
+							   left join t_usuario u on u.idusuario = e.IdUsuarioEntrega)
+							   left join t_puntoventa p on p.IdPuntoVenta = e.IdPuntoVentaOrigen)
+							   left join t_agenciaoficina ao on e.idOficina = ao.idOficina)
+							   left join t_agenciaoficina ao2 on p.idOficina = ao2.idOficina)
+		where es.modulo = 'ENCOMIENDA'	
+		            and e.TipoDocumento= #{tipoDocumento} 	
+					and e.Estado in (1,7) 
+					and e.IdOrigen = #{idOrigen}
+					and e.IdDestino = #{idDestino} 
+					and e.idOficina = #{idPuntoVentaDestino}
+					and p.IdOficina = #{idPuntoVentaOrigen}
+					<if test="dniRemitente != null">
+					and e.dniRemitente =#{dniRemitente}
+					</if>
+					<if test="rucRemitente != null">
+					and e.rucRemitente =#{rucRemitente}
+					</if>
+</select>
+
+
+
+</mapper>	

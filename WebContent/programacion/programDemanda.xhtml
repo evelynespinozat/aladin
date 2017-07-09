@@ -1,0 +1,567 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	
+	<pe:blockUI target=":formLista:dtServicios" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+	</pe:blockUI> 
+	
+	
+	
+		<p:panel id="panelUR" style="height:400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Programacion" url="#" />
+				<p:menuitem value="Programacion Demanda" url="programDemanda" />
+			</p:breadCrumb>
+			
+		<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<h4>Consulta y Generacion de Programacion a Demanda</h4>	
+		<table>
+			<tr>	
+			<td>
+			<!-- formulario de busqueda -->
+			<p:commandButton id="btnNuevaProg" title="Programacion" value="Nueva Programacion a Demanda"  update=":dlgDetNuevo"   
+										 oncomplete="dlgNuevo.show();" icon="icon-generarprogramacion" style="width:250px;"/>
+			<br/>
+			<br/>
+			<h:form id="Busqueda">
+			<p:panel style="width:1080px">
+			
+			       	<h:panelGrid columns="8" id="datUbigeo" style="width:800px">
+			       			#{"Origen:"}
+							<p:selectOneMenu style="width:150px" value="#{programacionMB.programFilterDemanda.origen}" required="true" requiredMessage="Seleccione un Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{programacionMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cboDestino" listener="#{programacionMB.listarDestinos()}"  event="change"/> 
+							</p:selectOneMenu>
+							#{"Destino:"}
+							<p:selectOneMenu id="cboDestino" style="width:150px" value="#{programacionMB.programFilterDemanda.destino}" required="true" requiredMessage="Seleccione un Destino">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{programacionMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" /> 
+							</p:selectOneMenu>
+							#{"Tipo:"}
+							<p:selectOneMenu style="width:150px" value="#{programacionMB.programFilterDemanda.idCatServicio}" required="true" requiredMessage="Seleccione un Tipo Servicio" update="btnBusqueda ">
+								<f:selectItems var="ag" value="#{programacionMB.listaCatServicio}" itemValue="#{ag.idCatServicio}" itemLabel="#{ag.descripcion}" /> 
+							</p:selectOneMenu>
+							
+							<p:commandButton id="btnBusqueda" value="Consultar programaciones"
+							 actionListener="#{programacionMB.listarProgDemanda()}" 
+							 onstart="blockUIWidget.block()" 
+						      oncomplete="blockUIWidget.unblock()" 
+							update=":formLista :sms :Busqueda" style="width:200px;"/>
+
+			       	</h:panelGrid> 
+			       	
+			       	<h:outputText value="Intervalo de tiempo:" style="font-size:14px;font-weight:bold;" />
+					<br/>
+			       	
+					<h:panelGrid columns="6" id="datAlterno"  style="width:800px">
+						#{"Fecha Inicio:"}
+						<p:calendar value="#{programacionMB.programFilterDemanda.fecInicio}" pattern="dd/MM/yyyy" locale="es"
+							 	 mindate="#{programacionMB.dateInicio}" navigator="true"  required="true" requiredMessage="Se necesita una fecha">
+							 	 <p:ajax event="dateSelect" update="idFechFilterFin"></p:ajax>
+						</p:calendar>
+					
+						#{"Fecha Fin:"}
+						<p:calendar id="idFechFilterFin" value="#{programacionMB.programFilterDemanda.fecFin}" pattern="dd/MM/yyyy" locale="es" mindate="#{programacionMB.programFilterDemanda.fecInicio}"
+							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha" />
+
+						<p:spacer style="width:300px;height:4px"></p:spacer>
+				
+					</h:panelGrid>
+					
+			</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+				<p:separator></p:separator>	 
+			<h:form id="formLista">
+				
+				<p:dataTable id="dtServicios" widgetVar="dtExcepcion" var="l" value="#{programacionMB.listaProgramacionDemanda}" filteredValue="#{programacionMB.listaFiltroServicio}"  
+					emptyMessage="No hay Excepciones Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header"> <span style="color:red;font-size:14px;" >Programacion a Demanda Generadas</span> </f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:200px;" headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{l.descServicio}" filterMatchMode="contains">
+						<h:outputText value="#{l.descServicio}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Fecha Salida">
+						<h:outputText value="#{l.fSalida}" rendered="#{l.fSalida != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:40px" headerText="Hora Salida">
+						<h:outputText value="#{l.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:40px" headerText="Horas de Viaje">
+						<h:outputText value="#{l.horasViaje}" />
+					</p:column>
+					
+					<p:column style="width:40px" headerText="Ruta Comp. del servicio">
+						<h:outputText value="#{l.desRutaCompartida}" 
+						style="color:#{l.desRutaCompartida eq 'SI' ? 'green':'red'};"  />
+					</p:column>
+					
+					<p:column style="width:30px" headerText="Precio Piso 1">
+						<h:outputText value="#{l.precioPiso1}" />
+					</p:column>
+					
+					<p:column style="width:30px"  headerText="Precio Piso 2">
+						<h:outputText value="#{l.precioPiso2}" />
+					</p:column>
+
+					<p:column  style="width:200px" headerText="Tipo Programa">
+						<h:graphicImage value="/resources/img/#{l.icono}.png"/>
+						<p:spacer width="3px"/> 
+						<h:outputText value="#{l.descEstado}"/>
+					</p:column>	 
+					
+					<p:column style="width:20px;text-align: center;"  headerText="Generado por:">
+						<p:commandButton title="generado"  update=":dlgDetInfo" actionListener="#{programacionMB.infoProgramacion(l)}" oncomplete="dlgInfo.show();" icon="icon-search">
+						</p:commandButton>
+					</p:column>
+					
+					
+					
+					<p:column style="width:20px;text-align: center;"  headerText="Editar">
+						<p:commandButton title="Editar"  update=":dlgDetEditar" actionListener="#{programacionMB.editarProgramacionDemanda(l)}"
+											 oncomplete="dlgEditar.show();" icon="icon-edit">
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+			</h:form>
+			
+			<!-- dialogo nuevo-->
+			
+			<p:dialog header="Generar Programacion a Demanda" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">					
+					<h:form id="formReg">
+					   
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="4">
+						
+							#{"Clase:"}
+							<p:selectOneMenu style="width:250px" value="#{programacionMB.servicioPaint.idClase}" required="true" requiredMessage="Seleccione una Clase">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="s" value="#{programacionMB.listaClases}" itemValue="#{s.idclase}" itemLabel="#{s.descripcion}" /> 
+							    <p:ajax update="cmbServi" listener="#{programacionMB.listarServicios()}" />
+							</p:selectOneMenu>
+							<p:outputLabel></p:outputLabel>
+							<p:outputLabel></p:outputLabel>
+							
+							#{"Servicio:"}
+							<p:selectOneMenu id="cmbServi" style="width:250px" value="#{programacionMB.servicioPaint.idServicio}" required="true" requiredMessage="Seleccione un Tipo Servicio">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="s" value="#{programacionMB.listaServicio}" itemValue="#{s.idServicio}" itemLabel="#{s.desOrigen} - #{s.desDestino} / #{s.HSalida}" /> 
+							    <p:ajax update="txtPiso1 txtPiso2 panelServComp pnHora" listener="#{programacionMB.obtenerInformacion()}" />
+							</p:selectOneMenu>
+							<h:panelGroup>
+								<h:outputLink id="grow" value="#">
+							    	<h:graphicImage id="imgAyuda" library="img" name="icon-help.png" />
+							    </h:outputLink>
+							    <p:tooltip for="imgAyuda"  showEffect="clip" hideEffect="explode" >
+							     	<h:outputText value="Si no se lista ningun servicio," />
+							     	<br/>
+							     	<h:outputText value="primero debera crear un servicio como a Demanda" />
+							     </p:tooltip>
+							</h:panelGroup>
+							
+							<h:commandLink value="Crear servicio" immediate="true" action="pretty:servicio" />
+							
+							
+								
+							
+							#{"Fecha Inicio:"}
+							<p:calendar value="#{programacionMB.dateInicio}" pattern="dd/MM/yyyy" locale="es" style="width:120px" mindate="#{programacionMB.dateInicio}"
+							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha">
+							 <p:ajax event="dateSelect" update="idFechFin"></p:ajax> 	 
+							</p:calendar>
+							<p:outputLabel></p:outputLabel>
+							<p:outputLabel></p:outputLabel>
+							
+							#{"Fecha Fin:"}
+							<p:calendar id="idFechFin" value="#{programacionMB.dateFinal}" pattern="dd/MM/yyyy" locale="es" style="width:120px"
+								 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha" mindate="#{programacionMB.dateInicio}" />
+							<p:outputLabel></p:outputLabel>
+							<p:outputLabel></p:outputLabel>
+
+						<!-- 							datos del tramo uno	 -->
+
+							#{"Precio Piso 1:"}
+							
+							<h:outputText id="txtPiso1" style="width:120px;color:red;font-weight:bold;" value="#{programacionMB.servicioPaint.precio1}" 
+								   />
+							<p:outputLabel></p:outputLabel>
+							<p:outputLabel></p:outputLabel>
+							
+							#{"Precio Piso 2:"}
+							<h:outputText id="txtPiso2" style="width:120px;color:red;font-weight:bold;" value="#{programacionMB.servicioPaint.precio2}" 
+								  />
+							<p:outputLabel></p:outputLabel>
+							<p:outputLabel></p:outputLabel>
+							
+						</h:panelGrid>
+							
+						<h:panelGrid columns="4" id="pnHora">
+							#{"Hora Salida:"}
+						   <p:selectOneMenu style="width:52px" value="#{programacionMB.hora}" required="true" requiredMessage="Seleccione un Tipo Servicio" disabled="true" >
+								<f:selectItem itemLabel="00" itemValue="00" />
+								<f:selectItem itemLabel="01" itemValue="01" />
+								<f:selectItem itemLabel="02" itemValue="02" />
+								<f:selectItem itemLabel="03" itemValue="03" />
+								<f:selectItem itemLabel="04" itemValue="04" />
+								<f:selectItem itemLabel="05" itemValue="05" />
+								<f:selectItem itemLabel="06" itemValue="06" />
+								<f:selectItem itemLabel="07" itemValue="07" /> 
+								<f:selectItem itemLabel="08" itemValue="08" />
+								<f:selectItem itemLabel="09" itemValue="09" />
+								<f:selectItem itemLabel="10" itemValue="10" />
+								<f:selectItem itemLabel="11" itemValue="11" />
+								<f:selectItem itemLabel="12" itemValue="12" />
+							</p:selectOneMenu>
+							
+							
+							<p:selectOneMenu style="width:52px" value="#{programacionMB.minutos}" required="true" requiredMessage="Seleccione un Tipo Servicio" disabled="true">
+								<f:selectItem itemLabel="00" itemValue="00" />
+								
+								<f:selectItem itemLabel="01" itemValue="01" />
+								<f:selectItem itemLabel="02" itemValue="02" />
+								<f:selectItem itemLabel="03" itemValue="03" />
+								<f:selectItem itemLabel="04" itemValue="04" />
+								<f:selectItem itemLabel="05" itemValue="05" />
+								<f:selectItem itemLabel="06" itemValue="06" />
+								<f:selectItem itemLabel="07" itemValue="07" /> 
+								<f:selectItem itemLabel="08" itemValue="08" />
+								<f:selectItem itemLabel="09" itemValue="09" />
+								<f:selectItem itemLabel="10" itemValue="10" />
+							
+								<f:selectItem itemLabel="11" itemValue="11" />
+								<f:selectItem itemLabel="12" itemValue="12" />
+								<f:selectItem itemLabel="13" itemValue="13" />
+								<f:selectItem itemLabel="14" itemValue="14" />
+								<f:selectItem itemLabel="15" itemValue="15" />
+								<f:selectItem itemLabel="16" itemValue="16" />
+								<f:selectItem itemLabel="17" itemValue="17" /> 
+								<f:selectItem itemLabel="18" itemValue="18" />
+								<f:selectItem itemLabel="19" itemValue="19" />
+								<f:selectItem itemLabel="20" itemValue="20" />
+
+								<f:selectItem itemLabel="21" itemValue="21" />
+								<f:selectItem itemLabel="22" itemValue="22" />
+								<f:selectItem itemLabel="23" itemValue="23" />
+								<f:selectItem itemLabel="24" itemValue="24" />
+								<f:selectItem itemLabel="25" itemValue="25" />
+								<f:selectItem itemLabel="26" itemValue="26" />
+								<f:selectItem itemLabel="27" itemValue="27" /> 
+								<f:selectItem itemLabel="28" itemValue="28" />
+								<f:selectItem itemLabel="29" itemValue="29" />
+								<f:selectItem itemLabel="30" itemValue="30" />
+								
+								<f:selectItem itemLabel="31" itemValue="31" />
+								<f:selectItem itemLabel="32" itemValue="32" />
+								<f:selectItem itemLabel="33" itemValue="33" />
+								<f:selectItem itemLabel="34" itemValue="34" />
+								<f:selectItem itemLabel="35" itemValue="35" />
+								<f:selectItem itemLabel="36" itemValue="36" />
+								<f:selectItem itemLabel="37" itemValue="37" /> 
+								<f:selectItem itemLabel="38" itemValue="38" />
+								<f:selectItem itemLabel="39" itemValue="39" />
+								<f:selectItem itemLabel="40" itemValue="40" />
+								
+								<f:selectItem itemLabel="41" itemValue="41" />
+								<f:selectItem itemLabel="42" itemValue="42" />
+								<f:selectItem itemLabel="43" itemValue="43" />
+								<f:selectItem itemLabel="44" itemValue="44" />
+								<f:selectItem itemLabel="45" itemValue="45" />
+								<f:selectItem itemLabel="46" itemValue="46" />
+								<f:selectItem itemLabel="47" itemValue="47" /> 
+								<f:selectItem itemLabel="48" itemValue="48" />
+								<f:selectItem itemLabel="49" itemValue="49" />
+								<f:selectItem itemLabel="50" itemValue="50" />
+								
+								<f:selectItem itemLabel="51" itemValue="51" />
+								<f:selectItem itemLabel="52" itemValue="52" />
+								<f:selectItem itemLabel="53" itemValue="53" />
+								<f:selectItem itemLabel="54" itemValue="54" />
+								<f:selectItem itemLabel="55" itemValue="55" />
+								<f:selectItem itemLabel="56" itemValue="56" />
+								<f:selectItem itemLabel="57" itemValue="57" /> 
+								<f:selectItem itemLabel="58" itemValue="58" />
+								<f:selectItem itemLabel="59" itemValue="59" />
+								
+								
+							</p:selectOneMenu>
+							<p:selectOneMenu style="width:55px" value="#{programacionMB.am_pm}" required="true" requiredMessage="Seleccione un Tipo Servicio" disabled="true">
+								<f:selectItem itemLabel="AM" itemValue="AM" />
+								<f:selectItem itemLabel="PM" itemValue="PM" /> 
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+							
+						<!-- si es de tipo servicio con tramo -->
+							
+						<h:panelGroup id="panelServComp">
+							<h:panelGrid columns="3" rendered="#{programacionMB.visibleComp}">
+								<h4 style="color:red;">La programaci&oacute;n a demanda no contendr&aacute; ruta compartida.</h4>
+							</h:panelGrid>
+							
+							<br/>
+							
+							<p:commandButton value="Aceptar" actionListener="#{programacionMB.validarFechas()}"
+							 update="msgNuevo formReg :formLista" disabled="#{programacionMB.visibleComp}"  widgetVar="startButton" id="btnGenerar"
+							 oncomplete="validar(xhr, status, args)" icon="icon-disk"
+							 onclick="startButton.disable()"/>
+							 
+				       		<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+							
+							
+						</h:panelGroup>
+
+					</h:form>	
+			</p:dialog>
+			
+<!-- 			editar programacion -->
+			<p:dialog header="Modificar Programacion a Demanda" widgetVar="dlgEditar" appendToBody="true"
+					  resizable="false" id="dlgDetEditar" modal="true">
+					
+					<h:form >
+					   <p:growl id="growl" />  
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="3">
+						
+							#{"Clase:"}
+							<p:selectOneMenu style="width:250px" value="#{programacionMB.editProgramacion.idClase}" required="true"
+								 requiredMessage="Seleccione una Clase" disabled="true">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="s" value="#{programacionMB.listaClases}" itemValue="#{s.idclase}" itemLabel="#{s.descripcion}" /> 
+							    <p:ajax update="cmbServi" listener="#{programacionMB.listarServicios()}" />
+							</p:selectOneMenu>
+							<p:outputLabel></p:outputLabel>
+							
+							#{"Servicio:"}
+							<p:selectOneMenu id="cmbServi" style="width:250px" value="#{programacionMB.editProgramacion.idServicio}" required="true" 
+								requiredMessage="Seleccione un Tipo Servicio" disabled="true">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="s" value="#{programacionMB.listaServicio}" itemValue="#{s.idServicio}" itemLabel="#{s.desOrigen} - #{s.desDestino} / #{s.HSalida}" /> 
+							    <p:ajax update="txtPiso1 txtPiso2  pnHora" listener="#{programacionMB.obtenerInformacion()}" />
+							</p:selectOneMenu>
+							
+
+							<p:outputLabel></p:outputLabel>
+
+							#{"Precio Piso 1:"}
+							<p:inputText id="txtPiso1" style="width:176px" value="#{programacionMB.editProgramacion.precioPiso1}" required="true" maxlength="6" requiredMessage="Se necesita un Precio Piso 1" />
+							<p:outputLabel></p:outputLabel>
+							 
+							#{"Precio Piso 2:"}
+							<p:inputText id="txtPiso2" style="width:176px" value="#{programacionMB.editProgramacion.precioPiso2}" required="true" maxlength="6" requiredMessage="Se necesita un Precio Piso 2" />
+							<p:outputLabel></p:outputLabel>
+					
+							#{"Fecha:"}
+							<p:calendar value="#{programacionMB.editProgramacion.fSalida}" pattern="dd/MM/yyyy" locale="es" style="width:100px" navigator="true"  disabled="true"  required="true" requiredMessage="Se necesita una fecha" />
+							<p:outputLabel></p:outputLabel>
+						</h:panelGrid>
+							
+							<h:panelGrid columns="4" id="pnHora">
+						    #{"Horas Salida:"}
+							<p:selectOneMenu style="width:52px" value="#{programacionMB.hora}" required="true" requiredMessage="Seleccione un Tipo Servicio">
+								<f:selectItem itemLabel="01" itemValue="01" />
+								<f:selectItem itemLabel="02" itemValue="02" />
+								<f:selectItem itemLabel="03" itemValue="03" />
+								<f:selectItem itemLabel="04" itemValue="04" />
+								<f:selectItem itemLabel="05" itemValue="05" />
+								<f:selectItem itemLabel="06" itemValue="06" />
+								<f:selectItem itemLabel="07" itemValue="07" /> 
+								<f:selectItem itemLabel="08" itemValue="08" />
+								<f:selectItem itemLabel="09" itemValue="09" />
+								<f:selectItem itemLabel="10" itemValue="10" />
+								<f:selectItem itemLabel="11" itemValue="11" />
+								<f:selectItem itemLabel="12" itemValue="12" />
+							</p:selectOneMenu>
+							<p:selectOneMenu style="width:52px" value="#{programacionMB.minutos}" required="true" requiredMessage="Seleccione un Tipo Servicio">
+								<f:selectItem itemLabel="00" itemValue="00" />
+								
+								<f:selectItem itemLabel="01" itemValue="01" />
+								<f:selectItem itemLabel="02" itemValue="02" />
+								<f:selectItem itemLabel="03" itemValue="03" />
+								<f:selectItem itemLabel="04" itemValue="04" />
+								<f:selectItem itemLabel="05" itemValue="05" />
+								<f:selectItem itemLabel="06" itemValue="06" />
+								<f:selectItem itemLabel="07" itemValue="07" /> 
+								<f:selectItem itemLabel="08" itemValue="08" />
+								<f:selectItem itemLabel="09" itemValue="09" />
+								<f:selectItem itemLabel="10" itemValue="10" />
+							
+								<f:selectItem itemLabel="11" itemValue="11" />
+								<f:selectItem itemLabel="12" itemValue="12" />
+								<f:selectItem itemLabel="13" itemValue="13" />
+								<f:selectItem itemLabel="14" itemValue="14" />
+								<f:selectItem itemLabel="15" itemValue="15" />
+								<f:selectItem itemLabel="16" itemValue="16" />
+								<f:selectItem itemLabel="17" itemValue="17" /> 
+								<f:selectItem itemLabel="18" itemValue="18" />
+								<f:selectItem itemLabel="19" itemValue="19" />
+								<f:selectItem itemLabel="20" itemValue="20" />
+
+								<f:selectItem itemLabel="21" itemValue="21" />
+								<f:selectItem itemLabel="22" itemValue="22" />
+								<f:selectItem itemLabel="23" itemValue="23" />
+								<f:selectItem itemLabel="24" itemValue="24" />
+								<f:selectItem itemLabel="25" itemValue="25" />
+								<f:selectItem itemLabel="26" itemValue="26" />
+								<f:selectItem itemLabel="27" itemValue="27" /> 
+								<f:selectItem itemLabel="28" itemValue="28" />
+								<f:selectItem itemLabel="29" itemValue="29" />
+								<f:selectItem itemLabel="30" itemValue="30" />
+								
+								<f:selectItem itemLabel="31" itemValue="31" />
+								<f:selectItem itemLabel="32" itemValue="32" />
+								<f:selectItem itemLabel="33" itemValue="33" />
+								<f:selectItem itemLabel="34" itemValue="34" />
+								<f:selectItem itemLabel="35" itemValue="35" />
+								<f:selectItem itemLabel="36" itemValue="36" />
+								<f:selectItem itemLabel="37" itemValue="37" /> 
+								<f:selectItem itemLabel="38" itemValue="38" />
+								<f:selectItem itemLabel="39" itemValue="39" />
+								<f:selectItem itemLabel="40" itemValue="40" />
+								
+								<f:selectItem itemLabel="41" itemValue="41" />
+								<f:selectItem itemLabel="42" itemValue="42" />
+								<f:selectItem itemLabel="43" itemValue="43" />
+								<f:selectItem itemLabel="44" itemValue="44" />
+								<f:selectItem itemLabel="45" itemValue="45" />
+								<f:selectItem itemLabel="46" itemValue="46" />
+								<f:selectItem itemLabel="47" itemValue="47" /> 
+								<f:selectItem itemLabel="48" itemValue="48" />
+								<f:selectItem itemLabel="49" itemValue="49" />
+								<f:selectItem itemLabel="50" itemValue="50" />
+								
+								<f:selectItem itemLabel="51" itemValue="51" />
+								<f:selectItem itemLabel="52" itemValue="52" />
+								<f:selectItem itemLabel="53" itemValue="53" />
+								<f:selectItem itemLabel="54" itemValue="54" />
+								<f:selectItem itemLabel="55" itemValue="55" />
+								<f:selectItem itemLabel="56" itemValue="56" />
+								<f:selectItem itemLabel="57" itemValue="57" /> 
+								<f:selectItem itemLabel="58" itemValue="58" />
+								<f:selectItem itemLabel="59" itemValue="59" />
+								
+								
+							</p:selectOneMenu>
+							
+							<p:selectOneMenu style="width:55px" value="#{programacionMB.am_pm}" required="true" requiredMessage="Seleccione un Tipo Servicio">
+								<f:selectItem itemLabel="AM" itemValue="AM" />
+								<f:selectItem itemLabel="PM" itemValue="PM" /> 
+							</p:selectOneMenu>
+							
+							</h:panelGrid>
+			
+						
+						<br/>
+						
+                        <p:commandButton value="Actualizar" actionListener="#{programacionMB.editarProgramacion()}"
+							 update="msgNuevo, :formLista" widgetVar="startButton" id="btnGenerar"
+							 oncomplete="validar(xhr, status, args)" icon="icon-disk"
+							 onclick="startButton.disable()"/>
+							 
+				        <p:commandButton value="Cancelar" type="button"	 onclick="dlgEditar.hide();"  icon="icon-cancel" />
+
+					</h:form>	
+			</p:dialog>
+			
+			
+			<p:dialog header="Usuario Generador de Programacion" widgetVar="dlgInfo" appendToBody="true"
+					  resizable="false" id="dlgDetInfo" modal="true">
+					
+					
+					 <h:panelGrid columns="2"> 
+					 <h:graphicImage value="/resources/img/user.png"/>
+					 <p:panel>
+					 <h:panelGrid columns="2">
+					 
+					 	#{"Usuario Creacion:"}
+						<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{programacionMB.programacionPaint.nombUsuarioRegistro}" />
+						
+						#{"Agencia:"}
+						<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{programacionMB.programacionPaint.desAgencia}">
+						</h:outputText>
+						
+						#{"Oficina:"}
+						<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{programacionMB.programacionPaint.desOficina}">
+						</h:outputText>
+						
+						#{"Fecha Creacion:"}
+						<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{programacionMB.programacionPaint.fcreacion}"  rendered="#{programacionMB.programacionPaint.fcreacion != null}">
+								<f:convertDateTime pattern="MM/dd/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+						
+						#{"Hora Creacion:"}
+						<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{programacionMB.programacionPaint.fcreacion}"  rendered="#{programacionMB.programacionPaint.fcreacion != null}">
+								<f:convertDateTime pattern="HH:mm:ss" type="date" dateStyle="short" />
+						</h:outputText>
+						
+					 </h:panelGrid> 
+					 </p:panel>
+					 </h:panelGrid>
+					 
+					 <br/>
+					 <p:commandButton value="Aceptar" type="button"	 onclick="dlgInfo.hide();" />
+			</p:dialog>
+
+		</p:panel>
+		<script> 
+		
+		function validar(xhr, status, args) {
+			if (args.validationFailed) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//dlgNuevo.hide();
+			}
+		}
+
+		</script>
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.CompraDetalleMapper">
+
+<resultMap id="compraDetalleResult" type="com.certicom.ittsa.domain.CompraDetalle">
+	<id column="IdCompDet" property="IdCompDet"/>
+	<result column="IdCompra" property="IdCompra"/>
+	<result column="IdProducto" property="IdProducto"/>
+	<result column="cantIngreso" property="cantIngreso"/>
+	<result column="fRegistro" property="fRegistro"/>
+	<result column="desProducto" property="desProducto"/>
+	<result column="desMedida" property="desMedida"/>
+	<result column="IdProveedor" property="idProveedor"/>
+</resultMap>
+
+<insert id="registrarCompraDetalle"  parameterType="com.certicom.ittsa.domain.CompraDetalle">
+   insert into t_compra_detalle (IdCompra,IdProducto,cantIngreso,fRegistro,IdProveedor)
+  						 values(#{IdCompra},#{IdProducto},#{cantIngreso},#{fRegistro},#{idProveedor})
+</insert>
+
+
+
+
+</mapper>	

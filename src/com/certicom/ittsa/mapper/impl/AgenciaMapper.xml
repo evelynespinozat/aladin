@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.AgenciaMapper">
+
+<resultMap id="agenciaResult" type="com.certicom.ittsa.domain.Agencia">
+	<id column="Idagencia" property="Idagencia"/>
+	<result column="Estado" property="Estado"/>
+	<result column="Grupo" property="Grupo"/>
+	<result column="Email" property="Email"/>
+	<result column="Telefono2" property="Telefono2"/>
+	<result column="Telefono1" property="Telefono1"/>
+	<result column="Direccion" property="Direccion"/>
+	<result column="Descripcion" property="Descripcion"/>
+	<result column="diascroquis" property="diascroquis"/>
+	
+	
+</resultMap>
+
+
+</mapper>	

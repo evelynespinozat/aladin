@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.CierreCajaMapper">
+
+<resultMap id="cierreCajaResult" type="com.certicom.ittsa.domain.CierreCaja">
+	<id column="IdCierreCaja" property="idCierreCaja"/>
+	<result column="IdUsuario" property="idUsuario"/>
+	<result column="Saldo" property="saldo"/>
+	<result column="FCierre" property="fCierre"/>
+	<result column="IdPuntoVenta" property="idPuntoVenta"/>
+</resultMap>
+
+</mapper>	

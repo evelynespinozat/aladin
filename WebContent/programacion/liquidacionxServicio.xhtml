@@ -1,0 +1,536 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	
+	<style>
+	
+		#resumen
+		{
+			background-color: #fcc14d;
+			border: 1px solid #0c0c0c;
+			-moz-border-radius: 10px;
+			-webkit-border-radius: 10px;
+			border-radius: 10px;
+			/*IE 7 AND 8 DO NOT SUPPORT BORDER RADIUS*/
+			opacity: 0.88;
+			-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity = 88);
+			/*-ms-filter must come before filter*/
+			filter: alpha(opacity = 88);
+			/*INNER ELEMENTS MUST NOT BREAK THIS ELEMENTS BOUNDARIES*/
+			/*All filters must be placed together*/
+			width: 200px;
+			height: 100px;
+			padding: 10px;
+		}
+	
+	
+	</style>
+	
+	<pe:blockUI target=":formTracking:dtidTracking" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+	</pe:blockUI> 
+	
+		<p:panel id="panelUR" style="height=400px;width:1230px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Programacion" url="#" />
+				<p:menuitem value="Liquidacion por Servicio" url="#" />
+			</p:breadCrumb>
+			
+		<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+				
+		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel style="width:1100px">
+			       	<h:panelGrid columns="10" id="datUbigeo">
+			       	
+			       			#{"Bus:"}
+							<p:selectOneMenu id="cboBus" style="width:150px" value="#{liquidacionxServicioMB.idBus}" required="true" requiredMessage="Seleccione una categoria">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="b" value="#{liquidacionxServicioMB.listaBuses}" itemValue="#{b.idBus}" itemLabel="#{b.numero}" /> 
+							</p:selectOneMenu>
+							 
+			       			#{"F. Inicio:"}
+			       			<p:calendar value="#{liquidacionxServicioMB.fecInicio}" pattern="dd/MM/yyyy" mode="popup"  locale="es"></p:calendar>
+			       			
+			       			#{"F. Fin:"}
+			       			<p:calendar value="#{liquidacionxServicioMB.fecFin}" pattern="dd/MM/yyyy" mode="popup" locale="es"></p:calendar>  
+							
+							<p:commandButton value="Buscar" title="Buscar" icon="icon-search" 
+								actionListener="#{liquidacionxServicioMB.buscarProgramacion()}" update =":formLista1"/>
+							
+							<h:commandLink id="Imprimir" value="Imprimir" style="padding: 6px 10px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							   color: #1C190A;" actionListener="#{liquidacionxServicioMB.imprimirPDF}">  
+							</h:commandLink>
+							  
+			       	</h:panelGrid>  
+			 </p:panel>       	
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+	
+			
+			<h:form id="formLista1">
+				
+				<p:dataTable id="dtProgAsig" widgetVar="dtProgAsig" var="p" value="#{liquidacionxServicioMB.listaProgramacionAsig}" 
+					filteredValue="#{liquidacionxServicioMB.listaProgramacionAsigFilter}" 
+					emptyMessage="No hay Flota Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+					paginator="true" rows="10"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Salidas Programadas Asignadas</f:facet>
+					
+					<p:column style="width:2%;text-align: center;" headerText="Origen">
+						<h:outputText value="#{p.nombOrigen}" />
+					</p:column>
+					
+					<p:column style="width:2%;text-align: center;" headerText="Destino">
+						<h:outputText value="#{p.nombDestino}" />
+					</p:column>
+					
+					<p:column style="width:7%;text-align: center;" headerText="Servicio">
+						<h:outputText value="#{p.descServicio}" />
+					</p:column>
+					
+					
+					<p:column style="width:3%;text-align: center;" headerText="Fecha">
+						<h:outputText value="#{p.fSalidaString}" />
+					</p:column>
+					
+					
+					<p:column style="width:2%;text-align: center;" headerText="H. Salida">
+						<h:outputText value="#{p.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Piloto">
+						<h:outputText value="#{p.nombPiloto}" />
+						
+					</p:column>
+					
+					<ui:remove>
+					<p:column style="width:5%;text-align: center;" headerText="Ubi. Piloto">
+						<h:outputText value="#{p.ubigeoPiloto}" />						
+					</p:column>
+					</ui:remove>
+					<p:column style="width:10%;text-align: center;" headerText="Copiloto">
+						<h:outputText value="#{p.nombCopiloto}" />			
+					</p:column>
+					
+					<ui:remove>
+					<p:column style="width:5%;text-align: center;" headerText="Ubi. Copiloto">
+						<h:outputText value="#{p.ubigeoCopiloto}" />						
+					</p:column>
+					</ui:remove>
+					<p:column style="width:10%;text-align: center;" headerText="Terramoza 1">
+						
+						
+						<p:commandLink value="#{p.nomTerramoza}" oncomplete="dlgTrackingTerramoza.show();" update=":dlgDetTrackingTerramoza" 
+							actionListener="#{liquidacionxServicioMB.setearTerramoza(p.idTerramoza)}"  >
+							
+						</p:commandLink>
+								
+					</p:column>
+					
+					<ui:remove>
+					<p:column style="width:7%;text-align: center;" headerText="Ubi. Terr.1">
+						<h:outputText value="#{p.ubigeoTerramoza1}" />	
+						
+						<p:commandLink value="#{p.ubigeoTerramoza1}" >
+						
+						</p:commandLink>
+						
+						<p:commandButton title="Agregar gasto" 
+							icon="icon-money"
+							oncomplete="dlgGasto.show();" update=":dlgDetGasto" actionListener="#{liquidacionxServicioMB.listarGastos(p)}" >
+							<f:setPropertyActionListener target="#{liquidacionxServicioMB.programacion}" value="#{p}" />	
+						</p:commandButton> 
+						
+						
+											
+					</p:column>
+					</ui:remove>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Terramoza 2">
+						<h:outputText value="#{p.nomTerramoza2}" />			
+					</p:column>
+					<ui:remove>
+					<p:column style="width:7%;text-align: center;" headerText="Ubi. Terr.2">
+						<h:outputText value="#{p.ubigeoTerramoza2}" />						
+					</p:column>
+					
+					<p:column style="width:2%;text-align: center;" headerText="Estado">
+						<h:graphicImage value="#{p.bandCerrado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+										title="#{p.bandCerrado?'Activo':'Bloqueado'}" />
+					</p:column>
+					</ui:remove>
+					
+					<p:column style="width:2%;text-align: center;" headerText="Ingresos">
+						<h:outputText value="#{p.asignacionViatico}" >
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:2%;text-align: center;" headerText="Total gastos">
+						<h:outputText value="#{p.totalGastos}" >
+						</h:outputText>
+					</p:column>
+					
+					
+					<p:column style="width:13%;text-align: center;" headerText="Gastos">
+						<p:commandButton title="Agregar gasto" 
+							icon="icon-money"
+							oncomplete="dlgGasto.show();" update=":dlgDetGasto :frmGasto" actionListener="#{liquidacionxServicioMB.listarGastos(p)}" >
+							<f:setPropertyActionListener target="#{liquidacionxServicioMB.programacion}" value="#{p}" />	
+						</p:commandButton> 
+						
+										 
+					</p:column>
+				</p:dataTable>
+			</h:form>
+			
+			
+			<h:form>
+				<p:commandButton value="Generar Liquidacion" icon="icon-process"  
+				actionListener="#{liquidacionxServicioMB.generarLiquidacionResumen()}" update=":sms :pnResumen" />
+			</h:form>
+			
+			<h:panelGroup id="pnResumen">
+				
+				
+
+					<p:panel rendered="#{liquidacionxServicioMB.resumenGenerado}" >
+						<div id="resumen">
+						<h:outputText value="Resumen Liquidacion" style="font-size:16px;font-weight:bold;" />
+						
+						<h:panelGrid columns="2">
+						
+							#{"Ingreso S/.:"}
+							<h:outputText value="#{liquidacionxServicioMB.totalIngreso}" style="font-size:14px;font-weight:bold;" />
+							
+							#{"Egreso S/.:"}
+							<h:outputText value="#{liquidacionxServicioMB.totalEgreso}" style="font-size:14px;font-weight:bold;"  />
+
+							#{"Saldo S/.:"}
+							<h:outputText value="#{liquidacionxServicioMB.totalSaldo}" style="font-size:14px;font-weight:bold;">
+								
+							</h:outputText>
+						
+						</h:panelGrid>
+						</div>
+					</p:panel>
+				
+				
+			</h:panelGroup>
+			
+			
+			
+			
+			
+			<p:dialog header="Agregar Gasto" widgetVar="dlgGasto" appendToBody="true"
+					  resizable="false" id="dlgDetGasto" modal="true" closable="false">
+					  
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						<p:panel>
+						<h:panelGrid columns="8">
+							<p:outputLabel value="Origen:"></p:outputLabel>
+							<h:outputText value=" #{liquidacionxServicioMB.programacion.nombOrigen}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+								
+							<p:outputLabel value="Destino:" style="padding-left:10px"></p:outputLabel>
+							<h:outputText value=" #{liquidacionxServicioMB.programacion.nombDestino}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+															
+							<p:outputLabel value="Fecha:" style="padding-left:10px"></p:outputLabel>
+							<h:outputText value=" #{liquidacionxServicioMB.programacion.fSalidaString}"  style="font-weight:bold;font-size: 1.2em;">
+							</h:outputText>
+
+							<p:outputLabel value="Hora:" ></p:outputLabel>
+							<h:outputText value=" #{liquidacionxServicioMB.programacion.hSalida}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+							
+							<p:outputLabel value="Piloto:" style="padding-left:10px"></p:outputLabel>
+							<h:outputText value=" #{liquidacionxServicioMB.programacion.nombPiloto}"  
+								style="font-weight:bold;font-size: 1.2em;"/>	
+								
+							<p:outputLabel value="Copiloto:" style="padding-left:10px"></p:outputLabel>
+							<h:outputText value=" #{liquidacionxServicioMB.programacion.nombCopiloto}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+		
+							<p:outputLabel value="Terramoza 1:"></p:outputLabel>
+							<h:outputText value=" #{liquidacionxServicioMB.programacion.nomTerramoza}"  
+								style="font-weight:bold;font-size: 1.2em;"/>	
+								
+							<p:outputLabel value="Terramoza 2:" style="padding-left:10px"></p:outputLabel>
+							<h:outputText value=" #{liquidacionxServicioMB.programacion.nomTerramoza2}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+					</h:panelGrid>
+				</p:panel>
+				
+					<h:form id="frmGasto">
+						<p:panel>
+						<h:outputText value="Registro de gastos"  style="font-weight:bold;font-size: 1.2em;"/> 
+						<h:panelGrid columns="8">
+							#{"Concepto:"}
+							<h:selectOneMenu value="#{liquidacionxServicioMB.gasto.concepto}" required="true" requiredMessage="Se necesita un Concepto" >
+								<f:selectItem itemLabel="Peaje" itemValue="PEAJE" />
+								<f:selectItem itemLabel="Viatico Piloto" itemValue="VIATICO PILOTO" />
+								<f:selectItem itemLabel="Viatico Terramoza" itemValue="VIATICO TERRAMOZA" />
+								<f:selectItem itemLabel="Hospedaje" itemValue="HOSPEDAJE" />
+								<f:selectItem itemLabel="Otros" itemValue="OTROS" />
+							</h:selectOneMenu>
+							#{"Monto:"}
+							<p:inputText  style="width:60px" value="#{liquidacionxServicioMB.gasto.monto}" required="true" size="5" maxlength="7" 
+								requiredMessage="Se necesita una monto" >
+							   <pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Fecha:"}
+							<p:calendar value="#{liquidacionxServicioMB.gasto.fecha}"	style="font-size:14px;" readonlyInput="true" 
+								size="9" pattern="dd-MM-yyyy" locale="es" required="true" requiredMessage="Se necesit una fecha" />
+								
+							#{"Observaciones:"}
+							<h:inputTextarea value="#{liquidacionxServicioMB.gasto.observaciones}" cols="30" rows="2" styleClass="mayuscula" />
+
+						</h:panelGrid>
+						
+						<h:panelGrid columns="4" >
+							<p:commandButton value="Guardar" icon="icon-add"   style="margin-left:80px"
+								actionListener="#{liquidacionxServicioMB.anadirGasto(liquidacionxServicioMB.programacion)}"
+								update="@form :formListaGasto :msgNuevo" /> 	
+							
+							<p:commandButton value="Limpiar" icon="icon-clear" update="@form" actionListener="#{liquidacionxServicioMB.nuevoGasto()}" />
+							
+							<p:commandButton value="Cerrar" icon="icon-cancel" update=":formLista1" oncomplete="dlgGasto.hide();"   />
+						</h:panelGrid>
+							
+						</p:panel>
+					</h:form>
+					
+					
+					
+					
+					<h:form id="formListaGasto" >
+						<p:dataTable id="dtDetalleLiq" widgetVar="dtDetalleLiq" var="gas" value="#{liquidacionxServicioMB.listaGasto}" 
+								emptyMessage="No hay gastos" rowIndexVar="nro" 
+								style="FONT-SIZE: 10px;margin-top:5px ">
+								
+								<f:facet name="header">Detalle de Gastos</f:facet>
+								
+								<p:column headerText="Orden" width="25" style="width:3%" >
+									#{nro+1}
+								</p:column>
+								
+								<p:column style="width:15%" headerText="Concepto" >
+									<h:outputText value="#{gas.concepto}" />
+								</p:column>
+								
+								<p:column style="width:15%;text-align: center;" headerText="Monto">
+									<h:outputText value="#{gas.monto}" />
+								</p:column>
+								
+								<p:column style="width:15%;text-align: center;" headerText="Fecha">
+									<h:outputText value="#{gas.fecha}">
+									<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+								
+								<p:column style="width:15%;text-align: center;" headerText="Observacion">
+									<h:outputText value="#{gas.observaciones}" />
+								</p:column>
+															
+								
+								<p:column headerText="Editar/Elim." style="width:15%;text-align: center">
+								
+									<p:commandButton title="Editar"  update=":frmGasto" 
+									
+													 icon="icon-edit">
+										<f:setPropertyActionListener target="#{liquidacionxServicioMB.editar}" value="true" />
+										<f:setPropertyActionListener target="#{liquidacionxServicioMB.gasto}" value="#{gas}" />					 
+									</p:commandButton>
+										
+			
+									<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+										    <f:setPropertyActionListener target="#{liquidacionxServicioMB.gasto}" value="#{gas}" />
+									</p:commandButton>
+											
+								</p:column>
+			
+							</p:dataTable>
+							
+							<br/>
+							<h:panelGrid id="pnTotal" columns="2">
+								#{"Total S/.:"}
+								
+								<h:outputText value="#{liquidacionxServicioMB.programacion.totalGastos}" style="font-size:14px;font-weight:bold;" />
+							
+							</h:panelGrid>
+								
+					</h:form>
+					
+			</p:dialog>
+			
+			
+			
+			
+			
+			
+			
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este detalle de la liquidación?" header="Eliminar Detalle de Liquidacion"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>					
+					<p:commandButton value="Eliminar"
+						update=":formListaGasto:dtDetalleLiq :frmGasto"
+						actionListener="#{liquidacionxServicioMB.eliminarDetalle()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			
+			
+			
+			
+			<p:dialog header="Ver Tracking" widgetVar="dlgTrackingTerramoza" appendToBody="true"
+					  resizable="false" id="dlgDetTrackingTerramoza" modal="true">
+					
+					<h:form id="tracking">
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+							
+						<h:panelGrid columns="8">
+							<p:outputLabel value="Terramoza: "/>
+							<h:outputText value="#{liquidacionxServicioMB.terramoza.apellidos} #{liquidacionxServicioMB.terramoza.nombres}" style="font-size:12px;font-weight: bold;" />
+							
+							<p:outputLabel value="DNI:"  style="margin-left:20px"/>
+							<h:outputText value="#{liquidacionxServicioMB.terramoza.dNI}" style="font-size:12px;font-weight: bold;" />
+
+							
+						</h:panelGrid>
+						<p:separator/>
+						<h:panelGrid columns="6">
+							<h:outputLabel value="F.Inicio "  /> 
+							<p:calendar style="width:200px"  value="#{liquidacionxServicioMB.fechaInicio}" pattern="dd/MM/yyyy" locale="es" showOn="button"
+							  			navigator="true"   required="true" requiredMessage="Se necesita una fecha de inicio">
+							  			<p:ajax update="calFfin" event="dateSelect"/> 
+							</p:calendar>
+
+							<h:outputLabel style="margin-left:20px" value="F.Fin" /> 
+							<p:calendar id="calFfin" style="width:200px;" mindate="#{liquidacionxServicioMB.fechaInicio}"  value="#{liquidacionxServicioMB.fechaFin}" 
+										pattern="dd/MM/yyyy" locale="es"
+							  			showOn="button" navigator="true"  required="true" requiredMessage="Se necesita una fecha final"> 
+							 </p:calendar>
+							  			
+							<p:commandButton id="consultar" value="Consultar" actionListener="#{liquidacionxServicioMB.consultarTracking()}" update=":formTracking tracking" 
+								 onstart="blockUIWidget.block()" 
+						        oncomplete="dtTracking.getPaginator().setPage(0);blockUIWidget.unblock()" 
+							/>  
+				 
+						</h:panelGrid>	
+					</h:form>	
+					
+					<h:form id="formTracking">
+						<p:panel style="width:900px">
+						<p:dataTable widgetVar="dtTracking" id="dtidTracking" var="p" value="#{liquidacionxServicioMB.listaProgramacion}"
+									emptyMessage="No hay Servicios para esas fechas." rowIndexVar="nro" 
+									paginator="true"
+									rows="5" paginatorPosition="bottom" 
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									rowsPerPageTemplate="5,10,20,30"
+									style="FONT-SIZE: 10px; ">
+							<f:facet name="header">Lista Servicios</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:10%" headerText="Origen">
+								<h:outputText value="#{p.nombOrigen}" />
+							</p:column>
+							
+							<p:column style="width:10%" headerText="Destino">
+								<h:outputText value="#{p.nombDestino}" />
+							</p:column>
+							
+							<p:column style="width:18%" headerText="Servicio">
+								<h:outputText value="#{p.descServicio}" />
+							</p:column>
+							
+							<p:column style="width:8%" headerText="Fecha">
+								<h:outputText value="#{p.fSalidaString}" />
+							</p:column>
+							
+							<p:column style="width:9%" headerText="Hora">
+								<h:outputText value="#{p.hSalida}" />
+							</p:column>
+							
+							<p:column style="width:5%" headerText="Bus">
+								<h:outputText value="#{p.numeroBus}" />
+							</p:column>
+							
+							<p:column style="width:21%" headerText="Piloto">
+								<h:outputText value="#{p.nombPiloto}" />
+							</p:column>
+							
+							<p:column style="width:21%" headerText="Copiloto">
+								<h:outputText value="#{p.nombCopiloto}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					</h:form>
+					
+					
+			</p:dialog>
+			
+			
+			
+			
+			
+	 	
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+	</script>
+
+	</ui:define>
+
+</ui:composition>
+</html>

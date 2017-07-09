@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	
+	<pe:blockUI target=":formListaServicio:dtServicios" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+	</pe:blockUI> 
+
+	
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Gestion de Servicios" url="servicios" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Servicio" icon="icon-add" update=":dlgDetNuevo" 
+					oncomplete="dlgNuevo.show();" actionListener="#{servicioMB.nuevoServicio()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaServicio">
+			<p:panel style="width:600px;">
+			
+				<h:panelGrid columns="5">
+				
+					#{"Origen:"}
+					<p:selectOneMenu style="width:150px" value="#{servicioMB.destino.origen}"
+							required="true" requiredMessage="Seleccione Origen">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{servicioMB.listaAgOrigen}" 
+							itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							<p:ajax update="cmbDest" listener="#{servicioMB.listarAgeDestino()}" />
+					</p:selectOneMenu>
+							
+					#{"Destino:"}
+					<p:selectOneMenu style="width:150px" value="#{servicioMB.destino.destino}" id="cmbDest"
+							 required="true" requiredMessage="Seleccione Destino">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{servicioMB.listaAgDestinos}"
+								itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+					</p:selectOneMenu>
+					
+					<p:commandButton value="Listar Servicios" actionListener="#{servicioMB.listarServicios()}" 
+						onstart="blockUIWidget.block()" 
+						oncomplete="blockUIWidget.unblock()"
+						update=":formListaServicio:dtServicios"  />	
+					
+				</h:panelGrid>
+			</p:panel>
+			<br/>
+				<p:dataTable id="dtServicios" widgetVar="dtExcepcion" var="serv" value="#{servicioMB.listaServicio}" 
+					filteredValue="#{servicioMB.listaFiltroServicio}"  
+					emptyMessage="No hay Excepciones Disponibles." rowIndexVar="nro" 
+					paginator="true" rows="20"
+					style="FONT-SIZE: 10px;">
+					
+					<f:facet name="header">Lista Servicios</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:10%" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{serv.descripcion}" filterMatchMode="contains" 
+						filterStyle="width:120px;" >
+						<h:outputText value="#{serv.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Tipo" filterStyleClass="mayuscula" filterBy="#{serv.descripcionClase}" filterMatchMode="contains" 
+						filterStyle="width:100px;" >
+						<h:outputText value="#{serv.descripcionClase}" />
+						
+						<h:graphicImage value="#{serv.descripcionClase eq 'BUS'?'/resources/img/icon-bus.png':'/resources/img/icon-carguero.png'}" 
+							title="#{serv.descripcionClase eq 'BUS'?'BUS':'CARGUERO'}" style="margin-left:20px"/>
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Origen">
+						<h:outputText value="#{serv.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Destino">
+						<h:outputText value="#{serv.desDestino}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Precio P1.">
+						<h:outputText value="#{serv.precio1}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Precio P2.">
+						<h:outputText value="#{serv.precio2}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Horas Viaje">
+						<h:outputText value="#{serv.horasViaje}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="H salida" filterStyleClass="mayuscula" filterMatchMode="contains"  filterBy="#{serv.HSalida}" filterStyle="width:80px;">
+						<h:outputText value="#{serv.HSalida}" />
+					</p:column>
+					
+					<p:column style="width:30%;text-align: center;" headerText="Frecuencia"  filterStyleClass="mayuscula"
+						filterBy="#{serv.descTipoFrecuencia}" filterMatchMode="contains"  filterStyle="width:70px;" >
+						<h:outputText value="#{serv.descTipoFrecuencia}"  style="color:#{serv.tipoFrecuencia eq '1' ? 'green':'red'};" />
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Ruta Compartida" filterStyleClass="mayuscula" filterMatchMode="contains"  filterBy="#{serv.rutaCompartida}" filterStyle="width:40px;">
+						<h:outputText value="#{serv.rutaCompartida}" style="color:#{serv.rutaCompartida eq 'SI' ? 'red':'green'};"  />
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Activo" >
+						<h:outputText value="#{serv.estado ? 'Activo':'Inactivo'}"  style="color:#{serv.estado ? 'green':'red'}; font-size:14px;font-weight:bold;"  />
+					</p:column>
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{servicioMB.editarServicio(serv)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit"/>
+							
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{servicioMB.servicio}" value="#{serv}" />
+						</p:commandButton>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{servicioMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+
+							#{"Clase:"}
+							<h:selectOneMenu value="#{servicioMB.claseServicio.idclase}">
+								<f:selectItem  itemLabel="Seleccione..." itemValue="0" />
+								<f:selectItems value="#{servicioMB.listaClaseServicio}" itemLabel="#{clase.descripcion}" itemValue="#{clase.idclase}"  var="clase" />
+								<f:ajax event="valueChange" execute="@this" render="txtDesc" listener="#{servicioMB.setearNombreCorto()}" />
+							</h:selectOneMenu>
+							
+							#{"Nombre Corto:"}
+							<p:inputText id="txtDesc" value="#{servicioMB.servicio.descripcion}" styleClass="mayuscula" 
+								size="28"   maxlength="50"  readonly="true" />
+							
+							#{"Ruta Servicio:"}			
+							<h:selectOneMenu value="#{servicioMB.rutaServicio.idRutaDestino}" style="width:200px">
+								<f:selectItem itemLabel="Seleccione..." itemValue="0"  />
+								<f:selectItems value="#{servicioMB.listaRutaServicio}"  var="rts"  itemLabel="#{rts.rutaDestino}" itemValue="#{rts.idRutaDestino}"/>
+							</h:selectOneMenu>
+							
+							#{"Costo P1:"}
+							<p:inputText  style="width:60px" value="#{servicioMB.servicio.precio1}" required="true" size="5" maxlength="7" requiredMessage="Se necesita una precio"  dir="rtl">
+							   <pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Costo P2:"}
+							<p:inputText style="width:60px" value="#{servicioMB.servicio.precio2}" required="true" size="5" maxlength="7" requiredMessage="Se necesita una precio"  dir="rtl">
+							  <pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Origen:"}
+							<p:selectOneMenu style="width:150px" value="#{servicioMB.destino.origen}"
+									required="true" requiredMessage="Seleccione Origen">
+									<f:selectItem itemLabel="Seleccione..." itemValue="" />
+									<f:selectItems var="item" value="#{servicioMB.listaAgOrigen}" 
+									itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+									<p:ajax update="cmbDest" listener="#{servicioMB.listarAgeDestino()}" />
+							</p:selectOneMenu>
+							
+							#{"Destino:"}
+							<p:selectOneMenu style="width:150px" value="#{servicioMB.destino.destino}" id="cmbDest"
+									 required="true" requiredMessage="Seleccione Destino">
+									<f:selectItem itemLabel="Seleccione..." itemValue="" />
+									<f:selectItems var="item" value="#{servicioMB.listaAgDestinos}"
+										itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+							
+							#{"Hora Salida:"}
+							<h:panelGroup>
+							<p:inputMask style="width:60px" value="#{servicioMB.servicio.HSalida}" mask="99:99" size="5" required="true" requiredMessage="se necesita hora" />
+							<h:selectOneMenu value="#{servicioMB._dialServicio}">
+								<f:selectItem itemLabel="AM" itemValue="AM"  />
+								<f:selectItem itemLabel="PM" itemValue="PM"  />
+							</h:selectOneMenu>
+							</h:panelGroup>
+							
+							#{"Horas viaje:"}
+							<p:inputText style="width:60px" value="#{servicioMB.servicio.horasViaje}"  maxlength="2" required="true" requiredMessage="se necesita hora de viaje" dir="rtl" >
+							      <pe:keyFilter mask="num"/>
+							</p:inputText>
+			
+							#{"Tipo Frecuencia:"}
+							<h:selectOneMenu value="#{servicioMB.servicio.tipoFrecuencia}" required="true" requiredMessage="se necesita frecuencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+									<f:selectItems var="item" value="#{servicioMB.listaTipoFrecuencia}"
+										itemValue="#{item.idFrecuencia}" itemLabel="#{item.descripcion}" />
+							</h:selectOneMenu>
+							
+							#{"Estado:"}			
+							<h:selectOneRadio value="#{servicioMB.servicio.estado}" required="true" requiredMessage="se necesita estado">
+								<f:selectItem itemLabel="Activo" itemValue="true"  />
+								<f:selectItem itemLabel="No activo" itemValue="false"  />
+							</h:selectOneRadio>
+							
+							#{"Frecuente Sabado:"}			
+							<h:selectOneRadio value="#{servicioMB.servicio.frecuenteSabado}" required="true" requiredMessage="se necesita especificar">
+								<f:selectItem itemLabel="Si" itemValue="1"  />
+								<f:selectItem itemLabel="No" itemValue="0"  />
+							</h:selectOneRadio>
+							
+							#{"Ruta Compartida:"}			
+							<h:selectOneRadio value="#{servicioMB.servicio.rutaCompartida}" required="true" requiredMessage="se necesita especificar Ruta Compartida">
+								<f:selectItem itemLabel="SI" itemValue="SI"  />
+								<f:selectItem itemLabel="NO" itemValue="NO"  />
+							</h:selectOneRadio>
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{servicioMB.guardarServicio()}" style="margin-left:90px"
+									 update="msgNuevo :formListaServicio:dtServicios msgNuevo"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk"/>
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" style="margin-left:5px"/>
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este servicio?" header="Eliminar Servicio"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Servicio: <h:outputText value="#{servicioMB.servicio.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaServicio:dtServicios :sms"
+						actionListener="#{servicioMB.eliminarServicio()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar el Servicio porque cuenta con boletos vendidos y/o reservados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

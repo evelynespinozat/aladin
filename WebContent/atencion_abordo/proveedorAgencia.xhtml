@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Proveedor" url="proveedor" /> 
+    				<p:menuitem value="Asignar Proveedor a Oficina" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="4">
+				#{"Proveedor  Seleccionado - "}
+				#{"Ruc:"}
+				<h:outputText value=" #{proveedorAgenciaMB.proveedor.RUC}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Razon Social:"}
+				<h:outputText value=" #{proveedorAgenciaMB.proveedor.razonSocial}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+		<h:form id="fm">
+		<p:panel>
+		<h:panelGrid columns="6">
+				#{"Agencia:"}
+				<p:selectOneMenu style="width:150px" value="#{proveedorAgenciaMB.proveedorAgencia.idagencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{proveedorAgenciaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{proveedorAgenciaMB.getOficinasxAgencia()}" /> 
+				</p:selectOneMenu>
+	
+				#{"Oficina:"}
+				<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{proveedorAgenciaMB.proveedorAgencia.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{proveedorAgenciaMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+				</p:selectOneMenu>
+				
+		</h:panelGrid>
+		</p:panel>
+		<br/>		
+		<!-- toolbar -->
+		
+			<h:panelGrid columns="2">
+				<p:commandButton value="Asignar Proveedor a Oficina" icon="icon-add" 
+				actionListener="#{proveedorAgenciaMB.addProveedorToOficina()}" update="fm :msgGeneral :frmListaAgP"/>
+			</h:panelGrid>
+		</h:form>		
+			
+		<br/>
+		
+		
+		
+		<h:form id="frmListaAgP">
+					
+			<p:dataTable value="#{proveedorAgenciaMB.listAgProveedor}" var="per" style="width:750px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+    			<f:facet name="header">Oficinas Asignadas del Proveedor</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Agencia">
+    				#{per.desAgencia}
+    			</p:column>
+    			
+    			<p:column headerText="Oficina">
+    				#{per.desOficina}
+    			</p:column>
+    		
+    			<p:column headerText="Proveedor">
+    				#{per.razonSocial}
+    			</p:column>
+    		
+    			
+				<p:column headerText="Elim." style="width:10%;text-align: center">
+
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+				<f:setPropertyActionListener target="#{proveedorAgenciaMB.proveedorAgencia}"	value="#{per}" />
+				</p:commandButton>
+				
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+		
+		
+		
+		<p:confirmDialog id="confirmDialog" message="Seguro de eliminar esta asignacion"   appendToBody="true"
+             		header="Eliminar Asignacion" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaAgP :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{proveedorAgenciaMB.deleteOficinaFromProveedor()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    	</p:confirmDialog> 
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

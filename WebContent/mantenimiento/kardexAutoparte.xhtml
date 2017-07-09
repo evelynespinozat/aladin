@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel id="panelUR" style="height=400px">
+		<h:form>
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Mantenimiento" url="#" />
+				<p:menuitem value="Kardex de Autopartes" url="kardex" />
+			</p:breadCrumb>
+			</h:form>
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="7" id="datareg">
+			 	
+			 	#{"Agencia:"}
+				<p:selectOneMenu style="width:150px" value="#{agenciaAutoparteMB.agenciaAutoparte.idagencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{agenciaAutoparteMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{agenciaAutoparteMB.getOficinasxAgencia()}" /> 
+				</p:selectOneMenu>
+	
+				#{"Oficina:"}
+				<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{agenciaAutoparteMB.agenciaAutoparte.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{agenciaAutoparteMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					<p:ajax update="cmbAlm" listener="#{agenciaAutoparteMB.listarAlmacen()}" />  
+				</p:selectOneMenu>
+				
+				#{"Almacen:"}
+				<p:selectOneMenu style="width:250px" id="cmbAlm" value="#{agenciaAutoparteMB.agenciaAutoparte.idAlmacen}" required="true" requiredMessage="Seleccione un Almacen ">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="ag" value="#{agenciaAutoparteMB.listAlmacen}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.descripcion}" /> 
+				</p:selectOneMenu>
+					
+					
+				<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{agenciaAutoparteMB.listarProductosxAgencia()}"  
+					 		update=":formLista :sms"	style=" width:160px;"/>
+				</h:panelGrid>
+	
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="l" value="#{agenciaAutoparteMB.listaAgenProductos}" filteredValue="#{agenciaAutoparteMB.listaAgenProductosFilter}"
+					paginator="true" rowIndexVar="nro" 
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Productos por agencia oficina y almacen</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:200px;" headerText="Producto" filterStyleClass="mayuscula" filterBy="#{l.desProducto}" filterMatchMode="contains" >
+						<h:outputText value="#{l.desProducto}" />
+					</p:column>
+					
+					<p:column style="width:200px;" headerText="Medida" >
+						<h:outputText value="#{l.desMedida}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Stock Actual">
+						<h:outputText value="#{l.stock}" />
+					</p:column>
+
+					<p:column  style="width:50px" headerText="Ver Kardex">
+						<p:commandButton title="Asociar" action="#{agenciaAutoparteMB.consultarKardex(l)}" icon="icon-asociacionproductoalmacen"/>
+					
+					<ui:remove>	
+						<p:commandButton title="Consolidado" action="#{agenciaAutoparteMB.consolidadoKardex(l)}" icon="icon-asociacionproductoalmacen"/>
+					</ui:remove>
+					</p:column>
+	
+				</p:dataTable>
+			</h:form>
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

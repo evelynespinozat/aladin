@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	
+<style>
+	
+	.rutaPadre{
+		background-color: #7BD3FC;
+	}
+	.rutaHijo{
+		/*background-color:blue;*/
+	}
+	.programacionPasada
+	{
+		background-color: red;
+	}
+	.naranjas
+	{
+		
+	}
+		
+</style>
+	
+	
+	<pe:blockUI target=":formGnral:dtServicios" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+	</pe:blockUI> 
+	
+	
+	<pe:blockUI target=":formGnral:datatableenlace" widgetVar="blockW">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+	</pe:blockUI> 
+	
+		<p:panel>
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Gestion de Rutas Compartidas" url="perfiles" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<h4>Solo se listan Servicios configurados como Ruta Compartida </h4>
+			
+			<h:form id="formGnral">
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						      <p:panel>
+									<h:panelGrid columns="7" id="datUbigeo" style="width:800px">
+									#{"Tipo:"}
+									<p:selectOneMenu id="tipo" style="width:165px" value="#{enlaceMB.tipo}" required="true" requiredMessage="Seleccione el Tipo">
+				                        <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+				                        <f:selectItem itemLabel="Demanda" itemValue="2"></f:selectItem>
+				                        <f:selectItem itemLabel="Frecuente" itemValue="1"></f:selectItem>
+				                    </p:selectOneMenu>
+									
+					       			#{"Origen:"}
+									<p:selectOneMenu style="width:150px" value="#{enlaceMB.programacionFilter.origen}" required="true" requiredMessage="Seleccione un Origen">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{enlaceMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+										<p:ajax update="cboDestino" listener="#{enlaceMB.listarDestinosxOri()}"  event="change"/> 
+									</p:selectOneMenu>
+									
+									#{"Destino:"}
+									<p:selectOneMenu id="cboDestino" style="width:150px" value="#{enlaceMB.programacionFilter.destino}" required="true" requiredMessage="Seleccione un Destino">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{enlaceMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" /> 
+									</p:selectOneMenu>
+									
+									
+									<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{enlaceMB.buscarServicio()}" 
+									onstart="blockUIWidget.block()" 
+									oncomplete="blockUIWidget.unblock()"
+									update=":formGnral:dtServicios, :formGnral:datatableenlace" style="width:160px;"/>
+					       			</h:panelGrid>
+			       	 	       </p:panel>		
+						<br/>
+						<p:dataTable id="dtServicios" widgetVar="dtExcepcion" var="serv" 
+						
+						selection="#{enlaceMB.servTramoOrig}" selectionMode="single" rowKey="#{serv.idServicio}"
+						value="#{enlaceMB.listaServicios}" filteredValue="#{enlaceMB.listaFiltroServicio}"  
+							emptyMessage="No hay Servicios Disponibles." rowIndexVar="nro" 
+							rowStyleClass="#{serv.idServicio eq enlaceMB.programacionFilter.idServicio} ? 'programacionPasada':'naranjas'"
+							paginator="true" rows="3" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							 style="FONT-SIZE: 10px;" >
+							
+							<f:facet name="header">Lista Servicios de Origen</f:facet>
+							
+							 <p:ajax event="rowSelect" listener="#{enlaceMB.seleccionar()}" update="@form"  
+							 		onstart="blockW.block()" 
+									oncomplete="blockW.unblock()" />
+							
+							
+							<p:column headerText="Orden" width="25" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="Origen">
+								<h:outputText value="#{serv.desOrigen}" style="color :#{serv.idServicio eq enlaceMB.programacionFilter.idServicio} ? 'red':'black';"  />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Destino">
+								<h:outputText value="#{serv.desDestino}" />
+							</p:column>
+							
+							<p:column  headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{serv.descripcion}" filterMatchMode="contains" 
+								filterStyle="width:100px;" >
+								<h:outputText value="#{serv.descripcion}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="H salida">
+								<h:outputText value="#{serv.HSalida}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Tipo">
+								<h:outputText value="#{serv.descripcionClase}" />
+							</p:column>
+							
+							<p:column headerText="Nuevo" style="width:10%;text-align: center">
+					
+								<ui:remove>
+								<p:commandButton title="Seleccionar" update="@form" actionListener="#{enlaceMB.buscarTramos(serv)}"
+									onstart="blockW.block()" 
+									oncomplete="blockW.unblock()"
+												 icon="icon-selecc" >
+								</p:commandButton>
+								</ui:remove>
+									
+								<p:commandButton title="Agregar Tramos"  update=":dlgDetNewTramo" actionListener="#{enlaceMB.setearTramoOriginal(serv)}"
+												 oncomplete="dlgNewTramo.show();" icon="icon-add" >
+								</p:commandButton>
+								
+								<p:commandButton title="Eliminar" update="@form" actionListener="#{enlaceMB.elimnarTramos(serv)}"
+												 icon="icon-cancel" >
+								</p:commandButton>
+							</p:column>					
+						</p:dataTable>
+						<br/>
+						<p:panel id="pnlTraza">
+							<h:panelGrid columns="2">
+							   <h:outputText value="Traza de Ruta:"  style="font-weight:bold;font-size: 1.2em;" />
+							   #{enlaceMB.servTramoOrig.desOrigen} - #{enlaceMB.servTramoOrig.desDestino}
+							</h:panelGrid>
+						</p:panel>
+						<br/>
+						<p:dataTable var="row" value="#{enlaceMB.listaServiciosCompartidos}" 
+							rowStyleClass="#{row.gradoServ eq '1' ? 'rutaPadre' : 'rutaHijo'}"  rowIndexVar="nro"
+                                     id="datatableenlace" 
+                                     rows="10" paginatorPosition="bottom"
+									 style="FONT-SIZE: 10px;width:800px;">
+
+                            <f:facet name="header" >Tramos del Servicio  #{enlaceMB.enlaceDos.desOrigen} - #{enlaceMB.enlaceUno.desOrigen} - #{enlaceMB.enlaceUno.desDestino} |"#{enlaceMB.enlaceUno.desServicio}"|
+                            						
+                            </f:facet>
+                            <p:column headerText="Orden" width="60" >
+                            	<h:outputText value="Ruta #{nro+1 eq 1 ? 'Principal': nro+1}"  
+                            		style="color:#{nro+1 eq 1 ? 'red':'black'}; font-size:13px;" />
+								
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="Origen">
+								<h:outputText value="#{row.desOrigen}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Destino">
+								<h:outputText value="#{row.desDestino}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Servicio">
+								<h:outputText value="#{row.descripcion}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Hora salida">
+								<h:outputText value="#{row.HSalida}" />
+							</p:column>
+
+                        </p:dataTable>
+						<br/>
+									 
+					</h:form>	
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<p:dialog id="dlgDetNewTramo" widgetVar="dlgNewTramo" appendToBody="true" header="Registrar Tramo" modal="true"
+					resizable="false">
+				<h:form>
+					<p:messages showDetail="false" showSummary="true" id="msg" closable="true" />
+				 <p:panel>
+					<h:panelGrid columns="8">
+						#{"Origen "}
+						<p:outputLabel value="#{enlaceMB.servTramoOrig.desOrigen}" style="width:200px;font-weight:bold;font-size: 1.2em;"/>
+						#{"Servicio "}
+						<p:outputLabel value="#{enlaceMB.servTramoOrig.descripcion}" style="width:200px;font-weight:bold;font-size:1.2em;"/>
+						#{"Destino "}
+						<p:outputLabel value="#{enlaceMB.servTramoOrig.desDestino}" style="width:200px;font-weight:bold;font-size:1.2em;"/>
+						#{"Hora "}
+						<p:outputLabel value="#{enlaceMB.servTramoOrig.HSalida}" style="width:200px;font-weight:bold;font-size: 1.2em;"/>
+					</h:panelGrid>
+				</p:panel>	
+					<br/>
+					<h:outputLabel value=" Datos de Tramo" style="font-weight:bold;font-size: 1.2em;"/>
+					<h:panelGrid columns="4">
+					
+						#{"Origen:"}
+						<p:selectOneMenu style="width:150px" value="#{enlaceMB.enlace.origen}" required="true" requiredMessage="Seleccione un Origen">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="ag" value="#{enlaceMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+							<p:ajax update="cmbDestino" listener="#{enlaceMB.listarDestinosxOriTramos()}"  event="change"/> 
+						</p:selectOneMenu>
+						
+						#{"Destino:"}
+						<p:selectOneMenu id="cmbDestino" style="width:150px" value="#{enlaceMB.enlace.destino}" required="true" requiredMessage="Seleccione un Destino">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="ag" value="#{enlaceMB.listaAgeTramos}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						</p:selectOneMenu>
+						
+						#{"Servicio: "}
+						<p:inputText value="#{enlaceMB.servTramoOrig.descripcion}" style="width:150px" disabled="true"/>
+						
+						#{"Hora Partida: "}
+						<p:inputMask value="#{enlaceMB.enlace.hora}" style="width:150px" mask="99:99 aM" styleClass="mayuscula" />
+						
+						#{"Precio P1: "}
+						<p:inputText  style="width:150px" value="#{enlaceMB.enlace.precio1}"  size="5" maxlength="7" >
+							<pe:keyFilter mask="num"/>
+						</p:inputText>	
+										
+						#{"Precio P2: "}
+						<p:inputText style="width:150px" value="#{enlaceMB.enlace.precio2}"  size="5" maxlength="7" >
+							  <pe:keyFilter mask="num"/>
+						</p:inputText>
+						
+						#{"Horas de Viaje: "}
+						<p:inputText style="width:150px" value="#{enlaceMB.enlace.horasViaje}" maxlength="2" required="true" requiredMessage="se necesita hora de viaje" >
+							      <pe:keyFilter mask="num"/>
+						</p:inputText>
+						
+						
+					</h:panelGrid>
+					<br/>
+					<p:commandButton value="Guardar" actionListener="#{enlaceMB.registrarEnlace()}"
+									 update=":formGnral msg"
+									 oncomplete="dlgNewTramo.hide();" icon="icon-disk" />
+									 
+					<p:commandButton value="Cancelar" type="button"	 onclick="dlgNewTramo.hide();"  icon="icon-cancel" />
+				
+				</h:form>
+			</p:dialog>
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este enlace?" header="Eliminar Enlace"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Enlace: <h:outputText value="#{enlaceMB.enlace.ruta}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":sms"
+						actionListener="#{enlaceMB.eliminarEnlace()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+		
+
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

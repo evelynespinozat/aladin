@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Administracion" url="#" />
+					<p:menuitem value="Gestion de Conceptos" url="perfiles" />
+				</p:breadCrumb>
+			</h:form>
+
+
+			<br />
+			<!-- sms general -->
+			<p:messages id="sms" showDetail="false" showSummary="true" closable="true" />
+
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Concepto" icon="icon-add"
+						update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+						actionListener="#{conceptoMB.nuevoConcepto()}">
+					</p:commandButton>
+				</p:toolbarGroup>
+			</h:form>
+
+			<!-- listado de Conceptos -->
+			<h:form id="formListaConcepto">
+				<p:dataTable widgetVar="dtConcepto" var="cs"
+					value="#{conceptoMB.listaConcepto}"
+					filteredValue="#{conceptoMB.listaConceptofiltro}"
+					emptyMessage="No hay Conceptos disponibles." rowIndexVar="nro"
+					rows="20" paginator="true" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Clase de Servicios</f:facet>
+
+					<p:column headerText="Orden" width="25" style="width:3%">
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:50px;" headerText="Codigo">
+						<h:outputText value="#{cs.codigo}" />
+					</p:column>
+
+					<p:column style="width:150px;" headerText="Descripcion." filterStyleClass="mayuscula" filterBy="#{cs.descripcion}" filterStyle="width:150px;" filterMatchMode="contains">
+						<h:outputText value="#{cs.descripcion}" />
+					</p:column>
+
+
+					<p:column style="width:100px;" headerText="Importe">
+						<h:outputText value="#{cs.importe}" />
+					</p:column>
+
+
+					<p:column style="width:40px;" headerText="Fecha Registro">
+						<h:outputText value="#{cs.FRegistro}"
+							rendered="#{cs.FRegistro != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:10px" headerText="Estado">
+						<p:commandLink update="@form :sms"
+							actionListener="#{conceptoMB.cambiarEstado(cs)}">
+							<h:graphicImage
+								value="#{cs.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}"
+								title="#{cs.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+
+
+
+					<p:column headerText="Editar/Elim."
+						style="width:10%;text-align: center">
+
+						<p:commandButton title="Editar" update=":dlgDetNuevo" actionListener="#{conceptoMB.editarConcepto(cs)}"
+							oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();"
+							update=":dlgDetEliminar" icon="icon-delete">
+							<f:setPropertyActionListener
+								target="#{conceptoMB.concepto}" value="#{cs}" />
+						</p:commandButton>
+
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+			<!-- #############    Dialogos      ################ -->
+
+			<!-- dialogo nuevo/editar perfil -->
+
+			<p:dialog header="Registrar Concepto" widgetVar="dlgNuevo"
+				appendToBody="true" resizable="false" id="dlgDetNuevo" modal="true">
+
+				<h:form>
+					<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+
+					<h:panelGrid columns="2">
+
+							#{"Codigo:"}
+							<p:inputText value="#{conceptoMB.concepto.codigo}"
+							required="true" requiredMessage="Se necesita un codigo" maxlength="3"/>
+							
+							#{"Descripcion:"}
+							<p:inputText value="#{conceptoMB.concepto.descripcion}"
+							required="true" requiredMessage="Se necesita una descripcion" />
+							
+							#{"Importe:"}
+							<pe:inputNumber value="#{conceptoMB.concepto.importe}" required="true" requiredMessage="Se necesita el importe" />
+							
+					</h:panelGrid>
+					<br />
+					<p:commandButton value="Guardar"
+						actionListener="#{conceptoMB.guardarConcepto()}"
+						update=":formListaConcepto msgNuevo"
+						oncomplete="validarCampos(xhr, status, args)" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgNuevo.hide();" icon="icon-cancel" />
+				</h:form>
+			</p:dialog>
+
+
+			<!-- dialogo eliminar -->
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+				message="¿Desea eliminar este concepto?"
+				header="Concepto" severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Concepto: <h:outputText
+						value="#{conceptoMB.concepto.descripcion}"
+						style="font-size:12px;font-weight: bold;" />
+					<br />
+					<p:commandButton value="Eliminar" update=":formListaConcepto :sms"
+						actionListener="#{conceptoMB.eliminarConcepto()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" onclick="dlgEliminar.hide()"
+						icon="icon-cancel" type="button" />
+
+				</h:form>
+			</p:confirmDialog>
+
+
+		</p:panel>
+
+		<script>
+			function validarCampos(xhr, status, args) {
+				if (!args.esValido) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					//limpiando
+
+					dlgNuevo.hide();
+				}
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
+</html>

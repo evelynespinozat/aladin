@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Seguridad" url="#" />
+    				<p:menuitem value="Registro de nuevos módulos" url="sistemas" />    
+				</p:breadCrumb>	
+			</h:form>	
+			
+			<br/>
+			<!-- message general -->
+			<p:messages showDetail="false" showSummary="true" id="msgGeneral" />
+			<!-- toolbar CRUD -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Módulo" icon="icon-add"  actionListener="#{sistemaMB.nuevoSistema()}" update=":dlgDetNuevo"  oncomplete="dlgNuevo.show();"/>
+				</p:toolbarGroup>
+			</h:form>
+			
+
+			<!-- lista de modulos -->
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="s" widgetVar="dtModulo"
+					value="#{sistemaMB.listaSistema}" filteredValue="#{sistemaMB.listaSistemaFilter}"
+					emptyMessage="No hay sistemas disponibles." paginator="true"
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<p:column style="width:17%" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{s.nombre_sistema}" filterMatchMode="contains" >
+						<h:outputText value="#{s.nombre_sistema}" />
+					</p:column>
+
+
+					<p:column style="width:26%" headerText="Descripción">
+						<h:outputText value="#{s.descripcion}" />
+					</p:column>
+
+
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form" actionListener="#{sistemaMB.cambiarEstado(s)}" > 
+							<h:graphicImage value="#{s.ind_activo eq 1?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{s.ind_activo eq 1?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+
+					<p:column headerText="Editar/Elim." style="width:13%; text-align: center">
+						
+						<p:commandButton id="cbtEditar" update=":dlgDetNuevo" actionListener="#{sistemaMB.editarSistema(s)}"
+							oncomplete="dlgNuevo.show();"  icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar"
+							actionListener="#{sistemaMB.newDelete(s.cod_sistema)}"
+							oncomplete="dlgEliminar.show();" title="Eliminar" 
+							icon="icon-delete" />
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+							
+						<p:commandButton id="cbtAgMenu"
+							action="#{sistemaMB.agregarMenu(s.cod_sistema)}" title="Menú"
+							icon="icon-pref">
+							<f:setPropertyActionListener value="#{s}"
+								target="#{sistemaMB.sistema}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtAgMenu" value="Agregar Menu"/>
+
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+			<!-- dialogo nuevo/editar -->
+			<p:dialog header="#{sistemaMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					resizable="false" id="dlgDetNuevo" modal="true" >
+				
+				<p:messages showDetail="false" showSummary="true" id="smsNuevoEdit" />	
+				<h:form id="formNuevo"> 
+					<h:panelGrid id="pgNuevo" columns="2">
+
+						#{"Nombre:"}
+						<p:inputText value="#{sistemaMB.sistema.nombre_sistema}" size="40" styleClass="mayuscula"
+							 required="true" maxlength="50" requiredMessage="Se necesita un nombre"/>
+							 	 
+						#{"Descripción:"}
+						<p:inputTextarea value="#{sistemaMB.sistema.descripcion}" cols="42" rows="4" styleClass="mayuscula"
+							required="true" maxlength="100"  requiredMessage="Se necesita una descripcion" />
+						
+						
+						#{"Estado:"}
+						<p:selectOneMenu rendered="#{not sistemaMB.editar}"  value="#{sistemaMB.sistema.ind_activo}" style="width:170px;"
+							required="true" requiredMessage="Se necesita Seleccionar el Estado">
+							<f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"  />
+							<f:selectItem itemLabel="Activo" itemValue="1" />
+							<f:selectItem itemLabel="Inactivo" itemValue="0" />
+						</p:selectOneMenu>
+						
+						<p:selectOneMenu rendered="#{sistemaMB.editar}" value="#{sistemaMB.sistema.ind_activo}" style="width:170px;"  
+							required="true" requiredMessage="Se necesita un indicador">
+							<f:selectItem itemLabel="Activo" itemValue="1" />
+							<f:selectItem itemLabel="Inactivo" itemValue="0" />
+						</p:selectOneMenu>	
+				
+					</h:panelGrid>
+					<br/>
+					<p:commandButton value="Guardar"
+						actionListener="#{sistemaMB.guardarSistema()}"
+						update=":smsNuevoEdit"
+						oncomplete="validarCampos(xhr, status, args);" icon="icon-disk" />
+						
+					<p:commandButton value="Cancelar" type="button" onclick="dlgNuevo.hide();"
+						icon="icon-cancel" />
+						
+					</h:form>	
+			</p:dialog>
+
+
+
+				<!-- Dialogo eliminar -->
+		
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este módulo?" header="Eliminar Módulo"
+					severity="alert" widgetVar="dlgEliminar">
+						
+					<h:form id="formEliminar">		
+						
+						<p:commandButton value="Eliminar"
+							update=":formLista :msgGeneral"
+							actionListener="#{sistemaMB.eliminarSistema()}"
+							oncomplete="dlgEliminar.hide();dtModulo.clearFilters();" icon="icon-delete" />
+
+						<p:commandButton value="Cancelar" 
+							oncomplete="dlgEliminar.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar el módulo porque cuenta con menus asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+
+		</p:panel>
+
+
+
+	<!-- js de control -->
+	
+	
+	<script>
+		function validarCampos(xhr, status, args) {  
+			if(!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", { times:1 }, 100);  
+			} else {
+				//limpiando
+				dtModulo.clearFilters();  
+				//dlgNuevo.hide();
+				
+				  
+			}  
+		}  
+	</script>
+	
+
+	</ui:define>
+</ui:composition>
+</html>

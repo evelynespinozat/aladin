@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.SalidaMapper">
+
+<resultMap id="salidaResult" type="com.certicom.ittsa.domain.Salida">
+	<id column="IdSalida" property="IdSalida"/>
+	<result column="IdProgramacion" property="IdProgramacion"/>
+	<result column="Idagencia" property="Idagencia"/>
+	<result column="IdOficina" property="IdOficina"/>
+	<result column="IdOrigen" property="IdOrigen"/>
+	<result column="IdDestino" property="IdDestino"/>
+	<result column="FSalida" property="FSalida"/>
+	<result column="FRegistro" property="FRegistro"/>
+	<result column="flagLlegada" property="flagLlegada"/>
+</resultMap>
+
+
+<insert id="registrarSalidaProductos" parameterType="com.certicom.ittsa.domain.Salida" >
+	insert into t_salida (IdProgramacion,Idagencia,IdOficina,IdOrigen,IdDestino,FRegistro,flagLlegada)
+			values(#{IdProgramacion},#{Idagencia},#{IdOficina},#{IdOrigen},#{IdDestino},#{FRegistro},#{flagLlegada})
+</insert>
+
+
+</mapper>	

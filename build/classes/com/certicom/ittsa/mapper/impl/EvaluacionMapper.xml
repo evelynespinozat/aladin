@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.EvaluacionMapper">
+
+<resultMap id="evaluacionResult" type="com.certicom.ittsa.domain.Evaluacion">
+	<id column="evaluacionId" property="evaluacionId"/>
+	<result column="nombre" property="nombre"/>
+	<result column="imagen" property="imagen" javaType="byte[]" jdbcType="BLOB" />
+	<result column="observacion" property="observacion"/>
+	<result column="IdPiloto" property="pilotoId"/>
+	<result column="rutaImagen" property="rutaImagen"/>
+	
+	<result column="FechaUltimaActualizacion" property="FechaUltimaActualizacion"/>
+	<result column="UsuarioUltimaActualizacion" property="UsuarioUltimaActualizacion"/>
+	
+</resultMap>
+
+
+</mapper>	

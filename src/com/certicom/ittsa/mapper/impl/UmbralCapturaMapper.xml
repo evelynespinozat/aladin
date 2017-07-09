@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.UmbralCapturaMapper">
+
+<resultMap id="umbralCapturaResult" type="com.certicom.ittsa.domain.UmbralCaptura">
+	<result column="id_captura" property="id_captura" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+	<result column="descripcion" property="descripcion" javaType="java.lang.String" jdbcType="VARCHAR"/>
+	<result column="estado" property="estado" javaType="boolean" jdbcType="BOOLEAN"/>
+
+</resultMap>
+
+
+</mapper>	

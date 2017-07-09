@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.HistorialPasajeroMapper">
+
+<resultMap id="agenciaResult" type="com.certicom.ittsa.domain.HistorialPasajero">
+	<id column="IdHistorialPasajero" property="idHistorialPasajero"/>
+	<result column="Dni" property="dni"/>
+	<result column="SerieBoleto" property="serieBoleto"/>
+	<result column="IdOficina" property="idOficina"/>
+	<result column="NumeroBoleto" property="numeroBoleto"/>
+	<result column="FRegistro" property="fRegistro"/>
+	<result column="nroRuc" property="nroRuc"/>
+	<result column="asientoventaid" property="asientoventaid"/>
+	<result column="operacion" property="operacion"/>
+	<result column="nroasiento" property="nroasiento"/>
+	<result column="piso" property="piso"/>
+	<result column="idservicio" property="idservicio"/>
+	<result column="idprogramacion" property="idprogramacion"/>
+	<result column="monto" property="monto"/>
+	<result column="idpadre" property="idpadre"/>
+	<result column="puntoVentaId" property="puntoVentaId"/>
+	<result column="fechaCaducidad" property="fechaCaducidad"/>
+	<result column="tipoEntrega" property="tipoEntrega"/>
+	<result column="prepagado" property="prepagado"/>
+
+	
+</resultMap>
+
+
+</mapper>	

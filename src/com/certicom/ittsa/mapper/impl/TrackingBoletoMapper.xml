@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.TrackingBoletoMapper">
+
+<resultMap id="trackingBoletoResult" type="com.certicom.ittsa.domain.TrackingBoleto">
+	<id column="IdTrackingBoleto" property="IdTrackingBoleto"/>
+	<result column="serieBoleto" property="serieBoleto"/>
+	<result column="numeroBoleto" property="numeroBoleto"/>
+	<result column="fregistro" property="fregistro"/>
+	<result column="idusuario" property="idusuario"/>
+	<result column="idasiento" property="idasiento"/>
+	<result column="idasientoventa" property="idasientoventa"/>
+	<result column="estado" property="estado"/>
+	<result column="idprogramacion" property="idprogramacion"/>
+	<result column="idservicio" property="idservicio"/>
+	<result column="nrodocumento" property="nrodocumento"/>
+	<result column="nrodocempresa" property="nrodocempresa"/>
+	<result column="intsecuencia" property="intsecuencia"/>
+	<result column="prepagado" property="prepagado"/>
+	<result column="fechaCaducidad" property="fechaCaducidad"/>
+	<result column="monto" property="monto"/>
+	<result column="montoReal" property="montoReal"/>
+	
+	<result column="tipoInh" property="tipoInh"/>
+	<result column="motivoInh" property="motivoInh"/>
+	<result column="serieRelacionado" property="serieRelacionado"/>
+	<result column="numeroRelacionado" property="numeroRelacionado"/>
+	<result column="dniNuevoPasajero" property="dniNuevoPasajero"/>
+	
+	<result column="puntoVentaId" property="puntoVentaId"/>
+	
+	
+</resultMap>
+
+
+
+</mapper>	

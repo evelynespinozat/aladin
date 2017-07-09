@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="srptFT_DatosF" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="057a661b-e334-4c93-8271-024fd08d7546">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="parentesco" class="java.lang.String"/>
+	<field name="dni" class="java.lang.String"/>
+	<field name="apellidos" class="java.lang.String"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="nroContacto" class="java.lang.String"/>
+	<field name="fechaNacString" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="53e1038f-5031-4924-a2cc-da39e8abc5e3" x="0" y="0" width="528" height="14" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="4e683a6b-b407-49a3-be9b-85d7fa9cdd65" x="17" y="0" width="80" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PARENTESCO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="857da645-f722-4d04-ba20-803f66e35a3b" x="108" y="0" width="110" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APELLIDOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4e9add22-8473-46d7-9347-d838518220cb" x="231" y="0" width="110" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="215e0682-3c43-4f17-a685-83d6c6550305" x="358" y="0" width="52" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DNI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4aa53af7-1588-44f8-b948-cc88ee74ca00" x="428" y="0" width="83" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA NAC.]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="c778e48c-661d-499d-b822-5d7cdab55bb4" x="97" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="5ddbeaae-e9db-4d44-a63f-b33645722569" x="218" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="182fe5b6-dbc0-438e-8a73-a16ebbd7b8fc" x="340" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="ca5d5e12-8a7f-431f-8119-3109027c074a" x="410" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="19c4ff34-ca2a-4198-aef6-050c911cce4c" x="0" y="0" width="528" height="14"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="bfb95e54-5deb-4dc2-842d-06eda300463a" x="17" y="0" width="80" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parentesco}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="837c8a15-f2c9-4911-9be4-e99cb030223f" x="108" y="0" width="110" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{apellidos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="764a8e5e-999b-47d3-bbd1-fe5da73b6975" x="231" y="0" width="110" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="80946359-a2c7-4625-ac0e-14af285f6af0" x="358" y="0" width="52" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dni}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9150ac62-70f1-4476-9fae-564be6b81dcf" x="428" y="0" width="83" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaNacString}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="b7a5eca4-f3eb-4841-9cdc-42976f1b7ed9" x="97" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="16c05af1-e13f-481b-9850-1480b153a780" x="218" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="1c9cf1eb-1305-4f14-83e6-2b6547b3e587" x="340" y="0" width="1" height="14"/>
+			</line>
+			<line>
+				<reportElement uuid="2fbcb644-f6f3-419d-a03e-db34ebd9cb74" x="410" y="0" width="1" height="14"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>

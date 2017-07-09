@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Inventario de Encomiendas" url="inventarioEncomiendas" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+					<h:panelGrid columns="9">
+					 
+					 #{"Agencia:"}
+					<p:selectOneMenu style="width:150px" value="#{inventarioEncomiendaMB.filter.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{inventarioEncomiendaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{inventarioEncomiendaMB.getOficinasxAgencia()}" /> 
+					</p:selectOneMenu>
+	
+					#{"Oficina:"}
+					<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{inventarioEncomiendaMB.filter.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{inventarioEncomiendaMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					<p:ajax update="cmbAlm" listener="#{inventarioEncomiendaMB.listarAlmacen()}" />  
+					</p:selectOneMenu>
+				
+					#{"Almacen:"}
+					<p:selectOneMenu style="width:250px" id="cmbAlm" value="#{inventarioEncomiendaMB.filter.idAlmacen}" required="true" requiredMessage="Seleccione un Almacen ">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="ag" value="#{inventarioEncomiendaMB.listAlmacen}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.descripcion}" /> 
+					</p:selectOneMenu>
+					
+					<p:commandButton  icon="icon-search" value="Buscar" actionListener="#{inventarioEncomiendaMB.consultarEncomienda()}"  update=":formLista :sms"/>
+					
+					<h:commandLink update=":formLista"  id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{inventarioEncomiendaMB.imprimirPDF}" />   
+							  
+				</h:panelGrid>			  
+					
+			</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="l" value="#{inventarioEncomiendaMB.listDetEnco}" filteredValue="#{inventarioEncomiendaMB.listDetEncoFilter}"
+					paginator="true" 
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Encomiendas</f:facet>
+
+					<p:column style="width:80px" headerText="C.Barras" filterStyleClass="mayuscula" filterBy="#{l.codigoBarrasStringPD}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:graphicImage value="/imagen/servletWill/?codigo=D#{l.idProducto_detalleEnc}" width="120" height="25"/>
+					</p:column>
+					
+					<p:column style="width:70px" headerText="Encomienda">
+						<h:outputText value="#{l.desProducto}" />
+					</p:column>
+
+					<p:column style="width:20px;" headerText="Doc." filterStyleClass="mayuscula" filterBy="#{l.comprobante}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:outputText value="#{l.tipoDocAbr} #{l.comprobante}" />
+					</p:column>
+
+					<p:column style="width:50px;" headerText="T.Doc." filterStyleClass="mayuscula" filterBy="#{l.tipoDocumento}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:outputText value="#{l.tipoDocumento}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{l.remitcompleto}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{l.remitcompleto}" />
+					</p:column>
+					
+					<p:column style="width:200px" headerText="Dest.1" filterStyleClass="mayuscula" filterBy="#{l.dest1}" filterMatchMode="contains" filterStyle="width:70px">
+						<h:outputText value="#{l.dest1}" />
+					</p:column>
+				
+					<p:column style="width:80px" headerText="F. Envio">
+						<h:outputText value="#{l.fRegistro}" rendered="#{l.fRegistro != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:30px" headerText="Origen">
+						<h:outputText value="#{l.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:30px" headerText="Destino">
+						<h:outputText value="#{l.desDestino}" />
+					</p:column>
+					<p:column style="width:30px" headerText="Estado">
+						<h:outputText value="#{l.desEstado}" />
+					</p:column>
+					
+					<p:column style="width:10px" headerText="Detalle">
+						<p:commandButton title="Editar"  update=":dlgDetDetalle" actionListener="#{inventarioEncomiendaMB.consultarDetalleEnc(l)}"
+										 oncomplete="dlgDetalle.show();" icon="icon-search" >
+						</p:commandButton>
+					</p:column>
+					
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column colspan="6" footerText="Total" style="text-align:right"/>
+							<p:column footerText="#{inventarioEncomiendaMB.totalBultos}" style="text-align:right"/>
+							<p:column colspan="4" footerText=""/>
+						</p:row>
+					</p:columnGroup>
+															
+				</p:dataTable>
+			</h:form>
+			
+			
+			<p:dialog header="Detalle de Encomienda" id="dlgDetDetalle" widgetVar="dlgDetalle" 
+					   appendToBody="true" modal="true" resizable="false" closable="true">
+				
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Remitente"/> 
+					<h:outputText  value="#{inventarioEncomiendaMB.encoSelect.remitcompleto}"  style="font-weight:bold;font-size: 1.2em;" />
+				</h:panelGrid>	
+				
+				<h:panelGrid columns="4">
+					<h:outputLabel value="Documento:"/> 
+					<h:outputText  value="#{inventarioEncomiendaMB.encoSelect.comprobante}"  style="font-weight:bold;font-size: 1.2em;" />
+						<h:outputLabel value="Fecha:"/> 
+					<h:outputText  value="#{inventarioEncomiendaMB.encoSelect.fRegistro}"  style="font-weight:bold;font-size: 1.2em;" >
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+					</h:outputText>
+				</h:panelGrid>
+
+				<h:panelGrid columns="4">
+					<h:outputLabel value="Destinatario 1:"/> 
+					<h:outputText  value="#{inventarioEncomiendaMB.encoSelect.destinatario1} -DNI #{inventarioEncomiendaMB.encoSelect.dniDestinatario1} "  style="font-weight:bold;font-size: 1.2em;" />
+					<h:outputLabel value="Destinatario 2:" rendered="#{inventarioEncomiendaMB.encoSelect.dniDestinatario2 !=null }"/> 
+					<h:outputText  value="#{inventarioEncomiendaMB.encoSelect.destinatario2} -DNI #{inventarioEncomiendaMB.encoSelect.dniDestinatario2} " 
+									rendered="#{inventarioEncomiendaMB.encoSelect.dniDestinatario2 !=null }" style="font-weight:bold;font-size: 1.2em;" />
+				</h:panelGrid>	
+				
+				
+				<h:panelGrid columns="4">
+					<h:outputLabel value="Origen"/> 
+					<h:outputText  value="#{inventarioEncomiendaMB.encoSelect.desOrigen}"  style="font-weight:bold;font-size: 1.2em;" />
+					<h:outputLabel value="Destino:"/> 
+					<h:outputText  value="#{inventarioEncomiendaMB.encoSelect.desDestino}"  style="font-weight:bold;font-size: 1.2em;" />
+				</h:panelGrid>	
+							
+				<br/>
+				<p:dataTable widgetVar="dtDetalle" var="p" value="#{inventarioEncomiendaMB.listDetalle}"
+							emptyMessage="No hay detalle para esta encomienda" rowIndexVar="nro" 
+							paginator="true"
+							rows="10" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20,30"
+							style="FONT-SIZE: 10px; margin-top:10px">
+							<f:facet name="header">Detalle de Encomiendas</f:facet>
+					
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:15%;text-align: center;" headerText="Encomienda" >
+								<h:outputText value="#{p.descripcion}" />
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Peso">
+								<h:outputText value="#{p.peso}" />
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Importe">
+								<h:outputText value="#{p.importe}" />
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Cantidad">
+								<h:outputText value="#{p.cantidad}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Codigo Barras">
+								<h:graphicImage value="/imagen/servletWill/?codigo=B#{p.idDetalle}" width="120" height="25"/>
+							</p:column>
+							
+						</p:dataTable>
+				<br/>
+				<p:commandButton value="Cancelar" type="button"	 onclick="dlgDetalle.hide();"  icon="icon-cancel" />
+			</p:dialog>
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel>
+	<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />	
+
+		<h:form>
+			<p:panel style="width:800px;">	
+					<h:panelGrid columns="5">	
+						#{"Origen:"}  
+				        <p:selectOneMenu id="cmbOrigen"  value="#{giroxPagarMB.giroFilter.idOrigen}" style=" width:150px;"
+				        		required="true" requiredMessage="Se necesita un origen"> 
+								<f:selectItem itemLabel="Seleccionar" itemValue="" />
+								<f:selectItems var="o" value="#{giroxPagarMB.listaAgencias}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+								<p:ajax listener="#{giroxPagarMB.listarDestinosxOri()}" update="cmbDestino"/>
+						</p:selectOneMenu>
+						#{"Fecha Inicio:"}
+						<p:calendar value="#{giroxPagarMB.giroFilter.fecInicio}"
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true">
+					    </p:calendar>
+					    
+						<p:commandButton value="Buscar Giros" style="margin-left:40px" actionListener="#{giroxPagarMB.buscarGiros()}" update=":formGirosxCobrar :sms"/>
+						
+						#{"Destino:"}
+						<p:selectOneMenu id="cmbDestino" style="width:150px" value="#{giroxPagarMB.giroFilter.idDestino}"
+										required="true" requiredMessage="Se necesita un destino">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="ag" value="#{giroxPagarMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" />
+							<p:ajax listener="#{giroxPagarMB.listarOficinasxAgencia()}" update="cmbOficina"/> 
+						</p:selectOneMenu>	
+						#{"Fecha Fin:"}
+						<p:calendar value="#{giroxPagarMB.giroFilter.fecFin}" 
+									mode="popup" showOn="button" locale="es"
+									pattern="dd/MM/yyyy"
+									readOnlyInputText="false" navigator="true">
+						</p:calendar>
+						<p:spacer></p:spacer>
+						#{"Oficina:"}
+						<p:selectOneMenu id="cmbOficina" style="width:150px" value="#{giroxPagarMB.giroFilter.idOficina}">
+							<f:selectItem itemLabel="Seleccione..." itemValue="0" />
+							<f:selectItems var="ag" value="#{giroxPagarMB.listaOficinas}" itemValue="#{ag.idOficina}" itemLabel="#{ag.nombre}" /> 
+						</p:selectOneMenu>	
+					
+						#{"Estado:"}
+						<p:selectOneMenu style="width:190px" value="#{giroxPagarMB.giroFilter.estado}">
+							<f:selectItem itemLabel="TODOS" itemValue="0" />
+							<f:selectItem itemLabel="POR COBRAR" itemValue="1" /> 
+							<f:selectItem itemLabel="COBRADO" itemValue="2" /> 
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+				
+				
+				<h:form id="formGirosxCobrar">
+					<p:dataTable widgetVar="dtGiros" var="g" value="#{giroxPagarMB.listaGiros}" filteredValue="#{giroxPagarMB.listaGirosFilter}"  
+					emptyMessage="No hay giros por cobrar." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Giros por cobrar</f:facet>
+					
+						<p:column headerText="Orden" width="25" style="width:2%" >
+							#{nro+1}
+						</p:column>
+						
+						
+						<p:column style="width:10%" headerText="Doc." >
+							<h:outputText value="#{g.tipoDocumento} #{g.documento}" />
+						</p:column>
+						
+						<p:column style="width:12%;text-align: center;" headerText="Fecha">
+							<h:outputText value="#{g.fRegistro}" >
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column style="width:8%" headerText="DNI Rem" >
+							<h:outputText value="#{g.dniRemitente}" />
+						</p:column>
+						
+						<p:column style="width:15%;text-align: center;" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{g.apellidosRemitente}">
+							<h:outputText value="#{g.apellidosRemitente} #{g.nombresRemitente}" />
+						</p:column>
+						
+						<p:column style="width:10%;text-align: center;" headerText="Monto">
+							<h:outputText value="#{g.montoGiro}" />
+						</p:column>
+						
+						<p:column style="width:10%;text-align: center;" headerText="DNI D1">
+							<h:outputText value="#{g.dniDestinatario1}" />
+						</p:column>
+						
+						<p:column style="width:15%;text-align: center;" headerText="Destinatario 1" filterStyleClass="mayuscula" filterBy="#{g.apellidosDestinatario1}" filterMatchMode="contains" filterStyle="width:60px;">
+							<h:outputText value="#{g.apellidosDestinatario1} #{g.nombresDestinatario1}" />
+						</p:column>
+						
+						<p:column style="width:10%;text-align: center;" headerText="DNI D2">
+							<h:outputText value="#{g.dniDestinatario2}" />
+						</p:column>
+						
+						<p:column style="width:15%;text-align: center;" headerText="Destinatario 2" filterStyleClass="mayuscula" filterBy="#{g.apellidosDestinatario2}" filterMatchMode="contains" filterStyle="width:60px;">
+							<h:outputText value="#{g.apellidosDestinatario2} #{g.nombresDestinatario2}" />
+						</p:column>
+						
+						<p:column style="width:10%;text-align: center;" headerText="Origen">
+							<h:outputText value="#{g.origenString}" />
+						</p:column>
+						<p:column style="width:10%;text-align: center;" headerText="Destino">
+							<h:outputText value="#{g.destinoString}" />
+						</p:column>
+						<p:column style="width:10%;text-align: center;" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{g.desOficina}" filterMatchMode="contains" filterStyle="width:50px;">
+							<h:outputText value="#{g.desOficina}"/>
+						</p:column>
+						<p:column style="width:10%;text-align: center;" headerText="Acciones">
+							<h:outputText value="COBRADO" rendered="#{(g.estado==2) ? true : false}" style="font-weight:bold;color:#E50808;"/>
+							<p:commandButton value="pagar Giro" update=":dlgDetPagoGiro" oncomplete="dlgPagoGiro.show()" actionListener="#{giroxPagarMB.setearGiro(g)}" rendered="#{(g.estado==1) ? true : false}"/>
+						</p:column>
+						
+						<p:columnGroup type="footer">  
+								                <p:row>  
+								                    <p:column colspan="5" footerText="Total de Giros por Pagar: " style="text-align:right"/>  
+								                    <p:column footerText="#{giroxPagarMB.totalGirosxPagar}" /> 
+												</p:row>  
+					   </p:columnGroup> 
+					
+					</p:dataTable>
+			
+				</h:form>			
+
+				<p:dialog header="Pagar Giro" widgetVar="dlgPagoGiro" appendToBody="true"
+					  resizable="false" id="dlgDetPagoGiro" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="3">
+							<p:panel header="Destinatario">
+								<h:panelGrid columns="2">
+									#{"DNI:"}
+									<p:outputLabel value="#{giroxPagarMB.giro.dniDestinatario1}" style="font-weight:bold;font-size: 1.1em"/>
+									
+									#{"Destinatario:"}
+									<p:outputLabel value="#{giroxPagarMB.giro.apellidosDestinatario1} #{giroxPagarMB.giro.nombresDestinatario1}" style="font-weight:bold;font-size: 1.1em"/>
+								
+									
+									#{"Telefono:"}
+									<p:outputLabel value="#{giroxPagarMB.giro.telefonoDestinatario1}" style="font-weight:bold;font-size: 1.1em"/>
+									
+								</h:panelGrid>
+							</p:panel>
+							
+							<p:panel header="Remitente">
+								<h:panelGrid columns="2">
+									#{"DNI:"}
+									<p:outputLabel value="#{giroxPagarMB.giro.dniRemitente}" style="font-weight:bold;font-size: 1.1em"/>
+									
+									#{"Destinatario:"}
+									<p:outputLabel value="#{giroxPagarMB.giro.apellidosRemitente} #{giroxPagarMB.giro.nombresRemitente}" styleClass="mayuscula" style="font-weight:bold;font-size: 1.1em"/> 
+								
+									
+									#{"Telefono:"}
+									<p:outputLabel value="#{giroxPagarMB.giro.telefonoRemitente}" style="font-weight:bold;font-size: 1.1em"/>
+									
+								</h:panelGrid>
+							</p:panel>
+							
+							<p:panel header="Entrega">
+								<h:panelGrid columns="2">
+									#{"Fecha Entrega:"}
+									<p:outputLabel value="#{giroxPagarMB.fechaEntrega}" style="font-weight:bold;font-size: 1.1em"/>
+									#{"Oficina a Pagar:"}
+									<p:outputLabel value="#{giroxPagarMB.giro.desOficina}" style="font-weight:bold;font-size: 1.1em"/>
+									#{"Total a Pagar:"}
+									<p:outputLabel value=" S/. #{giroxPagarMB.giro.montoGiro}" style="font-weight:bold;font-size: 1.5em;color:#E50808;"/>
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+									#{"Observacion:"}
+									<p:inputTextarea value="#{giroxPagarMB.observacion}" styleClass="mayuscula" style="width:200px;"/> 								
+								</h:panelGrid>
+							</p:panel>
+							
+							<h:panelGroup id="pnPagos">
+								<h:panelGrid rendered="#{giroxPagarMB._valida1}" columns="2" >
+									<p:commandButton value="Confirmar" actionListener="#{giroxPagarMB.confirmarPago()}" oncomplete="dlgPagoGiro.hide()" update=":formGirosxCobrar"/>
+								</h:panelGrid>
+								<h:panelGrid rendered="#{giroxPagarMB._valida2}" columns="2" >
+									#{"No se encuentra en la Oficina de Pago !!!    "} <p:commandButton value="Aceptar" onclick="dlgPagoGiro.hide()" update=":formGirosxCobrar"/>
+								</h:panelGrid>
+							</h:panelGroup>
+						</h:panelGrid>
+					</h:form>	
+			</p:dialog>
+
+				
+	</p:panel>
+	<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetConfirmar').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgConfirmar.show();
+			}
+		}
+		
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

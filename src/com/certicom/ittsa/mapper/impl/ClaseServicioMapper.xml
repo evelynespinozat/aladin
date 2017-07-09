@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ClaseServicioMapper">
+
+	<resultMap id="ClaseServicioResult"
+		type="com.certicom.ittsa.domain.ClaseServicio">
+		<id column="IdClase" property="idclase" />
+		<result column="Descripcion" property="Descripcion" />
+		<result column="Estado" property="estado" />
+		<result column="Grupo" property="grupo" />
+		<result column="NombreCorto" property="nombreCorto" />
+		<result column="AtnBordo" property="atnBordo" />
+		<result column="Asientos" property="asientos" />
+		<result column="nroPisos" property="nroPisos" />
+		<result column="IdCatServicio" property="IdCatServicio" />
+		<result column="nroColumnasPisoUno" property="nroColumnasPisoUno" />
+		<result column="nroColumnasPisoDos" property="nroColumnasPisoDos" />
+		<result column="idtipoasientop1" property="idtipoasientop1" />
+		<result column="idtipoasientop2" property="idtipoasientop2" />
+		<result column="color" property="color" />
+		<result column="idclasecapacidad" property="idclasecapacidad" />
+		
+	</resultMap>
+	
+	
+	<update id="actualizarClaseServicio" parameterType="com.certicom.ittsa.domain.ClaseServicio">
+		update
+		dbo.t_clase
+		SET
+		Descripcion = #{descripcion},
+		Estado = #{estado},
+		Grupo =
+		#{grupo},
+		NombreCorto = #{nombreCorto},
+		AtnBordo = #{atnBordo},
+		Asientos
+		= #{asientos},
+		color=#{color},
+		idclasecapacidad =#{idclasecapacidad}
+		WHERE IdClase = #{idclase}
+	</update>
+
+	<insert id="registrarClaseServicio" parameterType="com.certicom.ittsa.domain.ClaseServicio">
+		insert into
+		dbo.t_clase(Descripcion,Estado,NombreCorto,AtnBordo,nroPisos,IdCatServicio,idtipoasientop1,idtipoasientop2,color,idclasecapacidad,asientos)
+		values
+		(#{descripcion},#{estado},#{nombreCorto},#{atnBordo},#{nroPisos},#{IdCatServicio},#{idtipoasientop1},#{idtipoasientop2},#{color},#{idclasecapacidad},#{asientos})
+	</insert>
+
+</mapper>	

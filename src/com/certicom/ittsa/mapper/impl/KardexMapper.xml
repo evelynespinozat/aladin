@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.KardexMapper">
+
+<resultMap id="kardexResult" type="com.certicom.ittsa.domain.Kardex">
+	<id column="IdKardex" property="IdKardex"/>
+	<result column="IdProducto" property="IdProducto"/>
+	<result column="Idagencia" property="Idagencia"/>
+	<result column="IdOficina" property="IdOficina"/>
+	<result column="Tipo" property="Tipo"/>
+	<result column="Ingreso" property="Ingreso"/>
+	<result column="Salida" property="Salida"/>
+	<result column="FRegistro" property="FRegistro"/>
+	<result column="desAgencia" property="desAgencia"/>
+	<result column="desOficina" property="desOficina"/>
+	<result column="desProducto" property="desProducto"/>
+	<result column="Medida" property="medida"/>
+	<result column="desMedida" property="desMedida"/>
+	<result column="IdProgramacion" property="IdProgramacion"/>
+	<result column="docRef" property="docRef"/>
+	<result column="desOrigen" property="desOrigen"/>
+	<result column="desDestino" property="desDestino"/>
+	<result column="desServicio" property="desServicio"/>
+	
+	<result column="idBus" property="idBus"/>
+	<result column="numBus" property="numBus"/>
+	<result column="idProducto" property="idProducto"/>
+	<result column="cantConsumida" property="cantConsumida"/>
+	<result column="hSalida" property="hSalida"/>
+	<result column="fSalida" property="fSalida"/>
+
+</resultMap>
+
+<select id="listarKardexporProducto" parameterType="com.certicom.ittsa.domain.AgenciaProducto" resultMap="kardexResult">
+	select 
+		k.IdKardex,
+		k.Idagencia,
+		a.Descripcion as desAgencia,
+		k.IdOficina,
+		o.Nombre as desOficina,
+		k.Ingreso,
+		k.Salida,
+		k.FRegistro,
+		p.IdProducto,
+		p.Descripcion as desProducto,
+		p.Medida,
+		(select Descripcion from t_medida where CodigoMedida = p.medida) as desMedida,
+		k.Tipo,
+		(select Descripcion from t_agencia where IdAgencia = pr.Origen ) as desOrigen,
+		(select Descripcion from t_agencia where IdAgencia = pr.Destino ) as desDestino,
+		(select Descripcion from t_servicio where IdServicio = pr.IdServicio ) as desServicio,
+		pr.HSalida as hSalida,
+		pr.FSalida as fSalida,
+		k.costoUni, k.costo, k.cantDist, k.costoxPasj ,k.disgregacion 
+	  from t_kardex  k left join t_programacion pr
+		on (pr.IdProgramacion = k.IdProgramacion), 
+		   t_agencia a,
+		   t_agenciaoficina o,
+		   t_producto p
+	  where k.Idagencia = a.Idagencia
+	  	and k.IdOficina = o.IdOficina
+	  	and k.IdProducto = p.IdProducto
+	  	and k.Idagencia = #{Idagencia}
+	  	and k.IdOficina = #{IdOficina}
+	  	and k.IdProducto = #{IdProducto}
+	  	order by k.FRegistro asc ;
+</select>
+
+<insert id="registrarKardex" parameterType="com.certicom.ittsa.domain.Kardex">
+	insert into t_kardex (IdProducto,Idagencia,IdOficina,Tipo,Ingreso,Salida,FRegistro,IdProgramacion,docRef,costoUni,costo,cantDist,costoxPasj,disgregacion )
+						values(#{IdProducto},#{Idagencia},#{IdOficina},#{Tipo},#{Ingreso},#{Salida},#{FRegistro},#{IdProgramacion},#{docRef},#{costoUni},#{costo},#{cantDist},#{costoxPasj},#{disgregacion})
+</insert>
+
+<delete id="deleteKardexbyProducto" parameterType="com.certicom.ittsa.domain.Kardex" >
+	delete from t_kardex 
+		where IdProducto =#{IdProducto}
+			  and Idagencia =#{Idagencia}
+		      and IdOficina =#{IdOficina}	
+</delete>
+
+<select id="getCantKardexxProducto" parameterType="com.certicom.ittsa.domain.Kardex" resultMap="kardexResult">
+	select * from t_kardex 
+		where IdProducto =#{IdProducto} 
+		  and Idagencia =#{Idagencia}
+		  and IdOficina =#{IdOficina}
+</select>
+
+<select id="obtenerListaProductosxFecha2" resultMap="kardexResult" >
+<!-- 		select p.IdBus as idBus, f.Numero as numBus, o.IdProducto as idProducto, o.Descripcion as desProducto, -->
+<!-- 		( -->
+<!-- 		select COUNT(d.cantSalida)  -->
+<!-- 		from ((t_programacion x inner join t_salida s on x.IdProgramacion = s.IdProgramacion)  -->
+<!-- 							   inner join t_salida_detalle d on s.IdSalida = d.IdSalida) -->
+<!-- 							   inner join t_kardex a on a.IdProgramacion = x.IdProgramacion   -->
+<!-- 		where  a.FRegistro >= #{fecInicial} and a.FRegistro <= #{fecFinal}   -->
+<!-- 			   and a.IdProducto = #{idProducto} and a.Ingreso >0  -->
+<!-- 			   and x.IdBus = p.IdBus 	 -->
+<!-- 		) as cantConsumida  -->
+<!-- 		from ((t_programacion p inner join t_kardex k on  p.IdProgramacion = k.IdProgramacion)  -->
+<!-- 							   inner join t_flota f on p.IdBus = f.IdBus) -->
+<!-- 							   inner join t_producto o on k.IdProducto = o.IdProducto  -->
+<!-- 		where  k.FRegistro >= #{fecInicial} and k.FRegistro <= #{fecFinal}  -->
+<!-- 			   and k.IdProducto = #{idProducto} and k.Ingreso >0 				    -->
+<!-- 		group by p.IdBus, f.Numero, o.IdProducto, o.Descripcion -->
+<!-- 		order by f.Numero -->
+</select>
+
+
+</mapper>	

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptKardexCon" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="62c40109-c191-49e4-bad4-429e1fc7f22a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_PRODUCTO" class="java.lang.String"/>
+	<parameter name="P_FINI" class="java.lang.String"/>
+	<parameter name="P_FFIN" class="java.lang.String"/>
+	<parameter name="P_MEDIDA" class="java.lang.String"/>
+	<parameter name="P_TOTAL" class="java.lang.String"/>
+	<field name="numBus" class="java.lang.Integer"/>
+	<field name="cantConsumida" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="125" splitType="Stretch">
+			<image>
+				<reportElement uuid="4d137074-6eb1-4c70-a18e-3f612cd68969" x="43" y="25" width="103" height="38"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="3bc6a878-1663-42fa-b3da-cf7c6af6b1fe" x="171" y="25" width="266" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KARDEX CONSOLIDADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="be823ced-5117-44f1-a441-c343656fe26b" x="32" y="97" width="51" height="20"/>
+				<textElement/>
+				<text><![CDATA[Desde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e8bb2734-9720-45e2-8801-cce8f179b4d0" x="32" y="77" width="51" height="20"/>
+				<textElement/>
+				<text><![CDATA[Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ce8b12e5-8aa8-4d24-a36d-fd7118f42637" x="216" y="77" width="66" height="20"/>
+				<textElement/>
+				<text><![CDATA[Medida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ac0d4224-3662-4f05-92e7-a94d400cbf55" x="216" y="97" width="66" height="20"/>
+				<textElement/>
+				<text><![CDATA[Hasta]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7bc2abb9-21c7-4bd5-a72b-9e67aa194a55" x="84" y="77" width="132" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PRODUCTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="be61be73-d296-44e1-9b92-26a52b9a11e3" x="282" y="77" width="89" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_MEDIDA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="34bc65fc-8fce-4604-8a66-3286665c9379" x="83" y="97" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FINI}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a4d52b2f-155c-4e6f-a26e-2e9439aba430" x="282" y="97" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FFIN}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="8a2d8d97-0353-469a-aa76-9aea9b136a87" x="11" y="11" width="529" height="15" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="49896ea5-ea87-4ee7-bbc2-9763f8f53dad" x="32" y="11" width="78" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro Bus]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="47242176-a409-49c4-aa10-60b8dbd174d5" x="110" y="11" width="91" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<line>
+				<reportElement uuid="f7501a29-3cf8-4901-8943-29d4ba573cb1" x="11" y="25" width="529" height="1"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6711b3ef-c824-4450-bed8-ff7552c92fdb" x="32" y="0" width="78" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{numBus}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="0df5cee3-6c9e-4d3a-86ff-91039ba1f144" x="110" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cantConsumida}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="37" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="f279aab6-51bd-4b77-aa0d-6ea98a06c082" x="359" y="11" width="78" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad Total: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="57346fd0-cfdf-450f-ab5e-85d078cb7992" x="437" y="11" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

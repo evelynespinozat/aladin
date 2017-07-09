@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+         <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/img/bus.ico"/>
+         <link href="#{request.contextPath}/resources/css/login.css" rel="stylesheet" type="text/css"/>
+        
+          
+         
+         <h:outputScript library="js" name="calendar_es.js" />
+        <title><ui:insert name="title">Sistema ALADIN  - PMPPERU</ui:insert></title>
+</h:head>
+
+<h:body>
+
+<script>
+	//log jquery
+		jQuery.fn.log = function (msg) {
+      		console.log("%s: %o", msg, this);
+      		return this;
+  		};
+
+		jQuery(function()
+		{
+			jQuery("#frmMenu").hide();	
+			jQuery("#frmMenu").fadeIn(1500);
+		});
+		 
+  		
+
+</script>
+
+
+
+<p:layout fullPage="true">  
+    
+    <!-- Cabeza -->
+    <p:layoutUnit position="north" size="50" collapsible="true"  header=""  >  
+
+            <div style="padding: 0px 0px;margin: 0px 0px;background-color: #FED54C;" >
+            
+            	<div style="float:left;">
+            		<h:graphicImage value="resources/img/logo.png" alt="" width="40" height="20" style = "float: left;"/>
+            	</div>
+            	
+            	<div style="float:left;margin-left: 10px;">
+            		<h:outputText value=" Usuario: " style="FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000;" />
+					<h:outputText value="#{loginMB.usuario.nombre}	#{loginMB.usuario.apellido_paterno} 	
+						#{loginMB.usuario.apellido_materno}" style="FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000; font-weight:bold;" />
+            	</div>
+            	
+            	<div style="float:left;margin-left: 10px;">
+            		<h:panelGroup rendered="#{loginMB.impresoraAsociada}">
+            			#{"IP:"}
+            			<h:outputText value="#{loginMB.pv.numeroIP}" style="font-weight:bold;" />
+            			<p:spacer width="10" height="1" />
+            			#{"Impresora:"}
+            			<h:outputText value="#{loginMB.pv.nombreImpresora}" style="font-weight:bold;" />
+            		</h:panelGroup>
+            		
+            		<h:panelGroup rendered="#{not loginMB.impresoraAsociada}">
+            			<h:graphicImage  name="warning.png" library="img" width="20" height="20" />
+           				<h:outputText value="por favor configure su impresora adecuadamente" style="color:#B20005;font-weight:bold;" />
+            		</h:panelGroup>
+            	</div>
+            	
+            	<div style="float:right;margin-left: 10px;">
+            		<h:outputText value="Fecha de Último Acceso: " style="FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000; float: left;" />
+						<h:outputText value="#{loginMB.fechaAcceso}  "	style="FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000; font-weight:bold;float: left;"/>
+            	</div>
+            	
+            	<div style="float:right;">
+					
+					<div style="clear:both;" >
+            			<h:outputText value=" Agencia: " style="FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000;float: left;" />
+						<h:outputText value="#{loginMB.desOficina}" style="FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000; font-weight:bold;float: left;" />
+            		</div>
+            		
+            		<div style="clear:both;">
+            			<h:outputText value="CA: " style="FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000;float: left;" />
+						<h:outputText value="#{loginMB.centroAtencion} - #{loginMB.desTipo}"	style="FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000; font-weight:bold;float: left;"/>
+            		</div>
+            		
+            	</div>
+
+		</div>
+       
+    </p:layoutUnit>  
+  
+  	 <!-- Pie -->
+    <p:layoutUnit position="south" >  
+       
+       <div style="  background-color: #fff;padding: 3px;">
+       		<div style=" width:290px; FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000; font-weight:bold;margin:auto;" >
+            	<h:outputText value="PMP PERU. Derechos Reservados &reg; V.1.2015" />
+            </div>		
+		</div>
+       
+    </p:layoutUnit>  
+    
+     <!-- Menu -->
+    <p:layoutUnit position="west" size="210" header="Menu" collapsible="true">  
+			<ui:insert name="menu">
+				<div id="frmMenu">
+				<h:form id="formMenu"  >
+					<p:panelMenu rendered="#{not loginMB.usuario.es_nuevo}" autoDisplay="true" expanded="true"  autoSubmenuDisplay="true" model="#{loginMB.model}"
+								type="sliding" style="width:190px;font-size:10px"  />
+				</h:form>
+				</div>
+			</ui:insert>		
+    </p:layoutUnit>  
+  
+  	 <!-- Contenido -->
+    <p:layoutUnit position="center">  
+       <div id="contenido" style="margin-left: 4px;">
+			<ui:insert name="contenido">
+
+
+			</ui:insert>
+		</div>
+    </p:layoutUnit>  
+  
+</p:layout>
+	<p:dialog showHeader="false" modal="true" widgetVar="statusDialog"
+		header="Status" draggable="false" closable="false" position="center"
+		resizable="false">
+		<h:outputText value="Espere porfavor..." />
+		<br />
+		<p:graphicImage value="resources/img/Ajaxloading.gif" />
+	</p:dialog>
+
+	<ui:debug/> 
+</h:body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Agencias" url="agencia" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Agencia" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+					 actionListener="#{agenciaMB.nuevaAgencia()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaAgencia">
+				<p:dataTable id="dtidAgencia" widgetVar="dtAgencia" var="p" value="#{agenciaMB.listaAgencias}"
+					 filteredValue="#{agenciaMB.listaFiltroAgencias}"  
+					emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro"  
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Agencias</f:facet>
+					
+
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:15%" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+					
+
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{agenciaMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo" actionListener="#{agenciaMB.editarAgencia(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+						
+
+						<p:commandButton id="cbtEliminar" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{agenciaMB.agencia}" value="#{p}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{agenciaMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Nombre:"}
+							<p:inputText style="width:200px" value="#{agenciaMB.agencia.descripcion}" required="true" maxlength="50" styleClass="mayuscula" requiredMessage="Se necesita un nombre" />
+							
+<!-- 							#{"Grupo:"} -->
+<!-- 							<p:inputText style="width:200px" value="#{agenciaMB.agencia.grupo}" maxlength="3" required="true" requiredMessage="Se necesita un grupo" /> -->
+				
+			<ui:remove>	
+							#{"Email:"}
+							<p:inputText style="width:200px" value="#{agenciaMB.agencia.email}" maxlength="50" styleClass="mayuscula" required="true" validatorMessage="Formato de email inválido" requiredMessage="Se necesita un email" >
+								<f:validateRegex 
+                                    pattern="^\s*|([_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,}))$" />
+							</p:inputText>
+							
+							#{"Telefono 1:"}
+							<p:inputText style="width:200px" value="#{agenciaMB.agencia.telefono1}" mask="9999999999" maxlength="15" styleClass="mayuscula" required="true" requiredMessage="Se necesita un telefono" >
+								<pe:keyFilter  mask="num"/>  
+							</p:inputText>
+
+							#{"Telefono 2:"}
+							<p:inputMask style="width:200px" value="#{agenciaMB.agencia.telefono2}" mask="9999999999" maxlength="15" styleClass="mayuscula">
+								<pe:keyFilter  mask="num"/> 
+							</p:inputMask>
+							
+							#{"Direccion:"}
+							<p:inputText style="width:200px" value="#{agenciaMB.agencia.direccion}" required="true" maxlength="50" styleClass="mayuscula" requiredMessage="Se necesita una direccion" />
+				</ui:remove>			
+							
+							
+							
+							#{"Estado:"}
+							<p:selectOneRadio style="width:200px" value="#{agenciaMB.agencia.estado}" required="true" requiredMessage="se necesita un estado" >
+								<f:selectItem   itemLabel="Activo"  itemValue="true"/>
+								<f:selectItem   itemLabel="Inactivo"  itemValue="false"/>
+							</p:selectOneRadio>
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{agenciaMB.guardarAgencia()}"
+									 update=":formListaAgencia msgNuevo "
+									 icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta agencia?" header="Eliminar Agencia"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Agencia: <h:outputText value="#{agenciaMB.agencia.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaAgencia:dtidAgencia :sms"
+						actionListener="#{agenciaMB.eliminarAgencia()}"
+						oncomplete="dtAgencia.filter();dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede eliminar la agencia porque cuenta con oficinas asignadas" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				dtAgencia.filter();
+// 				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

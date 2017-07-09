@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Compra de Autopartes" url="#" />   
+				</p:breadCrumb>	
+			</h:form>
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nueva Compra" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{compraAutoparteMB.nuevaCompra()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+			<h:form id="formListaCompra">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{compraAutoparteMB.listaCompra}" filteredValue="#{compraAutoparteMB.listaCompraFilter}"  
+					emptyMessage="No hay Compras Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Listado de Compras</f:facet>
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:15%" headerText="Nro Orden" filterStyleClass="mayuscula" filterBy="#{p.ordenCompra}" filterMatchMode="contains">
+						<h:outputText value="#{p.ordenCompra}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Proveedor" filterStyleClass="mayuscula" filterBy="#{p.desProveedor}" filterMatchMode="contains">
+						<h:outputText value="#{p.desProveedor}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Agencia" filterStyleClass="mayuscula" filterBy="#{p.desAgencia}" filterMatchMode="contains">
+						<h:outputText value="#{p.desAgencia}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{p.desOficina}" filterMatchMode="contains">
+						<h:outputText value="#{p.desOficina}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Fecha Compra" >
+						<h:outputText value="#{p.fechaCompra}" rendered="#{p.fechaCompra != null}"> 
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Fecha Registro" >
+						<h:outputText value="#{p.fRegistro}" rendered="#{p.fRegistro != null}"> 
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			
+			<p:dialog header="Registrar Compra" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+				<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+				<h:form id="fm">	
+					<p:panel>
+
+						<h:panelGrid columns="6">
+
+						#{"Agencia:"}
+						<p:selectOneMenu style="width:200px" value="#{compraAutoparteMB.compraAutoparte.idagencia}" required="true" requiredMessage="Seleccione una Agencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+								<f:selectItems var="ag" value="#{compraAutoparteMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cmbOfi" event="change" listener="#{compraAutoparteMB.getOficinasxAgencia()}" /> 
+						</p:selectOneMenu>
+
+						#{"Oficina:"}
+						<p:selectOneMenu style="width:200px" id="cmbOfi" value="#{compraAutoparteMB.compraAutoparte.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="of" value="#{compraAutoparteMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+								<p:ajax update="cmbPr" event="change" listener="#{compraAutoparteMB.getProveedxOficina()}" /> 
+						</p:selectOneMenu>
+						
+						
+						#{"Proveedor:"}
+						<p:selectOneMenu style="width:200px" id="cmbPr" value="#{compraAutoparteMB.compraAutoparte.idProveedor}" required="true" requiredMessage="Seleccione un Proveedor">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="pro" value="#{compraAutoparteMB.listaProveedor}" itemValue="#{pro.idProveedor}" itemLabel="#{pro.razonSocial}" />
+						</p:selectOneMenu>
+
+						#{"Documento:"}
+						<p:selectOneMenu style="width:200px"  value="#{compraAutoparteMB.compraAutoparte.tipDocumento}" required="true" requiredMessage="Seleccione un Tipo de Documento">
+								<f:selectItem itemLabel="FACTURA" itemValue="FACTURA" />
+								<f:selectItem itemLabel="BOLETA" itemValue="BOLETA" />
+								<f:selectItem itemLabel="RECIBO" itemValue="RECIBO" />
+						</p:selectOneMenu>
+							
+						
+						#{"Nro Orden:"}
+						<p:inputText value="#{compraAutoparteMB.compraAutoparte.ordenCompra}" required="true" requiredMessage="ingrese el numero de orden de Compra"/>
+					
+						#{"Fecha :"}
+						<p:calendar style="width:200px"   value="#{compraAutoparteMB.compraAutoparte.fechaCompra}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Seleccione la fecha de compra">
+						</p:calendar>
+						
+						#{"Moneda:"}
+						<p:selectOneMenu style="width:200px"  value="#{compraAutoparteMB.compraAutoparte.moneda}" required="true" requiredMessage="Seleccione una moneda">
+								<f:selectItem itemLabel="SOLES" itemValue="SOLES" />
+								<f:selectItem itemLabel="DOLARES" itemValue="DOLARES" />
+								<p:ajax update="xxx, yyy" listener="#{compraAutoparteMB.showTCambio()}" />
+						</p:selectOneMenu>
+						
+						 <h:panelGrid columns="1" id="xxx" >
+						<p:outputLabel id="lblTC" rendered="#{compraAutoparteMB.showTC}" value="T. Cambio"/>
+						</h:panelGrid>
+						 <h:panelGrid columns="1" id="yyy" >
+						<p:inputText id="txtTC" rendered="#{compraAutoparteMB.showTC}" value="#{compraAutoparteMB.compraAutoparte.tipoCambio}" required="true" requiredMessage="ingrese el tipo de cambio"/>
+						</h:panelGrid>
+						
+						<p:commandButton value="Buscar Productos" actionListener="#{compraAutoparteMB.listarProductosxAgencia()}"
+									 update=":formGnral:dtProductos :msgNuevo" />
+									 
+									 
+
+						</h:panelGrid>
+						
+					</p:panel>
+				</h:form>	
+					<br/>
+					
+					<h:form id="formGnral">
+						
+						<p:dataTable id="dtProductos" widgetVar="dtDetProductos" var="pro" value="#{compraAutoparteMB.listaAgProducto}" filteredValue="#{compraAutoparteMB.listaAgProductoFilter}"  
+							emptyMessage="No hay productos disponibles" rowIndexVar="nro" 
+							paginator="true" rows="5" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5" style="FONT-SIZE: 10px;" >
+							
+							<f:facet name="header">Lista Productos x Agencia</f:facet>
+							
+							<p:column headerText="Orden" width="25" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="AutoParte" filterStyleClass="mayuscula" filterBy="#{pro.desProducto}" filterMatchMode="contains">
+								<h:outputText value="#{pro.desProducto}" />
+							</p:column>
+
+							<p:column style="text-align:center" headerText="Medida" >
+								<h:outputText value="#{pro.desMedida}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Stock">
+								<h:outputText value="#{pro.stock}" />
+							</p:column>
+							
+							<p:column  headerText="Cantidad">
+								<p:spinner value="#{pro.cantIngreso}"  min="0"  label="Cantidad"/>
+							</p:column>
+							
+							<p:column  headerText="Precio">
+								<pe:inputNumber value="#{pro.precioUni}" minValue="0" />
+							</p:column>
+							
+							<p:column headerText="Agregar" style="width:10%;text-align: center">
+		
+								<p:commandButton title="Editar" actionListener="#{compraAutoparteMB.agregarProductoCompra(pro)}"
+										  icon="icon-add" update=":formGnral:dtProductoCompra">
+								</p:commandButton>
+								
+							</p:column>					
+						</p:dataTable>
+						<br/>
+						
+						<p:dataTable id="dtProductoCompra" widgetVar="dtdetProductoCompra" var="serv" value="#{compraAutoparteMB.listaCompraDet}" 
+							emptyMessage="No hay productos disponibles" rowIndexVar="nro" 
+							paginator="true" rows="5" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5" style="FONT-SIZE: 10px;" >
+							
+							<f:facet name="header">Autoparte Comprados</f:facet>
+							
+							<p:column headerText="Orden" width="25" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="Autoparte" filterStyleClass="mayuscula" filterBy="#{serv.desProducto}" filterMatchMode="contains">
+								<h:outputText value="#{serv.desProducto}" />
+							</p:column>
+
+							<p:column style="text-align:center" headerText="Medida" >
+								<h:outputText value="#{serv.desMedida}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Cantidad">
+								<h:outputText value="#{serv.cantIngreso}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Precio">
+								<h:outputText value="#{serv.precio}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="S.total">
+								<h:outputText value="#{serv.subtotal}" />
+							</p:column>
+
+							
+							<p:column headerText="Eliminar" style="width:10%;text-align: center">
+						
+								<p:commandButton title="Remover" update=":formGnral:dtProductoCompra" actionListener="#{compraAutoparteMB.removerProductodeLista(serv.idAutoparte)}"
+												 oncomplete="dlgNuevo.show();" icon="icon-delete" >
+								</p:commandButton>
+							</p:column>					
+						</p:dataTable>
+						<br/>
+						
+						<p:commandButton value="Guardar" actionListener="#{compraAutoparteMB.registrarCompra()}"
+									 update=":formListaCompra "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

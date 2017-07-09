@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Atencion a Bordo" url="#" />
+				<p:menuitem value="Reporte de Costo por Servicio" url="#" />
+			</p:breadCrumb>
+			
+		<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+				
+		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel style="width:900px">
+			       	<h:panelGrid columns="6" id="datUbigeo">
+			       	<h:outputLabel value="F.Inicio "  /> 
+					<p:calendar style="width:200px"  value="#{rptCostoxServicioMB.fecIni}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita una fecha de inicio">
+							  <p:ajax update="calFfin" event="dateSelect"/>
+							  </p:calendar>
+
+					<h:outputLabel value="F.Fin" />
+					<p:spacer height="10px" width="18px"></p:spacer> 
+					<p:calendar id="calFfin" style="width:200px;" mindate="#{rptCostoxServicioMB.fecIni}"  value="#{rptCostoxServicioMB.fecFin}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"  required="true" requiredMessage="Se necesita una fecha final" /> 
+							
+					<p:commandButton value="Buscar" title="Buscar" icon="icon-search" actionListener="#{rptCostoxServicioMB.listarProgCostoxServicio()}" update =":formLista2"/>
+			       	</h:panelGrid>  
+			 </p:panel>       	
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+			<br/>
+			
+			<h:form id="formLista2">
+				
+				<p:dataTable id="dtProgAsig" widgetVar="dtProgAsig" var="p" value="#{rptCostoxServicioMB.listProgramacion}" filteredValue="#{rptCostoxServicioMB.listProgramacionFilter}" 
+					emptyMessage="No hay Programaciones disponibles" rowIndexVar="nro" paginatorPosition="bottom" 
+					paginator="true" rows="5"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Programaciones Desembarcadas</f:facet>
+					
+					<p:column headerText="Orden" style="width:2%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Programacion">
+						<h:outputText value="#{p.idProgramacion}" />
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Servicio">
+						<h:outputText value="#{p.descServicio}" />
+					</p:column>
+
+					<p:column style="width:10%;text-align: center;" headerText="Nro Bus">
+						<h:outputText value="#{p.numeroBus}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Fecha">
+						<h:outputText value="#{p.fSalida}"  rendered="#{p.fSalida !=null}">
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:6%;text-align: center;" headerText="Hora">
+						<h:outputText value="#{p.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:6%;text-align: center;" headerText="Nro Asientos">
+						<h:outputText value="#{p.numAsientos}" />
+					</p:column>
+			
+							
+					<p:column style="width:18%;text-align: center;" headerText="Costo Global">
+						<h:outputText value="#{p.costoGlobal}" />
+						
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Costo unitario x Asiento">
+						<h:outputText value="#{p.costoUnitario}" />			
+					</p:column>
+					
+<!-- 					<p:column style="width:10%;text-align: center;" headerText="Ver Detalle"> -->
+						
+<!-- 						<p:commandButton title="Ver Detalle" icon="icon-search"> -->
+<!-- 						</p:commandButton> -->
+
+<!-- 					</p:column>	 -->
+				</p:dataTable>
+			</h:form>
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

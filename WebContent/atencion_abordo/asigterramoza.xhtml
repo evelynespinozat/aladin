@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Atencion a Bordo" url="#" />
+				<p:menuitem value="Asignacion de Terramoza" url="#" />
+			</p:breadCrumb>
+			
+		<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+				
+		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel style="width:900px">
+			       	<h:panelGrid columns="7" id="datUbigeo">
+			       			#{"Fecha Programacion:"}
+			       			<p:calendar value="#{asigTerramozaMB.fechaProgramacion}" pattern="dd/MM/yyyy" mode="popup" showOn="button" locale="es"></p:calendar>
+			       			#{"Origen:"}
+							<p:selectOneMenu style="width:150px" value="#{asigTerramozaMB.idOrigen}" required="true" requiredMessage="Seleccione un Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{asigTerramozaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cboDestino" listener="#{asigTerramozaMB.listarDestinos()}" /> 
+							</p:selectOneMenu>
+							#{"Destino:"}
+							<p:selectOneMenu id="cboDestino" style="width:150px" value="#{asigTerramozaMB.idDestino}" required="true" requiredMessage="Seleccione un Destino">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{asigTerramozaMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" /> 
+							</p:selectOneMenu> 
+							
+							<p:commandButton value="Buscar" title="Buscar" icon="icon-search" actionListener="#{asigTerramozaMB.buscarProgramacion()}" update =":formLista2"/>
+			       	</h:panelGrid>  
+			 </p:panel>       	
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+			<br/>
+			
+			<h:form id="formLista2">
+				
+				<p:dataTable id="dtProgAsig" widgetVar="dtProgAsig" var="p" value="#{asigTerramozaMB.listaProgramacionAsig}" filteredValue="#{asigTerramozaMB.listaProgramacionFilter}" 
+					emptyMessage="No hay Flota Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+					paginator="true" rows="5"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Salidas Programadas Asignadas</f:facet>
+					
+					<p:column headerText="Orden" style="width:2%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Servicio">
+						<h:outputText value="#{p.descServicio}" />
+					</p:column>
+					
+					<p:column style="width:8%;text-align: center;" headerText="Hora Salida">
+						<h:outputText value="#{p.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:6%;text-align: center;" headerText="Piso 1 (S/.)">
+						<h:outputText value="#{p.precioPiso1}.00" />
+					</p:column>
+					
+					<p:column style="width:6%;text-align: center;" headerText="Piso 2 (S/.)">
+						<h:outputText value="#{p.precioPiso2}.00" />
+					</p:column>
+					
+					<p:column style="width:10px;text-align: center;" headerText="Bus">
+						<h:outputText value="#{p.numeroBus}" />					
+						
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Piloto">
+						<h:outputText value="#{p.nomPiloto}" />
+						
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Copiloto">
+						<h:outputText value="#{p.nomCopiloto}" />			
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Terramoza">
+						<h:outputText value="#{p.nomTerramoza}" />			
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Terramoza2">
+						<h:outputText value="#{p.nomTerramoza2}" />			
+					</p:column>
+					
+					<p:column style="width:40%;text-align: center;" headerText="Asignar Terramozas">
+					
+						
+						<p:commandButton title="Asignar Terramoza 1" icon="icon-terramoza"  update=":dlgDetPiloto"  actionListener="#{asigTerramozaMB.buscarTerramoza(p)}"  
+										 oncomplete="dlgPiloto.show();" >
+										 <f:setPropertyActionListener target="#{asigTerramozaMB.editarPiloto}" value="#{false}" />
+						</p:commandButton>
+
+						<p:commandButton title="Asignar Terramoza 2" icon="icon-terramoza"  update=":dlgDetTerramoza"  actionListener="#{asigTerramozaMB.buscarTerramoza(p)}"  
+										 oncomplete="dlgTerramoza.show();" >
+										 <f:setPropertyActionListener target="#{asigTerramozaMB.editarPiloto}" value="#{false}" />
+						</p:commandButton>
+															 
+					</p:column>	
+				</p:dataTable>
+			</h:form>
+			
+	 	
+			
+			
+		<!-- Seleccionar Piloto -->
+			<p:dialog header="Seleccionar Terramoza" widgetVar="dlgPiloto" appendToBody="true"
+					  resizable="false" id="dlgDetPiloto" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<p:dataTable id="dtBuses" widgetVar="dtBuses" var="p" value="#{asigTerramozaMB.listaTerramozas}" 
+									filteredValue="#{asigTerramozaMB.listaTerramozasFilter}"
+									emptyMessage="No hay Terramoza Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+									paginator="true" rows="10"
+									style="FONT-SIZE: 10px; ">
+							
+							<f:facet name="header">Lista de Terramozas</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="DNI" filterStyleClass="mayuscula" filterBy="#{p.dNI}" filterMatchMode="contains" filterStyle="width:100px;">
+								<h:outputText value="#{p.dNI}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Apellidos" filterStyleClass="mayuscula" filterBy="#{p.apellidos}" filterMatchMode="contains" filterStyle="width:100px;">
+								<h:outputText value="#{p.apellidos}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Nombres" filterStyleClass="mayuscula" filterBy="#{p.nombres}" filterMatchMode="contains" filterStyle="width:100px;">
+								<h:outputText value="#{p.nombres}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Celular">
+								<h:outputText value="#{p.nroCell}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Asignar">
+								<p:commandButton value="Asignar" title="Asignar"  update=":dlgDetPiloto  :formLista2 :sms" 
+												 oncomplete="dlgPiloto.hide();" actionListener="#{asigTerramozaMB.asignarTerramoza1(p)}">
+									
+								</p:commandButton>						
+							</p:column>
+						</p:dataTable>
+						
+					</h:form>	
+			</p:dialog>
+			
+			
+					<!-- Seleccionar Terramoza 2 -->
+			<p:dialog header="Seleccionar Terramoza" widgetVar="dlgTerramoza" appendToBody="true"
+					  resizable="false" id="dlgDetTerramoza" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<p:dataTable id="dtBuses" widgetVar="dtBuses" var="p" value="#{asigTerramozaMB.listaTerramozas}" 
+									filteredValue="#{asigTerramozaMB.listaTerramozasFilter}"
+									emptyMessage="No hay Terramoza Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+									paginator="true" rows="10"
+									style="FONT-SIZE: 10px; ">
+							
+							<f:facet name="header">Lista de Terramozas</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="DNI">
+								<h:outputText value="#{p.dNI}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Apellidos">
+								<h:outputText value="#{p.apellidos}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Nombres">
+								<h:outputText value="#{p.nombres}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Licencia">
+								<h:outputText value="#{p.nroCell}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Celular">
+								<p:commandButton value="Asignar" title="Asignar"  update=":dlgDetTerramoza  :formLista2 :sms" 
+												 oncomplete="dlgTerramoza.hide();" actionListener="#{asigTerramozaMB.asignarTerramoza2(p)}">
+									
+								</p:commandButton>						
+							</p:column>
+						</p:dataTable>
+						
+					</h:form>	
+			</p:dialog>
+			
+			
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

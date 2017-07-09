@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Nota Cobranza" url="notaCobranza" />   
+				</p:breadCrumb>	
+			</h:form>
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>	
+				
+			<!-- toolbar -->
+			<h:form>
+			<p:panel>
+				<h:panelGrid columns="6">
+				   #{"Origen:"}
+				   <p:selectOneMenu style="width:150px" value="#{notaCobranzaMB._idOrigen}"
+					required="true" requiredMessage="Seleccione Origen">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="item" value="#{notaCobranzaMB.listaOrigen}" 
+						itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+						<p:ajax listener="#{notaCobranzaMB.obtenerDestino()}" update="cmbDest"/>
+				   </p:selectOneMenu>
+					
+					#{"Destino:"}
+				  <p:selectOneMenu style="width:150px" value="#{notaCobranzaMB._idDestino}" id="cmbDest"
+					 required="true" requiredMessage="Seleccione Destino">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="item" value="#{notaCobranzaMB.listaDestinos}"
+							itemValue="#{item.destino}" itemLabel="#{item.desDestino}" />
+				  </p:selectOneMenu>
+				  
+				  <p:commandButton value="Consultar" actionListener="#{notaCobranzaMB.buscarNotaCobranza()}"
+									 update=":formListaNotaCobranza imprimir"
+									 oncomplete="validar(xhr, status, args)" icon="icon-search" />
+									 
+				<h:commandLink disabled="#{notaCobranzaMB.btnImprimir}" id="imprimir" value="Imprimir " title="Imprimir notas de cobranzas pagadas" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{notaCobranzaMB.imprimirPDF}" />   
+				</h:panelGrid>
+			</p:panel>
+			</h:form>
+				<!-- listado de Nota Cobranza -->
+			<h:form id="formListaNotaCobranza">
+				<p:dataTable widgetVar="dtNotaCobranza" var="p" value="#{notaCobranzaMB.listaNotaCobranza}" filteredValue="#{agenciaMB.listaFiltroAgencias}"  
+					emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Nota Cobranza Por Cobrar</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Serie">
+						<h:outputText value="#{p.serieNotaCobranza}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Nro Fisico">
+						<h:outputText value="#{p.numeroFisico}" />
+					</p:column>
+
+					<p:column style="width:100px;text-align: center;" headerText="Nro Corr.">
+						<h:outputText value="#{p.numeroNotaCobranza}" />
+					</p:column>
+
+					<p:column style="width:70px;text-align: center;" headerText="T.Doc">
+						<h:outputText value="#{p.tipoDocumento}" />
+					</p:column>
+
+					<p:column style="width:200px;text-align: center;" headerText="Doc.">
+						<h:outputText value="#{p.comprobante}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="F. Emision">
+						<h:outputText value="#{p.fEmision}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Origen">
+						<h:outputText value="#{p.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Destino">
+						<h:outputText value="#{p.desDestino}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Nombre Remitente">
+						<h:outputText value="#{p.nombresRemitente}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Apellidos Remitente">
+						<h:outputText value="#{p.apellidosRemitente}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="DNI">
+						<h:outputText value="#{p.dniRemitente}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Monto">
+						<h:outputText value="#{p.totalCobrado}" />
+					</p:column>
+					
+					<p:column style="width:120px;text-align: center;" headerText="Estado"  filterStyleClass="mayuscula" filterBy="#{p.estado}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.estado}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Detalle">
+						 <p:commandButton title="Buscar" actionListener="#{notaCobranzaMB.buscarDetalleNotaCobranza(p)}"
+									 update=":formListaDetalleNotaCobranza" icon="icon-search" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Pagar">
+						<p:commandButton title="Pagar" disabled="#{p.estado == 'PAGADO'}" oncomplete="dlgPagarNota.show();" update=":dlgDetPago" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{notaCobranzaMB.notaCobranza}" value="#{p}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+			</h:form>
+			<br/>
+			<br/>
+			<h:form id="formListaDetalleNotaCobranza">
+				<p:dataTable widgetVar="dtDetalle" var="p" value="#{notaCobranzaMB.listaDetalleNotaCobranza}" filteredValue="#{agenciaMB.listaFiltroAgencias}"  
+					emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista de Detalle Nota Cobranza</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Producto">
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Peso">
+						<h:outputText value="#{p.peso}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Cantidad">
+						<h:outputText value="#{p.cantidad}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Precio Envio">
+						<h:outputText value="#{p.precioEnvio}" />
+					</p:column>
+					
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+		</p:panel>
+		
+		<p:dialog id="dlgDetPago" appendToBody="true" header="Pagar Nota Cobranza" resizable="false"  modal="true"
+				  widgetVar="dlgPagarNota">
+				<h:form>
+					Nota de Cobranza a Pagar: 
+					<h:outputText value="#{notaCobranzaMB.notaCobranza.serieNotaCobranza} #{notaCobranzaMB.notaCobranza.numeroNotaCobranza}" style="font-size:15px;font-weight: bold; color:red" /> 
+					<br/>
+					<br/>
+					<h:panelGrid  columns="2">
+					    <h:outputText value="Forma Pago: " />
+						<p:selectOneMenu id="optionsPago"  value="#{notaCobranzaMB.formaPago}" style="margin-left:5px;width:150px" >  
+							<f:selectItem itemLabel="Efectivo" itemValue="E" />
+							<f:selectItem itemLabel="Tarjeta" itemValue="T" />
+						</p:selectOneMenu>
+						
+						<h:outputText value="Monto:" />
+						<pe:inputNumber decimalPlaces="2"  decimalSeparator="." minValue="0.00" style="width:150px" 
+							 value="#{notaCobranzaMB.montoPago}" maxlength="50" required="true"  requiredMessage="Ingrese el Monto" />
+						
+						<h:outputText value="N° Nota Cobranza:" />
+						<p:inputText style="width:150px" value="#{notaCobranzaMB.notaCobranza.numeroFisico}" required="true" requiredMessage="Ingrese numero Fisico"/>
+					</h:panelGrid>
+					<br/>
+					<br/>
+					<p:commandButton value="Pagar"
+						update=":formListaNotaCobranza :formListaDetalleNotaCobranza :sms"
+						actionListener="#{notaCobranzaMB.pagarNotaCobranza()}"
+						 oncomplete="validar(xhr, status, args)" />
+
+					<p:commandButton value="Cancelar"  type="button" onclick="dlgPagarNota.hide()" icon="icon-cancel"/>
+
+				</h:form>
+		</p:dialog>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetPago').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				dlgPagarNota.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

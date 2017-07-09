@@ -1,0 +1,1498 @@
+html, body {
+    font-family:Lucida Grande, Lucida Sans, Arial, sans-serif;font-size:12px;
+}
+
+#boxAviso
+{
+ border: 1px solid #f2e3d2;
+   background: #febe35;
+   background: -webkit-gradient(linear, left top, left bottom, from(#cc761a), to(#febe35));
+   background: -webkit-linear-gradient(top, #cc761a, #febe35);
+   background: -moz-linear-gradient(top, #cc761a, #febe35);
+   background: -ms-linear-gradient(top, #cc761a, #febe35);
+   background: -o-linear-gradient(top, #cc761a, #febe35);
+   background-image: -ms-linear-gradient(top, #cc761a 0%, #febe35 100%);
+   -webkit-border-radius: 8px;
+   -moz-border-radius: 8px;
+   border-radius: 8px;
+   -webkit-box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 0px 0;
+   -moz-box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 0px 0;
+   box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 0px 0;
+   font-family: 'Helvetica Neue',Helvetica,sans-serif;
+   text-decoration: none;
+   vertical-align: middle;
+   min-width:300px;
+   padding:5px;
+   width:500px;
+   height:50px; 
+}
+
+
+.botonRed {
+   border-top: 1px solid #e8c55d !important;
+   background: #d68c65 !important;
+   background: -webkit-gradient(linear, left top, left bottom, from(#cf291d), to(#d68c65)) !important;
+   background: -webkit-linear-gradient(top, #cf291d, #d68c65) !important;
+   background: -moz-linear-gradient(top, #cf291d, #d68c65) !important;
+   background: -ms-linear-gradient(top, #cf291d, #d68c65) !important;
+   background: -o-linear-gradient(top, #cf291d, #d68c65) !important;
+   padding: 6.5px 13px !important;
+   -webkit-border-radius: 6px !important;
+   -moz-border-radius: 6px !important;
+   border-radius: 6px !important;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0 !important;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0 !important;
+   box-shadow: rgba(0,0,0,1) 0 1px 0 !important;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0 !important;
+   color: white !important;
+   font-size: 13px !important;
+   font-family: Georgia, serif !important;
+   text-decoration: none !important;
+   vertical-align: middle !important;
+   }
+.botonRed:hover {
+   border-top-color: #de1616 !important;
+   background: #de1616 !important;
+   color: #ccc !important;
+   }
+.botonRed:active {
+   border-top-color: #1b435e !important;
+   background: #1b435e !important;
+   }
+
+
+
+/*       ICONOS        */
+
+.icon-key {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-key.png") !important;
+}
+.icon-home {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-home.png") !important;
+}
+.icon-search {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-search.png") !important;
+}
+
+.icon-verusuariogeneraprogramacion {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-verusuariogeneraprogramacion.png") !important;
+}
+
+.icon-mant {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-mant.png") !important;
+}
+.icon-music {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-music.png") !important;
+}
+.icon-artist {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-artist.png") !important;
+}
+.icon-album {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-album.png") !important;
+}
+.icon-title {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-title.png") !important;
+}
+.icon-report {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-report.png") !important;
+}
+.icon-security {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-security.png") !important;
+}
+.icon-rol {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-rol.png") !important;
+}
+.icon-user {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-user.png") !important;
+}
+.icon-pref {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-pref.png") !important;
+}
+.icon-exit {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-exit.png") !important;
+}
+
+.icon-password{
+    width:16px;
+    height:16px;
+    margin-right: 1px;
+    background-image:url("./../../resources/img/icon-password.png") !important;
+}
+
+.icon-add {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-add.png") !important;
+}
+.icon-edit {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-pencil.png") !important;
+}
+.icon-delete {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-bin.png") !important;
+}
+.icon-true {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-status-true.png") !important;
+}
+.icon-false {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-status-false.png") !important;
+}
+.icon-disk {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-disk.png") !important;
+}
+.icon-cancel {
+    width:16px;
+    height:16px;#7CC96A
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-cancel.png") !important;
+}
+.icon-update {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-update.png") !important;
+}
+.icon-map-add{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-map-add.png") !important;
+}
+
+
+.icon-layout-add{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-layout-add.png") !important;
+}
+
+.icon-photo-add{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-photo-add.png") !important;
+}
+
+
+.icon-printer{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-printer.png") !important;
+}
+
+.icon-ok{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-ok.png") !important;
+}
+
+.icon-hape-square-add{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-hape-square-add.png") !important;
+}
+
+.icon-prep {
+    width:16px;
+    height:18px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-prep.png") !important;
+}
+
+.icon-pdf {
+    width:26px;
+    height:24px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-pdf.png") !important;
+}
+
+.icon-date-add {
+    width:24px;
+    height:24px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-date-add.png") !important;
+}
+
+.icon-crop {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-crop.png") !important;
+}
+
+.icon-warning {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-warning.png") !important;
+}
+
+.icon-configuration {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-configuration.png") !important;
+}
+
+.icon-documental{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-documental.png") !important;
+}
+
+.icon-docs{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-docs.png") !important;
+}
+
+.icon-cargo{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-cargo.png") !important;
+}
+
+.icon-recibo{
+    width:16px;
+    height:16px;
+    margin-right: 4px;#7CC96A
+    background-image:url("./../../resources/img/icon-recibo.png") !important;
+}
+
+.icon-printer1{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-printer1.png") !important;
+}
+
+.icon-prepare{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-prepare.png") !important;
+}
+
+.icon-preparedocs{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-preparedocs.png") !important;
+}
+
+.icon-look{
+    width:16px;
+    height:16px;
+    margin-right: 4px;#7CC96A
+    background-image:url("./../../resources/img/icon-look.png") !important;
+}
+
+.icon-worker{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-worker.png") !important;
+}
+
+.icon-monitor{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-monitor.png") !important;
+}
+
+.icon-operator{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-operator.png") !important;
+}
+
+.icon-indice{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-indice.png") !important;
+}
+
+.icon-modules{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-modules.png") !important;
+}
+
+.icon-open{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-open.png") !important;
+}
+
+.icon-close{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-close.png") !important;
+}
+
+.icon-stop{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-stop.png") !important;
+}
+
+
+.icon-cliente{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-cliente.png") !important;
+}
+
+
+.icono-pdf{
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icono-pdf.png") !important;
+}
+
+/*nuevos iconos */
+.icon-agencia {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-agencia.png") !important;
+}
+
+.icon-asiento {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asiento.png") !important;
+}
+
+.icon-clasesservicio {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-clasesservicio.png") !important;
+}
+
+.icon-concepto {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-concepto.png") !important;
+}
+
+.icon-destinos {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-destinos.png") !important;
+}
+
+.icon-frecuencia {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-frecuencia.png") !important;
+}
+
+.icon-oficina {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-oficina.png") !important;
+}
+
+.icon-piloto {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-piloto.png") !important;
+}
+
+.icon-promocion {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-promocion.png") !important;
+}
+
+.icon-puntoventa {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-puntoventa.png") !important;
+}
+
+.icon-servicios {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-servicios.png") !important;
+}
+
+.icon-terramoza {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-terramoza.png") !important;
+}
+
+.icon-turno {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-turno.png") !important;
+}
+
+.icon-turnoagencia {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-turnoagencia.png") !important;
+}
+
+.icon-usuarioautorizante {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-usuarioautorizante.png") !important;
+}
+
+.icon-reservar {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-reserva.png") !important;
+}
+
+.icon-separar {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-separar.png") !important;
+}
+/*--------------*/
+
+
+.active{    
+    background-image: none !important;
+    display:none !important;   
+}
+
+.passive td.ui-selection-column input {
+
+        display:none !important;   
+    }
+    
+.passive ui-chkbox input {
+
+        display:none !important;   
+}
+
+.messagesform
+{
+	list-style-type:square;
+	list-style-position: inside;
+ 	border:1px solid #d0d6dc;
+ 	padding-top:2px;#7CC96A
+ 	padding-bottom:2px;
+ 	padding-right:10px;
+ 	padding-left:10px;
+	background-color: #f4f4f4;
+}
+.errorMessage
+{
+	color: red;
+	background-color: #f4f4f4;
+}
+.infoMessage
+{
+	color: blue;
+	background-color: #f4f4f4;
+}
+.requiredField
+{
+	color: red;
+
+}
+
+
+
+.ui-message-info {
+	color: #ffffff;
+	background-color: #A68E4C!important;
+}
+
+
+
+
+
+
+
+.titulo1{
+	text-shadow: 0px 1px 1px #4d4d4d;
+        color: #222;
+        font: 30px 'LeagueGothicRegular';
+}
+
+.titulo2{
+	text-shadow: 0px 1px 1px #4d4d4d;
+        color: #222;
+        font: 25px 'LeagueGothicRegular';
+}
+
+.titulo3{
+	text-shadow: 0px 1px 1px #4d4d4d;
+        color: #222;
+        font: 20px 'LeagueGothicRegular';
+}
+
+.titulo4{
+	text-shadow: 0px 1px 1px #4d4d4d;
+        color: #222;
+        font: 15px 'LeagueGothicRegular';
+}
+
+.filaOdd{
+	background:#FBF8A9;
+	color: black;
+}
+
+/*-- 22-01-2014 by jtorres -*/
+.icon-excepcion {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon_excepcion.png") !important;
+}
+
+.icon-historial {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon_historial.png") !important;
+}
+
+.icon-componente {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-componente.png") !important;
+}
+
+.icon-demanda {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-demanda.png") !important;
+}
+
+
+.icon-programaciondemanda {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-programaciondemanda.png") !important;
+}
+
+.icon-programacionfrecuente {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-programacionfrecuente.png") !important;
+}
+
+
+
+
+.icon-frecuente {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-frecuente.png") !important;
+}
+
+.icon-copiloto {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-copiloto.png") !important;
+}
+
+.icon-bus {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-bus.png") !important;
+}
+
+.icon-carguero {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-carguero.png") !important;
+}
+
+.icon-enlace {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-enlace.png") !important;
+}
+
+.icon-programacionflota {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-programacionflota.png") !important;
+}
+
+.icon-reten {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-reten.png") !important;
+}
+
+.icon-transbordo {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-transbordo.png") !important;
+}
+
+.icon-parametros {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-parametros.png") !important;
+}
+
+.icon-auditoria {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-auditoria.png") !important;
+}
+
+.icon-ubigeo {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-ubigeo.png") !important;
+}
+
+.icon-generarprogramacion {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-generarprogramacion.png") !important;
+}
+
+.icon-componente {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-componente.png") !important;
+}
+
+.icon-flota {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-flota.png") !important;
+}
+
+.icon-tipocombustible {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-tipocombustible.png") !important;
+}
+
+.icon-almacen {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-almacen.png") !important;
+}
+
+.icon-categoria {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-categoria.png") !important;
+}
+
+.icon-producto {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-producto.png") !important;
+}
+
+.icon-proveedor {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-proveedor.png") !important;
+}
+
+.icon-asociacionproductoalmacen {
+    width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asociacionproductoalmacen.png") !important;
+}
+
+.icon-agregarplantillaproducto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-agregarplantillaproducto.png") !important;
+}
+
+.icon-asignacionpiloto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asignacionpiloto.png") !important;
+}
+
+.icon-asociacionoficinaalmacen{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asociacionoficinaalmacen.png") !important;
+}
+
+.icon-asociarproductoalmacen{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asociarproductoalmacen.png") !important;
+}
+
+.icon-asociarproveedoragencia{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asociarproveedoragencia.png") !important;
+}
+
+.icon-autoparte{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-autoparte.png") !important;
+}
+
+.icon-kardexproducto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-kardexproducto.png") !important;
+}
+
+.icon-sistemaautomnotor{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-sistemaautomnotor.png") !important;
+}
+
+.icon-tipoasiento{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-tipoasiento.png") !important;
+}
+
+.icon-asignacionterramoza{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asignacionterramoza.png") !important;
+}
+
+.icon-asociarsistemabus{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asociarsistemabus.png") !important;
+}
+
+.icon-historialpiloto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-historialpiloto.png") !important;
+}
+
+.icon-liquidacion{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-liquidacion.png") !important;
+}
+
+.icon-llegabus{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-llegabus.png") !important;
+}
+
+.icon-llegadabus{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-llegadabus.png") !important;
+}
+
+.icon-croquis{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-croquis.png") !important;
+}
+
+.icon-mantenimiento{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-mantenimiento.png") !important;
+}
+
+.icon-reporteserviciobflota{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-reporteserviciobflota.png") !important;
+}
+
+.icon-reportesservicioporbus{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-reportesservicioporbus.png") !important;
+}
+
+.icon-salidaproductos{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-salidaproductos.png") !important;
+}
+
+.icon-agregarproductoplantilla{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-agregarproductoplantilla.png") !important;
+}
+
+.icon-asignarproducto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-asignarproducto.png") !important;
+}
+
+.icon-consolidadcombustible{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-consolidadcombustible.png") !important;
+}
+
+.icon-consumocombustible{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-consumocombustible.png") !important;
+}
+
+.icon-costocombustible{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-costocombustible.png") !important;
+}
+
+.icon-ingresargastos{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-ingresargastos.png") !important;
+}
+
+.icon-kilometrage{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-kilometrage.png") !important;
+}
+
+.icon-trackingpiloto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-trackingpiloto.png") !important;
+}
+
+.icon-trackingterramoza{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-trackingterramoza.png") !important;
+}
+
+.icon-series{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-series.png") !important;
+}
+
+.icon-comprasatencionbordo{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-comprasatencionbordo.png") !important;
+}
+
+
+.icon-costoservicioatencionbordo{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-costoservicioatencionbordo.png") !important;
+}
+
+
+.icon-unidadmedida{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-unidadmedida.png") !important;
+}
+
+.icon-tarifarioencomiendas{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-tarifarioencomiendas.png") !important;
+}
+
+.icon-tarifariogiros{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-tarifariogiros.png") !important;
+}
+/** */
+
+.icon-compraproducto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-compraproducto.png") !important;
+}
+
+.icon-historialflota{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-historialflota.png") !important;
+}
+
+.icon-kardexautoparte{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-kardexautoparte.png") !important;
+}
+
+.icon-mecanico{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-mecanico.png") !important;
+}
+
+.icon-registroserviciocorrectivo{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-registroserviciocorrectivo.png") !important;
+}
+
+.icon-registroserviciopreventivo{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-registroserviciopreventivo.png") !important;
+}
+
+.icon-reporteasignacionmecanico{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-reporteasignacionmecanico.png") !important;
+}
+
+.icon-reportecostoporbus{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-reportecostoporbus.png") !important;
+}
+
+.icon-reportemantenimientopreventivo{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-reportemantenimientopreventivo.png") !important;
+}
+
+.icon-salidaproducto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-salidaproducto.png") !important;
+}
+
+
+.icon-encomiendareparto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-encomiendareparto.png") !important;
+    
+}
+.icon-entregaencomienda{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-entregaencomienda.png") !important;
+}
+.icon-giroporpagar{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-giroporpagar.png") !important;
+}
+.icon-recepcionencomiedas{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-recepcionencomiedas.png") !important;
+}
+
+.icon-recepciondeencomiendaalmacen{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-recepciondeencomiendaalmacen.png") !important;
+}
+
+.icon-proveedores{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-proveedores.png") !important;
+}
+
+.icon-salidaretorno{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-salidaretorno.png") !important;
+}
+
+.icon-recepciongiros{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-recepciongiros.png") !important;
+}
+
+.icon-submanifiestoencomienda{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-submanifiestoencomienda.png") !important;
+}
+
+.icon-tarifaencomiendasreparto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-tarifaencomiendasreparto.png") !important;
+}
+
+.icon-tarifaproductoencimienda{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-tarifaproductoencimienda.png") !important;
+}
+
+.icon-tarifarioencomiendas{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-tarifarioencomiendas.png") !important;
+}
+
+.icon-tarifariogiros{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-tarifariogiros.png") !important;
+}
+
+.icon-trackingencomienda{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-trackingencomienda.png") !important;
+}
+
+.icon-diascroquis{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-diascroquis.png") !important;
+}
+
+.icon-consultapostergaciones{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-consultapostergaciones.png") !important;
+}
+
+.icon-listadelivery{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-listadelivery.png") !important;
+}
+
+.icon-listanegra{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-listanegra.png") !important;
+}
+
+.icon-manifiesto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-manifiesto.png") !important;
+}
+
+.icon-prepapagado{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-prepapagado.png") !important;
+}
+
+.icon-reservas{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-reservas.png") !important;
+}
+
+.icon-ventas{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-ventas.png") !important;
+}
+
+.icon-actualizacionnotareparto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-actualizacionnotareparto.png") !important;
+}
+.icon-almacenabandonolegal{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-almacenabandonolegal.png") !important;
+}
+
+.icon-inventario{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-inventario.png") !important;
+}
+
+.icon-notacobranza{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-notacobranza.png") !important;
+}
+
+.icon-personal{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-personal.png") !important;
+}
+
+.icon-submanifiesto{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-submanifiesto.png") !important;
+}
+
+.icon-ubicacion{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-ubicacion.png") !important;
+}
+
+.icon-unidadesvacias{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-unidadesvacias.png") !important;
+}
+
+.icon-varon{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-varon.gif") !important;
+}
+
+
+.icon-mujer{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-mujer.gif") !important;
+}
+
+.icon-vacio{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-vacio.png") !important;
+}
+
+.icon-buscar{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-verImg.png") !important;
+}
+
+
+
+.icon-selecc{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-seleccionar.png") !important;
+}
+
+
+.icon-dollar{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-dollar.png") !important;
+}
+
+.zeroSize {
+    visibility: hidden !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    border: 0px !important;
+    width: 0px !important;
+    height: 0px !important;
+}
+
+.icon-boletoanulados{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-boletoanulados.png") !important;
+}
+
+.icon-configuracionbiometria{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-configuracionbiometria.png") !important;
+}
+
+
+.icon-empresa{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-empresa.png") !important;
+}
+
+.icon-incidenciaembarque{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-incidenciaembarque.png") !important;
+}
+
+
+.icon-pasajero{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-pasajero.png") !important;
+}
+
+.icon-registrobiometrico{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-registrobiometrico.png") !important;
+}
+
+.icon-icon{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-icon.png") !important;
+}
+
+.icon-money{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-money.png") !important;
+}
+
+.icon-clear{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-clear.png") !important;
+}
+
+.icon-process{
+	width:16px;
+    height:16px;
+    margin-right: 4px;
+    background-image:url("./../../resources/img/icon-process.png") !important;
+}
+
+
+
+.embarcado
+{
+    background: #4CFF70;
+}
+
+.noembarcado
+{
+   background: #FF7074;        
+}
+
+.mayuscula
+{
+	text-transform: uppercase;
+}
+
+.rutaPadre{
+	background-color: red;
+}
+.rutaHijo{
+	
+}
+

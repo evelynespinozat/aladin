@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.Liquidacion_VentaMapper">
+
+<resultMap type="com.certicom.ittsa.domain.Liquidacion_Venta" id="liquidacion_VentaResult">
+	<id column="idLiquidacion_venta" property="idLiquidacion_venta"/>
+	<result column="documento" property="documento"/>
+	<result column="idPuntoVenta" property="idPuntoVenta"/>
+	<result column="fDocumento" property="fDocumento"/>
+	<result column="Area" property="Area"/>
+	<result column="subTotal" property="subTotal"/>
+	<result column="igv" property="igv"/>
+	<result column="total" property="total"/>
+	<result column="totalEfectivo" property="totalEfectivo"/>
+	<result column="totalTarjeta" property="totalTarjeta"/>
+	<result column="totalCredito" property="totalCredito"/>
+	<result column="proceso" property="proceso"/>
+	<result column="formaPago" property="formaPago"/>
+	<result column="movimientoCaja" property="movimientoCaja"/>
+	<result column="estLiq" property="estLiq"/>
+	<result column="tipoDocumento" property="tipoDocumento"/>
+	<result column="idUsuario" property="idUsuario"/>
+	<result column="formaEntrega" property="formaEntrega"/>
+	<result column="tipoTarjeta" property="tipoTarjeta"/>
+	
+</resultMap>
+
+<select id="rptReporteMecanizado" parameterType="com.certicom.ittsa.domain.Liquidacion_Venta" resultMap="liquidacion_VentaResult">
+	select  l.idLiquidacion_venta , l.TipoDocumento as tipoDocumento, l.IdPuntoVenta as idPuntoVenta,
+			l.FDocumento as fDocumento, l.SubTotal as subTotal, l.Igv as igv, l.Total as total,
+			l.TotalEfectivo as totalEfectivo, l.TotalTarjeta as totalTarjeta, l.TotalCredito as totalCredito,
+			l.Proceso as proceso,l.FormaPago as formaPago, l.Documento as documento,l.MovimientoCaja as movimientoCaja			
+	 from t_liquidacion_venta l inner join t_puntoventa pv
+		on l.IdPuntoVenta =  pv.IdPuntoVenta 
+		inner join t_agenciaoficina o
+		on o.IdOficina =  pv.IdOficina
+	    where l.Area = 'CARGO' 
+	    and pv.IdOficina = #{idOficina}
+	    and o.IdAgencia = #{idAgencia}
+	    order by cast(l.FDocumento as date) desc
+</select>
+
+
+</mapper>

@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Punto de Venta" url="puntoventa" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Punto de Venta" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{puntoVentaMB.nuevoPventa()}"/>
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaPuntoVenta">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{puntoVentaMB.listaPuntoVenta}" filteredValue="#{puntoVentaMB.listaFiltroPuntoVenta}"  
+					emptyMessage="No hay Punto de Ventas Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Punto de Ventas</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:50px" headerText="Agencia" filterStyleClass="mayuscula" filterBy="#{p.desAgencia}" filterMatchMode="contains" >
+						<h:outputText value="#{p.desAgencia}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{p.desOficina}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.desOficina}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Punto Venta"  filterStyleClass="mayuscula" filterBy="#{p.namePuntoVenta}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.namePuntoVenta}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Usuario" >
+						<h:outputText value="#{p.login}" />
+					</p:column>
+				
+					<p:column style="width:20px;text-align: center;" headerText="IP" filterStyleClass="mayuscula" filterBy="#{p.numeroIP}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.numeroIP}" />
+					</p:column>
+					<p:column style="width:20px;text-align: center;" headerText="Impresora" filterStyleClass="mayuscula" filterBy="#{p.nombreImpresora}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{p.nombreImpresora}" />
+					</p:column>
+					
+<!-- 					<p:column style="width:20px%;text-align: center;" headerText="Serie Boleto" > -->
+<!-- 						<h:outputText value="#{p.serieBoleto}" /> -->
+<!-- 					</p:column> -->
+					
+<!-- 					<p:column style="width:20px%;text-align: center;" headerText="Serie Boleta"  > -->
+<!-- 						<h:outputText value="#{p.serieBoleta}" /> -->
+<!-- 					</p:column> -->
+					
+<!-- 					<p:column style="width:20px%;text-align: center;" headerText="Serie Factura" > -->
+<!-- 						<h:outputText value="#{p.serieFactura}" /> -->
+<!-- 					</p:column> -->
+					
+<!-- 					<p:column style="width:20px;text-align: center;" headerText="Guia Remision" > -->
+<!-- 						<h:outputText value="#{p.serieGuiaRemision}" /> -->
+<!-- 					</p:column> -->
+					
+
+					<p:column style="width:10px" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{puntoVentaMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo" actionListener="#{puntoVentaMB.editarPventa(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{puntoVentaMB.puntoVenta}" value="#{p}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+
+						<p:commandButton id="cbtComponentes" title="Componentes" action="#{puntoVentaMB.agregarComponente(p)}" icon="icon-componente">
+						</p:commandButton>
+						<p:tooltip  for="cbtComponentes" value="Agregar Componentes"/>
+
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar Punto Venta -->
+			
+			<p:dialog header="#{puntoVentaMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+						
+							#{"Tipo:"}
+							<p:selectOneMenu style="width:150px" id="tipopv" value="#{puntoVentaMB.puntoVenta.tipo}" label="Tipo"  required="true" requiredMessage="Seleccione Tipo">
+		                        <f:selectItem itemValue="" itemLabel="Seleccione"></f:selectItem>
+		                        <f:selectItem itemValue="l" itemLabel="Call Center"></f:selectItem>
+		                        <f:selectItem itemValue="C" itemLabel="Cargo"></f:selectItem>
+		                        <f:selectItem itemValue="K" itemLabel="Kiosko Odenador"></f:selectItem>
+		                        <f:selectItem itemValue="P" itemLabel="Pasajes"></f:selectItem>
+		                        <f:selectItem itemValue="O" itemLabel="Oficina Administrativa"></f:selectItem>
+		                    </p:selectOneMenu>
+
+							#{"Agencia:"}
+							<p:selectOneMenu style="width:150px" value="#{puntoVentaMB.puntoVenta.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{puntoVentaMB.listaAgencia}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cmbOfi" listener="#{puntoVentaMB.listarOficinas()}" /> 
+							</p:selectOneMenu>
+	
+							#{"Oficina:"}
+							<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{puntoVentaMB.puntoVenta.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{puntoVentaMB.listaOficinas}" itemValue="#{ag.idOficina}" itemLabel="#{ag.nombre}" /> 
+							</p:selectOneMenu>
+							
+							#{"Nombre:"}
+							<p:inputText value="#{puntoVentaMB.puntoVenta.namePuntoVenta}" maxlength="50" styleClass="mayuscula" required="true" requiredMessage="Se necesita un nombre" />
+							
+							#{"Numero IP:"}
+							<p:inputMask value="#{puntoVentaMB.puntoVenta.numeroIP}" maxlength="50" required="true" requiredMessage="Ingrese Numero IP" >
+								<pe:keyFilter mask="num"/>
+							</p:inputMask>
+							#{"Impresora:"}
+							<p:inputText value="#{puntoVentaMB.puntoVenta.nombreImpresora}" maxlength="50"  styleClass="mayuscula" />
+														
+<!-- 							#{"Serie Boleto:"} -->
+<!-- 							<p:inputText value="#{puntoVentaMB.puntoVenta.serieBoleto}" maxlength="4" required="true" requiredMessage="Ingrese Serie Boleto" > -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText> -->
+							
+<!-- 							#{"Ultimo Boleto:"} -->
+<!-- 							<p:inputText id="txtultimoBoleto" value="#{puntoVentaMB.puntoVenta.ultimoBoleto}" maxlength="4" required="true" requiredMessage="Ingrese Ultimo Boleto" > -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText> -->
+							
+<!-- 							#{"Serie Boleta:"} -->
+<!-- 							<p:inputText value="#{puntoVentaMB.puntoVenta.serieBoleta}" maxlength="4" required="true" requiredMessage="Ingrese Serie Boleto" > -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText> -->
+
+<!-- 							#{"Ultima Boleta:"} -->
+<!-- 							<p:inputText id="txtultimaBoleta" value="#{puntoVentaMB.puntoVenta.ultimaBoleta}" required="true" requiredMessage="Ingrese Ultima Boleta" > -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText> -->
+							
+<!-- 							#{"Serie Factura:"} -->
+<!-- 							<p:inputText value="#{puntoVentaMB.puntoVenta.serieFactura}" maxlength="4" required="true" requiredMessage="Ingrese Sere Factura"> -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText> -->
+							
+<!-- 							#{"Ultima Factura:"} -->
+<!-- 							<p:inputText id="txtultimaFactura" value="#{puntoVentaMB.puntoVenta.ultimaFactura}" required="true" requiredMessage="Ingrese Ultima Factura" > -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText>							 -->
+<!-- 							#{"Serie Guia Remision:"} -->
+<!-- 							<p:inputText value="#{puntoVentaMB.puntoVenta.serieGuiaRemision}" maxlength="4" required="true" requiredMessage="Ingrese Serie Guia Remision" > -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText> -->
+							
+<!-- 							#{"Ultima Guia Remision:"} -->
+<!-- 							<p:inputText id="txtultimaGuia" value="#{puntoVentaMB.puntoVenta.ultimaGuia}" required="true" requiredMessage="Ingrese Ultima Guia Remision" > -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText> -->
+							
+						</h:panelGrid>
+<!-- 						<pe:keyFilter for="txtultimoBoleto" mask="num"  /> -->
+<!-- 						<pe:keyFilter for="txtultimaBoleta" mask="num"/>   -->
+<!-- 						<pe:keyFilter for="txtultimaFactura" mask="num"/>   -->
+<!-- 						<pe:keyFilter for="txtultimaGuia" mask="num"/>   -->
+						 
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{puntoVentaMB.guardarPuntoVenta()}"
+									 update=":formListaPuntoVenta msgNuevo" 
+									 oncomplete="dtAgencia.filter();validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"
+									 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta agencia?" header="Eliminar Agencia"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Punto de venta: <h:outputText value="#{puntoVentaMB.puntoVenta.namePuntoVenta}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaPuntoVenta :sms"
+						actionListener="#{puntoVentaMB.eliminarPuntoVenta()}"
+						oncomplete="dtAgencia.filter();dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar el punto venta porque cuenta con usuarios asignados y/o Componentes Asociados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				console.log("el valido es " +args.validationFailed)
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

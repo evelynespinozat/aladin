@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Registro de LLegada de Bus" url="registroLlegadaBus" /> 
+    				<p:menuitem value="Entrega de Productos" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="6">
+				#{"Origen:"}
+				<h:outputText value=" #{entregaProductosMB.programacion.desOrigen}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Destino:"}
+				<h:outputText value=" #{entregaProductosMB.programacion.desDestino}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Servicio:"}
+				<h:outputText value=" #{entregaProductosMB.programacion.descServicio}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Fecha LLegada:"}
+				<h:outputText value="#{entregaProductosMB.programacion.fLlegadaReal}" 
+					style="font-weight:bold;font-size: 1.2em;" >
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short" />
+				</h:outputText>
+					
+				#{"Terramoza 1:"}
+				<h:outputText value=" #{entregaProductosMB.programacion.nomTerramoza}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Terramoza 2:"}
+				<h:outputText value=" #{entregaProductosMB.programacion.nomTerramoza2}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+		<h:form id="fm">
+		<h:panelGrid columns="6">
+				#{"Agencia:"}
+				<p:selectOneMenu style="width:150px" value="#{entregaProductosMB.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{entregaProductosMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{entregaProductosMB.getOficinasxAgencia()}" /> 
+				</p:selectOneMenu>
+	
+				#{"Oficina:"}
+				<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{entregaProductosMB.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{entregaProductosMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					<p:ajax update="cmbAlm" listener="#{entregaProductosMB.listarAlmacen()}" />  
+				</p:selectOneMenu>
+				
+				#{"Almacen:"}
+				<p:selectOneMenu style="width:300px" id="cmbAlm" value="#{entregaProductosMB.idAlmacen}" required="true" requiredMessage="Seleccione un Almacen ">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="ag" value="#{entregaProductosMB.listAlmacen}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.descripcion}" /> 
+				</p:selectOneMenu>
+				
+		</h:panelGrid>
+		
+		<br/>		
+		<!-- toolbar -->
+		
+		<h:panelGrid columns="3">
+				<p:dataTable id="dtPlanDet" value="#{entregaProductosMB.listLlegadaProductos}" var="per" style="width:450px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" 
+						 paginator="true"
+						 editable="true"
+						 editMode="cell"
+						 rows="5" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						 >
+    			<f:facet name="header">Llegada de Productos </f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    		
+    			<p:column headerText="Producto" >
+    				#{per.desProducto}
+    			</p:column>
+    		
+    			<p:column headerText="Medida">
+    				#{per.medida}
+    			</p:column>
+
+    			<p:column headerText="Cant. Salida">
+    				#{per.cantSalida}
+    			</p:column>
+    			
+    			<p:column headerText="Cant. LLegada" style="width:20px">  
+                <p:spinner value="#{per.cantLLegada}"  min="0" max="#{per.cantSalida}" >
+                </p:spinner>
+                	
+            	
+        </p:column> 
+		</p:dataTable>
+			
+		<p:spacer width="10px"></p:spacer>
+		<p:commandButton value="Guardar" icon="icon-add" 
+			action="#{entregaProductosMB.registrarLlegadaProductos}" update="fm :msgGeneral"/>
+		</h:panelGrid>
+					
+   		</h:form>
+		
+	<ui:remove>
+		<p:confirmDialog id="confirmDialog" message="Seguro de eliminar esta asignacion"   appendToBody="true"
+             		header="Eliminar Asignacion" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaAgP :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{entregaProductosMB.registrarLlegadaProductos()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    	</p:confirmDialog> 
+	
+	</ui:remove>
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

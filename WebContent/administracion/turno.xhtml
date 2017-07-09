@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Turno" url="turno" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Turno" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" 
+					actionListener="#{turnoMB.nuevoTurno()}"/>
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de turnos -->
+			<h:form id="formListaTurno">
+				<p:dataTable widgetVar="dtTurno" var="p" value="#{turnoMB.listaTurno}" filteredValue="#{turnoMB.listaFiltroTurno}"   
+					emptyMessage="No hay Turnos Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Turnos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:17%" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterStyle="width:215px;"  filterMatchMode="contains" >
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+
+
+					<p:column style="width:26%;text-align: center;" headerText="Fecha Inicio" >
+						<h:outputText value="#{p.hInicio}" />
+					</p:column>
+
+					<p:column style="width:26%;text-align: center;" headerText="Fecha Fin" >
+						<h:outputText value="#{p.hFin}" />
+					</p:column>
+
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{turnoMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo" actionListener="#{turnoMB.editarTurno(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{turnoMB.turno}" value="#{p}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{turnoMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" />
+						
+						<h:panelGrid columns="2">
+
+						#{"Nombre:"}
+						<p:inputText value="#{turnoMB.turno.descripcion}" styleClass="mayuscula"
+							 required="true" maxlength="50" requiredMessage="Se necesita una descripcion"/>
+							 	 
+						#{"Hora Inicio (00:24): "}
+						 <p:calendar value="#{turnoMB.turno.horaInicio}" pattern="HH:mm" timeOnly="true"  locale="es"/>
+							
+						#{"Hora Fin (00:24): "}
+					    <p:calendar value="#{turnoMB.turno.horaFin}"  pattern="HH:mm" timeOnly="true"  locale="es"/>
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{turnoMB.guardarTurno()}"
+									 update=":formListaTurno msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"
+									 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este turno?" header="Eliminar Turno"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Turno: <h:outputText value="#{turnoMB.turno.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaTurno :sms"
+						actionListener="#{turnoMB.eliminarTurno()}"
+						oncomplete="dtTurno.filter();dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede eliminar el turno porque ha sido asignado a una agencia" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

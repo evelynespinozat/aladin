@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel id="pnl">
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Plantilla de Productos" url="plantillaProd" /> 
+    				<p:menuitem value="Productos" url="plantillaProd" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="10">
+				#{"Servicio:"}
+				<h:outputText value=" #{plantillaDetalleMB.plantilla.desCServicio}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Agencia:"}
+				<h:outputText value=" #{plantillaDetalleMB.plantilla.desAgencia}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Oficina:"}
+				<h:outputText value=" #{plantillaDetalleMB.plantilla.desOficina}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Origen :"}
+				<h:outputText value=" #{plantillaDetalleMB.plantilla.desOrigen}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Destino:"}
+				<h:outputText value=" #{plantillaDetalleMB.plantilla.desDestino}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+		<h:form id="fm">
+		<h:panelGrid columns="3">
+				#{"Almacen:"}
+				<p:selectOneMenu style="width:280px" value="#{plantillaDetalleMB.plantilla.idAlmacen}" required="true" requiredMessage="Seleccione un Almacen">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{plantillaDetalleMB.listaAlmacen}" itemValue="#{ag.idAlmacen}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update=":frmListaAgP :frmListaDeTp" event="change" listener="#{plantillaDetalleMB.getProductosxAgencia()}" /> 
+				</p:selectOneMenu>
+				
+		</h:panelGrid>
+		</h:form>		
+		<br/>
+
+		<h:panelGrid id="pntables" columns="3" >
+		
+		<h:form id="frmListaAgP">
+					
+			<p:dataTable value="#{plantillaDetalleMB.listaProductosxAgencia}" var="per" 
+						style="width:450px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" 
+						 paginator="true"
+						 rows="5" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						>
+    			<f:facet name="header">Productos Asignados a la Agencia</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    		
+    			<p:column headerText="Producto">
+    				#{per.desProducto}
+    			</p:column>
+    		
+    			<p:column headerText="Medida">
+    				#{per.desMedida}
+    			</p:column>
+    			
+    			 <p:column headerText="Cantidad">
+    				<p:spinner value="#{per.cantSalidaDefecto}"  min="0" max="#{per.stock}" label="Cantidad"/>
+    			</p:column>
+    			
+				<p:column headerText="Asignar" style="width:10%;text-align: center">
+
+				<p:commandButton title="Asignar"  update=":msgGeneral :frmListaDeTp:dtPlanDet" icon="icon-delete"
+				actionListener="#{plantillaDetalleMB.agregarProductosPlantilla(per)}">
+				
+				</p:commandButton>
+				
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+		
+		<p:spacer height="10px"></p:spacer>
+		<h:form id="frmListaDeTp">
+		
+		<p:dataTable id="dtPlanDet" value="#{plantillaDetalleMB.listPlantillaDetalle}" var="per" style="width:450px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" 
+						 paginator="true"
+						 rows="5" paginatorPosition="bottom" 
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						 >
+    			<f:facet name="header">Productos Asignados a la Plantilla</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    		
+    			<p:column headerText="Producto">
+    				#{per.desProducto}
+    			</p:column>
+    		
+    			<p:column headerText="Medida">
+    				#{per.desMedida}
+    			</p:column>
+
+    			<p:column headerText="Cant. Salida">
+    				#{per.cantDefecto}
+    			</p:column>
+    			
+				<p:column headerText="Edit./Elim." style="width:10%;text-align: center">
+
+				<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo" actionListener="#{plantillaDetalleMB.editarCantidad(per)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+				</p:commandButton>
+
+
+				<p:commandButton title="Eliminar"  update=":frmListaDeTp :msgGeneral " icon="icon-delete"
+				actionListener="#{plantillaDetalleMB.eliminarProductoPlantilla(per)}">
+				
+				</p:commandButton>
+
+			
+				
+				</p:column>
+
+				</p:dataTable>
+		
+	</h:form>
+	</h:panelGrid>
+	
+	
+				<p:dialog header="Actualizar Plantilla" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+			
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+						#{"Producto:"}
+						<p:outputLabel style="width:200px" value="#{plantillaDetalleMB.pldetselect.desProducto}"  maxlength="50" />
+
+						#{"Cantidad:"}
+						<p:inputText style="width:200px" value="#{plantillaDetalleMB.pldetselect.cantDefecto}" required="true" maxlength="50" requiredMessage="Se necesita una cantidad" >
+							<pe:keyFilter mask="num"/>
+						</p:inputText>
+	
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{plantillaDetalleMB.guardarCambioCantidad()}"
+									 update=":frmListaDeTp msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+					
+			</p:dialog>
+	
+		
+	</p:panel>
+	
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+
+	</ui:define>
+
+</ui:composition>
+</html>

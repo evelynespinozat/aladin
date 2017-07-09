@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.CategoriaProducto">
+
+<resultMap id="categoriaProductoResult" type="com.certicom.ittsa.domain.CategoriaProducto">
+	<id column="idCatProducto" property="idCatProducto"/>
+	<result column="Descripcion" property="Descripcion"/>
+	<result column="Estado" property="Estado"/>
+	<result column="tipo" property="tipo"/>
+</resultMap>
+
+
+</mapper>	

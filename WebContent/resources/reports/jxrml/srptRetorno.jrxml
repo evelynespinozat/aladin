@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="srptRetorno" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="32e70ebb-810d-41f2-b753-5abcd521f5c8">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="267"/>
+	<property name="ireport.y" value="0"/>
+	<field name="hSalida" class="java.lang.String"/>
+	<field name="descServicio" class="java.lang.String"/>
+	<field name="desOrigen" class="java.lang.String"/>
+	<field name="desDestino" class="java.lang.String"/>
+	<field name="asienVendidos" class="java.lang.Integer"/>
+	<field name="asienReserva" class="java.lang.Integer"/>
+	<field name="numeroBus" class="java.lang.String"/>
+	<field name="ruta" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="3" width="365" height="13" backcolor="#CCCCFF" uuid="2f90d307-8fff-4123-832e-77847895d102"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="279" y="3" width="46" height="15" uuid="22e42b5a-b643-4588-88e5-fbc217211b6a"/>
+				<text><![CDATA[Reserva]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="326" y="3" width="40" height="15" uuid="cb30aea4-5eef-4407-bcae-a0b895295459"/>
+				<text><![CDATA[Nro Bus]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="3" width="70" height="15" uuid="869d6cdf-9550-4efa-9f90-908d2506aaa8"/>
+				<text><![CDATA[Hora Salida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="165" y="3" width="56" height="15" uuid="25e7bdcd-5e78-48ba-adee-a8dfcdec3134"/>
+				<text><![CDATA[Ruta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="87" y="3" width="55" height="15" uuid="9679c8d9-9653-4471-91c2-b10983458a76"/>
+				<text><![CDATA[Servicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="228" y="3" width="45" height="15" uuid="7f57ae7f-1334-4002-97eb-089064fa0378"/>
+				<text><![CDATA[Vendido]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="8" y="3" width="69" height="15" uuid="b50b9197-eea0-48b4-9d72-1e96899b702b"/>
+				<textFieldExpression><![CDATA[$F{hSalida}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="242" y="3" width="17" height="15" uuid="592d87b5-3cb0-4a0a-8b80-2b29be18b209"/>
+				<textFieldExpression><![CDATA[$F{asienVendidos}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="289" y="3" width="29" height="15" uuid="23ed530d-0158-48b1-9190-11a5c925bb4a"/>
+				<textFieldExpression><![CDATA[$F{asienReserva}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="86" y="3" width="65" height="15" uuid="c51685fa-af56-45d7-9818-d5b00d9339cf"/>
+				<textFieldExpression><![CDATA[$F{descServicio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="334" y="3" width="25" height="15" uuid="e859f4f0-8f5e-455d-bbea-e00495fc8bc2"/>
+				<textFieldExpression><![CDATA[$F{numeroBus}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="162" y="1" width="59" height="17" uuid="ee58dd30-2032-4066-9bc9-8890310c0489"/>
+				<textFieldExpression><![CDATA[$F{ruta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

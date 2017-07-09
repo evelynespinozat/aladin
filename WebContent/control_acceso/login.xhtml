@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla_login.xhtml">
+	<ui:define name="usuario" />
+	<ui:define name="menu" />
+	<ui:define name="contenido">
+		<h:form id="formLogin">
+			<div style="position: absolute; width: 300px; top: 25%; left: 46%; margin-top: -150px; margin-left: -150px;">
+			<img  src="#{request.contextPath}/resources/img/logo.gif" alt="" hspace="40" vspace="15" />
+			</div>
+			<p:focus for="idUsuario" />
+			<p:panel id="panelLogin" header="Acceso Sistema"
+				style="position: absolute; width: 300px; top: 50%; left: 50%; margin-top: -150px; margin-left: -150px;">
+				<p:panel id="panelSublogin"
+					style="margin-top: 15px; margin-bottom: 10px;">
+
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Usuario: " />
+						<p:inputText id="idUsuario" value="#{loginMB.login}"
+							style="width: 155px;" required="true" requiredMessage="Ingrese el Usuario" title="Ingrese el Usuario de Acceso"/>
+							  
+						<h:outputLabel value="Contraseña: " />
+						<p:password id="idPassword" value="#{loginMB.password}"
+							style="width: 155px;" required="true" requiredMessage="Ingrese la Contraseña" title="Ingrese su Contraseña" />
+							
+					</h:panelGrid>
+
+					<p:commandButton id="btnIngresar" value="Ingresar"
+						process="@this :formLogin:panelLogin"
+						update=":formLogin:panelLogin, :formLogin:mensajes"
+						icon="icon-key" action="#{loginMB.efectuarLogin()}"
+						style="margin-left: 150px; margin-top: 10px" />
+					<p:defaultCommand target="btnIngresar" />
+
+				</p:panel>
+				<p:messages id="mensajes"/>
+			</p:panel>
+			
+			<p:ajaxStatus onstart="statusDialog.show();"
+				onsuccess="statusDialog.hide();" />
+		</h:form>
+			<div style="background-color: #E6E6E6;position: absolute; width: 98%; top:97%;padding-left: 0px;margin-left: 0px">
+       		<div style=" width:290px;height:25px; FONT-SIZE: small; FONT-FAMILY: 'Arial'; COLOR: #000; font-weight:bold;margin:auto;" >
+            	<h:outputText value="PMP PERU. Derechos Reservados &reg; V.1.2015" />
+<!-- 					<h:outputText value="PMPPERU. Derechos Reservados &reg; V.1.6.2014 28-05-2014 11:30 AM" /> -->
+            </div>		
+		    </div>
+	</ui:define>
+</ui:composition>
+</html>

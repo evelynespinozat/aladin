@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.TipoDocumentoMapper">
+
+	<resultMap id="TipoDocumentoResult"
+		type="com.certicom.ittsa.domain.ClaseServicio">
+		<id column="IdClase" property="idclase" />
+		<result column="descripcion" property="descripcion" />
+		<result column="longitud" property="longitud" />
+	</resultMap>
+	
+	
+	<update id="actualizarTipoDocumento" parameterType="com.certicom.ittsa.domain.TipoDocumento">
+		update
+		dbo.t_tipodocumento
+		SET
+		descripcion = #{descripcion}
+		WHERE idtipodoc = #{idtipodoc}
+	</update>
+
+	<insert id="registrarTipoDocumento" parameterType="com.certicom.ittsa.domain.TipoDocumento">
+		insert into
+		dbo.t_tipodocumento(descripcion)
+		values
+		(#{descripcion})
+	</insert>
+
+</mapper>	

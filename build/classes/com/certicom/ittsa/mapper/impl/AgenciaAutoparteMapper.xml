@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.AgenciaAutoparteMapper">
+
+<resultMap id="agenciaAutoparteResult" type="com.certicom.ittsa.domain.AgenciaAutoparte">
+	<id column="Id" property="Id"/>
+	<result column="Idagencia" property="Idagencia"/>
+	<result column="IdOficina" property="IdOficina"/>
+	<result column="IdAlmacen" property="IdAlmacen"/>
+	<result column="IdAutoparte" property="IdAutoparte"/>
+	<result column="Stock" property="Stock"/>
+	<result column="Fecha" property="Fecha"/>
+	<result column="desAgencia" property="desAgencia"/>
+	<result column="desOficina" property="desOficina"/>
+	<result column="desAlmacen" property="desAlmacen"/>
+	<result column="desProducto" property="desProducto"/>
+	<result column="Medida" property="medida"/>
+	<result column="desMedida" property="desMedida"/>
+	<result column="precioCompra" property="precioCompra"/>
+</resultMap>
+
+
+
+<select id="listOfixProducto" parameterType="int" resultMap="agenciaAutoparteResult">
+	select 
+		ap.Id,
+		ap.Idagencia,
+		a.Descripcion as desAgencia,
+		ap.IdOficina,
+		o.Nombre as desOficina,
+		ap.IdAlmacen,
+		al.Descripcion as desAlmacen,
+		ap.Stock,
+		ap.Fecha,
+		p.IdAutoparte,
+		p.Descripcion as desProducto,
+		p.Medida,
+		ap.PrecioCompra as precioCompra
+	  from t_agencia_autoparte ap,
+		   t_agencia a,
+		   t_agenciaoficina o,
+		   t_almacen al,
+		   t_autoparte p
+	  where ap.Idagencia = a.Idagencia
+	  	and ap.IdOficina = o.IdOficina
+	  	and ap.IdAlmacen = al.IdAlmacen
+	  	and ap.IdAutoparte = p.IdAutoparte
+	  	and ap.IdAutoparte = #{IdAutoparte}
+</select>
+
+<select id="getCantProdAgeAlmacen" parameterType ="com.certicom.ittsa.domain.AgenciaAutoparte" resultType="int">
+	  select count(*) 
+	  	from t_agencia_autoparte
+	 	 where Idagencia = #{Idagencia}
+	  	   and IdOficina = #{IdOficina}
+	  	   and IdAlmacen = #{IdAlmacen}
+	  	   and IdAutoparte = #{IdAutoparte}
+	  	   
+</select>
+
+<select id="listarAgenProductos" parameterType ="com.certicom.ittsa.domain.AgenciaAutoparte" resultMap="agenciaAutoparteResult">
+	  select 
+		ap.Id,
+		ap.Idagencia,
+		a.Descripcion as desAgencia,
+		ap.IdOficina,
+		o.Nombre as desOficina,
+		ap.IdAlmacen,
+		al.Descripcion as desAlmacen,
+		ap.Stock,
+		ap.Fecha,
+		p.IdAutoparte,
+		p.Descripcion as desProducto,
+		p.Medida,
+		(select Descripcion from t_medida where CodigoMedida = p.medida) as desMedida
+	  from t_agencia_autoparte ap,
+		   t_agencia a,
+		   t_agenciaoficina o,
+		   t_almacen al,
+		   t_autoparte  p
+	  where ap.Idagencia = a.Idagencia
+	  	and ap.IdOficina = o.IdOficina
+	  	and ap.IdAlmacen = al.IdAlmacen
+	  	and ap.IdAutoparte = p.IdAutoparte
+	  	and ap.Idagencia = #{Idagencia}
+	  	and ap.IdOficina = #{IdOficina}
+	  	and ap.IdAlmacen = #{IdAlmacen} 
+</select>
+
+
+
+</mapper>	

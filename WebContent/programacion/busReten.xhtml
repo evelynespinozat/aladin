@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Programacion" url="#" />
+					<p:menuitem value="Bus Reten" url="busReten" />
+				</p:breadCrumb>
+			</h:form>
+
+			<br />
+			<p:messages id="sms" showDetail="false" showSummary="true"
+				closable="true" />
+
+			<!-- formulario de busqueda -->
+			<h:form>
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Bus Reten" icon="icon-add"
+						update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+						actionListener="#{flotaRetenMB.nuevaFlotaReten()}" />
+				</p:toolbarGroup>
+			</h:form>
+			<br />
+
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="l"
+					value="#{flotaRetenMB.listaFReten}"
+					filteredValue="#{flotaRetenMB.listaFRetenFiltro}" paginator="true"
+					rowIndexVar="nro" rows="20" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+
+					<f:facet name="header">Buses Retenidos</f:facet>
+
+					<p:column headerText="Orden" width="25" style="width:3%">
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:50px;" headerText="Nro Bus" filterStyleClass="mayuscula"
+						filterBy="#{l.nroBus}" filterMatchMode="contains">
+						<h:outputText value="#{l.nroBus}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Placa">
+						<h:outputText value="#{l.placa}" />
+					</p:column>
+					
+					<p:column style="width:50px;" headerText="Telefono">
+						<h:outputText value="#{l.telefono}" />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Agencia" filterStyleClass="mayuscula"
+						filterBy="#{l.descAgencia}" filterMatchMode="contains">
+						<h:outputText value="#{l.descAgencia}">
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:200px" headerText="Piloto">
+						<h:outputText value="#{l.namePiloto}" />
+					</p:column>
+
+					<p:column style="width:200px" headerText="Copiloto">
+						<h:outputText value="#{l.nameCopiloto}" />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Estado">
+						<h:outputText value="#{l.descEstado}" />
+					</p:column>
+
+					<p:column style="width:100px;" headerText="Fecha Registro">
+						<h:outputText value="#{l.FRegistro}"
+							rendered="#{l.FRegistro != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+
+					<p:column headerText="Editar/Elim."
+						style="width:10%;text-align: center">
+
+						<p:commandButton title="Editar" update=":dlgDetNuevo"
+							actionListener="#{flotaRetenMB.editarFlotaReten(l)}"
+							oncomplete="dlgNuevo.show();" icon="icon-edit">
+
+						</p:commandButton>
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();"
+							update=":dlgDetEliminar" icon="icon-delete">
+							<f:setPropertyActionListener target="#{flotaRetenMB.flotaReten}"
+								value="#{l}" />
+						</p:commandButton>
+
+					</p:column>
+
+
+				</p:dataTable>
+			</h:form>
+
+
+			<p:dialog header="#{flotaRetenMB.titulo}" widgetVar="dlgNuevo"
+				appendToBody="true"  resizable="false"
+				id="dlgDetNuevo" modal="true">
+
+				<h:form id="frmNuevoBusReten">
+					<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+					<h:panelGroup>
+						<h:panelGrid columns="4">
+						#{"Agencia:"}
+						<p:selectOneMenu required="true" requiredMessage="Seleccione una agencia" value="#{flotaRetenMB.flotaReten.idAgencia}">
+							<f:selectItem  itemLabel="--Seleccione--" itemValue=""/>
+							<f:selectItems  var="a" value="#{flotaRetenMB.listaAgencias}" itemLabel="#{a.descripcion}" 
+									itemValue="#{a.idagencia}"/>
+						</p:selectOneMenu>	 
+					
+						#{"Estado:"}
+						<p:selectOneMenu value="#{flotaRetenMB.flotaReten.estado}">
+							<f:selectItem itemLabel="BUS RETEN" itemValue="9"/>
+							<f:selectItem itemLabel="MANTENIMIENTO" itemValue="7"/>
+						</p:selectOneMenu>
+						
+						#{"Numero de bus:"}
+						<p:selectOneMenu size="40" id="txtplaca" style="width:140px" value="#{flotaRetenMB.flotaReten.idBus}" required="true" requiredMessage="Seleccione un Bus">
+							<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+							<f:selectItems var="fo" value="#{flotaRetenMB.listaBuses}" itemValue="#{fo.idBus}" itemLabel="#{fo.numero} -- #{fo.placa}" /> 
+								<p:ajax listener="#{flotaRetenMB.mostrarDatosBus()}" update="pnlPiloto" />
+						</p:selectOneMenu>
+						
+						</h:panelGrid>
+
+                    	<br/>
+                    	
+                    	<h:panelGroup id="pnlPiloto">
+                    		<h:panelGrid columns="3" >
+                    		  
+		                        #{"Piloto Asignado:"}
+		                        <p:inputText    disabled="#{flotaRetenMB.disP}" 
+		                        style="width:320px" id="txtnpiloto_S" value="#{flotaRetenMB.flotaReten.namePiloto}"  readonly="true"/>
+		                        <p:commandButton  value="Reasignar Piloto" actionListener="#{flotaRetenMB.listarPilotosActivos()}" 
+		                        disabled="#{not flotaRetenMB.pilotoCopilotoRecuperado}"
+		                        oncomplete="dlgPiloto.show();" update=":dlgDetPiloto" />
+		                        
+		                        
+		                        
+	                        	#{"Copiloto Asignado:"}
+								 <p:inputText disabled="#{flotaRetenMB.disCP}"  
+		                        	style="width:320px" id="txtncpiloto_S" value="#{flotaRetenMB.flotaReten.nameCopiloto}" readonly="true" />
+		                          <p:commandButton  value="Reasignar Copiloto" actionListener="#{flotaRetenMB.listarCopilotosActivos()}"
+		                          disabled="#{not flotaRetenMB.pilotoCopilotoRecuperado}"
+		                           oncomplete="dlgCoPiloto.show();" update=":dlgDetCoPiloto" />
+	                       
+	                        </h:panelGrid>
+
+                    	</h:panelGroup>
+                    	
+                    	
+						<br/>
+						
+						<p:commandButton value="Guardar"
+							actionListener="#{flotaRetenMB.guardarFlotaReten()}"
+							update=":formLista msgNuevo "
+							oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+
+						<p:commandButton type="button" value="Cerrar" 
+								onclick="dlgNuevo.hide();" icon="icon-cancel" />
+								
+					</h:panelGroup>
+					
+
+				</h:form>
+			</p:dialog>
+			
+				
+				<p:dialog header="Pilotos" widgetVar="dlgPiloto"
+					appendToBody="true"  resizable="false"
+					id="dlgDetPiloto" modal="true">
+					<h:form>
+						 <p:dataTable var="pilot" style="font-size:10px;"  value="#{flotaRetenMB.listaPiloto}"  filteredValue="#{flotaRetenMB.listaFiltroPiloto}"
+						 	rowIndexVar="nro" rows="5" paginator="true">
+						 	
+						 	<f:facet name="header">
+						 		<h:panelGrid columns="2" style="width:100px;margin:auto;">
+						 			
+						 			<h:outputText value="Lista de Pilotos" />
+						 			<h:graphicImage library="img" name="piloto.png" width="32" height="32" />
+						 		</h:panelGrid>
+						 		
+						 	</f:facet>
+						 	
+				            <p:column headerText="Nro">
+				               #{nro+1}
+				            </p:column>
+				 
+				            <p:column headerText="Piloto" filterStyleClass="mayuscula" filterBy="#{pilot.apellidoPaterno}" filterMatchMode="contains" >
+				                <h:outputText value="#{pilot.apellidoPaterno} #{pilot.apellidoMaterno} #{pilot.nombres}" />
+				            </p:column>
+				 
+				            <p:column headerText="Seleccionar">
+				                <p:commandButton value="Seleccionar" icon="ui-icon-circle-plus" actionListener="#{flotaRetenMB.asignarPiloto(pilot)}"
+				                 update=":frmNuevoBusReten:txtnpiloto_S" oncomplete="dlgPiloto.hide();" />
+				                	
+				            </p:column>
+					        </p:dataTable>
+					        
+					        <br/>
+					        
+					        <p:commandButton value="Cerrar" onclick="dlgPiloto.hide();" icon="icon-cancel" />
+					        
+					</h:form>
+				</p:dialog>
+				
+				<p:dialog header="Copilotos" widgetVar="dlgCoPiloto"
+					appendToBody="true"  resizable="false"
+					id="dlgDetCoPiloto" modal="true">
+					<h:form>
+					         <p:dataTable var="copilot" style="font-size:10px;" value="#{flotaRetenMB.listaCopiloto}"  filteredValue="#{flotaRetenMB.listaFiltroCopiloto}"
+					         	rowIndexVar="nro" rows="5" paginator="true">
+					         	
+					         	<f:facet name="header">
+							 		<h:panelGrid columns="2" style="width:100px;margin:auto;">
+							 			<h:outputText value="Lista de CoPilotos" />
+							 			<h:graphicImage library="img" name="copiloto.png" width="32" height="32"/>
+							 		</h:panelGrid>
+						 		
+						 		</f:facet>
+					         	
+					            <p:column headerText="Nro">
+					                #{nro+1}
+					            </p:column>
+					 
+					            <p:column headerText="CoPiloto" filterStyleClass="mayuscula" filterBy="#{copilot.apellidoPaterno}" filterMatchMode="contains" >
+					               <h:outputText value="#{copilot.apellidoPaterno} #{copilot.apellidoMaterno} #{copilot.nombres}" />
+					            </p:column>
+					 
+					            <p:column headerText="Seleccionar">
+					                <p:commandButton value="Seleccionar" icon="ui-icon-circle-plus" actionListener="#{flotaRetenMB.asignarCopiloto(copilot)}"
+				                 update=":frmNuevoBusReten:txtncpiloto_S" oncomplete="dlgCoPiloto.hide();" />
+					            </p:column>
+					        </p:dataTable>
+					        
+					        <br/>
+					        
+					        <p:commandButton value="Cerrar" onclick="dlgCoPiloto.hide();" icon="icon-cancel" />
+					</h:form>
+				</p:dialog>
+			
+
+			<!-- dialogo eliminar -->
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+				message="¿Desea eliminar esta agencia?" header="Eliminar Bus Reten"
+				severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Bus Reten: <h:outputText
+						value="#{flotaRetenMB.flotaReten.nroBus}"
+						style="font-size:12px;font-weight: bold;" />
+					<br />
+					<p:commandButton value="Eliminar" update=":formLista :sms"
+						actionListener="#{flotaRetenMB.eliminarFlotaReten()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide()" icon="icon-cancel" />
+
+				</h:form>
+			</p:confirmDialog>
+
+		</p:panel>
+
+		<script>
+			function validar(xhr, status, args) {
+				console.log("entro en ajax  " +!args.esValido);
+				if (!args.esValido) {
+					console.log("entro en ajax if");	
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					//limpiando
+				console.log("entro en ajax else");
+					dlgNuevo.hide();
+				}
+			}
+		</script>
+
+	</ui:define>
+
+</ui:composition>
+</html>

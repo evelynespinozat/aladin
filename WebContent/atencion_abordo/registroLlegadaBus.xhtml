@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Atencion a Bordo" url="#" />
+				<p:menuitem value="Registro de Llegada de Bus" url="#" />
+			</p:breadCrumb>
+			
+		<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+				
+		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel style="width:900px">
+			       	<h:panelGrid columns="7" id="datUbigeo">
+			       			#{"Fecha Programacion:"}
+			       			<p:calendar value="#{regLlegadaBusMB.fechaProgramacion}" pattern="dd/MM/yyyy" mode="popup" showOn="button" locale="es"></p:calendar>
+			       			#{"Origen:"}
+							<p:selectOneMenu style="width:150px" value="#{regLlegadaBusMB.idOrigen}" required="true" requiredMessage="Seleccione un Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{regLlegadaBusMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cboDestino" listener="#{regLlegadaBusMB.listarDestinos()}" /> 
+							</p:selectOneMenu>
+							#{"Destino:"}
+							<p:selectOneMenu id="cboDestino" style="width:150px" value="#{regLlegadaBusMB.idDestino}" required="true" requiredMessage="Seleccione un Destino">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{regLlegadaBusMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" /> 
+							</p:selectOneMenu> 
+							
+							<p:commandButton value="Buscar" title="Buscar" icon="icon-search" actionListener="#{regLlegadaBusMB.buscarProgramacion()}" update =":formLista2"/>
+			       	</h:panelGrid>  
+			 </p:panel>       	
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+			<br/>
+			
+			<h:form id="formLista2">
+				
+				<p:dataTable id="dtProgAsig" widgetVar="dtProgAsig" var="p" value="#{regLlegadaBusMB.listaProgramacionAsig}" filteredValue="#{regLlegadaBusMB.listaProgramacionFilter}" 
+					emptyMessage="No hay Flota Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+					paginator="true" rows="5"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">LLegada de Buses</f:facet>
+					
+					<p:column headerText="Orden" style="width:2%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Progamacion" filterStyleClass="mayuscula" filterBy="#{p.idProgramacion}" filterMatchMode="contains">
+						<h:outputText value="#{p.idProgramacion}" />
+					</p:column>
+					
+					<p:column style="width:10px;text-align: center;" headerText="Nro Bus">
+						<h:outputText value="#{p.numeroBus}" />
+					</p:column>
+
+					<p:column style="width:10%;text-align: center;" headerText="Origen">
+						<h:outputText value="#{p.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Destino">
+						<h:outputText value="#{p.desDestino}" />
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Servicio">
+						<h:outputText value="#{p.descServicio}" />
+					</p:column>
+					
+					<p:column style="width:8%;text-align: center;" headerText="Fecha Salida">
+						<h:outputText value="#{p.fSalida}" rendered="#{p.fSalida != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short"/>
+						</h:outputText>
+						
+					</p:column>
+
+					<p:column style="width:8%;text-align: center;" headerText="Hora Salida">
+						<h:outputText value="#{p.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:10px;text-align: center;" headerText="Fecha-Hora Llegada">
+						<h:outputText value="#{p.fLlegadaReal}" rendered="#{p.fLlegadaReal != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short"/>
+						</h:outputText>			
+						
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Estado Desembarque">
+						<h:outputText value="#{p.desEstDesem}" />
+						
+					</p:column>
+					
+					
+					<p:column style="width:40%;text-align: center;" headerText="Asignar">
+					
+						
+						<p:commandButton title="Asignar estado Desembarque" rendered="#{p.estDesembarque ==null or p.estDesembarque != '1'}" icon="icon-edit"  update=":dlgDetEliminar"  actionListener="#{regLlegadaBusMB.setProg(p)}"  
+										 oncomplete="dlgEliminar.show();" >
+						</p:commandButton>
+						<p:commandButton title="Agregar Objetos encontrados" icon="icon-edit"  rendered="#{p.estDesembarque !=null and p.estDesembarque == '1'}"  action="#{regLlegadaBusMB.consultarObjetosEncontrados(p)}"/>
+
+						<p:commandButton title="Entrega de Productos" icon="icon-piloto" rendered="#{p.estDesembarque !=null and p.estDesembarque == '1' and p.flagLlegada == '0'}" action="#{regLlegadaBusMB.consultarEntregaProducto(p)}"/> 
+															 
+					</p:column>	
+				</p:dataTable>
+			</h:form>
+			
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea actualizar la fecha y la hora de llegada del bus?" 
+					header="Confirmacion de Desembarque"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					<p:commandButton value="Aceptar"
+						update=":formLista2 :sms"
+						actionListener="#{regLlegadaBusMB.actualizarDesembarque()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+				 	
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.OficinaTurnoMapper">
+
+<resultMap id="oficinaTurnoResult" type="com.certicom.ittsa.domain.OficinaTurno">
+	<id column="IdAgenciaTurno" property="idAgenciaTurno"/>
+	<id column="IdAgencia" property="idAgencia"/>
+	<id column="IdOficina" property="idOficina"/>
+	<id column="IdTurno" property="idTurno"/>
+	<id column="desOficina" property="desOficina"/>
+	<id column="desTurno" property="desTurno"/>
+	<id column="desAgencia" property="desAgencia"/>
+	<result column="Estado" property="estado"/>
+	<result column="hFin" property="hFin"/>
+	<result column="hInicio" property="hInicio"/>
+</resultMap>
+
+<select id="listaOficinaTurno" parameterType="com.certicom.ittsa.domain.OficinaTurno" resultMap="oficinaTurnoResult">
+		select  o.IdAgenciaTurno, 
+		        a.IdAgencia,
+		        g.Descripcion as desAgencia, 
+				o.IdOficina,
+				a.Nombre as desOficina, 
+				o.IdTurno, 
+				t.Descripcion as desTurno, 
+				o.Estado,
+				t.hFin,
+				t.hInicio
+		from ((t_oficinaturno o inner join t_agenciaoficina a on o.IdOficina = a.IdOficina) 
+				inner join t_turno t on o.IdTurno = t.IdTurno) 
+				inner join t_agencia g on g.Idagencia = a.IdAgencia  
+				order by g.Descripcion , a.Nombre 
+</select>
+
+</mapper>	

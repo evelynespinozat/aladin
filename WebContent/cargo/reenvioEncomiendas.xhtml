@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Reenvio de Encomiendas" url="reenvioEncomienda" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<h:panelGrid columns="5" >
+				 
+				<h:outputLabel value="Origen:"  />  
+			        <p:selectOneMenu id="cmbOrigen"  value="#{reenvioEncomMB.encomiendaFilter.idOrigen}" style=" width:150px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue="" />
+							<f:selectItems var="o" value="#{reenvioEncomMB.listaAgeOrigen}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+							<p:ajax listener="#{reenvioEncomMB.listarDestinosxOri('1')}" update="cmbDestino cmbOficinaOri"/>
+					</p:selectOneMenu>
+					
+					<h:outputLabel  value="Ofic. Origen:" /> 
+					<p:selectOneMenu id="cmbOficinaOri" style="width:150px" value="#{reenvioEncomMB.encomiendaFilter.idPuntoVentaOrigen}" required="true"
+								requiredMessage="Se necesita una oficina">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="o" value="#{reenvioEncomMB.listOficinaOri}" itemValue="#{o.idOficina}" itemLabel="#{o.nombre}" />
+					</p:selectOneMenu>
+					
+					<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{reenvioEncomMB.consultarEncomiendas()}"  
+					 		update=":formLista :sms" style=" width:160px;"/>
+					 		
+					<h:outputLabel  value="Destino:" /> 
+					<p:selectOneMenu id="cmbDestino" style="width:150px" value="#{reenvioEncomMB.encomiendaFilter.idDestino}"
+							required="true" requiredMessage="Se necesita un destino">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="ag" value="#{reenvioEncomMB.listaAgeDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" />
+						<p:ajax listener="#{reenvioEncomMB.listarOficinasDestino('1')}" update="cmbOficinaDes"/> 
+					</p:selectOneMenu> 	
+					
+					<h:outputLabel  value="Ofic. Destino:" /> 
+					<p:selectOneMenu id="cmbOficinaDes" style="width:150px" value="#{reenvioEncomMB.encomiendaFilter.idPuntoVentaDestino}" required="true"
+								requiredMessage="Se necesita una oficina">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems var="o" value="#{reenvioEncomMB.listOficinaDes}" itemValue="#{o.idOficina}" itemLabel="#{o.nombre}" />
+					</p:selectOneMenu>	
+					
+					</h:panelGrid>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formLista">
+			<br/>
+				<p:dataTable id="dtAgencias" widgetVar="dtAgencias2" var="a"  value="#{reenvioEncomMB.listaEncomienda}" filteredValue="#{reenvioEncomMB.listaEncomiendaFilter}"  
+					emptyMessage="No hay Perfiles Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Lista de Agencias</f:facet>
+					
+					<p:column style="width:5px">  
+			          	#{nro+1}
+			        </p:column> 
+			        
+					<p:column style="width:50px;text-align: left;" headerText="Documento" filterStyleClass="mayuscula" filterBy="#{a.tipoDocAbr}" filterMatchMode="contains" filterStyle="width:50px;">
+						<h:outputText value="#{a.tipoDocAbr eq 'B' ? 'BOLETA':'FACTURA'}" />
+					</p:column>
+					
+					<p:column style="width:50px;text-align: left;" headerText="Comprobante" filterStyleClass="mayuscula" filterBy="#{a.comprobante}" filterMatchMode="contains" filterStyle="width:50px;">
+						<h:outputText value="#{a.comprobante}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: left;" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{a.desOrigen}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{a.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: left;" headerText="Ofic. Origen" filterStyleClass="mayuscula" filterBy="#{a.desOficinaOrigen}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{a.desOficinaOrigen}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: left;" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{a.desDestino}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{a.desDestino}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: left;" headerText="Ofic. Destino" filterStyleClass="mayuscula" filterBy="#{a.desOficinaDestino}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{a.desOficinaDestino}" />
+					</p:column>
+					
+					<p:column style="width:70px;text-align: left;" headerText="Estado" filterStyleClass="mayuscula" filterBy="#{a.desEstado}" filterMatchMode="contains" filterStyle="width:70px;">
+						<h:outputText value="#{a.desEstado}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: left;" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{a.remitcompleto}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{a.remitcompleto}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: left;" headerText="Destinatario 1" filterStyleClass="mayuscula" filterBy="#{a.dest1}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{a.dest1}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: left;" headerText="Destinatario 2" filterStyleClass="mayuscula" filterBy="#{a.dest1}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{a.dest2}" />
+					</p:column>
+					
+					<p:column style="width:250px;text-align: left;" headerText="Detalle" filterStyleClass="mayuscula" filterBy="#{a.detalle}" filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{a.detalle}" />
+					</p:column>
+					
+					<p:column style="width:20px;text-align: left;" headerText="Reenviar">
+						<p:commandButton id="cbtEliminar" title="Reenviar" value="Reenviar" oncomplete="dlgReenvioEncom.show();" update=":dlgDetReenvioEncom" actionListener="#{reenvioEncomMB.cargarEncomienda(a)}">
+							    <f:setPropertyActionListener target="#{reenvioEncomMB.encomienda}" value="#{a}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<p:dialog header="Reenvio Encomienda" widgetVar="dlgReenvioEncom" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetReenvioEncom">
+				<h:form>
+				<p:messages showDetail="false" showSummary="true" id="msgReenvio" closable="true"/>
+						<h:panelGrid columns="2">
+							#{"Origen:"}
+							<p:selectOneMenu id="cmbOrigen"  value="#{reenvioEncomMB.encomiendaReenvio.idOrigen}" style=" width:150px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+								<f:selectItem itemLabel="Seleccionar" itemValue="" />
+								<f:selectItems var="o" value="#{reenvioEncomMB.listaAgeOrigenReenvio}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+								<p:ajax event="change" listener="#{reenvioEncomMB.listarDestinosxOri('2')}" update="cmbDestinoReenvio cmbOficinaDesReenvio"/>
+							</p:selectOneMenu>
+					
+							#{"Destino:"} 
+							<p:selectOneMenu id="cmbDestinoReenvio" style="width:150px" value="#{reenvioEncomMB.encomiendaReenvio.idDestino}"
+									required="true" requiredMessage="Se necesita un destino">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{reenvioEncomMB.listaAgeDestinoReenvio}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" />
+								<p:ajax event="change" listener="#{reenvioEncomMB.listarOficinasDestino('2')}" update="cmbOficinaDesReenvio"/> 
+							</p:selectOneMenu> 	
+							
+							#{"Ofic. Destino:"}
+							<p:selectOneMenu id="cmbOficinaDesReenvio" style="width:150px" value="#{reenvioEncomMB.encomiendaReenvio.idOficina}" required="true"
+										requiredMessage="Se necesita una oficina">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="o" value="#{reenvioEncomMB.listOficinaDesReenvio}" itemValue="#{o.idOficina}" itemLabel="#{o.nombre}" />
+							</p:selectOneMenu>	
+					
+						</h:panelGrid>
+						
+						<p:commandButton value="Guardar" actionListener="#{reenvioEncomMB.reenviarEncomienda()}"
+									 update=":formLista msgReenvio"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+
+						<p:commandButton value="Cancelar" oncomplete="dlgReenvioEncom.hide()"/> 
+				</h:form>	
+			</p:dialog>
+			
+		
+	</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetReenvioEncom').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgReenvioEncom.hide()
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

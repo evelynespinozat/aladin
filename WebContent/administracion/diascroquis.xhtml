@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<style>
+		.ui-datagrid-column
+		{padding:0px!important;}
+		
+		.ui-buttonset{
+			margin-right:0px!important;
+		}
+		
+		</style>
+		
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Administracion de fechas para croquis" url="diascroquis" />   
+				</p:breadCrumb>	
+		</h:form>
+
+		<br/>
+		<p:panel>
+			
+			<h:form id="frmListaAgancias">
+				
+				<h3>Configurar Numero de Dias Para el Croquis de Ventas</h3>
+				
+				<p:dataTable   var="ag" value="#{diasCroquisMB.listaAgencia}"
+								paginator="true" rows="15" 
+								emptyMessage="No hay Agencias disponibles." rowIndexVar="nro" 
+								style="FONT-SIZE: 10px; width:850px;" >
+								
+								<f:facet name="header">Agencias</f:facet>
+								
+								<p:column headerText="Ord." style="width:42px;" >
+									#{nro+1}
+								</p:column>
+								
+								<p:column style="width:97px;" 
+									headerText="Agencia">
+									<h:outputText value="#{ag.descripcion}"/>
+								</p:column>
+								
+								
+								<p:column  style="width:40px;" headerText="Nro dias" >
+									<h:outputText value="#{ag.diascroquis}"/>
+								</p:column>
+								
+								<p:column headerText="Agregar fechas" style="width:10%;text-align: center">
+					
+									<p:commandButton title="Configurar"  update=":dlgDetNuevo" actionListener="#{diasCroquisMB.configurarFechaAgencia(ag)}"
+													 oncomplete="dlgNuevo.show();" icon="icon-edit">
+									</p:commandButton>
+
+								</p:column>
+				</p:dataTable>
+			
+			</h:form>
+			
+			
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="Fechas Croquis Agencia" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						
+						<h:panelGrid columns="2">
+
+							#{"Nombre:"}
+							<h:inputText size="20"  value="#{diasCroquisMB.agencia.descripcion}" readonly="true"  />
+
+							#{"Nro de dias:"}
+							 <p:spinner size="4" value="#{diasCroquisMB.agencia.diascroquis}"/>
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{diasCroquisMB.guardarNrodiasCroquis()}"
+									 update=":frmListaAgancias" icon="icon-disk" oncomplete="dlgNuevo.hide();" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+						
+						
+
+							
+					</h:form>	
+			</p:dialog>
+			
+
+
+   		</p:panel>
+   		
+		<!-- Aqui js jquery -->
+   		<script>
+
+			
+
+
+		</script>
+		
+   		
+		<ui:debug/> 
+	</ui:define>
+</ui:composition>
+</html>

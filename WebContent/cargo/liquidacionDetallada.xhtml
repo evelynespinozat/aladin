@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel >
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Liquidacion Detallada" url="liquidacionDetallada" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+					<h:panelGrid columns="9">
+					 
+					 #{"Agencia:"}
+					<p:selectOneMenu style="width:150px" value="#{liquidacionDetalladaMB.filter.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="ag" value="#{liquidacionDetalladaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{liquidacionDetalladaMB.getOficinasxAgencia()}" /> 
+					</p:selectOneMenu>
+	
+					#{"Oficina:"}
+					<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{liquidacionDetalladaMB.filter.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+					<f:selectItem itemLabel="Seleccione..." itemValue="" />
+					<f:selectItems var="of" value="#{liquidacionDetalladaMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					</p:selectOneMenu>
+				
+					
+					<p:commandButton  icon="icon-search" value="Buscar" actionListener="#{liquidacionDetalladaMB.consultarLiquidacion()}"  update=":formLista :sms"/>
+					
+							  
+				</h:panelGrid>			  
+					
+			</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="l" value="#{liquidacionDetalladaMB.listaLiqVenta}" filteredValue="#{liquidacionDetalladaMB.listaLiqVentaFilter}"
+					paginator="true" 
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Documentos</f:facet>
+
+					<p:column style="width:80px" headerText="T. DOC." filterStyleClass="mayuscula" filterBy="#{l.tipoDocumento}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:outputText value="#{l.tipoDocumento}" />
+					</p:column>
+
+					<p:column style="width:20px;" headerText="Doc." filterBy="#{l.documento}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:outputText value="#{l.documento}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="F. Venta">
+						<h:outputText value="#{l.fDocumento}" rendered="#{l.fDocumento != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:70px" headerText="S. Total">
+						<h:outputText value="#{l.subTotal}" />
+					</p:column>
+
+					<p:column style="width:50px;" headerText="IGV" >
+						<h:outputText value="#{l.igv}" />
+					</p:column>
+					
+					<p:column style="width:70px" headerText="Total">
+						<h:outputText value="#{l.total}" />
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Proceso">
+						<h:outputText value="#{l.proceso}" />
+					</p:column>
+
+					<p:column style="width:150px" headerText="F. Pago" filterBy="#{l.formaPago}" filterMatchMode="contains" filterStyle="width:80px">
+						<h:outputText value="#{l.formaPago}" />
+					</p:column>
+				
+
+					<p:column style="width:150px" headerText="Mov. Caja" filterStyleClass="mayuscula" filterBy="#{l.movimientoCaja}" filterMatchMode="contains" filterStyle="width:80px">
+						<h:outputText value="#{l.movimientoCaja}" />
+					</p:column>
+					
+					
+					
+				</p:dataTable>
+			</h:form>
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

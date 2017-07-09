@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.CompHistorialMapper">
+
+<resultMap id="compHistorial" type="com.certicom.ittsa.domain.CompHistorial">
+	<id column="IdHistComp" property="IdHistComp"/>
+	<result column="Descripcion" property="Descripcion"/>
+	<result column="Observacion" property="Observacion"/>
+	<result column="Tecnico" property="Tecnico"/>
+	<result column="Fecha" property="Fecha"/>
+	<result column="FRegistro" property="FRegistro"/>
+	<result column="EstadoHis" property="EstadoHis"/>
+	<result column="Idcomponente" property="Idcomponente"/>
+</resultMap>
+
+
+</mapper>	

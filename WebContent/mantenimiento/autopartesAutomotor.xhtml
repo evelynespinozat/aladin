@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Sistema Automotor" url="sisAutomotor" /> 
+    				<p:menuitem value="Asociar Partes - Sistema Automotor" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="4">
+				#{"Sistema Automotor:"}
+				<h:outputText value=" #{autoparteAutomotorMB.automotor.descripcion}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+		<h:form id="fm">
+		
+				<p:dataTable widgetVar="dtAuto" value="#{autoparteAutomotorMB.listAutoparte}" var="o" style="width:750px;FONT-SIZE: 10px;" 
+						    rowIndexVar="nro" filteredValue="#{autoparteAutomotorMB.listFiltroAutoparte}" 
+							emptyMessage="No hay Perfiles Disponibles." 
+							paginator="true"
+							rows="5" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20,30">
+    			<f:facet name="header">Lista de Autopartes</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Partes" filterStyleClass="mayuscula" filterBy="#{o.descripcion}" filterMatchMode="contains" filterStyle="width:200px;">
+    				#{o.descripcion}
+    			</p:column>
+    			
+				<p:column headerText="Agregar" style="width:10%;text-align: center">
+				
+				<p:commandButton value="Agregar" icon="icon-add" 
+							     actionListener="#{autoparteAutomotorMB.addAutoparte(o)}" update=":msgGeneral :frmListaAgP">	
+				
+				</p:commandButton>
+				</p:column>
+
+				</p:dataTable>
+		
+		</h:form>		
+			
+		<br/>
+		
+		<h:form id="frmListaAgP">
+					
+			<p:dataTable value="#{autoparteAutomotorMB.listaAutoparteAutomotor}" var="o" style="width:750px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+    			<f:facet name="header">Partes Asignadas al Sistema Automotor</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Partes">
+    				#{o.desPartes}
+    			</p:column>
+    			
+    			<p:column headerText="Km. Cambio">
+    				#{o.desKm}
+    			</p:column>
+    			
+				<p:column headerText="Elim." style="width:10%;text-align: center">
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+				<f:setPropertyActionListener target="#{autoparteAutomotorMB.autoparteAutomotor}" value="#{o}" />
+				</p:commandButton>
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+		
+		
+		
+		<p:confirmDialog id="confirmDialog" message="Seguro de eliminar la autoparte del sistema automotor"   appendToBody="true"
+             		header="Eliminar Autoparte" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaAgP :msgGeneral" oncomplete="confirmation.hide()"  
+                    				actionListener="#{autoparteAutomotorMB.deleteAutopartexAutomotor()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    	</p:confirmDialog> 
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

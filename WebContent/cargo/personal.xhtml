@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Gestion de Personal" url="personal" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Personal" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" />
+
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaPersonal">
+				<p:dataTable widgetVar="dtPersonal" var="p" value="#{personalMB.listaPersonal}" filteredValue="#{personalMB.listaFiltroPersonas}"  
+					emptyMessage="No hay Personal Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="5" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Personal</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%" headerText="dni" filterBy="#{p.dni}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.dni}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Nombres" filterStyleClass="mayuscula" filterBy="#{p.nombres}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.nombres}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Paterno" filterStyleClass="mayuscula" filterBy="#{p.appaterno}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.appaterno}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Materno" filterStyleClass="mayuscula" filterBy="#{p.apmaterno}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.apmaterno}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Tipo" filterStyleClass="mayuscula" filterBy="#{p.tipo}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.tipo}" />
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{personalMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{personalMB.editarPersonal(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+							
+						</p:commandButton>
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{personalMB.personal}" value="#{p}" />
+						</p:commandButton>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{personalMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+
+							#{"Nombre:"}
+							<p:inputText value="#{personalMB.personal.nombres}" required="true" maxlength="50" styleClass="mayuscula" requiredMessage="Se necesita un nombre" />
+							
+							#{"Apellido Paterno:"}
+							<p:inputText value="#{personalMB.personal.appaterno}" required="true" maxlength="50" styleClass="mayuscula" requiredMessage="Se necesita un apellido paterno" />
+							
+							#{"Apellido Materno:"}
+							<p:inputText value="#{personalMB.personal.apmaterno}" required="true" maxlength="50" styleClass="mayuscula" requiredMessage="Se necesita un apellido materno" />
+							
+							#{"Dni:"}
+							<p:inputText value="#{personalMB.personal.dni}" required="true" maxlength="8" requiredMessage="Se necesita un dni" dir="rtl"  >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Tipo:"}
+							<p:selectOneMenu style="width:180px" value="#{personalMB.personal.tipo}" required="true" requiredMessage="Seleccione un tipo">
+								<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+								<f:selectItem itemLabel="REPARTIDOR" itemValue="REPARTIDOR"/>
+							</p:selectOneMenu>
+				
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{personalMB.registrarPersonal()}"
+									 update=":formListaPersonal msgNuevo :sms"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este personal?" header="Eliminar Personal"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Personal: <h:outputText value="#{personalMB.personal.nombres}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaPersonal :sms"
+						actionListener="#{personalMB.eliminarPersonal()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

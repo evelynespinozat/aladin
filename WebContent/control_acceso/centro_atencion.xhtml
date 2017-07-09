@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		
+		<p:panel >
+		
+		<p:breadCrumb>  
+    			<p:menuitem value="Home" url="#" />  
+    			<p:menuitem value="Seguridad" url="#" />
+    			<p:menuitem value="Centros de Atencion" url="#" />   
+		</p:breadCrumb>	
+		
+		<p:messages showDetail="false" showSummary="true" id="grlGeneral" />
+		
+		<!-- Toolbar  -->
+			<h:form>
+				<p:commandButton value="Nuevo Centro de Atención" icon="icon-add"  actionListener="#{centro_atencionMB.iniciaNuevoCentro_Atencion}"  
+					update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" >
+					<p:resetInput target=":dlgDetNuevo" /> 
+				</p:commandButton>
+			</h:form>
+			<br/>
+		<!-- listado de clientes -->
+			<h:form id="frmLista" >
+				
+				<p:dataTable value="#{centro_atencionMB.listaCentro_Atencion}" var="c" rowIndexVar="nro"  >
+    				
+    				<f:facet name="header">Lista de Centros de Atención</f:facet>
+    				<p:column headerText="Ord.">
+    					#{nro+1}
+    				</p:column>
+					
+					
+    				<p:column headerText="Nombre" filterStyle="width:100px;" filterStyleClass="mayuscula" filterBy="#{c.nombre}" filterMatchMode="contains" >
+						#{c.nombre}
+					</p:column>
+    				
+    				<p:column headerText="Descripción" >
+						#{c.descripcion}
+					</p:column>
+    				
+    				<p:column headerText="Responsales" >
+						#{c.responsable}
+					</p:column>
+    				
+    				<p:column headerText="Acciones" >
+
+    					<p:commandButton
+							oncomplete="dlgNuevo.show();" actionListener="#{centro_atencionMB.iniciaEditarCentro_Atencion(c)}"  update=":dlgDetNuevo" title="Editar"
+							icon="icon-edit">
+						</p:commandButton>
+    					
+    					<p:commandButton
+							oncomplete="dlgEliminar.show();" title="Eliminar"
+							icon="icon-delete">
+							<f:setPropertyActionListener target="#{centro_atencionMB.centro_atencion}" value="#{c}"/>
+						</p:commandButton>
+    				
+    				</p:column>
+    			
+    		</p:dataTable>
+			</h:form>
+			
+			<!-- Dialogo nuevo -->
+			<p:dialog header="Registrar Centro de Atencion" widgetVar="dlgNuevo"
+					resizable="false" id="dlgDetNuevo" appendToBody="true"  modal="true">
+					
+				<h:form>
+					<p:messages showDetail="false" showSummary="true" id="msgCliente" />
+					<h:panelGrid columns="2" >
+					
+						#{"Nombre:"}
+						<h:inputText maxlength="30" value="#{centro_atencionMB.centro_atencion.nombre}" />
+					
+						#{"Descripción:"}
+						<h:inputText maxlength="100" value="#{centro_atencionMB.centro_atencion.descripcion}" />
+					
+						#{"Responsable:"}
+						<h:inputText maxlength="30" value="#{centro_atencionMB.centro_atencion.responsable}" />
+		
+				
+						<p:commandButton value="Guardar" actionListener="#{centro_atencionMB.guardarCentroAtencion()}"  update="msgCliente :frmLista" 
+						 	oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+						
+						
+						<p:commandButton value="Cancelar"  onclick="dlgNuevo.hide()"
+							icon="icon-cancel" />
+
+					</h:panelGrid>
+				
+				</h:form>				
+
+			</p:dialog>
+			
+
+			<!-- Dialogo Eliminar -->
+		
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+				message="¿Desea eliminar este centro de atencion?"
+				header="Eliminar cliente" severity="alert"
+				widgetVar="dlgEliminar">
+				<h:form >
+						<p:commandButton value="Eliminar"
+							actionListener="#{centro_atencionMB.eliminarCentroAtencion()}"
+							update=":frmLista :grlGeneral"
+							oncomplete="dlgEliminar.hide()"   
+							icon="icon-delete" />
+						
+						<p:commandButton value="Cancelar" onclick="dlgEliminar.hide()"
+							icon="icon-cancel" />
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		
+		<!-- Listado cliente -->
+		</p:panel>
+		
+		<!-- js de validacion -->
+		<script>
+			function validar(xhr, status, args) {
+				if(args.validationFailed) {
+					
+				} else { 
+					dlgNuevo.hide();
+				}
+			}
+			
+		</script>
+		
+		
+		
+
+
+
+	</ui:define>
+</ui:composition>
+</html>

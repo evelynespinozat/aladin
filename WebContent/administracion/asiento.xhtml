@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Asientos" url="perfiles" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Asiento" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{asientoMB.newInsert()}">
+						<f:setPropertyActionListener target="#{asientoMB.editar}" value="false" />
+						<p:resetInput target=":dlgDetNuevo"/>
+					</p:commandButton>
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaAsientos">
+				<p:dataTable widgetVar="dtCServicio" var="cs" value="#{asientoMB.listaAsiento}"  filteredValue="#{asientoMB.listaAsientofiltro}"
+					emptyMessage="No hay Asiento disponibles." rowIndexVar="nro" 
+					rows="20" 
+					paginator="true" 
+					paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					 style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Asientos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:150px;" headerText="Servicio." filterStyleClass="mayuscula" filterBy="#{cs.descClase}"  filterStyle="width:150px;" filterMatchMode="contains">
+						<h:outputText value="#{cs.descClase}"/>
+					</p:column>
+
+					<p:column style="width:100px;" headerText="Nro Asiento Piso 1" >
+						<h:outputText value="#{cs.canPrPiso}" />
+					</p:column>
+
+					<p:column style="width:100px;" headerText="Nro Asientos Piso 2">
+						<h:outputText value="#{cs.canSePiso}" />
+					</p:column>
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{asientoMB.asiento}" value="#{cs}" />
+						</p:commandButton>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="Registrar Asientos" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Clase Servicio:"}
+							<p:selectOneMenu value="#{asientoMB.asiento.idclase}" style="width:150px"
+								required="true" requiredMessage="Seleccione Clase de Servicio">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{asientoMB.listaClaseServicio}" 
+								itemValue="#{item.idclase}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+							
+							#{"Asientos Piso 1:"}
+							<p:inputText id="txtNroAp1" value="#{asientoMB.asiento.n_canPrPiso}" maxlength="2" 
+								required="true" requiredMessage="Se necesita el numero de Asientos  Piso 1" >
+								
+								</p:inputText>
+							
+							#{"Asientos Piso 2:"}
+							<p:inputText id="txtNroAp2" value="#{asientoMB.asiento.n_canSePiso}" maxlength="2"  
+								required="true" requiredMessage="Se necesita el numero de Asientos de Piso 2" />
+							
+						</h:panelGrid>
+						<pe:keyFilter for="txtNroAp1" mask="num"/>  
+						<pe:keyFilter for="txtNroAp2" mask="num"/>  
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{asientoMB.guardarAsiento()}"
+									 update=":formListaAsientos msgNuevo"
+									 oncomplete="validarCampos(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" update=":formListaAsientos" 
+						actionListener="#{asientoMB.newInsert()}"
+									 oncomplete="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este asiento?" header="Asientos"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Asiento: <h:outputText value="#{asientoMB.asiento.descClase}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaAsientos :sms"
+						actionListener="#{asientoMB.eliminarAsiento()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" 
+						oncomplete="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validarCampos(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

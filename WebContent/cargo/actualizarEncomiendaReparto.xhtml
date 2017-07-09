@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Actualizar Encomienda Reparto" url="#" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<p:panel>
+				<h:form style="margin-bottom: 8px">
+				<h:panelGrid columns="6">					
+						#{"Repartidor:"}
+						<p:selectOneMenu  style="width:200px" value="#{repartirEncoMB.idRepartidor}" id="cmbRepartidor" required="true" requiredMessage="Seleccione un Repartidor de Encomiendas">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{repartirEncoMB.listaPersonal}" itemValue="#{item.idPersonal}" itemLabel="#{item.nombres} #{item.appaterno} #{item.apmaterno}" />
+						</p:selectOneMenu>
+
+						#{"Estado:"}
+						<p:selectOneMenu  style="width:200px" value="#{repartirEncoMB.estado}"  required="true" requiredMessage="Seleccione un Repartidor de Encomiendas">
+							<f:selectItem itemLabel="POR REPARTIR" itemValue="6" />
+							<f:selectItem itemLabel="ENTREGADO" itemValue="5" />
+						</p:selectOneMenu>
+						
+						<p:commandButton value="Buscar" actionListener="#{repartirEncoMB.listarEncomiendasAsignadas()}"
+									 update=":formListaEncoAsig :sms imprimir"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<h:commandLink  disabled="#{repartirEncoMB.btnImprimir}"  id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{repartirEncoMB.imprimirPDF}"/>   
+							 
+				</h:panelGrid>		
+				</h:form>
+			</p:panel>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaEncoAsig">
+			<br/>
+			  <p:dataTable widgetVar="dtGiros" var="e" value="#{repartirEncoMB.encomiendaModel}"  
+					emptyMessage="No hay encomiendas por entregar." rowIndexVar="nro" selection="#{repartirEncoMB.listaEncomiendaSelected}" rowKey="#{e.idEncomienda}"
+					paginator="true" filteredValue="#{entEncomiendaxRepMB.listaEncomiendaFilter}"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Lista Encomiendas por Usuario Asignados</f:facet>
+					
+					<p:column style="width:50px;" headerText="Doc." filterStyleClass="mayuscula" filterBy="#{e.comprobante}" filterMatchMode="contains" filterStyle="width:50px" >
+						<h:outputText value="#{e.tipoDocAbr}-#{e.comprobante}" />
+					</p:column>
+						
+					<p:column style="width:200px" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{e.remitcompleto}" filterMatchMode="contains" filterStyle="width:100px">
+						<h:outputText value="#{e.remitcompleto}" />
+					</p:column>
+						
+						<p:column style="width:150px;" headerText="Dest. 1" filterStyleClass="mayuscula" filterBy="#{e.dest1}" filterMatchMode="contains" filterStyle="width:100px;">
+							<h:outputText value="#{e.dest1}" />
+						</p:column>
+						
+						<p:column style="width:150px" headerText="Dest. 2" filterStyleClass="mayuscula" filterBy="#{e.dest2}" filterMatchMode="contains" filterStyle="width:100px;">
+							<h:outputText value="#{e.dest2}" />
+						</p:column>
+						
+						
+						<p:column style="width:100px" headerText="Direccion">
+							<h:outputText value="#{e.direccionEnvio}" />
+						</p:column>
+						
+						<p:column style="width:80px" headerText="Distrito">
+							<h:outputText value="#{e.sdistrito}" />
+						</p:column>
+						
+						<p:column style="width:150px" headerText="Detalle">
+							<h:outputText value="#{e.detalle}" />
+						</p:column>
+
+						<p:column style="width:40px" headerText="Nro bultos">
+							<h:outputText value="#{e.nroBultos}" />
+						</p:column>
+						
+						<p:column style="width:50px" headerText="Peso (kg)">
+							<h:outputText value="#{e.pesoTotal}" />
+						</p:column>
+						
+						<p:column style="width:50px" headerText="Importe">
+							<h:outputText value="#{e.totalCobrado}" />
+						</p:column>
+						
+					<p:column style="width:50px" headerText="Bus">
+						<h:outputText value="#{e.nroBus}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="T.Entrega">
+						<h:outputText value="#{'REPARTO'}" rendered="#{e.servicioEntrega  =='R' ? true :false}"/>
+						<h:outputText value="#{'REP/CONTR'}" rendered="#{e.servicioEntrega  =='RC' ? true :false}"/>
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Obs">
+						<h:outputText value="#{e.obsReparto}" />
+					</p:column>
+					
+					<p:column style="width:25px" headerText="">
+					     <p:commandButton title="Registrar Obs."  update=":dlgDetObs" actionListener="#{repartirEncoMB.setearObs(e)}"
+										 oncomplete="dlgObs.show();" icon="icon-disk">
+						</p:commandButton>
+					</p:column>
+					
+					<p:column selectionMode="multiple"  disabledSelection="#{e.estado == 5}"  style="width:5px;text-align:center">
+					</p:column>
+					
+					</p:dataTable>
+						<br/>
+					<p:commandButton value="Entregados" actionListener="#{repartirEncoMB.cambiarEstadoEnco()}"
+						     update=":formListaEncoAsig :sms" icon="icon-disk" />
+			</h:form>
+			
+				<p:dialog id="dlgDetObs" appendToBody="true" resizable="false" modal="true"
+					 widgetVar="dlgObs" closable="true" header="Registrar Observacion">
+						
+					<h:form style="text-algin:center">
+						
+						<p:messages  id="mensaje2" showDetail="false" showSummary="true"  closable="true"/>
+						<p:panel>
+						<h:panelGrid columns="2">
+							#{"Comprobante:"}
+							<h:outputText value="#{repartirEncoMB.encoObs.comprobante}" style="font-weight:bold;font-size:1.2em" />
+							#{"Remitente:"}
+							<h:outputText value="#{repartirEncoMB.encoObs.remitcompleto}" style="font-weight:bold;font-size:1.2em" />
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2">
+						#{"Devuelto a Oficina"}
+						<p:selectBooleanCheckbox value="#{repartirEncoMB.encoObs.devuelto}"/>
+						
+					    #{"Obs:"}
+						<h:inputTextarea  value="#{repartirEncoMB.encoObs.obsReparto}"  cols="30" rows="4" required="true" requiredMessage="Se necesita una observacion"/> 
+						</h:panelGrid>
+							
+						</p:panel>
+						<br/>
+						<p:commandButton  value="Guardar " oncomplete="validarObs(xhr, status, args)" actionListener="#{repartirEncoMB.agregarObserv()}"  
+					 		update=":formListaEncoAsig mensaje2"  />
+					 	<p:commandButton  value="Cancelar" type="button" onclick="dlgObs.hide();"  icon="icon-cancel"/>	
+							
+					</h:form>
+			</p:dialog>
+			
+	</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					
+				} else {
+					
+				}
+			}
+			
+			function validarObs(xhr,status,args){
+				if (!args.esValido) {
+					jQuery('#dlgDetObs').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgObs.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

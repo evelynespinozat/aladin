@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.LiquidacionMapper">
+
+<resultMap id="liquidacionResult" type="com.certicom.ittsa.domain.Liquidacion">
+	<id column="IdLiquidacion" property="idLiquidacion"/>
+	<result column="Estado" property="estado"/>
+	<result column="IdProgramacion" property="idProgramacion"/>
+	<result column="Total" property="total"/>
+</resultMap>
+
+</mapper>	

@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Ventas" url="#" />
+    				<p:menuitem value="Boletos Anulados" url="boletosanulados" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<h:panelGrid columns="5">
+					#{"Agencia:"}
+					<p:selectOneMenu style="width:150px" value="#{boletosAnuladoMB.trackingBoletoFilter.idAgencia}"
+							required="true" requiredMessage="Seleccione Agencia">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{boletosAnuladoMB.listaAgenicias}" 
+							itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							<p:ajax update="cmbOficina" listener="#{boletosAnuladoMB.listarOficinas()}" />
+					</p:selectOneMenu>
+						
+					#{"Oficina:"}
+					<p:selectOneMenu id="cmbOficina" style="width:150px" value="#{boletosAnuladoMB.trackingBoletoFilter.idOficina}"
+							required="true" requiredMessage="Seleccione Oficina">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{boletosAnuladoMB.listaOficinas}" 
+							itemValue="#{item.idOficina}" itemLabel="#{item.nombre}" />
+					</p:selectOneMenu>
+					
+					<p:commandButton value="Buscar" icon="icon-search" update=":formListaBoletos :sms imprimirCB" actionListener="#{boletosAnuladoMB.buscarBoletos()}" />
+					
+					#{"Fecha Inicio:"}
+					<p:calendar value="#{boletosAnuladoMB.fechaInicio}" pattern="dd/MM/yyyy" locale="es"
+							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha inicio">
+					  <p:ajax update="calFfin" event="dateSelect"/>
+					</p:calendar>
+					
+					#{"Fecha Fin:"}
+					<p:calendar id="calFfin" mindate="#{boletosAnuladoMB.fechaInicio}" value="#{boletosAnuladoMB.fechaFin}" pattern="dd/MM/yyyy" locale="es"
+							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha fin" />
+							 	 
+					<h:commandLink disabled="#{boletosAnuladoMB.btnImprimir}" id="imprimirCB" value="Imprimir Boletos Anulados" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+     							 color: #1C190A;" actionListener="#{boletosAnuladoMB.imprimirPDF}" ajax="false">    
+					</h:commandLink>			 	 
+					
+				</h:panelGrid>			
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaBoletos">
+				<p:dataTable widgetVar="dtBoletosAnulados" var="p" value="#{boletosAnuladoMB.listaBoletosAnulados}" filteredValue="#{boletosAnuladoMB.listaFiltroBoletosAnulados}"  
+					emptyMessage="No hay Boletos Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Boletos Anulados</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Fecha Anulacion" >
+						<h:outputText value="#{p.fregistro}">
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText> 
+					</p:column>
+					
+					<p:column style="width:25px" headerText="Serie Boleto" >
+						<h:outputText value="#{p.serieBoleto}" />
+					</p:column>
+					
+					<p:column style="width:25px" headerText="Numero Boleto" >
+						<h:outputText value="#{p.numeroBoleto}" />
+					</p:column>
+					
+					<p:column style="width:250px" headerText="Usuario Resposable" >
+						<h:outputText value="#{p.desUsuario}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="DNI Pasajero" >
+						<h:outputText value="#{p.nrodocumento}" />
+					</p:column>
+					
+					<p:column style="width:25px" headerText="N° Asiento" >
+						<h:outputText value="#{p.desNroAsiento}" />
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Servicio" >
+						<h:outputText value="#{p.desServicio}" />
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Origen" >
+						<h:outputText value="#{p.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Destino" >
+						<h:outputText value="#{p.desDestino}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+		</p:panel>
+		
+		<script>
+	
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

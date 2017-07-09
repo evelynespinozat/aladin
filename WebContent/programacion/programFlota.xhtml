@@ -1,0 +1,1116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	
+	<style>
+		.ventanaConfirm{
+
+			width: 400px;
+			margin:auto;
+			padding:5px;
+			
+			border: 1px #000000 solid;
+			background-color:#FFEBA1;
+			
+			-webkit-border-radius: 24px 24px 24px 24px;
+			-moz-border-radius: 24px 24px 24px 24px;
+			border-radius: 24px 24px 24px 24px;
+		
+		}
+	</style>
+	
+	<pe:blockUI target=":formLista:dtServicios" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+	</pe:blockUI> 
+	
+		<p:panel id="panelUR" style="height:400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Programacion" url="#" />
+				<p:menuitem value="Flota" url="#" />
+			</p:breadCrumb>
+			
+		<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel style="width:1200px">
+			       	<h:panelGrid columns="9" id="datUbigeo"> 
+			       			#{"Fecha Programacion:"}
+			       			<p:calendar value="#{progFlotaMB.fechaProgramacion}" pattern="dd/MM/yyyy" mode="popup" showOn="button" locale="es"></p:calendar>
+			       			#{"Origen:"}
+							<p:selectOneMenu style="width:150px" value="#{progFlotaMB.idOrigen}" required="true" requiredMessage="Seleccione un Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{progFlotaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cboDestino" listener="#{progFlotaMB.listarDestinos()}" /> 
+							</p:selectOneMenu>
+							
+							#{"Destino:"}
+							<p:selectOneMenu id="cboDestino" style="width:150px" value="#{progFlotaMB.idDestino}" required="true" requiredMessage="Seleccione un Destino">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{progFlotaMB.listaDestino}" itemValue="#{ag.destino}" itemLabel="#{ag.desDestino}" />
+								<p:ajax update="cboCategoria" listener="#{progFlotaMB.listarCategoriasServ()}" />  
+							</p:selectOneMenu> 
+							
+							#{"Cat. Servicio:"}
+							<p:selectOneMenu id="cboCategoria" style="width:150px" value="#{progFlotaMB.idCategoriaServ}" required="true" requiredMessage="Seleccione una categoria">
+								<f:selectItems var="cat" value="#{progFlotaMB.listaCatServicio}" itemValue="#{cat.idCatServicio}" itemLabel="#{cat.descripcion}" /> 
+							</p:selectOneMenu> 
+							
+							<p:commandButton value="Buscar" title="Buscar" icon="icon-search" actionListener="#{progFlotaMB.buscarProgramacion()}"
+								onstart="blockUIWidget.block()" 
+						        oncomplete="dtExcepcion.getPaginator().setPage(0);blockUIWidget.unblock()" 
+							 update =":formLista :formLista2"/>
+			       	</h:panelGrid>  
+			 </p:panel>       	
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+			
+			<h:form id="formLista">
+				
+				<p:dataTable id="dtServicios" widgetVar="dtExcepcion" var="p" value="#{progFlotaMB.listaProgramacion}" filteredValue="#{progFlotaMB.listaProgramacionFilter}" 
+					emptyMessage="No hay Flota Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+					paginator="true" rows="10"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Salidas Programadas No asignadas</f:facet>
+					
+				
+					
+					<p:column headerText="Orden" style="width:10px" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{p.descServicio}" 
+						filterMatchMode="contains"  filterStyle="width:70px;">
+						<h:outputText value="#{p.descServicio}" rendered="#{not p.ampliado}"/>
+						
+						<h:outputText value="#{p.descServicio eq 'MIXTO 53' ? 'MIXTO 56' : 'SOFA 42'}" style="color:red;" rendered="#{p.ampliado}" />
+						
+						<h:outputText value=" Amp." style="color:red;" rendered="#{p.ampliado}" />
+					</p:column>
+					
+					<p:column style="width:40px;text-align: center;" headerText="Hora Salida" filterStyleClass="mayuscula" filterBy="#{p.hSalida}" filterMatchMode="contains"  filterStyle="width:50px;">
+						<h:outputText value="#{p.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:40px;text-align: center;" headerText="Piso 1 (S/.)">
+						<h:outputText value="#{p.precioPiso1}" />
+					</p:column>
+					
+					<p:column style="width:40px;text-align: center;" headerText="Piso 2 (S/.)">
+						<h:outputText value="#{p.precioPiso2}" />
+					</p:column>
+										
+					<p:column style="width:150px;text-align: center;" headerText="Frecuencia" filterStyleClass="mayuscula" filterBy="#{p.descEstadoFD}" filterMatchMode="contains"  filterStyle="width:70px;">
+						<h:outputText value="#{p.desTipoFrecuencia eq '2' ? 'Demanda' : 'Frecuente'}"  
+							style="color:#{p.desTipoFrecuencia eq '2'?'red':'green'}; font-size:13px;" />
+					</p:column>
+					
+					<p:column style="width:40px;text-align: center;" headerText="Ruta Comp." filterStyleClass="mayuscula" filterBy="#{p.desRutaCompartida}" filterMatchMode="contains"  filterStyle="width:50px;">
+						<h:outputText value="#{p.desRutaCompartida}" style="color:#{p.desRutaCompartida eq 'NO' ? 'green':'red'};"  />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Bus">
+						<h:outputText value="#{empty p.flota.numero ? 'Sin Asignar': p.flota.numero}"  style="color:#{empty p.flota.numero ? 'red':'green'};font-size:12px;"/>					
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Piloto">
+						<h:outputText value="#{empty p.flota.nombPiloto ? 'Sin Asignar' : p.flota.nombPiloto}" style="color:#{empty p.flota.nombPiloto ? 'red':'green'};font-size:12px;" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Copiloto">
+						<h:outputText value="#{empty p.flota.nombCopiloto ? 'Sin Asignar' : p.flota.nombCopiloto}" style="color:#{empty p.flota.nombCopiloto ? 'red':'green'};font-size:12px;" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Asignar">
+					  
+					 
+							<p:commandButton title="Asignar un  Bus Fisico a esta programacion"  icon="icon-bus" update=":dlgDetBus"  
+								actionListener="#{progFlotaMB.buscarBus(p)}" oncomplete="dlgBus.show();" disabled="#{p.gradoServ eq 2? true:false}" >
+								<f:setPropertyActionListener target="#{progFlotaMB.editarBus}" value="#{false}" />
+							</p:commandButton>	
+								
+									
+							<p:commandButton title="Eliminar programacion" icon="icon-cancel" update=":dlgDetEliminarProgramacion" 
+							oncomplete="dlgEliminarProgramacion.show();" disabled="#{p.gradoServ eq 2? true:false}">
+								<f:setPropertyActionListener target="#{progFlotaMB.programacion}" value="#{p}" />
+							</p:commandButton>	
+								
+							
+							
+							<p:commandButton title="Gestion Ruta Compartida de esta programacion"   icon="icon-enlace"    
+									disabled="#{p.desRutaCompartida eq 'SI' or  p.gradoServ eq 2 }"
+									actionListener="#{progFlotaMB.obtenerDatosRutaCompartida(p)}"  update=":dlgDetRutaCompartida"
+									oncomplete="dlgRutaCompartida.show();" >
+							</p:commandButton>	 	
+							
+							<ui:remove>	
+							<p:commandButton title="Gestion Ruta Compartida de esta programacion"   icon="icon-enlace"   disabled="#{p.desRutaCompartida eq 'NO'}"
+									action="#{progFlotaMB.obtenerDatosRutaCompartida(p)}">
+							</p:commandButton>
+							</ui:remove>
+							
+							
+							<p:commandButton title="Ampliar bus a esta programacion" icon="icon-configuration"  
+									 disabled="#{p.clase.asientos ne 39 and p.clase.asientos ne 53 and p.clase.asientos ne 31 or p.ampliado}"  
+									actionListener="#{progFlotaMB.amppliarCapacidadBus(p)}" update="@form" >
+							</p:commandButton>	 				
+	
+
+					</p:column>	
+					
+				</p:dataTable>
+			</h:form>
+			
+			<br/>
+			
+			<h:form id="formLista2">
+				
+				<p:dataTable id="dtProgAsig" widgetVar="dtProgAsig" var="p" value="#{progFlotaMB.listaProgramacionAsig}" filteredValue="#{progFlotaMB.listaProgramacionFilter}" 
+					emptyMessage="No hay Flota disponible  con copiloto y copiloto asigandos  " rowIndexVar="nro" paginatorPosition="bottom" 
+					paginator="true" rows="5"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header"><span  style="color:red;"> Confirmacion de Asignacion de Salidas Programadas</span></f:facet>
+					
+					<p:column headerText="Orden" style="width:2%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Servicio">
+						
+						<h:outputText value="#{p.descServicio}" rendered="#{not p.ampliado}"/>
+						
+						<h:outputText value="#{p.descServicio eq 'MIXTO 53' ? 'MIXTO 56' : 'SOFA 42'}" style="color:red;" rendered="#{p.ampliado}" />
+						
+						<h:outputText value=" Amp." style="color:red;" rendered="#{p.ampliado}" />
+						
+					</p:column>
+					
+					<p:column style="width:8%;text-align: center;" headerText="Hora Salida">
+						<h:outputText value="#{p.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:6%;text-align: center;" headerText="Piso 1 (S/.)">
+						<h:outputText value="#{p.precioPiso1}.00" />
+					</p:column>
+					
+					<p:column style="width:6%;text-align: center;" headerText="Piso 2 (S/.)">
+						<h:outputText value="#{p.precioPiso2}.00" />
+					</p:column>
+					
+					<p:column style="width:8%;text-align: center;" headerText="Bus">
+						<h:outputText value="#{p.flota.numero}" />					
+						
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Piloto">
+					
+						<h:outputText value="#{p.piloto.apellidoPaterno} #{p.piloto.apellidoMaterno} #{p.piloto.nombres}" />
+						
+					</p:column>
+					
+					<p:column style="width:18%;text-align: center;" headerText="Copiloto">
+						<h:outputText value="#{p.copiloto.apellidoPaterno} #{p.copiloto.apellidoMaterno} #{p.copiloto.nombres}" />			
+					</p:column>
+					
+					<p:column style="width:40%;text-align: center;" headerText="Modificar / Eliminar">
+
+						<p:commandButton title="Modificar Asignacion de Bus"  icon="icon-bus" update=":dlgDetBus"  
+							actionListener="#{progFlotaMB.buscarBus(p)}" 
+										 oncomplete="dlgBus.show();">
+										 <f:setPropertyActionListener target="#{progFlotaMB.editarBus}" value="#{true}" />
+						</p:commandButton>
+						
+						<p:commandButton title="Asignar Piloto" icon="icon-piloto"  update=":dlgDetPiloto"  
+							actionListener="#{progFlotaMB.buscarPiloto(p)}"  
+										 oncomplete="dlgPiloto.show();" >
+										 <f:setPropertyActionListener target="#{progFlotaMB.editarPiloto}" value="#{false}" />
+						</p:commandButton>
+															 
+						<p:commandButton title="Asignar Copiloto" icon="icon-copiloto"  update=":dlgDetCopiloto"  actionListener="#{progFlotaMB.buscarCopiloto(p)}"  
+										 oncomplete="dlgCopiloto.show();">
+										 <f:setPropertyActionListener target="#{progFlotaMB.editarCopiloto}" value="#{false}" />
+						</p:commandButton>
+						<ui:remove>
+						<p:commandButton title="Ver Croquis" icon="icon-diascroquis"  update=":dlgDetCroquis"  actionListener="#{progFlotaMB.verCroquis(p)}"  
+										 oncomplete="dlgCroquis.show();">
+						</p:commandButton>
+						</ui:remove>
+						
+						<ui:remove>
+						<p:commandButton title="Aumentar Capacidad" icon="icon-configuration"  update=":dlgDetAumentarCapacidad"
+							actionListener="#{progFlotaMB.amppliarCapacidadBus(p)}"  oncomplete="dlgAumentarCapacidad.show();">
+						</p:commandButton>
+						</ui:remove>
+						
+						
+						<p:commandButton title="Liberar asignacion" icon="icon-cancel"
+							value="Liberar" update=":dlgDetEliminarProgAsig"
+							oncomplete="dlgEliminarProgAsig.show();">
+							<f:setPropertyActionListener target="#{progFlotaMB.programacion}"
+								value="#{p}" />
+						</p:commandButton>
+					</p:column>	
+				</p:dataTable>
+			</h:form>
+			
+	 	
+	 	<!-- Dialog Seleccionar Bus -->
+	 	
+	 	<p:dialog header="Seleccionar Bus" widgetVar="dlgBus" appendToBody="true"
+					  resizable="false" id="dlgDetBus" modal="true">
+					  
+						<p:messages showDetail="false" showSummary="true" id="msgSelectFlota" closable="true" escape="false" />
+						
+					<h:form>
+						<p:panel style="width:1100px">
+			       	<h:panelGrid columns="10">
+			       			#{"Servicio Actual:"}
+			       			<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.descServicio}" />
+						
+			       			#{"Hora Salida:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.hSalida}" />
+						
+							#{"Piso 1 S/.:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.precioPiso1}" />
+						
+							#{"Piso 2 S/.:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.precioPiso2}" />
+						
+							#{"Frecuencia:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacion.estado eq '3' ? 'Frecuente' : 'Demanda'}" />
+							
+					</h:panelGrid>  
+					
+					
+					<ui:remove>
+						<h:panelGroup>
+						<h:panelGrid columns="2">
+							#{"Nuevo Servicio:"}
+							<p:selectOneMenu value="#{progFlotaMB.idClaseBus}">
+								<f:selectItem  itemLabel="--Seleccione--" itemValue=""/>
+								<f:selectItems  var="a" value="#{progFlotaMB.listaServicios}" itemLabel="#{a.descripcion}" itemValue="#{a.idclase}"/>
+									<p:ajax listener="#{progFlotaMB.buscarBusClase()}" update="dtBuses"/>
+							</p:selectOneMenu>
+							
+						</h:panelGrid>
+						</h:panelGroup>	
+					</ui:remove>
+					
+									
+					 </p:panel> 
+			 
+						<p:dataTable id="dtBuses" widgetVar="dtBuses" var="b" value="#{progFlotaMB.listaBuses}" filteredValue="#{progFlotaMB.listaBusesFilter}"
+									emptyMessage="No hay Flota Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+									paginator="true" rows="10"
+									style="FONT-SIZE: 10px; ">
+							
+							<f:facet name="header"> 
+							
+							<h:panelGrid columns="4" style="width:450px;margin:auto;" >
+								<span  style="color:blue;" >Lista de Flota de Buses con Piloto y Copiloto Asignado</span>
+								
+								<h:panelGroup>
+									<h:outputLink id="grow" value="#">
+								    	<h:graphicImage id="imgAyuda" library="img" name="icon-help.png" />
+								    </h:outputLink>
+								    <p:tooltip for="imgAyuda"  showEffect="clip" hideEffect="explode" >
+								     	<h:outputText value="Si no se lista ninguna flota," />
+								     	<br/>
+								     	<h:outputText value="primero debera asignar un piloto/copiloto a la flota" />
+								     </p:tooltip>
+								</h:panelGroup>
+								
+								<p:spacer  width="60" height="1" />
+								
+								<h:commandLink style="color:red;" value="Asigar piloto y copiloto" action="pretty:asigPiloto" /> 
+							</h:panelGrid>
+							</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Nro. Bus" filterStyleClass="mayuscula" filterBy="#{b.numero}" filterMatchMode="contains">
+								<h:outputText value="#{b.numero}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Placa">
+								<h:outputText value="#{b.placa}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Marca">
+								<h:outputText value="#{b.marca}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Modelo">
+								<h:outputText value="#{b.modelo}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Clase">
+								<h:outputText value="#{b.descClase}" />
+							</p:column>
+
+							<p:column style="width:100px;text-align: center;" headerText="Piloto">
+								<h:outputText value="#{b.nombPiloto}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Copiloto">
+								<h:outputText value="#{b.nombCopiloto}" />
+							</p:column>
+							
+							<p:column style="width:100px;text-align: center;" headerText="Bus">
+								<p:commandButton value="Asignar" title="Asignar"  update=":smsAsignacion :frmConfirmar" 
+												 actionListener="#{progFlotaMB.asignarBus(b)}">									
+								</p:commandButton>						
+							</p:column>
+						</p:dataTable>
+	
+					</h:form>
+
+					<p:messages  id="smsAsignacion" showDetail="false" showSummary="true" closable="true" />	
+					<br/>
+					<h:form id="frmConfirmar">
+					
+					<h:panelGroup rendered="#{progFlotaMB.asignacionBus}">
+							<h:panelGroup rendered="#{progFlotaMB.asignarPilotoCopiloto}" >
+						
+							<div class="ventanaConfirm"> 
+								
+								<h:panelGrid columns="3">
+									<h:graphicImage library="img" name="warning.png" width="36" height="36" />
+									
+									<p:spacer width="20" height="2" />
+									
+									<h:outputText value="Esta seguro de asignar este Bus a la programacion  seleccionada" />
+									
+									<p:spacer width="10" height="2" />
+									<p:spacer width="10" height="2" />
+									
+									<h:panelGroup>
+										<p:commandButton value="Aceptar"  update=":sms :formLista :formLista2" 
+										actionListener="#{progFlotaMB.guardarProgramacionFlota(progFlotaMB.programacion)}" oncomplete="dlgBus.hide();" />
+									
+										<p:commandButton value="Cancelar" onclick="dlgBus.hide();" />
+									</h:panelGroup>
+								</h:panelGrid>
+								
+								
+							
+							</div>
+						</h:panelGroup>
+					
+					</h:panelGroup>
+					
+						
+					</h:form>
+						
+			</p:dialog>
+			
+			
+			
+			
+			<p:dialog header="Usuario de registro" widgetVar="dlgVerUsuario" appendToBody="true" resizable="false" 
+					  id="dlgDetVerUsuario" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgVerUsuario" closable="true" />
+						#{"Usuario:"}
+						<p:outputLabel value ="#{progFlotaMB.programacion.nombUsuarioRegistro}"></p:outputLabel>
+						
+					</h:form>	
+			</p:dialog>
+			
+			
+		<!-- Seleccionar Piloto -->
+			<p:dialog header="Seleccionar Piloto" widgetVar="dlgPiloto" appendToBody="true"
+					  resizable="false" id="dlgDetPiloto" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<p:dataTable id="dtBuses" widgetVar="dtBuses" var="p" value="#{progFlotaMB.listaPilotos}" 
+									emptyMessage="No hay Pilotos Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+									paginator="true" rows="10"
+									style="FONT-SIZE: 10px; ">
+							
+							<f:facet name="header">Lista de Pilotos</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="DNI" filterStyleClass="mayuscula" filterBy="#{p.dNI}" filterMatchMode="contains"  filterStyle="width:100px;" >
+								<h:outputText value="#{p.dNI}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Apellidos" filterStyleClass="mayuscula" filterBy="#{p.apellidoPaterno} #{p.apellidoMaterno}" filterMatchMode="contains"  filterStyle="width:100px;">
+								<h:outputText value="#{p.apellidoPaterno} #{p.apellidoMaterno}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Nombres" filterStyleClass="mayuscula" filterBy="#{p.nombres}" filterMatchMode="contains"  filterStyle="width:100px;">
+								<h:outputText value="#{p.nombres}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Licencia">
+								<h:outputText value="#{p.licencia}" />
+							</p:column>
+							<p:column style="width:22%;text-align: center;" headerText="Tipo">
+								<p:selectOneMenu  value="#{p.flagTemporal}" style="width:100px">
+									<f:selectItem  itemLabel="TEMPORAL" itemValue="true"/>
+									<f:selectItem  itemLabel="INDEFINIDA" itemValue="false"/>
+									
+								</p:selectOneMenu>
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Asignar">
+								<p:commandButton value="Asignar" title="Asignar"  update=":dlgDetPiloto :formLista :formLista2" 
+												 oncomplete="dlgPiloto.hide();" actionListener="#{progFlotaMB.asignarPiloto(p)}">
+									
+								</p:commandButton>						
+							</p:column>
+						</p:dataTable>
+						
+					</h:form>	
+			</p:dialog>
+			
+			
+		<!-- Dialog Seleccionar Copiloto -->
+	 	
+	 	<p:dialog header="Seleccionar Copiloto" widgetVar="dlgCopiloto" appendToBody="true"
+					  resizable="false" id="dlgDetCopiloto" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<p:dataTable id="dtCopiloto" widgetVar="dtCopiloto" var="p" value="#{progFlotaMB.listaCopilotos}" 
+									emptyMessage="No hay Copilotos Disponibles." rowIndexVar="nro" paginatorPosition="bottom" 
+									paginator="true" rows="10"
+									style="FONT-SIZE: 10px; ">
+							
+							<f:facet name="header">Lista de Copilotos</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="DNI">
+								<h:outputText value="#{p.dNI}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Apellidos">
+								<h:outputText value="#{p.apellidoPaterno} #{p.apellidoMaterno}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Nombres">
+								<h:outputText value="#{p.nombres}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Licencia">
+								<h:outputText value="#{p.licencia}" />
+							</p:column>
+							
+							<p:column style="width:22%;text-align: center;" headerText="Tipo">
+								<p:selectOneMenu  value="#{p.flagTemporal}" style="width:100px">
+									<f:selectItem  itemLabel="TEMPORAL" itemValue="true"/>
+									<f:selectItem  itemLabel="INDEFINIDA" itemValue="false"/>
+								</p:selectOneMenu>
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Asignar">
+								<p:commandButton value="Asignar" title="Asignar"  update=":dlgDetCopiloto :formLista :formLista2" 
+												 oncomplete="dlgCopiloto.hide();" actionListener="#{progFlotaMB.asignarCopiloto(p)}"> 
+									
+								</p:commandButton>						
+							</p:column>
+						</p:dataTable>
+						
+					</h:form>	
+			</p:dialog>
+			
+		<!-- Convertir en ruta compartida -->
+		
+		
+			
+			
+			<!-- Dialog Croquis -->
+			<p:dialog  header="Croquis del Servicio" widgetVar="dlgCroquis" appendToBody="true" closable="true"
+					  resizable="false" id="dlgDetCroquis" modal="true">
+			
+			    	<h:form id="frmBus">
+			    	
+			    		<h:panelGrid columns="12" style="margin:auto;width:210px; background-color:#fed54c;border-color:black;border-style:dashed;border-width: 1px;"  rendered="#{not empty progFlotaMB.programacionSelec.idProgramacion}"  >
+							    		<h:outputText value="Disponible:" />
+								    	<h:outputText value="#{progFlotaMB.programacionSelec.disponibles}" style="font-weight:bold; font-size:16px; color:green;" />
+								    	<p:spacer width="10"  height="3"/>
+								    	<h:outputText value="Vendido:" />
+								    	<h:outputText value="#{progFlotaMB.programacionSelec.vendidos}" style="font-weight:bold; font-size:16px; color:red;"/>
+								    	<p:spacer width="10"  height="3"/>
+								    	<h:outputText value="Reservado:" />
+								    	<h:outputText value="#{progFlotaMB.programacionSelec.reservados}" style="font-weight:bold; font-size:16px; color:#D80DCE;"/>
+								    	<p:spacer width="10"  height="3"/>
+								    	<h:outputText value="Capacidad:" />
+								    	<h:outputText value="#{progFlotaMB.programacionSelec.clase.asientos}" style="font-weight:bold; font-size:16px; color:black;" />
+					    </h:panelGrid>
+			    	
+						
+					<h:panelGroup rendered="#{progFlotaMB.visibleBus}" >
+					
+						<h:panelGrid columns="6">
+							<h:outputText value="Servicio:" style="font-weight:bold;font-size:14px;" /> 
+							<h:outputText value="#{progFlotaMB.programacionSelec.etiqueta}" style="font-weight:bold;font-size:14px;color:red;" />
+		
+							<p:spacer width="15" height="3" />
+							
+							<p:ajaxStatus style="width:14px;height:14px;" >  
+				    			<f:facet name="start">  
+				        			<h:graphicImage value="resources/img/active.gif" />  
+				    			</f:facet>  
+				      
+				    			<f:facet name="complete">  
+				        			<h:outputText value="" />  
+				    			</f:facet>  
+							</p:ajaxStatus>
+							
+							<h:panelGrid columns="5">
+									<h:outputText value="Masculino:"/>					
+							    	<h:outputText value="M" style="font-weight:bold;font-size:16px;" />
+							    	<p:spacer width="15"  height="5"/>
+							    	<h:outputText value="Femenino:" />					
+							    	<h:outputText value="F" style="font-weight:bold;font-size:16px;" />
+							</h:panelGrid>
+							
+							<h:panelGrid columns="12" style="width:230" >
+									<p:spacer width="30"  height="5"/>
+						    		<h:outputText value="Vendido" style="font-weight:bold;" />					
+						    		<h:graphicImage value="resources/img/icon-red.png"  width="20" height="20" />
+						    		<p:spacer width="10"  height="5"/>
+						    		<h:outputText value="Libre" style="font-weight:bold;" />
+						    		<h:graphicImage value="resources/img/icon-green.png" width="20" height="20" />
+						    		<p:spacer width="10"  height="5"/>
+						    		<h:outputText value="Reservado" style="font-weight:bold;" />
+						    		<h:graphicImage value="resources/img/icon-violet.png" width="18" height="18" />
+						    		<p:spacer width="10"  height="5"/>
+						    		<h:outputText value="En Proceso" style="font-weight:bold;" />
+						    		<h:graphicImage value="resources/img/icon-blue.png"  width="20" height="20"/>
+						    </h:panelGrid>	
+						
+						</h:panelGrid>
+						
+<!--####################################### si el bus es de  un piso: #################################-->
+						<h:panelGroup rendered="#{progFlotaMB.busClase.nroPisos eq '1'}" >
+    						<h:panelGrid columns="3">
+    						<h:graphicImage url="/resources/img/front.png" height="225" />
+    							<h:panelGroup>
+    								<div  style="text-align:center;font-size:15px;font-weight:bold;" >
+										<h:outputText value="Piso Uno" />
+									</div>
+									
+    								<p:dataGrid var="as" value="#{progFlotaMB.listaAsientosPisoUno}"  
+    										columns="#{progFlotaMB.nroColumnasPisoUno}" 
+    										rows="#{progFlotaMB.nroColumnasPisoUno*progFlotaMB.nroFilas}">
+    										
+										<div style="width:36px; height:36px; font-size:9px;">
+											<h:commandButton value="#{as.numero}" 
+												 style="width:35px; height:35px; background-color:#6FD61B;color:black;font-weight:bold;"
+												 rendered="#{as.estado}" disabled="true" />
+											<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.png': as.numero eq '300' ? 'tv.png' : as.numero eq '400' ? 'cafe.png':'wc.png'}" 
+														    rendered="#{not as.estado and as.numero ge '200'}" />
+										</div>
+									</p:dataGrid>
+								</h:panelGroup>
+								<h:graphicImage  url="/resources/img/back.png" height="225" />
+    						</h:panelGrid>
+						</h:panelGroup>
+						
+						
+<!-- ########################################## si el bus es de  dos pisos : #################################################### -->
+						<h:panelGroup rendered="#{progFlotaMB.busClase.nroPisos eq '2'}">
+    						<h:panelGrid columns="5" >
+    						
+    							<h:graphicImage  url="/resources/img/front.png" height="220" />
+    							
+    							<h:panelGroup>
+    								<div  style="height:30px;text-align:center;font-size:13px;font-weight:bold;border-top-color:#df8f16;border-top-style:solid;" >
+										<h:outputText value="Piso Uno: #{progFlotaMB.tipoAsientop1.nombre} S/.#{progFlotaMB.programacionSelec.servicio.precio1}" />
+									</div>
+									
+    								<p:dataGrid var="as" value="#{progFlotaMB.listaAsientosPisoUno}"  
+    										columns="#{progFlotaMB.nroColumnasPisoUno}" 
+    										rows="#{progFlotaMB.nroColumnasPisoUno*progFlotaMB.nroFilas}">
+    										
+												 
+												<p:commandButton value="#{as.asientoVenta.numero}#{as.asientoVenta.sexo}" rendered="#{as.estado}" 
+													disabled="#{as.asientoVenta.estado eq 'PROCESO' or not as.visible}" icon="#{as.asientoVenta.sexo eq 'F' ? 'icon-mujer':as.asientoVenta.sexo eq 'M'?'icon-varon':'icon-vacio'}"
+												 	style="font-size:11px;font-weight:bold; color:#{as.asientoVenta.estado eq 'VENTA' ? 'red': as.asientoVenta.estado eq 'RESERVA' ? '#D80DCE':as.asientoVenta.estado eq 'PROCESO' ? '#1C7FC2':'green' };">
+						    					</p:commandButton>	 
+													 
+												<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.png': as.numero eq '300' ? 'tv.png' : as.numero eq '400' ? 'cafe.png':'wc.png'}"
+													rendered="#{not as.estado and as.numero ge '200'}"  />
+	
+										
+									</p:dataGrid>
+									<div  style="height:20px;border-bottom-color:#df8f16;border-bottom-style: solid;" >
+										<h:outputText value="" />
+									</div>
+								</h:panelGroup>
+								
+    							<h:graphicImage  url="/resources/img/spacer.png" height="180" />
+    							
+    							
+    							<h:panelGroup>
+    							
+    								<div  style="text-align:center;font-size:13px;font-weight:bold;border-top-color:#df8f16;border-top-style:solid;" >
+										<h:outputText value="Piso Dos: #{progFlotaMB.tipoAsientop2.nombre} S/.#{progFlotaMB.programacionSelec.servicio.precio2}" />
+									</div>
+									
+									<p:dataGrid  var="as" value="#{progFlotaMB.listaAsientosPisoDos}"  
+    									columns="#{progFlotaMB.nroColumnasPisoDos}" rows="#{progFlotaMB.nroColumnasPisoDos*progFlotaMB.nroFilas}">
+				
+										<span style="width:100px; height:45px;" >
+										
+											<p:commandButton value="#{as.asientoVenta.numero}#{as.asientoVenta.sexo}" rendered="#{as.estado}" 
+												disabled="#{as.asientoVenta.estado eq 'PROCESO'}" icon="#{as.asientoVenta.sexo eq 'F' ? 'icon-mujer':as.asientoVenta.sexo eq 'M'?'icon-varon':'icon-vacio'}"
+												style="font-size:11px;font-weight:bold; color:#{as.asientoVenta.estado eq 'VENTA' ? 'red': as.asientoVenta.estado eq 'RESERVA' ? '#D80DCE':as.asientoVenta.estado eq 'PROCESO' ? '#1C7FC2':'green' };"> 
+		  
+									        					
+					    					</p:commandButton>	 
+												 
+											<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.png': as.numero eq '300' ? 'tv.png' : as.numero eq '400' ? 'cafe.png':'wc.png'}"
+															 rendered="#{not as.estado and as.numero ge '200'}"  />
+
+										</span>
+					
+									</p:dataGrid>
+									
+									<div  style="height:8px;border-bottom-color:#df8f16;border-bottom-style: solid;" >
+										<h:outputText value="" />
+									</div>
+    							</h:panelGroup>
+    							
+    							<h:graphicImage url="/resources/img/back.png" height="190" />
+    							
+    						</h:panelGrid>
+						</h:panelGroup>	
+						<!-- vender asiento -->
+						<div align="center" style="width:700px;padding-left: 100px;">
+						</div>
+						<br/>
+						<!-- Leyenda -->
+			    	</h:panelGroup>
+			    	
+			    	</h:form>				
+			
+			</p:dialog>
+			
+			
+		<!-- Dialog Seleccionar Piloto -->
+			
+			<p:confirmDialog id="dlgDetEliminarProgAsig" appendToBody="true" message="¿Desea Liberar la asignación de Bus?" header="Liberar Programacion"
+					severity="alert" widgetVar="dlgEliminarProgAsig">
+				<h:form>
+					<p:commandButton value="Liberar"
+						update=":formLista :formLista2"
+						actionListener="#{progFlotaMB.eliminarProgramacionFlota()}" 
+						oncomplete="dlgEliminarProgAsig.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminarProgAsig.hide();" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgDetEliminarProgramacion" appendToBody="true" message="¿Desea eliminar esta programacion?" header="Eliminar Programacion"
+					severity="alert" widgetVar="dlgEliminarProgramacion">
+				<h:form>
+					<p:commandButton value="Eliminar"
+						update=":formLista :formLista2"
+						actionListener="#{progFlotaMB.eliminarProgramacionNoAsignada()}" 
+						oncomplete="dlgEliminarProgramacion.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminarProgramacion.hide();" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:dialog header="Incrementar Capacidad" widgetVar="dlgAumentarCapacidad" appendToBody="true"
+					  resizable="false" id="dlgDetAumentarCapacidad" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+				
+						<p:commandButton value="Cerrar"   update=":formLista2" oncomplete="dlgAumentarCapacidad.hide();"
+									 icon="icon-cancel"/>
+					</h:form>	
+					
+			</p:dialog>
+			
+
+		<p:dialog header="Ruta Compartida" widgetVar="dlgRutaCompartida" appendToBody="true"
+					  resizable="false" id="dlgDetRutaCompartida" modal="true"  closable="false" >
+				
+
+				<p:messages showDetail="false" showSummary="true"  id="smsCompartida"/>
+				<h:form id="frmProgrmacion">
+					
+					
+						<h:panelGrid columns="4">
+			       			#{"Origen:"}
+			       			<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.desOrigen}" />
+						
+			       			#{"Destino:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.desDestino}" />
+						
+			       	
+			       			#{"Servicio Actual:"}
+			       			<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.descServicio}" />
+						
+			       			#{"Hora Salida:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.hSalida}" />
+						
+							#{"Piso 1 S/.:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.precioPiso1}" />
+						
+							#{"Piso 2 S/.:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.precioPiso2}" />
+						
+							#{"Frecuencia:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.estado eq '3' ? 'Frecuente' : 'Demanda'}" />
+						
+							#{"Ruta compartida:"}
+							<h:outputText value="#{progFlotaMB.programacionRuta.desRutaCompartida}" style="font-size:14px;font-weight:bold;" />
+						</h:panelGrid>
+						
+						
+						
+						<p:commandButton value="Convertir a ruta compartida" 
+							disabled="#{progFlotaMB.conversionRutaCompartida}"
+							update=":smsCompartida :frmRutas @form" actionListener="#{progFlotaMB.convertirRutaCompartida()}"
+							icon="icon-add"  />
+						
+						<p:commandButton value="Listar todas las rutas" title="Seleccionar"  icon="icon-selecc" 
+						 actionListener="#{progFlotaMB.buscarTramos()}"
+										  update=":frmRutas @form" />
+										  
+
+						
+						<p:commandButton value="Agregar nuevas rutas" title="Agregar Ruta Compartida"  icon="icon-enlace" 
+						disabled="#{not progFlotaMB.conversionRutaCompartida}"
+						update=":dlgDetRutaCompart"  
+										 oncomplete="dlgRutaCompart.show();" />
+						
+						
+						
+						<p:commandButton value="Quitar todas las rutas" title="Quitar Ruta Compartida"  icon="icon-delete" 
+							 actionListener="#{progFlotaMB.quitarRutaCompartida()}"
+							 disabled="#{not progFlotaMB.listarHijos}"
+								update=":frmRutas"
+								oncomplete="dlgQuitarRutaCompartida.show();" />
+								
+						<p:commandButton value="Cerrar" title="Cerrar ventana"  icon="icon-cancel" 
+							 actionListener="#{progFlotaMB.cerrarVentanaRutaCompartidaCaliente()}"
+							 update=":frmRutas"
+							 oncomplete="dlgRutaCompartida.hide();" />		
+					
+				
+				</h:form>
+				
+				
+				<h:form id="frmRutas">
+					
+					<p:dataTable var="row" value="#{progFlotaMB.listaServiciosCompartidos}"  rowIndexVar="nro"
+                                     id="datatableenlace"
+                                     rows="10" paginatorPosition="bottom"
+									 style="FONT-SIZE: 10px;width:800px;">
+
+                            <f:facet name="header" >Tramos del Servicio 
+                            </f:facet>
+                            <p:column headerText="Orden" width="40" >
+								Ruta :#{nro+1}
+							</p:column>
+							
+							<p:column style="text-align:center" headerText="Origen">
+								<h:outputText value="#{row.desOrigen}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Destino">
+								<h:outputText value="#{row.desDestino}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Servicio">
+								<h:outputText value="#{row.descripcion}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Hora salida">
+								<h:outputText value="#{row.HSalida}" />
+							</p:column>
+
+                 </p:dataTable>
+					
+					
+				</h:form>
+				
+				
+					
+		</p:dialog>
+			
+			
+
+	
+			
+
+
+
+		<p:confirmDialog id="dlgDetQuitarRutaCompartida" appendToBody="true" message="¿Desea Quitar a ruta compartida?" header="Quitar"
+					severity="alert" widgetVar="dlgQuitarRutaCompartida">
+				<h:form>
+					<p:commandButton value="Quitar ya"
+						update=":dlgDetRutaCompartida :formLista"
+						actionListener="#{progFlotaMB.confirmQuitarRutaCompartida()}" 
+						oncomplete="dlgQuitarRutaCompartida.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgQuitarRutaCompartida.hide();" icon="icon-cancel"/>
+
+				</h:form>
+		</p:confirmDialog>
+	 	
+	 	
+	 	<p:dialog header="Agregar Ruta Compartida" widgetVar="dlgRutaCompart" appendToBody="true"
+					  resizable="false" id="dlgDetRutaCompart" modal="true">
+					<p:messages showDetail="false" showSummary="true" id="msgNuevoRuta" closable="true" />
+					<h:form>
+						
+						<p:panel>
+			       	<h:panelGrid columns="4">
+			       			#{"Origen:"}
+			       			<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.desOrigen}" />
+						
+			       			#{"Destino:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.desDestino}" />
+						
+			       	
+			       			#{"Servicio Actual:"}
+			       			<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.descServicio}" />
+						
+			       			#{"Hora Salida:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.hSalida}" />
+						
+							#{"Piso 1 S/.:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.precioPiso1}" />
+						
+							#{"Piso 2 S/.:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.precioPiso2}" />
+						
+							#{"Frecuencia:"}
+							<h:outputText style="width:200px;font-weight:bold;font-size: 1.2em;" value="#{progFlotaMB.programacionRuta.estado eq '3' ? 'Frecuente' : 'Demanda'}" />
+					</h:panelGrid>
+					 </p:panel>
+					 <br/>
+					<h:panelGrid columns="2">
+					
+					
+							#{"Origen:"}
+							<p:selectOneMenu style="width:176px" value="#{progFlotaMB.servicioRuta.origen}" required="true" requiredMessage="Seleccione un Origen">
+									<f:selectItem itemLabel="Seleccione..." itemValue="" />
+									<f:selectItems var="ag" value="#{progFlotaMB.listaAgeTramos}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+							</p:selectOneMenu>
+
+							
+							#{"Destino: "}
+							<p:selectOneMenu style="width:150px" value="#{progFlotaMB.servicioRuta.destino}" >
+									<f:selectItem itemLabel="Seleccione..." itemValue="" />
+									<f:selectItems var="ag" value="#{progFlotaMB.listaAgeTramos}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+							</p:selectOneMenu>
+							
+							
+							#{"Precio Piso 1:"}
+							<p:inputText id="enlacetxtPiso1" style="width:176px" value="#{progFlotaMB.servicioRuta.precio1}" required="true" maxlength="6" requiredMessage="Se necesita un Precio Piso 1 del Tramo 2" />
+							
+							
+							#{"Precio Piso 2:"}
+							<p:inputText id="enlacetxtPiso2" style="width:176px" value="#{progFlotaMB.servicioRuta.precio2}" required="true" maxlength="6" requiredMessage="Se necesita un Precio Piso 2 del Tramo 2" />
+
+							#{"Horas de Viaje:"}
+							<p:inputText id="enlacetxtPiso4a" style="width:176px" value="#{progFlotaMB.servicioRuta.horasViaje}" required="true" maxlength="2" requiredMessage="Se necesita un Precio Piso 2 del Tramo 2" >
+							 	<pe:keyFilter mask="num"/>
+							</p:inputText> 
+							
+						</h:panelGrid>
+						
+						
+							<h:panelGrid columns="4">
+						    #{"Hora Salida:"}
+							<p:selectOneMenu style="width:52px" value="#{progFlotaMB.hora_Tramo2}" required="true" requiredMessage="Seleccione Tramo 2">
+								<f:selectItem itemLabel="00" itemValue="00" />
+								<f:selectItem itemLabel="01" itemValue="01" />
+								<f:selectItem itemLabel="02" itemValue="02" />
+								<f:selectItem itemLabel="03" itemValue="03" />
+								<f:selectItem itemLabel="04" itemValue="04" />
+								<f:selectItem itemLabel="05" itemValue="05" />
+								<f:selectItem itemLabel="06" itemValue="06" />
+								<f:selectItem itemLabel="07" itemValue="07" /> 
+								<f:selectItem itemLabel="08" itemValue="08" />
+								<f:selectItem itemLabel="09" itemValue="09" />
+								<f:selectItem itemLabel="10" itemValue="10" />
+								<f:selectItem itemLabel="11" itemValue="11" />
+								<f:selectItem itemLabel="12" itemValue="12" />
+							</p:selectOneMenu>
+							<p:selectOneMenu style="width:52px" value="#{progFlotaMB.minutos_Tramo2}" required="true" requiredMessage="Seleccione un Tipo Servicio">
+								<f:selectItem itemLabel="00" itemValue="00" />
+								
+								<f:selectItem itemLabel="01" itemValue="01" />
+								<f:selectItem itemLabel="02" itemValue="02" />
+								<f:selectItem itemLabel="03" itemValue="03" />
+								<f:selectItem itemLabel="04" itemValue="04" />
+								<f:selectItem itemLabel="05" itemValue="05" />
+								<f:selectItem itemLabel="06" itemValue="06" />
+								<f:selectItem itemLabel="07" itemValue="07" /> 
+								<f:selectItem itemLabel="08" itemValue="08" />
+								<f:selectItem itemLabel="09" itemValue="09" />
+								<f:selectItem itemLabel="10" itemValue="10" />
+							
+								<f:selectItem itemLabel="11" itemValue="11" />
+								<f:selectItem itemLabel="12" itemValue="12" />
+								<f:selectItem itemLabel="13" itemValue="13" />
+								<f:selectItem itemLabel="14" itemValue="14" />
+								<f:selectItem itemLabel="15" itemValue="15" />
+								<f:selectItem itemLabel="16" itemValue="16" />
+								<f:selectItem itemLabel="17" itemValue="17" /> 
+								<f:selectItem itemLabel="18" itemValue="18" />
+								<f:selectItem itemLabel="19" itemValue="19" />
+								<f:selectItem itemLabel="20" itemValue="20" />
+
+								<f:selectItem itemLabel="21" itemValue="21" />
+								<f:selectItem itemLabel="22" itemValue="22" />
+								<f:selectItem itemLabel="23" itemValue="23" />
+								<f:selectItem itemLabel="24" itemValue="24" />
+								<f:selectItem itemLabel="25" itemValue="25" />
+								<f:selectItem itemLabel="26" itemValue="26" />
+								<f:selectItem itemLabel="27" itemValue="27" /> 
+								<f:selectItem itemLabel="28" itemValue="28" />
+								<f:selectItem itemLabel="29" itemValue="29" />
+								<f:selectItem itemLabel="30" itemValue="30" />
+								
+								<f:selectItem itemLabel="31" itemValue="31" />
+								<f:selectItem itemLabel="32" itemValue="32" />
+								<f:selectItem itemLabel="33" itemValue="33" />
+								<f:selectItem itemLabel="34" itemValue="34" />
+								<f:selectItem itemLabel="35" itemValue="35" />
+								<f:selectItem itemLabel="36" itemValue="36" />
+								<f:selectItem itemLabel="37" itemValue="37" /> 
+								<f:selectItem itemLabel="38" itemValue="38" />
+								<f:selectItem itemLabel="39" itemValue="39" />
+								<f:selectItem itemLabel="40" itemValue="40" />
+								
+								<f:selectItem itemLabel="41" itemValue="41" />
+								<f:selectItem itemLabel="42" itemValue="42" />
+								<f:selectItem itemLabel="43" itemValue="43" />
+								<f:selectItem itemLabel="44" itemValue="44" />
+								<f:selectItem itemLabel="45" itemValue="45" />
+								<f:selectItem itemLabel="46" itemValue="46" />
+								<f:selectItem itemLabel="47" itemValue="47" /> 
+								<f:selectItem itemLabel="48" itemValue="48" />
+								<f:selectItem itemLabel="49" itemValue="49" />
+								<f:selectItem itemLabel="50" itemValue="50" />
+								
+								<f:selectItem itemLabel="51" itemValue="51" />
+								<f:selectItem itemLabel="52" itemValue="52" />
+								<f:selectItem itemLabel="53" itemValue="53" />
+								<f:selectItem itemLabel="54" itemValue="54" />
+								<f:selectItem itemLabel="55" itemValue="55" />
+								<f:selectItem itemLabel="56" itemValue="56" />
+								<f:selectItem itemLabel="57" itemValue="57" /> 
+								<f:selectItem itemLabel="58" itemValue="58" />
+								<f:selectItem itemLabel="59" itemValue="59" />
+								
+								
+							</p:selectOneMenu>
+							<p:selectOneMenu style="width:55px" value="#{progFlotaMB.am_pm_Tramo2}" required="true" requiredMessage="Seleccione un Tipo Servicio">
+								<f:selectItem itemLabel="AM" itemValue="AM" />
+								<f:selectItem itemLabel="PM" itemValue="PM" /> 
+							</p:selectOneMenu>
+							</h:panelGrid>  
+					 <br/>
+						
+                        <p:commandButton value="Aceptar" actionListener="#{progFlotaMB.generarProgRuta()}"
+							 update=":msgNuevoRuta :formLista :formLista2 :frmRutas" 
+							 oncomplete="validar(xhr, status, args)" icon="icon-disk"/>
+							 
+				        <p:commandButton value="Cancelar" type="button"	 onclick="dlgRutaCompart.hide();"  icon="icon-cancel" >
+				        	  <f:setPropertyActionListener target="#{progFlotaMB.cancelarRutaCompartida()}" value="#{p}" />
+				        </p:commandButton>
+					 
+					</h:form>	
+			</p:dialog>
+	 	
+	 	
+	 	
+	 	
+	 
+	 	
+	 	
+	 	
+	 	
+	 	
+	 	
+	 	
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetRutaCompart').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				dlgRutaCompart.hide();
+			}
+		}
+		
+		function validarCapacidad(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetAumentarCapacidad').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				dlgAumentarCapacidad.hide();
+			}
+		}
+
+		</script>
+
+	</ui:define>
+
+</ui:composition>
+</html>

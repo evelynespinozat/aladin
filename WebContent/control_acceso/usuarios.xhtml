@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel>
+		
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Seguridad" url="#" />
+    				<p:menuitem value="Gestion de Usuarios" url="usuarios" />    
+				</p:breadCrumb>	
+		</h:form>	
+		<br/>
+
+		<p:messages showDetail="false"  showSummary="true" id="msgGeneral" />
+		
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+
+					<p:commandButton value="Nuevo Usuario" icon="icon-add"
+						update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+						actionListener="#{usuarioMB.newInsert}" >
+					</p:commandButton>
+			</h:form>
+			
+			
+			<!-- listado de usuarios -->	
+			<h:form id="formLista">
+			
+				<p:dataTable  var="u" value="#{usuarioMB.usuarios}" rowIndexVar="nro" 
+					paginator="true" filteredValue="#{usuarioMB.usuariosfilter}"
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30"
+					style="FONT-SIZE: 10px;" widgetVar="dtUsuarios"  >
+					
+					<f:facet name="header">Lista de Usuarios</f:facet>
+					
+				 	<p:column headerText="Ord." style="width:20px;" >
+						#{nro+1}
+					</p:column>
+
+					<p:column  style="width:160px;" headerText="Apellidos" filterStyleClass="mayuscula" filterBy="#{u.apellido_paterno}" filterMatchMode="contains" >
+						<h:outputText value="#{u.apellido_paterno} #{u.apellido_materno}"/>
+					</p:column>
+					
+					<p:column style="width:150px" headerText="Nombres" >
+						<h:outputText value="#{u.nombre}" />
+					</p:column>
+					
+					<p:column style="width:5%" headerText="DNI" filterBy="#{u.dni}" filterMatchMode="contains" filterStyle="text-align: right;">
+						<h:outputText value="#{u.dni}" />
+					</p:column>
+					
+					<p:column style="width:150" headerText="Usuario" filterStyleClass="mayuscula" filterBy="#{u.login}" 
+						 filterMatchMode="contains" >
+						<h:outputText value="#{u.login}" />
+					</p:column>
+					
+					<p:column  headerText="Agencia" filterBy="#{u.descagencia}" filterStyleClass="mayuscula" filterMatchMode="contains" >
+						<h:outputText value="#{u.descagencia}" />
+					</p:column>
+					
+					<p:column  headerText="Oficina" filterBy="#{u.descoficina}" filterStyleClass="mayuscula" filterMatchMode="contains" >
+						<h:outputText value="#{u.descoficina}" />
+					</p:column>
+										
+					<p:column headerText="Punto de Venta">
+						<h:outputText value="#{u.descpventa}" />
+					</p:column>
+					
+					<p:column style="width:10%" headerText="Email">
+						<h:outputText value="#{u.email}" />
+					</p:column>
+	
+					<p:column style="width:12%" headerText="Fec. Ult. Acceso">
+						<h:outputText value="#{u.fecha_acceso}" rendered="#{u.fecha_acceso != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Estado">
+							<p:commandLink update="@form :msgGeneral" actionListener="#{usuarioMB.cambiarEstado(u)}" > 
+							<h:graphicImage value="#{u.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{u.estado?'Activo':'Bloqueado'}" />
+							</p:commandLink>
+					</p:column>
+
+					<p:column style="width:13%;text-align: center">
+						
+						<p:commandButton title="Editar"   update=":dlgDetNuevo" id="cbtEditar"
+						 oncomplete="dlgNuevo.show();" icon="icon-edit" 
+						 actionListener="#{usuarioMB.newUpdate(u.idusuario)}">
+						 </p:commandButton>
+						 <p:tooltip  for="cbtEditar" value="Editar"/>
+
+						<p:commandButton id="cbtEliminar" title="Eliminar" actionListener="#{usuarioMB.newDelete(u)}"
+							oncomplete="dlgEliminar.show();" icon="icon-delete" />
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+							
+
+						<p:commandButton id="cbtAgPerfil" title="Perfil" action="#{usuarioMB.agregarPerfil(u)}" icon="icon-rol" />
+						<p:tooltip  for="cbtAgPerfil" value="Agregar Perfil"/>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+	
+			
+			<!-- dialogo nuevo usuario -->
+			
+			<p:dialog header="#{usuarioMB.titulo}" widgetVar="dlgNuevo"  appendToBody="true"
+					resizable="false" id="dlgDetNuevo" modal="true">
+					<p:messages id="smsNuevoEdit" showDetail="false" showSummary="true" />
+					
+					<h:form id="formNuevo" style="width:300px;">
+						<h:panelGrid columns="2" width="100%">
+
+							#{"Tipo Documento:"}
+							<p:selectOneMenu value="#{usuarioMB.usuario.idtipodoc}" required="true" requiredMessage="Seleccione un tipo de Documento"
+									style="width:160px">
+								<p:ajax event="change" update=":formNuevo:txtdni" listener="#{usuarioMB.mostrarBox()}"/>
+								<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+								<f:selectItems var="ag" value="#{usuarioMB.listTipDoc}" itemValue="#{ag.idtipodoc}" itemLabel="#{ag.descripcion}" />
+								<p:ajax update="txtdni" listener="#{usuarioMB.setLengthtdoc()}" />   
+							</p:selectOneMenu>
+							
+							#{"Numero:"}
+							<h:panelGroup id="txtdni" style="text-align: left;">
+							    <h:panelGrid columns="1" rendered="#{usuarioMB.mostrarBoxC1}" dir="ltr" border="0" cellspacing="0" cellpadding="0">
+									<p:inputText value="#{usuarioMB.usuario.dni}" maxlength="8"
+										required="true" requiredMessage="Debe ingresar el DNI" dir="rtl">
+										<pe:keyFilter  mask="num"/> 
+									<f:ajax  event="blur"  execute="@this" render="txtLogin" />	 
+									</p:inputText>
+								</h:panelGrid>
+								
+								<h:panelGrid columns="1" rendered="#{usuarioMB.mostrarBoxC2}" dir="ltr" cellspacing="0" cellpadding="0">
+									<p:inputText  value="#{usuarioMB.usuario.dni}" maxlength="20"
+										required="true" requiredMessage="Debe ingresar Carnet Extranjeria" dir="rtl" border="0"> 
+									</p:inputText>
+								</h:panelGrid>
+							</h:panelGroup>
+							#{"Nombre:"}							
+							<p:inputText value="#{usuarioMB.usuario.nombre}" styleClass="mayuscula" maxlength="30">
+							</p:inputText>
+
+							#{"Apellido Paterno:"}
+							<p:inputText value="#{usuarioMB.usuario.apellido_paterno}"
+								required="true" requiredMessage="Debe ingresar el apellido paterno"
+								maxlength="30" styleClass="mayuscula">
+							</p:inputText>
+							
+							#{"Apellido Materno"}
+							<p:inputText value="#{usuarioMB.usuario.apellido_materno}"
+							 maxlength="30" styleClass="mayuscula"/>
+
+							#{"Login:"}
+							<p:inputText id="txtLogin" value="#{usuarioMB.usuario.dni}" maxlength="8" readonly="true" />
+							
+
+							<h:outputLabel value="Password" rendered="#{usuarioMB.showPassword}" />
+							<h:inputText rendered="#{usuarioMB.showPassword}" value="#{usuarioMB.usuario.password}" maxlength="10" required="true" requiredMessage="Escriba una contraseña" />
+
+							#{"Email:"}
+							<p:inputText value="#{usuarioMB.usuario.email}" 
+								validatorMessage="Email invalido"
+								maxlength="30">
+								<f:validateRegex
+									pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+							</p:inputText>
+								
+							#{"Agencia:"}
+							<p:selectOneMenu value="#{usuarioMB.usuario.idagencia}" required="true" requiredMessage="Seleccione una Agencia"
+									style="width:160px">
+								<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+								<f:selectItems var="ag" value="#{usuarioMB.listAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+								<p:ajax update="cmbOfi, cmbPV" listener="#{usuarioMB.getOficinasxAgencia()}" /> 
+							</p:selectOneMenu>
+	
+							#{"Oficina:"}
+							<p:selectOneMenu id="cmbOfi" value="#{usuarioMB.usuario.idoficina}" required="true" requiredMessage="Seleccione una Oficina"
+									style="width:160px">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{usuarioMB.listOficina}" itemValue="#{ag.idOficina}" itemLabel="#{ag.nombre}" />
+								 <p:ajax update="cmbPV" listener="#{usuarioMB.getPventasxOficina()}" /> 
+							</p:selectOneMenu>
+
+							#{"Punto de Ventas:"}
+							<p:selectOneMenu id="cmbPV" value="#{usuarioMB.usuario.idpuntoventa}" required="true" requiredMessage="Seleccione una Punto de Venta"
+									style="width:160px">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{usuarioMB.listpventas}" itemValue="#{ag.idPuntoVenta}" itemLabel="#{ag.descPtventa}" /> 
+							</p:selectOneMenu>
+	
+						</h:panelGrid>						
+						<pe:keyFilter for="txtdni" mask="num"/>						
+						<br/>
+						<p:commandButton value="Guardar"
+							actionListener="#{usuarioMB.registrarUsuario}"
+							update=":formLista :smsNuevoEdit"
+							oncomplete="validarCampos(xhr, status, args)" icon="icon-disk" />
+						
+						<p:commandButton value="Cancelar" type="button" update=":formLista"
+							onclick="dlgNuevo.hide()" icon="icon-cancel" />						
+					</h:form>		
+			</p:dialog>
+
+
+
+			<!-- confirm dialog eliminar -->
+			
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este usuario?" header="Eliminar Integrante"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form id="formEliminar">
+					<p:commandButton value="Eliminar"
+						update=":formLista :msgGeneral @form"
+						actionListener="#{usuarioMB.eliminarUsuario()}"
+						oncomplete="dlgEliminar.hide();dtUsuarios.clearFilters();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" onclick="dlgEliminar.hide()" icon="icon-cancel" />
+				</h:form>
+			</p:confirmDialog>
+		</p:panel>
+		
+		
+		<script>
+			function validarCampos(xhr, status, args) {  
+				if(args.validationFailed) {  
+					jQuery('#dlgDetNuevo').effect("shake", { times:1 }, 100);  
+				} else {  
+					dtUsuarios.clearFilters();
+					//dlgNuevo.hide();  
+				}  
+			}  
+		</script>
+		
+		
+		
+	</ui:define>
+
+</ui:composition>
+</html>

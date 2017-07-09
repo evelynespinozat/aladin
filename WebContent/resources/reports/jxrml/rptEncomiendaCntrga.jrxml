@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptInventarioEncomienda" language="groovy" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eaf5de4b-053f-4cc5-a230-19ed2d5f45d1">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_ORIGEN" class="java.lang.String"/>
+	<parameter name="P_DESTINO" class="java.lang.String"/>
+	<parameter name="P_FSISTEMA" class="java.lang.String"/>
+	<parameter name="P_TOTAL" class="java.lang.String"/>
+	<parameter name="P_ESTADO" class="java.lang.String"/>
+	<field name="comprobante" class="java.lang.String"/>
+	<field name="remitcompleto" class="java.lang.String"/>
+	<field name="direccionEnvio" class="java.lang.String"/>
+	<field name="nroBultos" class="java.lang.Integer"/>
+	<field name="totalCobrado" class="java.math.BigDecimal"/>
+	<field name="tipoDocumento" class="java.lang.String"/>
+	<field name="pesoTotal" class="java.math.BigDecimal"/>
+	<field name="detalle" class="java.lang.String"/>
+	<field name="servicioEntrega" class="java.lang.String"/>
+	<field name="dest1" class="java.lang.String"/>
+	<field name="dest2" class="java.lang.String"/>
+	<field name="fEnvio" class="java.util.Date"/>
+	<field name="desEstado" class="java.lang.String"/>
+	<field name="fRegistro" class="java.util.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="100" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="ec2bd6a8-6e81-4998-b111-70d16d107c68" x="0" y="16" width="300" height="20"/>
+				<textElement>
+					<font size="11" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[ENCOMIENDAS CONTRAENTREGA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="76fa9f90-a46a-4808-9c77-b65f0b2af9e6" x="0" y="46" width="61" height="15"/>
+				<textElement/>
+				<text><![CDATA[Origen:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d372d871-7973-4401-a643-ce797362da06" x="0" y="61" width="61" height="15"/>
+				<textElement/>
+				<text><![CDATA[Destino]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="bca80731-7788-4467-9ac4-0969a82d5c07" x="61" y="61" width="60" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_DESTINO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b455ad2e-27fc-4925-a20b-cd8076ea2a3b" x="0" y="76" width="61" height="15"/>
+				<textElement/>
+				<text><![CDATA[Estado:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="110e6f22-be80-47b1-b922-a03be37658ac" x="300" y="16" width="173" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{P_FSISTEMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="69da3177-80d6-4e21-a412-206fd5295059" x="61" y="46" width="60" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_ORIGEN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0042cace-e622-40d4-a3c1-f8e385891028" x="61" y="76" width="60" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_ESTADO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="5abe41be-9d45-441c-9a38-35b2afadd83c" mode="Opaque" x="61" y="0" width="60" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Documento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1c6e3b69-7132-4eda-bef8-e316f2f560a0" mode="Opaque" x="121" y="0" width="179" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Remitente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e98532cb-9061-42d8-9484-ae70bafd266f" mode="Opaque" x="300" y="0" width="173" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Destinatario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cf646dbb-f879-4f71-af50-a13fc43c4a5d" mode="Opaque" x="473" y="0" width="55" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[F.Envio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f663bede-0101-4a89-a6e1-4a4dac656a8b" mode="Opaque" x="0" y="0" width="61" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tipo Doc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="41408e37-cff5-488b-b49b-93538faf2753" mode="Opaque" x="728" y="0" width="74" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Total por Cobrar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9fc54c45-347d-4b5a-bd48-c609f454b43e" mode="Opaque" x="628" y="0" width="100" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b2b30fcd-91ab-4b5d-8343-079588dc2628" mode="Opaque" x="528" y="0" width="100" height="15" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tipo Entrega]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="935d84f2-e43f-4a36-9d40-c134581e257d" x="0" y="0" width="61" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoDocumento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5e8b3009-e224-487b-9fe6-2766f5df6f4e" x="528" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{servicioEntrega}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="fb672ad3-acdf-4f3b-9da1-8a41e2bda53e" x="728" y="0" width="74" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalCobrado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="df2c411c-2ad8-478d-9497-4241fa1bf346" x="628" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desEstado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="dbfd3a1c-787e-4611-89fe-11c79f0ccf25" x="473" y="0" width="55" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fRegistro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="56b230ac-5800-417f-a4b5-67b9b5b12b6f" x="300" y="0" width="173" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dest1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f1bfbe6c-ab61-4dc6-8e33-e3a6dc1cfda8" x="121" y="0" width="179" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dest1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7082109e-aa26-4ab7-a21e-8931719500e9" x="61" y="0" width="60" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprobante}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="470ad501-6509-41c0-9e65-3e1b0340877e" x="0" y="0" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="fbf7e83f-9551-4dc3-b1dc-88f741822be4" x="61" y="0" width="60" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

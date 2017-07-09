@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Liquidacion por Servicio" url="liquidacionxServicio" /> 
+    				<p:menuitem value="Liquidacion de Bus" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+		<br/>		
+		<p:messages showDetail="false" showSummary="true" id="sms" closable="true"/>		
+	
+		<h:panelGrid columns="8">
+				<p:outputLabel value="Servicio:"></p:outputLabel>
+				<h:outputText value=" #{liquidacionMB.programacion.descServicio}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				<p:outputLabel value="Num. Bus:" style="padding-left:10px"></p:outputLabel>
+				<h:outputText value=" #{liquidacionMB.programacion.flota.numero}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				<p:outputLabel value="Piloto:" style="padding-left:10px"></p:outputLabel>
+				<h:outputText value=" #{liquidacionMB.programacion.nombPiloto}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+				<p:outputLabel value="Copiloto:" style="padding-left:10px"></p:outputLabel>
+				<h:outputText value=" #{liquidacionMB.programacion.nombCopiloto}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+		</h:panelGrid>
+		
+		<p:commandButton value="Nuevo" icon="icon-add" update=":dlgDetNuevo"  
+					oncomplete="dlgNuevo.show();" actionListener="#{liquidacionMB.nuevoDetalle()}" /> 	
+
+		<h:form id="formLista">
+			<p:dataTable id="dtDetalleLiq" widgetVar="dtDetalleLiq" var="det" value="#{liquidacionMB.listaDetalleLiq}" 
+					emptyMessage="No hay Excepciones Disponibles." rowIndexVar="nro" 
+					paginator="true" rows="20"
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Detalle de Liquidacion</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Concepto" >
+						<h:outputText value="#{det.concepto}" />
+					</p:column>
+					
+					<p:column style="width:15%;text-align: center;" headerText="Costo">
+						<h:outputText value="#{det.costo}" />
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Estado">
+							<p:commandLink update="@form :sms" actionListener="#{liquidacionMB.cambiarEstado(det)}" >  
+							<h:graphicImage value="#{det.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{det.estado?'Activo':'Bloqueado'}" />
+							</p:commandLink>
+					</p:column>
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{liquidacionMB.editarDetalle(det)}" 
+										 oncomplete="dlgNuevo.show();" icon="icon-edit"/>
+							
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{liquidacionMB.detalle_liquidacion}" value="#{det}" />
+						</p:commandButton>
+								
+					</p:column>
+
+				</p:dataTable>
+		</h:form>
+	
+		<p:dialog header="Registrar Gasto" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						<h:panelGrid columns="2">
+							#{"Concepto:"}
+							<p:inputText value="#{liquidacionMB.detalle_liquidacion.concepto}" size="28"  required="true" maxlength="50" requiredMessage="Se necesita un concepto" />
+							#{"Costo:"}
+							<p:inputText  style="width:60px" value="#{liquidacionMB.detalle_liquidacion.costo}" required="true" size="5" maxlength="7" requiredMessage="Se necesita una precio" >
+							   <pe:keyFilter mask="num"/>
+							</p:inputText>
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{liquidacionMB.guardarDetalleLiq()}" style="margin-left:90px"
+									 update=":dlgDetNuevo msgNuevo :formLista"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk"/>
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" style="margin-left:5px"/>
+					</h:form>	
+			</p:dialog>
+		
+		<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este detalle de la liquidación?" header="Eliminar Detalle de Liquidacion"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>					
+					<p:commandButton value="Eliminar"
+						update=":formLista:dtDetalleLiq :sms"
+						actionListener="#{liquidacionMB.eliminarDetalle()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+				</h:form>
+			</p:confirmDialog>
+
+	</p:panel>
+	
+	<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+</script>
+
+	</ui:define>
+
+</ui:composition>
+</html>

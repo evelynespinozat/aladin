@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Oficina" url="oficina" /> 
+    				<p:menuitem value="Asociar Oficina - Almacen" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+		
+		<p:messages showDetail="false" showSummary="true" id="msgGeneral" closable="true"/>		
+	
+		<p:panel >	
+		<h:panelGrid columns="4">
+				#{"Agencia:"}
+				<h:outputText value=" #{oficinaAlmacenMB.oficina.desAgencia}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				#{"Oficina:"}
+				<h:outputText value=" #{oficinaAlmacenMB.oficina.nombre}" 
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+		
+		<h:form id="fm">
+		<h:panelGrid columns="2">
+				#{"Almacen:"}
+				<p:selectOneMenu style="width:300px" value="#{oficinaAlmacenMB.oficinaAlmacen.idAlmacen}" required="true" requiredMessage="Seleccione un ALmacen">
+					<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+					<f:selectItems var="a" value="#{oficinaAlmacenMB.listAlmacen}" itemValue="#{a.idAlmacen}" itemLabel="#{a.descripcion}" /> 
+				</p:selectOneMenu>
+
+		</h:panelGrid>
+		
+		<br/>		
+		<!-- toolbar -->
+		
+			<h:panelGrid columns="2">
+				<p:commandButton value="Agregar Almacen a Oficina" icon="icon-add" actionListener="#{oficinaAlmacenMB.addAlmacen()}" update="fm :msgGeneral :frmListaAgP"/>
+			</h:panelGrid>
+		</h:form>		
+			
+		<br/>
+		
+		<h:form id="frmListaAgP">
+					
+			<p:dataTable value="#{oficinaAlmacenMB.listaOficinaAlmacen}" var="o" style="width:750px;FONT-SIZE: 10px;" 
+						 rowIndexVar="nro" >
+    			<f:facet name="header">Oficinas Asignadas del Producto</f:facet>
+    			
+    			<p:column headerText="Nro" >
+    				#{nro+1}
+    			</p:column>
+    					 
+    			<p:column headerText="Almacen">
+    				#{o.desAlmacen}
+    			</p:column>
+    			
+				<p:column headerText="Elim." style="width:10%;text-align: center">
+				<p:commandButton title="Eliminar" oncomplete="confirmation.show();"
+							update=":confirmDialog :msgGeneral" icon="icon-delete">
+				<f:setPropertyActionListener target="#{oficinaAlmacenMB.oficinaAlmacen}" value="#{o}" />
+				</p:commandButton>
+				</p:column>
+
+				</p:dataTable>
+   		</h:form>
+		
+		
+		
+		<p:confirmDialog id="confirmDialog" message="Seguro de eliminar el almacen de oficina"   appendToBody="true"
+             		header="Eliminar Almacen" severity="alert" widgetVar="confirmation">  
+                  
+                  <h:form>
+        			<p:commandButton id="confirm" value="Si" update=":frmListaAgP :msgGeneral :fm" oncomplete="confirmation.hide()"  
+                    				actionListener="#{oficinaAlmacenMB.deleteOficinaxAlmacen()}" /> 
+                    				 
+        			<p:commandButton id="decline" value="No" onclick="confirmation.hide()" hideEffect="explode"  type="button" />   
+                  </h:form>
+    	</p:confirmDialog> 
+				
+
+	</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

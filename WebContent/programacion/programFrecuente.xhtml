@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	<style>
+	.ui-panelgrid tr,
+	.ui-panelgrid td {
+	    border: none;
+	}
+	</style>	
+	<pe:blockUI target=":formLista:dataTable" widgetVar="blockUIWidget">  
+	    <h:panelGrid columns="2">  
+	        <h:graphicImage library="img" name="load.gif"  
+	                        style="margin-right: 12px; vertical-align: middle;"/>  
+	        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+	    </h:panelGrid>  
+	</pe:blockUI> 
+	
+	
+	
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Programacion" url="#" />
+				<p:menuitem value="Programaciones Frecuentes" url="programFrecuente" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			<h4>Consulta de Programaci&oacute;n Frecuente</h4>
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<p:panelGrid id="datareg" style="border: 0px;">
+			 		<p:row>
+			 			<p:column><h:outputLabel value="Origen:" /></p:column>
+			 			<p:column>
+							<p:selectOneMenu id="cmbOrigen"  value="#{programacionMB.progFilter.origen}" style=" width:140px;"
+					        	required="true" requiredMessage="Se necesita un origen"> 
+								<f:selectItem itemLabel="Seleccionar" itemValue="" />
+								<f:selectItems var="o" value="#{programacionMB.listaAgencias}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+								<p:ajax listener="#{programacionMB.listarDestinosxOri()}"  event="change" update="cmbDestino "/>
+							</p:selectOneMenu>
+			 			</p:column>
+			 			<p:column><h:outputLabel value="Destino:" /></p:column>
+			 			<p:column>
+							<p:selectOneMenu id="cmbDestino" value="#{programacionMB.progFilter.destino}" style=" width:150px;"
+								required="true" requiredMessage="Se necesita un destino"> 
+								<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+								<f:selectItems var="d" value="#{programacionMB.listaDestino}" itemValue="#{d.destino}" itemLabel="#{d.desDestino}"/>
+							</p:selectOneMenu>
+			 			</p:column>
+			 			<p:column>
+							<h:outputLabel value="Tipo" /> 
+			 			</p:column>
+			 			<p:column>
+							<p:selectOneMenu id="cmbTipo" value="#{programacionMB.progFilter.idCatServicio}" style=" width:160px;"> 
+								<f:selectItems var="d" value="#{programacionMB.listaCatServicio}" itemValue="#{d.idCatServicio}" itemLabel="#{d.descripcion}"/>
+							</p:selectOneMenu>
+			 			</p:column>
+			 			<p:column>
+							<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{programacionMB.listarProgFrecuente()}" 
+									onstart="blockUIWidget.block()" 
+								    oncomplete="blockUIWidget.unblock()" 
+							 		update=":formLista :sms"	style=" width:160px;"/>
+			 			</p:column>
+			 		</p:row>
+			 		<p:row>
+			 			<p:column colspan="7"><h:outputText value="Intervalo de fechas de salida:" style="font-size:14px;font-weight:bold;"/></p:column>
+			 		</p:row>
+			 		<p:row>
+			 			<p:column><h:outputLabel value="F.Inicio "  /> </p:column>
+			 			<p:column>
+							<p:calendar style="width:200px" value="#{programacionMB.progFilter.fecInicio}" pattern="dd/MM/yyyy" 
+								locale="es" navigator="true" required="true" requiredMessage="Se necesita una fecha de inicio">
+								<p:ajax update="calFfin" event="dateSelect"/>
+							</p:calendar>
+			 			</p:column>
+			 			<p:column><h:outputLabel value="F.Fin" /></p:column>
+			 			<p:column>
+							<p:calendar id="calFfin" style="width:200px;" mindate="#{programacionMB.progFilter.fecInicio}" value="#{programacionMB.progFilter.fecFin}" pattern="dd/MM/yyyy" locale="es"
+									  navigator="true"  required="true" requiredMessage="Se necesita una fecha final" /> 
+			 			</p:column>
+			 			<p:column></p:column>
+			 			<p:column></p:column>
+			 			<p:column></p:column>
+			 		</p:row>
+				</p:panelGrid>
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="l" value="#{programacionMB.listaProgramacion}" filteredValue="#{programacionMB.listaProgramacionFilter}"
+					paginator="true" rowIndexVar="nro" 
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Programacion Frecuente</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:200px;" headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{l.descServicio}" filterMatchMode="contains">
+						<h:outputText value="#{l.descServicio}" />
+					</p:column>
+					
+					<p:column style="width:80px" headerText="Fecha Salida">
+						<h:outputText value="#{l.fSalida}" rendered="#{l.fSalida != null}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:40px" headerText="Hora Salida">
+						<h:outputText value="#{l.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:40px" headerText="Horas de Viaje">
+						<h:outputText value="#{l.horasViaje}" />
+					</p:column>
+					
+					<p:column style="width:40px" headerText="Ruta Comp.">
+						<h:outputText value="#{l.desRutaCompartida}" />
+					</p:column>
+					
+					<p:column style="width:30px" headerText="Precio Piso 1">
+						<h:outputText value="#{l.precioPiso1}" />
+					</p:column>
+					
+					<p:column style="width:30px"  headerText="Precio Piso 2">
+						<h:outputText value="#{l.precioPiso2}" />
+					</p:column>
+					
+					<p:column style="width:30px"  headerText="Frecuencia Sabados">
+						<h:outputText value="#{l.frecuenteSabado eq '1'?'SI':'NO'}" />
+					</p:column>
+
+					<p:column  style="width:200px" headerText="Generado por:">
+						<h:graphicImage value="/resources/img/#{l.icono}.png"/>
+						<p:spacer width="3px"/> 
+						<h:outputText value="#{l.descEstado}"/>
+					</p:column>
+	
+				</p:dataTable>
+			</h:form>
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

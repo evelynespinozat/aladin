@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptOficina" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ddad19fb-63fb-4958-a8ba-952f624b224c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_TOTAL" class="java.lang.String"/>
+	<parameter name="P_FENVIO" class="java.lang.String"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<field name="desAgencia" class="java.lang.String"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="idOficina" class="java.lang.Integer"/>
+	<variable name="SUMA_ID" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{idOficina}]]></variableExpression>
+	</variable>
+	<variable name="SUMA_ID_PARES" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[($F{idOficina}%2==0)?$F{idOficina}:0]]></variableExpression>
+	</variable>
+	<group name="JUANCITO">
+		<groupExpression><![CDATA[$F{desAgencia}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<staticText>
+					<reportElement uuid="220d3503-51a8-4ba2-a0ca-9ffa81308dd7" mode="Opaque" x="126" y="30" width="78" height="20" backcolor="#CCCCCC"/>
+					<textElement/>
+					<text><![CDATA[ID Oficina]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="585e5d79-a159-451c-9811-1493c23ffee3" mode="Opaque" x="245" y="30" width="127" height="20" backcolor="#CCCCCC"/>
+					<textElement/>
+					<text><![CDATA[Oficina]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="87f0ed97-8439-492a-83f2-a70408cade77" mode="Opaque" x="408" y="30" width="125" height="20" backcolor="#CCCCCC"/>
+					<textElement/>
+					<text><![CDATA[Direccion]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="095b3c67-1bbb-4ace-81d2-83bb9ae5578b" x="47" y="0" width="145" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{desAgencia}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="84" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="1417de66-b7d0-4f05-a7f9-93a5826be7e5" x="365" y="18" width="43" height="20"/>
+				<textElement/>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1632552b-6922-4dde-9b63-df77d53d683f" x="423" y="18" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8e30d969-b936-4051-b3dd-440a18cb85f3" x="369" y="54" width="39" height="20"/>
+				<textElement/>
+				<text><![CDATA[FECHA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="ce26a6bf-dc7c-44b4-818d-dd6ad286a5bd" x="423" y="54" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FENVIO}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="591807fd-3b75-4e48-8a6d-6c7a41fdccb6" x="27" y="18" width="187" height="50"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="d8ca66a1-427b-4fad-888a-dea46db1a800" x="408" y="0" width="125" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7bfdea88-d7c0-440f-8a16-5eb1b02aefb2" x="245" y="0" width="145" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="33fa6f3f-651a-48fa-9473-636492bfa260" x="0" y="0" width="47" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="85e0ea66-8922-41e2-8a1f-e364ab61d1ae" x="126" y="0" width="78" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{idOficina}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="27f71823-ffd5-4bd2-b2be-739702affe2d" x="469" y="34" width="41" height="20"/>
+				<textElement/>
+				<text><![CDATA[Pagina]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2e3f6986-3e33-48b4-813f-276538c7d16d" x="510" y="34" width="45" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="49">
+			<textField>
+				<reportElement uuid="b1edf224-9fd0-4232-a011-11209f14af28" x="47" y="0" width="78" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{SUMA_ID}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="85e4da88-f942-4ef4-88f7-8d8e230fcc14" x="0" y="0" width="37" height="20"/>
+				<textElement/>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0c84c550-996b-4c85-9da3-9cfb0d4cd525" x="0" y="29" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[Total Pares:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="bfc8cb90-0398-4e19-a7bf-51c65bddaa5c" x="73" y="29" width="119" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{SUMA_ID_PARES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

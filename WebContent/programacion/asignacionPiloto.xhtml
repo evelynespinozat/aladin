@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Asignacion Piloto y Copiloto" url="#" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+				<!-- listado de flotas -->
+			<h:form id="flota">
+				<p:dataTable widgetVar="dtFlota" var="p" value="#{asignacionPilotoMB.listaBuses}"  filteredValue="#{asignacionPilotoMB.listaBusesFilter}" 
+					emptyMessage="No hay Flota Vehicular Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					
+					
+					<f:facet name="header"> 
+					
+					<h:panelGrid columns="4" style="width:450px;margin:auto;" >
+							
+							<span  style="color:blue;" >Lista Flota Vehicular y Asignacion de Piltos y Copilotos</span>
+								
+								<h:panelGroup>
+									<h:outputLink id="grow" value="#">
+								    	<h:graphicImage id="imgAyuda" library="img" name="icon-help.png" />
+								    </h:outputLink>
+								    <p:tooltip for="imgAyuda"  showEffect="clip" hideEffect="explode" >
+								     	<h:outputText value="Si no visualiza la flota buscada en el listado," />
+								     	<br/>
+								     	<h:outputText value="primero debera crear una nueva flota" />
+								     </p:tooltip>
+								</h:panelGroup>
+								
+								<p:spacer  width="60" height="1" />
+								
+								<h:commandLink  style="color:red;"  value="Crear nueva Flota" action="pretty:flotaVehicular" />
+							</h:panelGrid>
+
+					</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{p.descClase}" filterMatchMode="contains" filterStyle="width:60px;" >
+						<h:outputText value="#{p.descClase}" />
+					</p:column>
+					
+					<p:column style="width:50;text-align: center;" headerText="Numero" filterBy="#{p.numero}" filterMatchMode="contains" filterStyle="width:50px;" >
+						<h:outputText value="#{p.numero}" />
+					</p:column>
+					
+					<p:column style="width:7%;text-align: center;" headerText="Placa">
+						<h:outputText value="#{p.placa}" style="color:#D914E8;font-weight:bold;font-size:13px;" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Marca" filterStyleClass="mayuscula" filterBy="#{p.marca}" filterMatchMode="contains" filterStyle="width:60px;">
+						<h:outputText value="#{p.marca}" />
+					</p:column>
+				
+					<p:column style="width:7%;text-align: center;" headerText="Modelo">
+						<h:outputText value="#{p.modelo}" />
+					</p:column>
+					
+					<p:column style="width:7%;text-align: center;" headerText="Fabricacion">
+						<h:outputText value="#{p.fabricacion}" />
+					</p:column>
+					
+					<p:column style="width:12%;text-align: center;" headerText="Piloto">
+						<h:outputText value="#{empty p.nombPiloto ? 'Sin Asignar':p.nombPiloto}" style="color:#{empty p.nombPiloto ? 'red':'blue'};" />
+					</p:column>
+					
+					<p:column style="width:12%;text-align: center;" headerText="Copiloto">
+						<h:outputText value="#{empty p.nombCopiloto ? 'Sin Asignar':p.nombCopiloto}"  style="color:#{empty p.nombCopiloto ? 'red':'blue'};"/>
+					</p:column>
+
+					<ui:remove>
+					<p:column style="width:5%;text-align: center;" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{asignacionPilotoMB.cambiarEstado(p)}" >  
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					</ui:remove>
+					
+					<p:column headerText="Acciones" style="width:40%;text-align: center">
+					
+						<p:commandButton title="Asignar Piloto" value="Piloto"  update=":dlgDetAsignarPiloto" 
+							actionListener="#{asignacionPilotoMB.setearFlota(p)}"
+										 oncomplete="dlgAsignarPiloto.show(); " icon="icon-piloto" style="width:55px"> 
+							
+						</p:commandButton>
+						
+						<p:commandButton title="Asignar Copiloto" value="Copiloto"  update=":dlgDetAsignarCoPiloto" 
+							actionListener="#{asignacionPilotoMB.setearFlota(p)}"
+										 oncomplete="dlgAsignarCoPiloto.show(); " icon="icon-piloto" style="width:68px"> 
+							
+						</p:commandButton>
+						
+						<ui:remove>
+						<p:commandButton title="Historial" value="Historial" icon="icon-historialpiloto" update=":dlgDetHistorial" 
+							actionListener="#{asignacionPilotoMB.setearFlota(p)}"
+										 oncomplete="dlgHistorial.show(); "  style="width:65px"> 				
+						</p:commandButton>
+						</ui:remove>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos     ################ -->
+			
+			<!-- dialogo Asignar Piloto -->
+		
+			<p:dialog header="Asignar Piloto" widgetVar="dlgAsignarPiloto" appendToBody="true"
+					  resizable="false" id="dlgDetAsignarPiloto" modal="true">
+					
+					<h:form id="formAsig">
+						<p:messages showDetail="false" showSummary="true" id="msgAsignar" closable="true"/>
+						<p:panel>
+							<h:panelGrid columns="4">
+							
+								#{"Bus:"}
+								<p:outputLabel value="#{asignacionPilotoMB.bus.numero}" style="margin-left:20px;font-weight:bold;color:red;font-size:14px;"></p:outputLabel>
+								
+								#{"Servicio:"}
+								<p:outputLabel value="#{asignacionPilotoMB.bus.descClase}" style="margin-left:20px;font-weight:bold;color:red;font-size:14px;"></p:outputLabel>
+							</h:panelGrid>
+						</p:panel>
+						<br/>
+							
+								<p:dataTable widgetVar="dtPiloto" var="p" value="#{asignacionPilotoMB.listaPilotos}" filteredValue="#{pilotoMB.listaFiltroPiloto}"  
+									emptyMessage="No hay Pilotos Disponibles." rowIndexVar="nro" 
+									paginator="true"
+									rows="10" paginatorPosition="bottom" 
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									rowsPerPageTemplate="10,20,30"
+									style="FONT-SIZE: 10px; ">
+									<f:facet name="header">Lista de Pilotos  aun no asignados</f:facet>
+									
+									<p:column headerText="Orden" width="25" style="width:10px" >
+										#{nro+1}
+									</p:column>
+
+									<p:column style="width:100px;text-align: center;" headerText="Apellidos" filterStyleClass="mayuscula" filterBy="#{p.apellidoPaterno}  #{p.apellidoMaterno}" filterMatchMode="contains" filterStyle="width:100px;" >
+										<h:outputText value="#{p.apellidoPaterno}  #{p.apellidoMaterno}" />
+									</p:column>
+									
+									<p:column style="width:100px" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{p.nombres}" filterMatchMode="contains" filterStyle="width:100px;" >
+										<h:outputText value="#{p.nombres}" />
+									</p:column>
+									
+									<p:column style="width:100px;text-align: center;" headerText="DNI" filterBy="#{p.dNI}" filterMatchMode="contains" filterStyle="width:100px;">
+										<h:outputText value="#{p.dNI}" />
+									</p:column>
+				
+									<p:column headerText="Asignar" style="width:50px;text-align: center">
+										<p:commandButton value="Asignar" title="Asignar" update=":flota :formAsig:msgAsignar" 
+										actionListener="#{asignacionPilotoMB.guardarPiloto(p)}" />
+									</p:column>
+				
+								</p:dataTable>
+						<br/>
+		 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgAsignarPiloto.hide();"  icon="icon-cancel" />
+						
+					</h:form>
+			</p:dialog>
+			
+			<p:dialog header="Asignar CoPiloto" widgetVar="dlgAsignarCoPiloto" appendToBody="true"
+					  resizable="false" id="dlgDetAsignarCoPiloto" modal="true">
+					
+					<h:form id="formAsigCo">
+						<p:messages showDetail="false" showSummary="true" id="msgAsignar" closable="true"/>
+						<p:panel>
+							<h:panelGrid columns="4">
+							
+								#{"Bus:"}
+								<p:outputLabel value="#{asignacionPilotoMB.bus.numero}" style="margin-left:20px"></p:outputLabel>
+								
+								#{"Servicio:"}
+								<p:outputLabel value="#{asignacionPilotoMB.bus.descClase}" style="margin-left:20px"></p:outputLabel>
+							</h:panelGrid>
+						</p:panel>
+						<br/>
+								<p:dataTable widgetVar="dtCoPiloto" var="p" value="#{asignacionPilotoMB.listaCoPilotos}" filteredValue="#{pilotoMB.listaFiltroPiloto}"  
+									emptyMessage="No hay Pilotos Disponibles." rowIndexVar="nro" 
+									paginator="true"
+									rows="10" paginatorPosition="bottom" 
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									rowsPerPageTemplate="10,20,30"
+									style="FONT-SIZE: 10px; ">
+									<f:facet name="header">Lista Pilotos</f:facet>
+									
+									<p:column headerText="Orden" width="25" style="width:10px" >
+										#{nro+1}
+									</p:column>
+									
+									
+									<p:column style="width:100px;text-align: center;" headerText="Apellidos" filterStyleClass="mayuscula" filterBy="#{p.apellidoPaterno}  #{p.apellidoMaterno}" filterMatchMode="contains" filterStyle="width:100px;" >
+										<h:outputText value="#{p.apellidoPaterno}  #{p.apellidoMaterno}" />
+									</p:column>
+									
+									<p:column style="width:100px" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{p.nombres}" filterMatchMode="contains" filterStyle="width:100px;" >
+										<h:outputText value="#{p.nombres}" />
+									</p:column>
+									
+									<p:column style="width:100px;text-align: center;" headerText="DNI" filterBy="#{p.dNI}" filterMatchMode="contains" filterStyle="width:100px;">
+										<h:outputText value="#{p.dNI}" />
+									</p:column>
+				
+									<p:column headerText="Asignar" style="width:50px;text-align: center">
+										<p:commandButton value="Asignar" title="Asignar" update=":flota :formAsigCo:msgAsignar" actionListener="#{asignacionPilotoMB.guardarCopiloto(p)}" />
+									</p:column>
+				
+								</p:dataTable>
+						<br/>
+		 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgAsignarCoPiloto.hide();"  icon="icon-cancel" />
+						
+					</h:form>
+			</p:dialog>
+			
+			
+			<p:dialog header="Historial de Bus: #{asignacionPilotoMB.bus.numero}" widgetVar="dlgHistorial" appendToBody="true"
+					  resizable="false" id="dlgDetHistorial" modal="true">
+					  
+					<h:form>
+						<p:outputLabel value="Fecha Inicio: " style="margin-left:5px"></p:outputLabel>
+						<p:calendar value="#{asignacionPilotoMB.fechaInicio}" pattern="dd/MM/yyyy"  mode="popup" showOn="button" locale="es" 
+							 	    navigator="true"  required="true" requiredMessage="Se necesita una fecha de inicio" />
+						
+						<p:outputLabel value="Fecha Fin: " style="margin-left:20px"></p:outputLabel>
+						<p:calendar value="#{asignacionPilotoMB.fechaFin}" pattern="dd/MM/yyyy" mode="popup" showOn="button" locale="es"
+							 	    navigator="true"  required="true" requiredMessage="Se necesita una fecha de Fin" />
+						
+						<p:commandButton value="Consultar" actionListener="#{asignacionPilotoMB.obtenerHistorial()}" update=":formHistorial" style="margin-left:20px"/> 	     
+					</h:form>					
+					<h:form id="formHistorial">
+					
+						<p:dataTable widgetVar="dtHistorial" var="p" value="#{asignacionPilotoMB.listaHistorial}"
+							emptyMessage="No hay Historial para este bus." rowIndexVar="nro" 
+							paginator="true"
+							rows="10" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20,30"
+							style="FONT-SIZE: 10px; margin-top:10px">
+							<f:facet name="header">Historial de Bus</f:facet>
+					
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:15%;text-align: center;" headerText="Piloto Asignado"  filterStyleClass="mayuscula"
+								filterBy="#{p.nombPiloto}" filterMatchMode="contains" filterStyle="width:60px;">
+								<h:outputText value="#{p.nombPiloto}" />
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Copiloto Asignado"  filterStyleClass="mayuscula"
+								filterBy="#{p.nombCopiloto}" filterMatchMode="contains" filterStyle="width:60px;">
+								<h:outputText value="#{p.nombCopiloto}" />
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Fecha" >
+								<h:outputText value="#{p.fecha}" >
+									<f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</h:form>
+					
+			</p:dialog>
+
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetAsignar').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				dlgAsignar.hide();
+				//location.reload(true); 
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

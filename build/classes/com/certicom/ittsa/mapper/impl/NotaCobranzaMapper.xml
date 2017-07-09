@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.NotaCobranzaMapper">
+
+<resultMap id="notaCobranzaResult" type="com.certicom.ittsa.domain.NotaCobranza">
+	<id column="IdNotaCobranza" property="idNotaCobranza"/>
+	<result column="SerieNotaCobranza" property="serieNotaCobranza"/>
+	<result column="NumeroNotaCobranza" property="numeroNotaCobranza"/>
+	<result column="FRegistro" property="fRegistro"/>
+	<result column="FEmision" property="fEmision"/>
+	<result column="IdOrigen" property="idOrigen"/>
+	<result column="IdDestino" property="idDestino"/>
+	<result column="IdEncomienda" property="idEncomienda"/>
+	<result column="Estado" property="estado"/>
+</resultMap>
+
+</mapper>	

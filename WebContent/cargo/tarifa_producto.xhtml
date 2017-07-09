@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Tarifa de Productos para Encomiendas" url="tarifa_productos" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Producto" icon="icon-add" update=":dlgDetNuevo" 
+					oncomplete="dlgNuevo.show();" actionListener="#{tarifa_productoMB.nuevoTarifa_Producto()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaTarifaGiro">
+			<br/>
+				<p:dataTable id="dtAgencias" widgetVar="dtAgencias2" var="a" value="#{tarifa_productoMB.listaAgencias}" 
+					emptyMessage="No existen agencias registradas." rowIndexVar="nro"  filteredValue="#{distritoMB.listaAgenciasFilter}"
+					paginator="true" rows="20"
+					style="FONT-SIZE: 10px; ">
+					
+					<p:ajax event="rowToggle" listener="#{tarifa_productoMB.onRowToggle}" />
+					
+					<f:facet name="header">Lista de Agencias</f:facet>
+					
+					<p:column style="width:1%">  
+			            <p:rowToggler />  
+			        </p:column> 
+					
+					<p:column style="width:15%;text-align: cente;" headerText="Oficina Origen" filterStyleClass="mayuscula" filterBy="#{a.descripcion}"  filterStyle="width:150px;" filterMatchMode="contains">
+						<h:outputText value="#{a.descripcion}" />
+					</p:column>
+					
+					<p:rowExpansion>
+						<p:dataTable id="dtTarifaGiros" widgetVar="dtTarifaGiros2" var="t" value="#{tarifa_productoMB.mapAgenciaListaTarifaProducto.get(a.idagencia)}" 
+									filteredValue="#{tarifa_productoMB.listaFiltroTarifa_Producto}"  paginatorPosition="bottom" 
+									emptyMessage="No existen tarifa de productos para encomiendas registradas." rowIndexVar="nro" 
+									paginator="true" rows="20" style="FONT-SIZE: 10px; ">
+															
+						<f:facet name="header">Lista de Tarifas de Productos para Encomiendas</f:facet>
+						
+						<p:column style="width:40%;text-align: left;" headerText="Descripcion">
+							<h:outputText value="#{t.descripcion}" />
+						</p:column>
+						
+						
+						<p:column style="width:15%;text-align: right;" headerText="Precio Envio">
+							<h:outputText value="S/. #{t.precioEnvio}" />
+						</p:column>
+						
+						<p:column style="width:15%;text-align: right;" headerText="Precio Embalaje">
+							<h:outputText value="S/. #{t.precioEmbalaje}" />
+						</p:column>
+						
+						<p:column style="width:15%;text-align: right;" headerText="Peso">
+							<h:outputText value="#{t.peso} Kg" />
+						</p:column>
+						
+
+						<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+						
+							<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{tarifa_productoMB.editarTarifa_Producto(t)}"
+											 oncomplete="dlgNuevo.show();" icon="icon-edit"/>
+								
+	
+							<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+								    <f:setPropertyActionListener target="#{tarifa_productoMB.tarifa_producto}" value="#{t}" />
+							</p:commandButton>
+									
+						</p:column>
+
+				</p:dataTable>
+					</p:rowExpansion>  
+					
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{tarifa_productoMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+								
+							#{"Agencia:"}
+							<p:selectOneMenu style="width:150px" value="#{tarifa_productoMB.tarifa_producto.idAgencia}"
+								required="true" requiredMessage="Seleccione origen.">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{tarifa_productoMB.listaAgencias}" 
+									itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+												
+							#{"Descripcion:"}
+							<p:inputTextarea  style="width:160px" value="#{tarifa_productoMB.tarifa_producto.descripcion}"  styleClass="mayuscula" required="true" requiredMessage="Se necesita una descripción." />
+							
+							#{"Precio Envio:"}
+							<p:inputText  id="precioEnvio" style="width:60px" value="#{tarifa_productoMB.tarifa_producto.precioEnvio}"  required="true" requiredMessage="Se necesita un costo de envío." dir="rtl"  >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Precio Embalaje:"}
+							<p:inputText  id="precioEmbalaje" style="width:60px" value="#{tarifa_productoMB.tarifa_producto.precioEmbalaje}"  required="true" requiredMessage="Se necesita un costo de embalaje." dir="rtl" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Peso:"}
+							<p:inputText  id="peso" style="width:60px" value="#{tarifa_productoMB.tarifa_producto.peso}"  required="true" requiredMessage="Se necesita un peso para el producto." dir="rtl" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>					
+						
+						</h:panelGrid>
+						<pe:keyFilter for="precioEnvio" mask="num"  />
+						<pe:keyFilter for="precioEmbalaje" mask="num"/> 
+						<pe:keyFilter for="peso" mask="num"/> 
+						
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{tarifa_productoMB.guardarTarifa_Producto()}" style="margin-left:90px" 
+									 update="msgNuevo :formListaTarifaGiro msgNuevo"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk"/>
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" style="margin-left:5px"/>
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Esta seguro que desea eliminar esta tarifa de giro?" header="Eliminar Tarifa de Giro"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					<p:commandButton value="Eliminar"
+						update=":formListaTarifaGiro :sms"
+						actionListener="#{tarifa_productoMB.eliminarTarifa_Producto()}" 
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+	</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

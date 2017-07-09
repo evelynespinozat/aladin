@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Proveedores" url="proveedorMan" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Proveedor" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{proveedorManMB.nuevaProveedor()}" />
+
+				</p:toolbarGroup>
+			</h:form>
+			
+				
+			<h:form id="formListaProveedor">
+				<p:dataTable widgetVar="dtProveedor" var="p" value="#{proveedorManMB.listaProveedores}" filteredValue="#{proveedorManMB.listaFiltroProveedores}"  
+					emptyMessage="No hay Proveedores Disponibles ." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Proveedores</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:50px" headerText="RUC" filterBy="#{p.RUC}" filterMatchMode="contains" >
+						<h:outputText value="#{p.RUC}" />
+					</p:column>
+					
+					<p:column style="width:200px;text-align: center;" headerText="RazonSocial" filterStyleClass="mayuscula" filterBy="#{p.razonSocial}" filterMatchMode="contains">
+						<h:outputText value="#{p.razonSocial}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Direccion">
+						<h:outputText value="#{p.direccion}" />
+					</p:column>
+				
+					<p:column style="width:80px;text-align: center;" headerText="Telefono">
+						<h:outputText value="#{p.telefono}" />
+					</p:column>
+					
+					<p:column style="width:80px;text-align: center;" headerText="Email">
+						<h:outputText value="#{p.email}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Contacto">
+						<h:outputText value="#{p.contacto}" />
+					</p:column>
+					<p:column style="width:50px;text-align: center;" headerText="Tel Contacto">
+						<h:outputText value="#{p.telContacto}" />
+					</p:column>
+
+					<p:column style="width:200px;text-align: center;" headerText="Ubigeo">
+						<h:outputText value="#{p.desUbigeo}" />
+					</p:column>
+
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{proveedorManMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					<p:column headerText="Editar/Elim./Asociar/Ver Prod." style="width:12%;text-align: center">
+					
+						<p:commandButton title="Editar"  update=":dlgDetNuevo" actionListener="#{proveedorManMB.editarProveedor(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+							
+						</p:commandButton>
+
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{proveedorManMB.proveedor}" value="#{p}" />
+						</p:commandButton>
+
+						<p:commandButton title="Asignar a Agencia" action="#{proveedorManMB.asociarOficina(p)}" icon="icon-asociarproveedoragencia"/>
+						
+						<p:commandButton title="Ver productos"  action="#{proveedorManMB.consultarProductos(p)}"  icon="icon-search"/>
+							
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{proveedorManMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"RUC:"}
+							<p:inputMask style="width:200px" value="#{proveedorManMB.proveedor.RUC}" required="true" mask="99999999999" requiredMessage="Se necesita un RUC" dir="rtl" />
+							
+							#{"Razon Social:"}
+							<p:inputText style="width:200px;text-transform: uppercase" value="#{proveedorManMB.proveedor.razonSocial}" required="true" requiredMessage="Se necesita una razon social" />
+							
+							#{"Email:"}
+							<p:inputText style="width:200px" value="#{proveedorManMB.proveedor.email}" maxlength="50" required="true" validatorMessage="Formato de email inválido" requiredMessage="Se necesita un email" >
+								<f:validateRegex 
+                                    pattern="^\s*|([_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,}))$" />
+							</p:inputText>
+
+							 #{"Departamento:"}						
+							<p:selectOneMenu style="width:150px" value="#{proveedorManMB.sdepartamento}" required="true" requiredMessage="Seleccione un Departamento">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{proveedorManMB.listaDepartamentos}" itemValue="#{ag.sdepartamento}" itemLabel="#{ag.sdepartamento}" /> 
+										<p:ajax update="cboProvincias" listener="#{proveedorManMB.listarProvincias()}"  event="change"/> 
+							</p:selectOneMenu>
+									
+							#{"Provincia:"}						
+							<p:selectOneMenu id="cboProvincias" style="width:150px" value="#{proveedorManMB.sprovincia}" required="true" requiredMessage="Seleccione una Provincia">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{proveedorManMB.listaProvincias}" itemValue="#{ag.sprovincia}" itemLabel="#{ag.sprovincia}" /> 
+										<p:ajax update="cboDistritos" listener="#{proveedorManMB.listarDistritos()}"  event="change"/> 
+							</p:selectOneMenu>
+									
+							#{"Distritos:"}						
+							<p:selectOneMenu id="cboDistritos" style="width:150px" value="#{proveedorManMB.proveedor.codUbigeo}" required="true" requiredMessage="Seleccione un Distrito">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{proveedorManMB.listaDistritos}" itemValue="#{ag.sid_ubigeo}" itemLabel="#{ag.sdistrito}" /> 
+							</p:selectOneMenu>
+
+							#{"Direccion:"}
+							<p:inputText style="width:200px;text-transform: uppercase" value="#{proveedorManMB.proveedor.direccion}" required="true" maxlength="50" requiredMessage="Se necesita una direccion" />
+							
+							#{"Telefono:"}
+							<p:inputText style="width:200px" value="#{proveedorManMB.proveedor.telefono}" maxlength="15" required="true" requiredMessage="Se necesita un telefono" dir="rtl" >
+								<pe:keyFilter  mask="num"/>  
+							</p:inputText>
+
+							#{"Contacto:"}
+							<p:inputText style="width:200px;text-transform: uppercase" value="#{proveedorManMB.proveedor.contacto}" required="true" maxlength="50" requiredMessage="Ingrese los datos del contacto" />
+							
+							#{"Tel Cont.:"}
+							<p:inputText style="width:200px" value="#{proveedorManMB.proveedor.telContacto}" maxlength="9" required="true" requiredMessage="Ingrese el telefono del contacto" dir="rtl" >
+								<pe:keyFilter  mask="num"/>  
+							</p:inputText>
+
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{proveedorManMB.guardarProveedor()}"
+									 update=":formListaProveedor msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar este proveedor?" header="Eliminar Proveedor"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Proveedor: <h:outputText value="#{proveedorManMB.proveedor.razonSocial}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaProveedor :sms"
+						actionListener="#{proveedorManMB.eliminarProveedor()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede eliminar este proveedor porque tiene autopartes asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

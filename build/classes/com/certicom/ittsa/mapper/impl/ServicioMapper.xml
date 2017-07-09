@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ServicioMapper">
+
+	<resultMap id="ServicioResult"
+		type="com.certicom.ittsa.domain.Servicio">
+		
+		<id column="IdServicio" property="IdServicio" />
+		<result column="IdClase" property="IdClase" />
+		<result column="Descripcion" property="Descripcion" />
+		<result column="Precio1" property="Precio1" />
+		<result column="Precio2" property="Precio2" />
+		<result column="Origen" property="Origen" />
+		<result column="desOrigen" property="desOrigen" />
+		<result column="desDestino" property="desDestino" />
+		<result column="Destino" property="Destino" />
+		<result column="HSalida" property="HSalida" />
+		<result column="HorasViaje" property="HorasViaje" />
+		<result column="HLlegada" property="HLlegada" />
+		<result column="Hora24" property="Hora24" />
+		<result column="Estado" property="Estado" />
+		<result column="TipoFrecuencia" property="TipoFrecuencia" />
+		<result column="idRutaDestino" property="idRutaDestino" />
+		<result column="FRegistro" property="FRegistro" />
+		<result column="FrecuenteSabado" property="FrecuenteSabado" />
+		<result column="DescripcionClase" property="DescripcionClase" />
+		<result column="RutaCompartida" property="RutaCompartida"/>
+		<result column="IntCorre" property="IntCorre"/>
+		<result column="GradoServ" property="GradoServ"/>
+		<result column="rutaCompEnCaliente" property="rutaCompEnCaliente"/>
+		
+		
+	</resultMap>
+	<!--  
+	<select id="findByOrigenDestino" resultMap="ServicioResult"
+		parameterType="int">
+		
+		select serv.IdServicio,serv.IdClase,serv.Descripcion,serv.Precio1,serv.Precio2,serv.Origen,serv.Destino,
+		serv.HSalida,serv.HorasViaje,serv.HLlegada,serv.Hora24,serv.Estado,serv.TipoFrecuencia,serv.idRutaDestino,
+		serv.FRegistro,serv.FrecuenteSabado,csr.Descripcion DescripcionClase
+		from t_servicio serv, t_clase cls,t_categoriaservicio csr  
+		where origen = #{Origen} and destino = #{Destino} and
+		serv.idclase=cls.idclase and
+		cls.idcatservicio=csr.idcatservicio
+	</select>
+-->
+
+<!--   <select id="obtenerEnlaces" resultMap="ServicioResult" parameterType="com.certicom.ittsa.domain.Servicio"> -->
+<!--   		SELECT DISTINCT s.Descripcion, s.IdServicio , s.HSalida, s.Hora24, a.Descripcion as desOrigen, a2.Descripcion as desDestino  -->
+<!--   		FROM (t_servicio s inner join t_agencia a on s.Origen = a.Idagencia)  -->
+<!--   		inner join t_agencia a2 on s.Destino = a2.Idagencia  -->
+<!--   		WHERE (s.Origen &gt;&lt; #{Origen}  -->
+<!--   		AND s.Destino = #{Destino})  -->
+<!--   		AND s.IdClase = #{IdClase}  -->
+<!--   		AND s.idRutaDestino = #{idRutaDestino}  -->
+<!--   		AND s.Hora24 &lt;  #{Hora24} ORDER BY Hora24 -->
+<!--   </select> -->
+
+	  <select id="obtenerServicioporClase" resultMap="ServicioResult" parameterType="com.certicom.ittsa.domain.Servicio">
+	  
+	  select max(s.IdServicio) as IdServicio, s.IdClase, s.Descripcion, s.Precio1, s.Precio2, s.Origen, s.Destino, a.Descripcion as desOrigen, a2.Descripcion as desDestino, s.HSalida, s.RutaCompartida, s.IntCorre    
+	  from (t_servicio s inner join t_agencia a on a.Idagencia = s.Origen) 
+	  						   inner join t_agencia a2 on a2.Idagencia = s.Destino 
+	  where s.IdClase = #{idclase} 
+	  and s.GradoServ = 1 
+	  group by s.IdClase, s.Descripcion, s.Precio1, s.Precio2, s.Origen, s.Destino,  a.Descripcion, a2.Descripcion, s.HSalida, s.RutaCompartida, s.IntCorre   
+	  
+<!-- 	  		select s.IdServicio, s.IdClase, s.Descripcion, s.Precio1, s.Precio2, s.Origen, s.Destino, s.HSalida, s.HorasViaje, s.HLlegada, s.Hora24, s.Estado, a.Descripcion as desOrigen, a2.Descripcion as desDestino   -->
+<!-- 			from (t_servicio s inner join t_agencia a on s.Origen = a.Idagencia)  -->
+<!-- 			inner join t_agencia a2 on s.Destino = a2.Idagencia  -->
+<!-- 			where IdClase = #{idclase} and s.Estado = 1 -->
+	  </select>
+	  
+	  <select id="obtenerServicioporClaseDemanda" resultMap="ServicioResult" parameterType="com.certicom.ittsa.domain.Servicio">
+	  
+	  select max(s.IdServicio) as IdServicio, s.IdClase, s.Descripcion, s.Precio1, s.Precio2, s.Origen, s.Destino, a.Descripcion as desOrigen, a2.Descripcion as desDestino, s.HSalida, s.RutaCompartida, s.IntCorre    
+	  from (t_servicio s inner join t_agencia a on a.Idagencia = s.Origen) 
+	  						   inner join t_agencia a2 on a2.Idagencia = s.Destino 
+	  where s.IdClase = #{idclase} 
+	  and s.GradoServ = 1 
+	  and s.TipoFrecuencia = 2
+	  group by s.IdClase, s.Descripcion, s.Precio1, s.Precio2, s.Origen, s.Destino,  a.Descripcion, a2.Descripcion, s.HSalida, s.RutaCompartida, s.IntCorre   
+	  	 
+	  </select>
+	  
+</mapper>

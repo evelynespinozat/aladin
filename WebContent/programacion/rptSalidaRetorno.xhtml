@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		
+		<pe:blockUI target=":formLista" widgetVar="blockUIWidget1">  
+		    <h:panelGrid columns="2">  
+		        <h:graphicImage library="img" name="load.gif"  
+		                        style="margin-right: 12px; vertical-align: middle;"/>  
+		        <h:outputText value="Procesando..." style="white-space: nowrap;"/>  
+		    </h:panelGrid>  
+		</pe:blockUI> 
+	
+		
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Programacion" url="#" />
+    				<p:menuitem value="Consulta Salida y Reporte" url="rptEntradaSalida" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+				<!-- listado de agencias -->
+			<p:panel>
+			    <h:form id="formListaServicio">
+				<h:panelGrid columns="7">
+				
+					#{"Seleccionar la Fecha:"}
+					<p:calendar value="#{rptSalidaRetornoMB.programacionFilter.fLiquidacion}" pattern="dd/MM/yyyy" locale="es"
+							 	 navigator="true"  required="true" requiredMessage="Se necesita una fecha" />
+							
+					#{"Seleccionar Ruta:"}
+					<p:selectOneMenu style="width:150px" value="#{rptSalidaRetornoMB.programacionFilter.ruta}" 
+							 required="true" requiredMessage="Seleccione Ruta">
+							 <f:selectItem itemLabel="TRUJILLO - LIMA" itemValue="2" />
+							<f:selectItem itemLabel="TRUJILLO - NORTE" itemValue="1" />
+							
+					</p:selectOneMenu>
+					
+					<p:commandButton value="Consulta Salida" actionListener="#{rptSalidaRetornoMB.listarSalidas()}" 
+					update=":formLista:dtSalida"
+					onstart="blockUIWidget1.block()" 
+					oncomplete="blockUIWidget1.unblock()" />
+					
+					<p:commandButton value="Consulta Retorno" actionListener="#{rptSalidaRetornoMB.listarRetornos()}" 
+					update=":formLista:dtRetorno"
+					onstart="blockUIWidget1.block()" 
+					oncomplete="blockUIWidget1.unblock()"/>
+					
+					<h:commandLink id="imprimirCB" value="Imprimir Salida Retorno" style="padding: 6px 30px;background: #FCC14D;
+					 text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+     							 color: #1C190A;" actionListener="#{rptSalidaRetornoMB.imprimirPDF}" ajax="false">    
+					</h:commandLink>	
+					
+				</h:panelGrid>
+				</h:form>
+			</p:panel>
+			
+			<br/>
+			<h:form id="formLista">
+			<p:panelGrid columns="2">
+					<p:dataTable id="dtSalida" widgetVar="dtExcepcion" var="prog" value="#{rptSalidaRetornoMB.listaProgramacionSalida}" 
+					emptyMessage="No hay Salidas." rowIndexVar="nro" 
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Salidas</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:10px;text-align: center;" headerText="Hora de Viaje" >
+						<h:outputText value="#{prog.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Servicio" >
+						<h:outputText value="#{prog.descServicio}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Ruta">
+						<h:outputText value="#{prog.ruta}" />
+					</p:column>
+	
+					
+					<p:column style="width:100px;text-align: center;" headerText="Pasajes">
+						<h:outputText value="#{prog.asienVendidos}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Reserva">
+						<h:outputText value="#{prog.asienReserva}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Nro Bus">
+						<h:outputText value="#{prog.numeroBus}" />
+					</p:column>
+
+				
+				</p:dataTable>
+				<p:dataTable id="dtRetorno" widgetVar="dtExcepcion" var="p" value="#{rptSalidaRetornoMB.listaProgramacionRetorno}" 
+					emptyMessage="No hay Retornos." rowIndexVar="nro" 
+					style="FONT-SIZE: 10px; ">
+					
+					<f:facet name="header">Retornos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:10px;text-align: center;" headerText="Hora de Viaje" >
+						<h:outputText value="#{p.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Servicio" >
+						<h:outputText value="#{p.descServicio}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Ruta">
+						<h:outputText value="#{p.ruta}" />
+					</p:column>
+
+					
+					<p:column style="width:100px;text-align: center;" headerText="Pasajes">
+						<h:outputText value="#{p.asienVendidos}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Reserva">
+						<h:outputText value="#{p.asienReserva}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Nro Bus">
+						<h:outputText value="#{p.numeroBus}" />
+					</p:column>
+					
+				
+				</p:dataTable>
+			</p:panelGrid>	
+			</h:form>
+			
+		</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

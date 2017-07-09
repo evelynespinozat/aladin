@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=400px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Cargo" url="#" />
+				<p:menuitem value="Ubicacion de Encomienda" url="#" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda">
+			<p:panel>
+			 	<h:panelGrid columns="4" id="datareg">
+				 
+					<h:outputLabel value="Codigo de Barras"  /> 
+					<p:inputText value="#{ubicacionEncomiendaMB._codigoBarra}" style=" width:160px;" required="true" requiredMessage="Se necesita el codigo de Barras"/> 
+
+					<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{ubicacionEncomiendaMB.consultarxCodigoBarras()}"  
+					 		update=":formLista :sms" style=" width:160px;"/>
+					 		
+					<p:commandButton  value="Entregar Encomienda" actionListener="#{ubicacionEncomiendaMB.hayEncomienda()}" oncomplete="validarEncoSelec(xhr, status, args);"  
+					 		update=":sms :dlgDetEntregar" style=" width:160px;"/> 		
+				</h:panelGrid>
+					 
+					
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		<p:separator></p:separator>			 
+			<h:form id="formLista">
+			
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Remitente"/> 
+					<h:outputText  value="#{ubicacionEncomiendaMB.encConsultada.remitcompleto}"  style="font-weight:bold;font-size: 1.2em;" />
+				</h:panelGrid>	
+				
+				<h:panelGrid columns="4">
+					<h:outputLabel value="Documento:"/> 
+					<h:outputText  value="#{ubicacionEncomiendaMB.encConsultada.comprobante}"  style="font-weight:bold;font-size: 1.2em;" />
+						<h:outputLabel value="Fecha:"/> 
+					<h:outputText  value="#{ubicacionEncomiendaMB.encConsultada.fRegistro}"  style="font-weight:bold;font-size: 1.2em;" >
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+					</h:outputText>
+				</h:panelGrid>
+
+				<h:panelGrid columns="4">
+					<h:outputLabel value="Destinatario 1:"/> 
+					<h:outputText  value="#{ubicacionEncomiendaMB.encConsultada.dest1} "  style="font-weight:bold;font-size: 1.2em;" />
+					<h:outputLabel value="Destinatario 2:" /> 
+					<h:outputText  value="#{ubicacionEncomiendaMB.encConsultada.dest2} "  style="font-weight:bold;font-size: 1.2em;" />
+				</h:panelGrid>	
+				
+				
+				<h:panelGrid columns="6">
+					<h:outputLabel value="Origen"/> 
+					<h:outputText  value="#{ubicacionEncomiendaMB.encConsultada.desOrigen}"  style="font-weight:bold;font-size: 1.2em;" />
+					<h:outputLabel value="Destino:"/> 
+					<h:outputText  value="#{ubicacionEncomiendaMB.encConsultada.desDestino}"  style="font-weight:bold;font-size: 1.2em;" />
+					<h:outputLabel value="Estado: "/> 
+					<h:outputText  value="#{ubicacionEncomiendaMB.encConsultada.desEstado}"  style="font-weight:bold;font-size: 1.2em;color:#E50808" />
+				</h:panelGrid>	
+			
+				<br/>
+			
+				<p:dataTable widgetVar="dtDetalle" var="p" value="#{ubicacionEncomiendaMB.listaDetalle}"
+							emptyMessage="No hay detalle para esta encomienda" rowIndexVar="nro" 
+							paginator="true"
+							rows="10" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,20,30"
+							style="FONT-SIZE: 10px; margin-top:10px">
+							<f:facet name="header">Detalle de Encomiendas</f:facet>
+					
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:15%;text-align: center;" headerText="Encomienda" >
+								<h:outputText value="#{p.descripcion}" />
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Peso">
+								<h:outputText value="#{p.peso}" />
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Importe">
+								<h:outputText value="#{p.importe}" />
+							</p:column>
+							
+							<p:column style="width:10%;text-align: center;" headerText="Cantidad">
+								<h:outputText value="#{p.cantidad}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align: center;" headerText="Codigo Barras">
+								<h:graphicImage value="/imagen/servletWill/?codigo=B#{p.idDetalle}" width="120" height="25"/>
+							</p:column>
+							
+						</p:dataTable>
+				
+			</h:form>
+			
+			
+			<p:dialog id="dlgDetEntregar" resizable="false"  modal="true" appendToBody="true"
+				    header="Entrega de  Encomienda" widgetVar="dlgEntregar">
+				    
+					<h:form id="formEntrega">
+					
+					<p:messages showDetail="false" showSummary="true" id="msgEntrega" closable="true"/>
+					
+					<h:panelGrid columns="2">
+						#{"Tipo Documento:"}
+						<p:selectOneMenu style="width:200px" value="#{ubicacionEncomiendaMB._tipoDocumento}" required="true" requiredMessage="Seleccione un Tipo Documento">
+							<f:selectItem itemLabel="DNI" itemValue="DNI"/>
+							<f:selectItem itemLabel="RUC" itemValue="RUC"/> 
+							<p:ajax update="formEntrega" event="change" listener="#{ubicacionEncomiendaMB.evaluaTipDoc()}" />
+						</p:selectOneMenu>
+						
+						#{"Numero Documento:"}
+						<p:inputText style="width:200px" value="#{ubicacionEncomiendaMB.encConsultada.numeroDocRecoge}" required="true" maxlength="11" requiredMessage="Se necesita un numero documento" >
+							<pe:keyFilter mask="num"/>
+							<p:ajax event="blur" listener="#{ubicacionEncomiendaMB.buscarPersona()}" update="txtNomUsuReco"/>
+						</p:inputText>
+						
+						<h:outputText  value="Nombre:" rendered="#{ubicacionEncomiendaMB._nombre}"></h:outputText>
+						<h:outputText value="Razon Social:" rendered="#{ubicacionEncomiendaMB._razonSocial}"></h:outputText>
+						<p:inputText id="txtNomUsuReco" style="width:200px" value="#{ubicacionEncomiendaMB.encConsultada.nombreRecoge}" required="true" maxlength="50" requiredMessage="Se necesita el usuario que recibe" />
+						
+						<p:separator></p:separator>
+						<p:separator></p:separator>
+						
+						#{"Usuario Recibe:"}
+						<p:selectOneMenu style="width:200px" value="#{ubicacionEncomiendaMB.encConsultada.idUsuarioEntrega}" required="true" requiredMessage="Seleccione el usuario que entrega ">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="a" value="#{ubicacionEncomiendaMB.listaUsuarioRec}" itemValue="#{a.idusuario}" itemLabel="#{a.nombre_completo}" /> 
+						</p:selectOneMenu>
+						#{"Observacion:"}
+						<p:inputTextarea cols="30" autoResize="true" rows="5" value="#{ubicacionEncomiendaMB.encConsultada.observacionRecojo}"/>
+						
+						<p:commandButton value="Aceptar" actionListener="#{ubicacionEncomiendaMB.confirmarEntrega()}"
+							oncomplete="validar(xhr, status, args)" icon="icon-disk" update=":formLista msgEntrega"/>
+	
+						<p:commandButton value="Cancelar"  type="button" 
+							onclick="dlgEntregar.hide()" icon="icon-cancel" />
+							
+					</h:panelGrid>
+					</h:form>
+				</p:dialog>
+			
+			
+			<ui:remove>
+			
+			<p:dialog id="dlgdetImprimir" appendToBody="true" resizable="false" modal="true"
+					 widgetVar="dlgImprimir" closable="true" header="Generar SubManifiesto">
+						
+					<h:form id="formImprimir" style="text-algin:center">
+						
+						<p:messages  id="mensaje" showDetail="false" showSummary="true"  closable="true"/>	
+						<p:panel>
+						<h:panelGrid columns="4">
+							#{"Origen:"}
+							<h:outputText value="#{ubicacionEncomiendaMB.progSelected.desOrigen}" style="font-weight:bold;font-size:1.2em" />
+							#{"Destino:"}
+							<h:outputText value="#{ubicacionEncomiendaMB.progSelected.desDestino}" style="font-weight:bold;font-size:1.2em" />
+							#{"Bus:"}
+							<h:outputText value="#{ubicacionEncomiendaMB.progSelected.numeroBus}" style="font-weight:bold;font-size:1.2em" />
+							#{"Fecha:"}
+							<h:outputText value="#{ubicacionEncomiendaMB.progSelected.fSalida}" style="font-weight:bold;font-size:1.2em" >
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+							</h:outputText>
+							#{"Hora:"}
+							<h:outputText value="#{ubicacionEncomiendaMB.progSelected.hSalida}" style="font-weight:bold;font-size:1.2em" />
+							#{"Nro Bultos:"}
+							<h:outputText value="#{ubicacionEncomiendaMB.totalBultos}" style="font-weight:bold;color:#E50808;font-size:1.2em;" />
+							#{"P. Total"}
+							<h:outputText value="#{ubicacionEncomiendaMB.totalPeso} Kg." style="font-weight:bold;color:#E50808;font-size:1.2em" />
+							#{"Importe"}
+							<h:outputText value="S/. #{ubicacionEncomiendaMB.totalImporte}" style="font-weight:bold;color:#E50808;font-size:1.2em" />
+							
+						</h:panelGrid>
+						<h:panelGrid columns="4">	
+							#{"Piloto:"}
+							<h:outputText value="#{ubicacionEncomiendaMB.progSelected.nomPiloto}" style="font-weight:bold;font-size:1.2em" />
+							#{"Copiloto:"}
+							<h:outputText value="#{ubicacionEncomiendaMB.progSelected.nomCopiloto}" style="font-weight:bold;font-size:1.2em" />
+						</h:panelGrid>	
+						</p:panel>
+						<br/>
+					<h:panelGrid columns="4">
+						<p:commandButton  value="Guardar " actionListener="#{ubicacionEncomiendaMB.crearSubManifiesto()}"  
+					 		update=":formImprimir :formLista" style=" width:160px;" disabled="#{ubicacionEncomiendaMB.btnGuardar}" />
+						
+						<h:commandLink update=":mensaje :formLista"  disabled="#{ubicacionEncomiendaMB.btnImprimir}"  id="imprimir" value="Imprimir SubManifiesto" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{ubicacionEncomiendaMB.imprimirPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						<h:commandLink update=":mensaje :formLista"  disabled="#{ubicacionEncomiendaMB.btnImprimirGuia}"  id="imprimirGuia" value="Imprimir Guia Remision" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{ubicacionEncomiendaMB.imprimirGuiaRemisionPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						<h:commandLink update=":mensaje :formLista"  disabled="#{ubicacionEncomiendaMB.btnImprimirGuia}"  id="imprimirCB" value="Imprimir Codigo Barras" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{ubicacionEncomiendaMB.imprimirCodigoBarraPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+						
+					</h:panelGrid>	 	
+							
+					</h:form>
+			</p:dialog>
+			
+			</ui:remove>
+			
+			<script>
+			
+			function validarEncomiendas(xhr, status, args) {
+				if (args.hayEncomiendas) {
+					dlgImprimir.show();
+				} 
+			}
+			
+			function validarEncoSelec(xhr, status, args){
+				if (args.esValido) {
+					dlgEntregar.show();
+				} 
+			}
+			
+			function validar(xhr, status, args) {
+				if (!args.esValido) {
+					jQuery('#dlgDetEntregar').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					//limpiando
+					dlgEntregar.hide();
+				}
+			}
+			
+			</script>
+			
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Gestion de Clases de Servicios" url="#" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Clase de Servicio" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();"
+									 actionListener="#{claseServicioMB.nuevoCServicio()}"/>
+					
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaCServicio">
+				<p:dataTable widgetVar="dtCServicio" var="cs" value="#{claseServicioMB.listaClaseServicio}"  filteredValue="#{claseServicioMB.listaClaseServiciofiltro}"
+					emptyMessage="No hay Clase de Servicio disponibles." rowIndexVar="nro" 
+					rows="20" 
+					paginator="true" 
+					 style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Clase de Servicios</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:150px;" headerText="Descripcion." filterStyleClass="mayuscula" filterBy="#{cs.descripcion}"  filterStyle="width:150px;" filterMatchMode="contains">
+						<h:outputText value="#{cs.descripcion}"/>
+					</p:column>
+					
+					<p:column style="width:40px;" headerText="Nombre Corto">
+						<h:outputText value="#{cs.nombreCorto}" />
+					</p:column>
+
+<!-- 					<p:column style="width:50px;" headerText="Grupo" > -->
+<!-- 						<h:outputText value="#{cs.grupo}" /> -->
+<!-- 					</p:column> -->
+
+<!-- 					<p:column style="width:100px;" headerText="Abrev."> -->
+<!-- 						<h:outputText value="#{cs.nombreCorto}" /> -->
+<!-- 					</p:column> -->
+
+					<p:column style="width:40px;" headerText="Atn a Bordo">
+						<h:outputText value="#{cs.atnBordo eq 'S'?'SI':'NO'}" />
+					</p:column>
+
+					<p:column style="width:40px;" headerText="Nro de Asientos">
+						<h:outputText value="#{cs.asientos}" />
+					</p:column>
+					
+					<p:column style="width:40px;" headerText="Nro de Pisos">
+						<h:outputText value="#{cs.nroPisos}" />
+					</p:column>
+					
+					<p:column style="width:40px;" headerText="Color">
+						
+						<div style="background-color:#{cs.color};width:40px;height:20px;">
+							<h:outputText value="#{cs.color}" />
+						</div>
+					</p:column>
+					
+					<p:column style="width:40px;" headerText="Servicio Cap. Asociado">
+						<h:outputText value="#{cs.claseServicioCapacidad.nombreCorto}" />
+					</p:column>
+					
+					<p:column style="width:10px" headerText="Estado">
+						<p:commandLink update="@form :sms"
+							actionListener="#{claseServicioMB.cambiarEstado(cs)}">
+							<h:graphicImage
+								value="#{cs.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}"
+								title="#{cs.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					
+					
+					
+					<p:column headerText="Editar/Elim." style="width:10%;text-align: center">
+					
+						<p:commandButton id="cbtEditar" title="Editar"  update=":dlgDetNuevo" actionListener="#{claseServicioMB.editarCServicio(cs)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="cbtEditar" value="Editar"/>
+						
+						<p:commandButton id="cbtEliminar" title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{claseServicioMB.claseServicio}" value="#{cs}" />
+						</p:commandButton>
+						<p:tooltip  for="cbtEliminar" value="Eliminar"/>
+						
+						<p:commandButton id="cbtConfAsiento" title="Configuracion de asiento" ajax="false" disabled="#{cs.idCatServicio ne '4'}"  action="#{claseServicioMB.irANuevaClaseServicio(cs)}"
+										  icon="icon-bus">
+						</p:commandButton>
+						<p:tooltip  for="cbtConfAsiento" value="Configurar asiento"/>
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="#{claseServicioMB.titulo}" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+						
+							#{"Categoria:"}
+							<p:selectOneMenu style="width:150px" value="#{claseServicioMB.claseServicio.idCatServicio}"
+								required="true" requiredMessage="Seleccione una Categoria">
+								<f:selectItems var="item" value="#{claseServicioMB.listaCategoriaServicio}" 
+								itemValue="#{item.idCatServicio}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+
+							#{"Nombre:"}
+							<p:inputText value="#{claseServicioMB.claseServicio.descripcion}" required="true"  styleClass="mayuscula" 
+								requiredMessage="Se necesita una  descripcion" style="width:140px" />
+							
+							#{"Color:"}
+							<p:colorPicker value="#{claseServicioMB.claseServicio.color}"/>
+							
+							
+							#{"Nombre Corto:"}
+							<p:inputText value="#{claseServicioMB.claseServicio.nombreCorto}" required="true" styleClass="mayuscula"  
+								requiredMessage="Se necesita el nombre corto" style="width:140px" />
+								
+							#{"Nro Asientos:"}
+							<h:selectOneMenu value="#{claseServicioMB.claseServicio.asientos}" required="true"  
+								requiredMessage="Se necesita el nro de asientos" style="width:150px">
+								<f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true" />
+								<f:selectItem  itemLabel="32"  itemValue="32" />
+								<f:selectItem  itemLabel="39"  itemValue="39" />
+								<f:selectItem  itemLabel="53"  itemValue="53" />
+								<f:selectItem  itemLabel="56"  itemValue="56" />
+								<f:selectItem  itemLabel="42"  itemValue="42" />
+								<f:selectItem  itemLabel="40"  itemValue="40" />
+								<f:selectItem  itemLabel="58"  itemValue="58" />
+								<f:selectItem  itemLabel="60"  itemValue="60" />
+							</h:selectOneMenu>
+
+							#{"Atn Bordo :"}
+							<p:selectOneMenu style="width:147px" value="#{claseServicioMB.claseServicio.atnBordo}" required="true" requiredMessage="Se necesita la atencion a Bordo">
+								<f:selectItem itemLabel="NO" itemValue="N" />
+								<f:selectItem itemLabel="SI" itemValue="S" />
+							</p:selectOneMenu>
+							
+							#{"Nro Pisos:"}
+							<h:selectOneRadio value="#{claseServicioMB.claseServicio.nroPisos}" required="true" requiredMessage="se necesita saber cuantos pisos" >
+  								<f:selectItem itemValue="1"  itemLabel="Uno" />
+  								<f:selectItem itemValue="2"  itemLabel="Dos" />
+  								<f:ajax render="pnPisoDos" execute="@this" event="valueChange" />
+  							</h:selectOneRadio>
+  							
+							#{"Tipo Asiento P1:"}  							
+							<p:selectOneMenu style="width:147px" value="#{claseServicioMB.claseServicio.idtipoasientop1}" >
+								<f:selectItems  itemLabel="#{ta.nombre}" itemValue="#{ta.idtipoasiento}" value="#{claseServicioMB.listatipoAsiento}" var="ta" />
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+						
+						<h:panelGroup id="pnPisoDos">
+							<h:panelGrid rendered="#{claseServicioMB.claseServicio.nroPisos eq '2'}" columns="2" >
+								#{"Tipo Asiento P2:"} 
+								<p:selectOneMenu style="width:147px" value="#{claseServicioMB.claseServicio.idtipoasientop2}" >
+									<f:selectItems  itemLabel="#{ta.nombre}" itemValue="#{ta.idtipoasiento}" value="#{claseServicioMB.listatipoAsiento}" var="ta" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+						</h:panelGroup>
+						
+						<ui:remove>
+							<br/><br/>
+							#{"Asociar Clase de servicio por capacidad:"}
+							<h:selectOneMenu value="#{claseServicioMB.claseServicio.idclasecapacidad}" >
+								<f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"  />
+								<f:selectItem itemLabel="No tiene" itemValue="0" />
+								<f:selectItems itemLabel="#{cap.nombreCorto}" itemValue="#{cap.idclase}" var="cap" value="#{claseServicioMB.listaClaseServicioCapacidad}"  />
+							</h:selectOneMenu>
+						
+						</ui:remove>
+						
+						<br/><br/>
+						<p:commandButton value="Guardar" actionListener="#{claseServicioMB.guardarClaseServicio()}"
+									 update=":formListaCServicio msgNuevo"
+									 oncomplete="validarCampos(xhr, status, args)" icon="icon-disk" />
+						
+						<p:spacer width="50" height="2" />
+									 
+						<p:commandButton value="Cancelar" type="button"
+									 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta clase de servicio y toda la configuración de asientos asociada?" header="Clase de Servicio"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Clase servicio: <h:outputText value="#{claseServicioMB.claseServicio.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaCServicio :sms"
+						actionListener="#{claseServicioMB.eliminarCServicio()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validarCampos(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

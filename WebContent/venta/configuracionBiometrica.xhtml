@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Ventas" url="#" />
+    				<p:menuitem value="Configuracion Biometrica" url="configuracionBiometrica" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+		
+
+			<h:form id="formConfig">	
+               <h:panelGroup>
+						<p:fieldset legend= "CONFIGURACION CALIDAD" style="height:200px;width:600px;font-weight:bold;font-size: 1em">
+						<h:panelGrid columns="2" >
+								
+							<h:panelGrid columns="2">
+									<h:outputLabel value="Umbral Captura " ></h:outputLabel>							
+									<p:selectOneMenu style="width:150px" id="cmbOfiX" value="#{configuracionBiometricaMB.umbralCapturaSelec.id_captura}" required="true" requiredMessage="Seleccione">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="cap" value="#{configuracionBiometricaMB.listaUmbralCaptura}" itemValue="#{cap.id_captura}" itemLabel="#{cap.descripcion}"/>
+									</p:selectOneMenu>								
+		
+									<h:outputLabel value="Umbral Deteccion "></h:outputLabel>	
+									<p:selectOneMenu style="width:150px" id="cmbOfiY" value="#{configuracionBiometricaMB.umbralDeteccionSelec.id_deteccion}" required="true" requiredMessage="Seleccione">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="detec" value="#{configuracionBiometricaMB.listaUmbralDeteccion}" itemValue="#{detec.id_deteccion}" itemLabel="#{detec.descripcion}"/>
+									</p:selectOneMenu>
+		
+									<h:outputLabel value="Umbral Verificacion "></h:outputLabel>	
+									<p:selectOneMenu style="width:150px" id="cmbOfiZ" value="#{configuracionBiometricaMB.umbralVerificacionSelec.id_verificacion}" required="true" requiredMessage="Seleccione">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="verf" value="#{configuracionBiometricaMB.listaUmbralVerificacion}" itemValue="#{verf.id_verificacion}" itemLabel="#{verf.descripcion}" />
+									</p:selectOneMenu>
+
+							</h:panelGrid >
+							
+								<h:panelGrid columns="1">
+										<p:commandButton value="guardar" 
+									oncomplete="dlgConfig.show();" 
+							 		update=":dlgDetConfig" style="width:120px;"> 
+									</p:commandButton>
+								</h:panelGrid>	
+														
+							</h:panelGrid>	
+						</p:fieldset>
+						<div align="center">
+									<h:outputText value="CONFIGURACION DISPOSITIVO " style="font-weight:bold;font-size: 1.5em;color:#0000FF" />
+						</div>
+						
+				</h:panelGroup>	
+				
+				</h:form>
+				
+				<p:confirmDialog id="dlgDetConfig" appendToBody="true"
+					message="¿Desea guardar Umbrales?"
+					header="Guardar Umbrales" severity="alert"
+					widgetVar="dlgConfig">
+						<h:form >
+								<p:commandButton value="Aceptar"
+									actionListener="#{configuracionBiometricaMB.guardar()}"
+									update=":formConfig"
+									oncomplete="dlgConfig.hide()"   
+									icon="icon-delete" />
+								
+								<p:commandButton value="Cancelar" onclick="dlgConfig.hide()"
+									update=":formConfig"
+									icon="icon-cancel" />
+						</h:form>
+				</p:confirmDialog>
+			
+				
+		
+		
+		<script type="text/javascript">
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+		
+	
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

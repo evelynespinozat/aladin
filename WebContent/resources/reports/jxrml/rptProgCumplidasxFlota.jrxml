@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptProgCumplidasxFlota" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="62c40109-c191-49e4-bad4-429e1fc7f22a">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_RANGO_FECHAS" class="java.lang.String"/>
+	<parameter name="P_TOTAL_PROGRAM" class="java.lang.String"/>
+	<field name="numeroBus" class="java.lang.String"/>
+	<field name="cantidadSalidasBus" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="107" splitType="Stretch">
+			<image>
+				<reportElement uuid="4d137074-6eb1-4c70-a18e-3f612cd68969" x="43" y="25" width="103" height="38"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="3bc6a878-1663-42fa-b3da-cf7c6af6b1fe" x="188" y="25" width="266" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  PROGRAMACIONES CUMPLIDAS]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="68e6a425-51e9-4526-b93a-c6515910c766" x="143" y="77" width="208" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_RANGO_FECHAS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="be823ced-5117-44f1-a441-c343656fe26b" x="43" y="77" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Rango de Fechas:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="d8c38bfb-9682-4d8c-a25b-d0a1a1bd574a" x="65" y="12" width="283" height="15" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="eb11dd4e-633a-40f7-8641-9062d4fe3877" x="98" y="11" width="51" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Bus]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1dc3ea86-c518-4fb2-8d62-065f20726d56" x="224" y="11" width="67" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<line>
+				<reportElement uuid="f7501a29-3cf8-4901-8943-29d4ba573cb1" x="65" y="19" width="283" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="d25e4d03-dc2f-4c7d-a853-5807f034da9c" x="108" y="0" width="68" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroBus}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fd86d975-c0bf-454f-a233-c614eef4f398" x="234" y="0" width="57" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidadSalidasBus}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="37" splitType="Stretch">
+			<textField>
+				<reportElement uuid="64c95430-fa1d-45e6-9299-31b71007cec3" x="270" y="17" width="78" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_TOTAL_PROGRAM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f279aab6-51bd-4b77-aa0d-6ea98a06c082" x="224" y="17" width="46" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL : ]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

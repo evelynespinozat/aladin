@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.AsignacionMapper">
+
+<resultMap id="asignacionResult" type="com.certicom.ittsa.domain.Asignacion">
+	<id column="idasignacion" property="idasignacion"/>
+	<result column="monto" property="monto"/>
+	<result column="programacionId" property="programacionId"/>
+	<result column="idPiloto" property="idPiloto"/>
+	<result column="fecha" property="fecha"/>
+	<result column="idUsuario" property="idUsuario"/>
+	<result column="agenciaOrigen" property="agenciaOrigen"/>
+	
+	
+</resultMap>
+
+
+</mapper>

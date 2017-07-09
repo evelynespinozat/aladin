@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+		<p:panel id="panelUR" style="height=800px">
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Programacion" url="#" />
+				<p:menuitem value="Servicios cumplidos por Bus" url="#" />
+			</p:breadCrumb>
+			
+		<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+		<table>
+			<tr>	
+			<td>
+			
+			<h4>Servicios programados realizados por un todos los buses</h4>
+			
+			<!-- formulario de busqueda -->
+			<h:form id="Busqueda" style="width:1100px">
+			<p:panel >
+					<h:panelGrid columns="8" id="datareg4"> 
+					 
+					<h:outputLabel value="F.Inicio "  /> 
+					<p:calendar style="width:200px"  value="#{rptServiciosFlotaMB.fecInicio}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita una fecha de inicio">
+							  <p:ajax update="calFfin" event="dateSelect"/>
+					</p:calendar>
+
+
+					<h:outputLabel value="F.Fin" />
+					<p:calendar id="calFfin" style="width:200px;" mindate="#{rptServiciosFlotaMB.fecInicio}"  value="#{rptServiciosFlotaMB.fecFin}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"  required="true" requiredMessage="Se necesita una fecha final" /> 
+			
+					
+					<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{rptServiciosFlotaMB.buscarServicios()}"   
+					 			style=" width:160px;" update=":formLista Busqueda"/>
+
+					
+					<h:commandLink id="Busqueda" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							   color: #1C190A;" actionListener="#{rptServiciosFlotaMB.imprimirPDF}" rendered="#{rptServiciosFlotaMB.bandImprimir}"> 
+					</h:commandLink>  
+					
+				</h:panelGrid>
+				</p:panel>
+			</h:form>			
+			</td>
+
+			</tr>
+			</table>
+		
+		 
+			<h:form id="formLista">
+				<p:dataTable id="dataTable" var="p" value="#{rptServiciosFlotaMB.listaProgramacion}" filteredValue="#{rptServiciosFlotaMB.listaProgramacionFilter}"
+					paginator="true" rowIndexVar="nro" 
+					rows="20" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px;width:700px;text-align:center;margin-left:100px">
+					
+					<f:facet name="header">Programacion de Buses cumplidos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column  style="width:10%;text-align:center" headerText="Numero Bus">
+						<h:outputText value="#{p.numeroBus}" />
+					</p:column>				
+				
+					
+					<p:column style="width:10%;text-align:center" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{p.desOrigen}" filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.desOrigen}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align:center" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{p.desDestino}" filterMatchMode="contains" filterStyle="width:200px;">
+						<h:outputText value="#{p.desDestino}" />
+					</p:column>
+
+					<p:column style="width:20%;text-align:center" headerText="Detalle">
+						<p:commandButton icon= "icon-search" value="Ver Detalle"  update=":dlgDetVerDetalle"  actionListener="#{rptServiciosFlotaMB.verDetalle(p)}" 
+										 oncomplete="dlgVerDetalle.show();"> 
+						</p:commandButton>
+					</p:column>
+	
+				</p:dataTable>
+			</h:form>
+			
+			<p:dialog header="Ver Detalle" widgetVar="dlgVerDetalle" appendToBody="true"
+					  resizable="false" id="dlgDetVerDetalle" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgAsignar" closable="true"/>
+						
+						<h:panelGrid columns="3">
+						
+							#{"Bus:"}
+							<p:outputLabel value="#{rptServiciosFlotaMB.programacion.numeroBus}" style="margin-left:5px"></p:outputLabel>
+							
+							<h:commandLink id="imprimirDetalle" value="Imprimir" style="padding: 6px 30px;background: #FCC14D;margin-left:80px; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							   color: #1C190A;" actionListener="#{rptServiciosFlotaMB.imprimirPDF_Detalle}">  
+							</h:commandLink> 
+
+						</h:panelGrid>
+						
+						<h:form id="formLista2">
+						<p:dataTable id="dataTable2" var="p" value="#{rptServiciosFlotaMB.listaProgramacionDetalle}" 
+							paginator="true" rowIndexVar="nro"  
+							rows="10" paginatorPosition="bottom" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; margin-top:10px">
+							
+							<f:facet name="header">Programaciones Cumplidas</f:facet>
+							
+							<p:column headerText="Orden" width="25" style="width:3%" >
+								#{nro+1}
+							</p:column>
+							
+							<p:column style="width:200px;" headerText="Origen">
+								<h:outputText value="#{p.nombOrigen}" />
+							</p:column>
+							
+							<p:column style="width:200px;" headerText="Destino">
+								<h:outputText value="#{p.nombDestino}" />
+							</p:column>
+							
+							<p:column style="width:80px" headerText="Fecha Salida">
+								<h:outputText value="#{p.fSalida}">
+									<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+								</h:outputText>
+							</p:column>
+							
+							<p:column style="width:200px;" headerText="Piloto">
+								<h:outputText value="#{p.nombPiloto}" />
+							</p:column>
+							
+							<p:column style="width:200px;" headerText="Copiloto">
+								<h:outputText value="#{p.nombCopiloto}" />
+							</p:column>
+		
+							<p:column style="width:40px" headerText="Hora Salida">
+								<h:outputText value="#{p.hSalida}" />
+							</p:column>
+			
+						</p:dataTable>
+					</h:form>
+						<ui:remove>
+						<p:commandButton value="Guardar" actionListener="#{asignacionPilotoMB.guardarPiloto_Copiloto()}"
+									 update=":flota msgAsignar" icon="icon-disk" oncomplete="dlgAsignar.hide(); javascript:location.reload(true)" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgAsignar.hide();"  icon="icon-cancel" />
+						
+						</ui:remove>
+						
+					</h:form>
+					
+			</p:dialog>
+			
+			
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
+</html>

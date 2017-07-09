@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Ventas" url="#" />
+					<p:menuitem value="Lista Delivery" url="delivery" />
+				</p:breadCrumb>
+			</h:form>
+
+			<br />
+			<!-- sms general -->
+			<p:messages id="sms" showDetail="false" showSummary="true"
+				closable="true" />
+
+			<!-- toolbar -->
+			<p:panel>
+				<h:form id="Busqueda" style="margin-bottom: 8px">
+					<h:panelGrid columns="8">					
+						#{"Fecha entrega:"}
+						<p:calendar value="#{deliveryMB.boletoFilter.fechaEntregaDelivery}" pattern="dd/MM/yyyy" style="width:50px;"
+							locale="es" navigator="true" required="true"
+							requiredMessage="Se necesita una fecha" >
+							<p:ajax event="dateSelect"></p:ajax>
+						</p:calendar>
+							
+						#{"Horario de entrega:"}		
+						<p:selectOneMenu id="cmbEstado"  value="#{deliveryMB.boletoFilter.turno_entrega}" style=" width:140px;"
+				        		required="true" requiredMessage="Se necesita un origen"> 
+							<f:selectItem itemLabel="Mañana" itemValue="MANANA" />
+							<f:selectItem itemLabel="Tarde" itemValue="TARDE" />
+						</p:selectOneMenu>		
+						<h:outputLabel value="Oficina entrega:" />  
+				        <p:selectOneMenu id="cmbOficina"  value="#{deliveryMB.boletoFilter.idoficina}" style=" width:150px;"
+				        		required="true" requiredMessage="Se necesita un origen"> 
+								<f:selectItem itemLabel="Seleccionar" itemValue="" />
+								<f:selectItems var="o" value="#{deliveryMB.listaCmbOficina}" itemValue="#{o.idOficina}" itemLabel="#{o.nombre}"/>
+						</p:selectOneMenu>
+							
+							
+						<p:commandButton value="Consultar" icon="icon-search"
+							update=":formListaDelivery :sms imprimir" 
+							actionListener="#{deliveryMB.buscarDelivery()}" />							
+							
+							<h:commandLink   disabled="#{deliveryMB.btnImprimir}"  id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{deliveryMB.imprimirPDF}" ajax="false" oncomplete="dlgImprimir.hide()">   
+						</h:commandLink>
+					</h:panelGrid>
+				</h:form>
+			</p:panel>
+			<br />
+
+			<!-- listado de agencias -->
+			<h:form id="formListaDelivery">
+				<p:dataTable widgetVar="dtAgencia" var="p"
+					value="#{deliveryMB.listaAsientoVenta}"
+					filteredValue="#{deliveryMB.listaAsientoVentaFilter}"
+					emptyMessage="No hay delivery en la lista" rowIndexVar="nro"
+					paginator="true" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30" style="FONT-SIZE: 10px;">
+					<f:facet name="header">Lista boletos por delivery</f:facet>
+
+					<p:column headerText="Orden" width="25">
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:50px" headerText="Boleto" filterBy="#{p.serieNumeroBoleto}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:outputText value="#{p.serieNumeroBoleto}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Ofi. Origen" filterStyleClass="mayuscula" filterBy="#{p.desOficina}" filterMatchMode="contains" filterStyle="width:50px">
+						<h:outputText value="#{p.desOficina}" />
+					</p:column>
+					
+
+					<p:column style="width:30px" headerText="Fecha Venta">
+						<h:outputText value="#{p.fechaventa}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:350px" headerText="Servicio" filterStyleClass="mayuscula" filterBy="#{p.desServicio}" filterMatchMode="contains" filterStyle="width:80px;">
+						<h:outputText value="#{p.desServicio}" />
+					</p:column>
+					
+					<p:column  headerText="Destino" >
+						<h:outputText value="#{p.desDestino}" />
+					</p:column>
+					
+					<p:column  headerText="Hora Salida" >
+						<h:outputText value="#{p.desHsalida}" />
+					</p:column>
+					
+					
+					<p:column style="width:30px" headerText="Fecha Salida">
+						<h:outputText value="#{p.desFSalida}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column  headerText="Asiento" >
+						<h:outputText value="#{p.numero}" />
+					</p:column>
+					
+					<p:column style="width:20px" headerText="Dni Pagador" filterBy="#{p.nrodocdelivery}" filterMatchMode="contains" filterStyle="width:99%">
+						<h:outputText value="#{p.nrodocdelivery}" />
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Pagador" filterStyleClass="mayuscula" filterBy="#{p.personaPagador.nombres} #{p.personaPagador.APaterno} #{p.personaPagador.AMaterno}" filterMatchMode="contains" filterStyle="width:99%;">
+						<h:outputText value="#{p.personaPagador.nombres} #{p.personaPagador.APaterno} #{p.personaPagador.AMaterno}" />
+					</p:column>
+
+					<p:column style="width:20px" headerText="Dni Pasajero" filterBy="#{p.documentoPersona}" filterMatchMode="contains" filterStyle="width:99%;">
+						<h:outputText value="#{p.documentoPersona}" />
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Pasajero" filterStyleClass="mayuscula" filterBy="#{p.persona.nombres} #{p.persona.APaterno} #{p.persona.AMaterno}" filterMatchMode="contains" filterStyle="width:150px;">
+						<h:outputText value="#{p.persona.nombres} #{p.persona.APaterno} #{p.persona.AMaterno}" />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Direccion Pagador" filterStyleClass="mayuscula" filterBy="#{p.direccion}" filterMatchMode="contains" filterStyle="width:99%;">
+						<h:outputText value="#{p.direccion}" />
+					</p:column>
+
+					<p:column style="width:100px" headerText="Referencia">
+						<h:outputText value="#{p.referenDelivery}" />
+					</p:column>
+					
+					<p:column style="width:30px" headerText="Telefono Pagador" filterBy="#{p.telefDelivery}" filterMatchMode="contains" filterStyle="width:99%;">
+						<h:outputText value="#{p.telefDelivery}" />
+					</p:column>
+
+					<p:column style="width:80px" headerText="Estado" filterStyleClass="mayuscula" filterBy="#{p.estado_delivery}" filterMatchMode="contains" filterStyle="width:99%;">
+						<h:outputText value="#{p.estado_delivery}" />
+					</p:column>
+					
+					<p:column style="width:30px" headerText="Fecha y hora de entrega">
+						<h:outputText value="#{p.fechaEntregaDelivery}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:a" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:15px" headerText="Importe">
+						<h:outputText value="#{p.monto}" />
+					</p:column>
+					
+					<p:column style="width:30px" headerText="Motivo">
+						<h:outputText value="#{p.motivo}" />
+					</p:column>
+					<p:column style="width:30px" headerText="Actualizar estado">
+						<p:commandLink update="@form :sms" actionListener="#{deliveryMB.cambiarEstado(p)}" > 
+							<h:graphicImage value="#{p.visible?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+							title="#{p.visible?'Activo':'Bloqueado'}" />
+						</p:commandLink>
+					</p:column>
+					<p:column style="width:15px" headerText="">
+						<p:commandButton title="Editar" update=":dlgDetEntrega" disabled="#{p.estado_delivery  eq 'ENTREGADO'}"
+							actionListener="#{deliveryMB.setearAsientoVenta(p)}"
+							oncomplete="dlgEntrega.show();" icon="icon-edit">
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+			<!-- #############    Dialogos      ################ -->
+			<p:dialog header="Actualizar Entrega de Boleto Delivery" widgetVar="dlgEntrega"
+				appendToBody="true" resizable="false" id="dlgDetEntrega"
+				modal="true">
+
+				<h:form>
+					<p:messages showDetail="false" showSummary="true" id="msgEntrega"
+						closable="true" />
+
+					<h:panelGrid columns="2">
+						<p:panel>
+							<h:panelGrid columns="2">
+							
+							#{"Persona Entrega"}
+							<p:inputText value="#{deliveryMB.asientoVenta.personaRecibeDeliv}" required="true"
+								requiredMessage="Se necesita una persona de de entrega" style="width:200px" />
+
+							#{"Fecha Entrega:"}
+							<p:calendar value="#{deliveryMB.asientoVenta.desFSalida}"
+										maxdate="#{deliveryMB.asientoVenta.desFSalida}"
+										mindate="#{deliveryMB.asientoVenta.fechaventa}" 
+									pattern="dd/MM/yyyy" locale="es" navigator="true"
+									required="true" requiredMessage="Se necesita una fecha entrega" />
+							
+							#{"Hora Entrega:"}
+							<p:calendar  value="#{deliveryMB.fechaEntrega}" required="true"
+							 				pattern="hh:mm a"  locale="es" requiredMessage="Se necesita una hora de entrega"
+							 				timeOnly="true" >
+							 <f:convertDateTime pattern="hh:mm a" />
+							 </p:calendar>
+							 #{"Estado:"}
+							<h:outputText value="NO ENTREGADO"  
+								style="font-weight:bold;font-size: 1.2em;color:red;" /> 		
+
+							</h:panelGrid>
+						</p:panel>
+						<p:panel>
+						
+						<h:panelGroup>
+						<h:outputLabel value="Datos del Cliente Delivery" style="font-weight:bold;font-size: 1em;" />
+						<p:panelGrid columns="4">
+						#{"Dni:"}
+						<h:outputText value="#{deliveryMB.asientoVenta.personaPagador.dni}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Nombres:"}
+						<h:outputText value="#{deliveryMB.asientoVenta.personaPagador.nombres} #{deliveryMB.asientoVenta.personaPagador.APaterno} 
+									#{deliveryMB.asientoVenta.personaPagador.AMaterno}"
+									style="font-weight:bold;font-size: 1.2em;" />
+						#{"Fecha Venta:"}
+						<h:outputText value="#{deliveryMB.asientoVenta.fechaventa}"  
+								style="font-weight:bold;font-size: 1.2em;" >
+								<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+								dateStyle="short" />
+							</h:outputText>
+						
+						</p:panelGrid>
+						
+						</h:panelGroup>
+						<br/>
+
+						<h:panelGroup>
+						<h:outputLabel value="Datos del Boleto : #{deliveryMB.asientoVenta.serieNumeroBoleto}" style="font-weight:bold;font-size: 1em;" />
+						<p:panelGrid columns="4">
+						#{"Dni Pasajero:"}
+						<h:outputText value="#{deliveryMB.asientoVenta.persona.dni}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Pasajero:"}
+						<h:outputText value="#{deliveryMB.asientoVenta.persona.nombres} #{deliveryMB.asientoVenta.persona.APaterno}
+								#{deliveryMB.asientoVenta.personaCliente.AMaterno}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+								
+						#{"Origen:"}
+						<h:outputText value=" #{deliveryMB.asientoVenta.desOrigen}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Destino:"}
+						<h:outputText value=" #{deliveryMB.asientoVenta.desDestino}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Fecha Salida:"}
+						<h:outputText value="#{deliveryMB.asientoVenta.desFSalida}"  
+								style="font-weight:bold;font-size: 1.2em;" >
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+						#{"Hora Salida:"}
+						<h:outputText value=" #{deliveryMB.asientoVenta.desHsalida}"  
+								style="font-weight:bold;font-size: 1.2em;" />
+						#{"Asiento:"}
+						<h:outputText value=" #{deliveryMB.asientoVenta.nroAsiento}"  
+								style="font-weight:bold;font-size: 1.2em;" />	
+						#{"Servicio:"}
+						<h:outputText value=" #{deliveryMB.asientoVenta.desServicio}"  
+								style="font-weight:bold;font-size: 1.2em;" />		
+						
+						</p:panelGrid>
+						</h:panelGroup>
+						</p:panel>
+					</h:panelGrid>
+
+					<br />
+					<p:commandButton value="Guardar"
+						actionListener="#{deliveryMB.actualizarEstadoDelivery()}" update="msgEntrega :formListaDelivery"
+						oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar" type="button"
+						onclick="dlgEntrega.hide();" icon="icon-cancel" />
+				</h:form>
+			</p:dialog>
+
+
+
+		</p:panel>
+
+		<script>
+			function validar(xhr, status, args) {
+				if (!args.esValido) {
+					jQuery('#dlgDetEntrega').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgEntrega.hide();
+				}
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
+</html>

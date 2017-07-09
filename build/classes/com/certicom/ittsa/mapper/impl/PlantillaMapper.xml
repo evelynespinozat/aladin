@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.PlantillaMapper">
+
+<resultMap id="plantillaResult" type="com.certicom.ittsa.domain.Plantilla">
+	<id column="IdPlantilla" property="IdPlantilla"/>
+	<result column="Descripcion" property="Descripcion"/>
+	<result column="IdClase" property="IdClase"/>
+	<result column="Idagencia" property="Idagencia"/>
+	<result column="IdOficina" property="IdOficina"/>
+	<result column="IdOrigen" property="IdOrigen"/>
+	<result column="IdDestino" property="IdDestino"/>
+	<result column="desCServicio" property="desCServicio"/>
+	<result column="desAgencia" property="desAgencia"/>
+	<result column="desOficina" property="desOficina"/>
+	<result column="desOrigen" property="desOrigen"/>
+	<result column="desDestino" property="desDestino"/>
+	<result column="IdServicio" property="IdServicio"/>
+	<result column="HSalida" property="HSalida"/>
+</resultMap>
+
+
+<select id="findAll" resultMap="plantillaResult"> 
+	select		
+		p.IdPlantilla,
+		p.Descripcion,
+		p.Idagencia,
+		a.Descripcion as desAgencia,
+		p.IdOficina,
+		o.Nombre as desOficina,
+		p.IdOrigen,
+		ori.Descripcion as desOrigen,
+		p.IdDestino,
+		de.Descripcion as desDestino,
+		c.IdClase,
+		c.Descripcion as desCServicio,
+		s.IdServicio as IdServicio,
+		s.HSalida
+		from 
+		t_plantilla p,
+		t_agencia a,
+		t_agenciaoficina o,
+		t_agencia ori,
+		t_agencia de,
+		t_clase c,
+		t_servicio s
+		where p.Idagencia = a.Idagencia
+		  and p.IdOficina = o.IdOficina
+		  and p.IdOrigen = ori.Idagencia
+		  and p.IdDestino = de.Idagencia
+		  and p.IdClase = c.IdClase
+		  and p.IdServicio = s.IdServicio 
+		
+</select>
+
+<insert id="crearPlantilla" parameterType="com.certicom.ittsa.domain.Plantilla" >
+	insert into t_plantilla (Descripcion,IdClase,Idagencia,IdOficina,IdOrigen,IdDestino,IdServicio)
+				values (#{Descripcion},#{IdClase},#{Idagencia},#{IdOficina},#{IdOrigen},#{IdDestino},#{IdServicio})				
+</insert>
+
+<update id="actualizarPlantilla" parameterType="com.certicom.ittsa.domain.Plantilla">
+	update t_plantilla set Descripcion = #{Descripcion},IdClase=#{IdClase} ,Idagencia=#{Idagencia}, IdOficina =#{IdOficina}, 
+								IdOrigen = #{IdOrigen},IdDestino = #{IdDestino}, IdServicio =#{IdServicio}  where IdPlantilla= #{IdPlantilla}
+</update>
+
+
+
+
+
+</mapper>	

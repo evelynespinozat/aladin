@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptBoletosPostergados" language="groovy" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b39488bd-e64e-4662-abb6-3c07198019af">
+	<property name="ireport.zoom" value="1.366026910730141"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_FECHA_RANGO" class="java.lang.String"/>
+	<parameter name="P_ORIGEN" class="java.lang.String"/>
+	<parameter name="P_DESTINO" class="java.lang.String"/>
+	<parameter name="P_TOTAL" class="java.lang.Integer"/>
+	<parameter name="P_OFICINA_ORIGEN" class="java.lang.String"/>
+	<field name="nomPersona" class="java.lang.String"/>
+	<field name="documentopersona" class="java.lang.String"/>
+	<field name="fechapostergacion" class="java.util.Date"/>
+	<field name="horaPost" class="java.lang.String"/>
+	<field name="fechacaducidad" class="java.util.Date"/>
+	<field name="tiempVencer" class="java.lang.Integer"/>
+	<field name="FSalida" class="java.util.Date"/>
+	<field name="HSalida" class="java.lang.String"/>
+	<field name="monto" class="java.math.BigDecimal"/>
+	<field name="fechaAbierta" class="java.lang.Boolean"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="serviciostr" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="97" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="d41fce65-fdab-4277-bd94-776cb7020ad1" x="179" y="15" width="250" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BOLETOS POSTERGADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1f8b5c30-9bf4-49a0-a75f-a34ff623710f" x="441" y="15" width="100" height="18"/>
+				<textElement/>
+				<text><![CDATA[Rango Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d05e77eb-e213-4249-b974-20387bff7df3" x="288" y="75" width="48" height="18"/>
+				<textElement/>
+				<text><![CDATA[DESTINO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="295ed5c9-1e0e-4480-8e77-458a52c088cb" x="32" y="75" width="64" height="18"/>
+				<textElement/>
+				<text><![CDATA[ORIGEN:]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="33394aa1-db06-41f8-9b14-bfeaad772451" x="32" y="15" width="135" height="51"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="67963095-1222-425e-a745-39ec6d4ddaf1" x="96" y="75" width="162" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_ORIGEN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5b9a3b85-f6e1-420c-86a8-ab4d4daf0220" x="336" y="75" width="100" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_DESTINO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8b5320c4-c37d-4f98-940d-74e8a3a24246" x="541" y="15" width="211" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FECHA_RANGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2f03cc75-3fde-4c6c-9e42-3b8fe17c8267" x="179" y="48" width="97" height="18"/>
+				<textElement/>
+				<text><![CDATA[OFICINA ORIGEN:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="33811d7e-e98e-4f3f-b821-93171ad107d8" x="276" y="48" width="153" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_OFICINA_ORIGEN}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="8a806d8e-e9fd-4c1b-99af-12acdac74678" mode="Opaque" x="4" y="0" width="131" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Pasajero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2808ccf8-656b-4984-832c-4907b5263cc3" mode="Opaque" x="135" y="0" width="44" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Dni]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f9e5e9bc-37e2-4cb1-9e87-705b5d919f6c" mode="Opaque" x="487" y="0" width="91" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Fecha caducidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a6c1c710-c116-46bb-b2d4-7e6568f8f89b" mode="Opaque" x="393" y="0" width="94" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Hora Vencimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1765c90f-ef4c-4b0a-b1d6-5e39692aad9e" mode="Opaque" x="640" y="0" width="36" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Monto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="267add54-3a43-42d4-a530-2608ef4a66ea" mode="Opaque" x="676" y="0" width="58" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[F. Abierta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8a3bf1bf-0255-4f83-b79a-ffc3bde1f699" mode="Opaque" x="734" y="0" width="68" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0cb16ee4-d4df-4bea-8177-63a48074e8d9" mode="Opaque" x="299" y="0" width="94" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Fecha Vencimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b46091d0-515b-4930-af3e-35e2664d499e" mode="Opaque" x="578" y="0" width="62" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Dias Vigente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="29e221ad-3f59-4a66-9dc5-111c775b1334" mode="Opaque" x="179" y="0" width="120" height="15" backcolor="#FFCC66"/>
+				<textElement/>
+				<text><![CDATA[Servicio]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="dcbd8a50-4218-4c4e-adf9-c6ad554b0650" x="4" y="0" width="131" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomPersona}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a6bcd87d-a905-4c83-a59f-33a1768b2ecd" x="135" y="0" width="44" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{documentopersona}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="c9cb1290-d037-4c33-a513-0e2d629887d6" x="299" y="0" width="94" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechapostergacion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="8cee3fb7-5898-47ca-afcc-4f29f01aa895" x="393" y="0" width="94" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{horaPost}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="59364d89-9913-413c-ac98-e463177b1465" x="487" y="0" width="91" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechacaducidad}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="4abbb8d8-111c-4ce5-8385-d883c8251f66" x="578" y="0" width="62" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiempVencer}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="93db6b59-bb68-4e15-b679-35b37d3c8244" x="640" y="0" width="36" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{monto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="99ebd6d3-9747-474d-9291-3c8841b1c54b" x="734" y="0" width="68" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1b0f08b1-85a4-451e-b4b7-853eeb6f1397" x="676" y="0" width="58" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaAbierta}==true?"SI":"NO"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d22601fd-72c9-4621-9350-67875185cc81" x="179" y="0" width="120" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{serviciostr}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<textField>
+				<reportElement uuid="5c8eee82-fcb1-42d8-b768-61b6060297b3" x="494" y="36" width="47" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b19f2ecd-2fbf-418c-bffa-e765384a1be1" x="464" y="36" width="30" height="18"/>
+				<textElement/>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="a15f38bd-0426-4b5b-8a7d-485f9f920bf4" x="4" y="0" width="551" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.IncidenciaMapper">
+
+<resultMap id="incidenciaResult" type="com.certicom.ittsa.domain.Incidencia">
+	<id column="incidenciaId" property="incidenciaId"/>
+	<result column="descripcion" property="descripcion"/>
+	<result column="fecha" property="fecha"/>
+	<result column="tipo" property="tipo"/>
+	<result column="IdPiloto" property="idPiloto"/>
+	<result column="IdTerramoza" property="idTerramoza"/>
+	
+	<result column="FechaUltimaActualizacion" property="FechaUltimaActualizacion"/>
+	<result column="UsuarioUltimaActualizacion" property="UsuarioUltimaActualizacion"/>
+</resultMap>
+
+
+</mapper>	

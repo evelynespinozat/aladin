@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptNotaCobranza" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="20" uuid="63073ec6-0fc2-426b-a09b-c660aaf9ba53">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_FECHA" class="java.lang.String"/>
+	<parameter name="P_OFICINA" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="tipoDocumento" class="java.lang.String"/>
+	<field name="comprobante" class="java.lang.String"/>
+	<field name="desOrigen" class="java.lang.String"/>
+	<field name="totalCobrado" class="java.lang.Double"/>
+	<field name="nombresRemitente" class="java.lang.String"/>
+	<field name="apellidosRemitente" class="java.lang.String"/>
+	<field name="numeroFisico" class="java.lang.String"/>
+	<field name="serieNotaCobranza" class="java.lang.String"/>
+	<field name="fEmision" class="java.util.Date"/>
+	<field name="estado" class="java.lang.String"/>
+	<variable name="nomCompleto" class="java.lang.String">
+		<variableExpression><![CDATA[$F{nombresRemitente}+" "+$F{apellidosRemitente}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="92" splitType="Stretch">
+			<image>
+				<reportElement uuid="9570c7ab-38b2-4822-a4ce-359b1de1d8c5" x="24" y="16" width="103" height="38"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="02c7a207-8c23-460e-b306-51d0f10892bf" x="159" y="16" width="266" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE ENCOMIENDAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b47f033e-8322-4bcd-99f9-9825effae7fd" mode="Transparent" x="0" y="70" width="138" height="20" backcolor="#340505"/>
+				<textElement textAlignment="Right">
+					<font isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="64bd5580-5eab-4146-b97d-dfa4a4f11acc" x="319" y="42" width="77" height="20"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Oficina :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="aaad34c0-2376-4858-ac04-06a9442f133a" x="396" y="42" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_OFICINA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d17013f2-7011-497c-a007-4c62ec939293" x="138" y="70" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="168" splitType="Stretch">
+			<line>
+				<reportElement uuid="5361dec1-7643-46d8-86c4-5acf22fd3466" x="13" y="167" width="529" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement uuid="eae7dd59-526f-464e-b416-eae201548299" x="13" y="72" width="47" height="15"/>
+				<textElement/>
+				<text><![CDATA[TIPO :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bd0ba321-7f75-42d6-8b84-ab6e0b7e3f9f" x="13" y="87" width="76" height="15"/>
+				<textElement/>
+				<text><![CDATA[DOCUMENTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="423a2ff7-cbf6-41b4-93f1-4d312e32b577" x="13" y="102" width="76" height="15"/>
+				<textElement/>
+				<text><![CDATA[OF. ORIGEN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7e8612d5-5a8a-4672-b3e9-e7471776e04a" x="13" y="117" width="76" height="15"/>
+				<textElement/>
+				<text><![CDATA[REMITENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="670b4567-48ef-430b-abb0-f25071fe5acb" x="13" y="132" width="94" height="15"/>
+				<textElement/>
+				<text><![CDATA[TOTAL(S/.):]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f4a79421-082d-4404-82fb-66410bcc049e" x="117" y="72" width="100" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{tipoDocumento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="05a8efb0-61c2-46f6-afee-8fab65658764" x="117" y="87" width="100" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{comprobante}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e6c41345-4cf0-4faf-a316-0125ddb317f4" x="117" y="102" width="100" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{desOrigen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b861d134-8738-49c0-8394-fb43a2a82b2b" x="117" y="132" width="131" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{totalCobrado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="218b2946-437c-42fb-b5db-3b431da6fb66" x="117" y="117" width="379" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{nomCompleto}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="773ac454-07cd-47fb-9d47-75365e319ad1" x="13" y="10" width="100" height="15"/>
+				<textElement/>
+				<text><![CDATA[SERIE :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="952b9ffe-9f68-45f4-a5b8-53624488b1b7" x="117" y="10" width="121" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{serieNotaCobranza}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="01824ee5-3047-4877-a284-7edbfe3d110b" x="13" y="26" width="100" height="15"/>
+				<textElement/>
+				<text><![CDATA[NUMERO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="4c88fc3d-a841-4eea-8c98-33a4e16f828c" x="117" y="26" width="100" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{numeroFisico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="cd20d6dc-bb60-416a-b642-628bec2d6d79" x="13" y="41" width="100" height="15"/>
+				<textElement/>
+				<text><![CDATA[FECHA EMISION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="afcbc7e6-18e0-4548-b104-8b64b791be55" x="13" y="56" width="100" height="15"/>
+				<textElement/>
+				<text><![CDATA[ESTADO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="aff7782f-53d4-4a41-889a-011d7e0ffd7b" x="117" y="56" width="142" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="b815b756-3d4a-4b68-bbeb-1183f7e04e71" x="117" y="41" width="218" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fEmision}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="50"/>
+	</summary>
+</jasperReport>

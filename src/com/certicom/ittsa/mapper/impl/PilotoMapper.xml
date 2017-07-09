@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.PilotoMapper">
+
+<resultMap id="pilotoResult" type="com.certicom.ittsa.domain.Piloto">
+	<id column="IdPiloto" property="idPiloto"/>
+	<result column="DNI" property="dNI"/>
+	<result column="ApellidoPaterno" property="apellidoPaterno"/>
+	<result column="ApellidoMaterno" property="apellidoMaterno"/>
+	<result column="Nombres" property="nombres"/>
+	<result column="Licencia" property="licencia"/>
+	<result column="FNacimiento" property="fNacimiento"/>
+	<result column="CodigoAnterior" property="codigoAnterior"/>
+	<result column="Telefono" property="telefono"/>
+	<result column="Estado" property="estado"/>
+	<result column="Fingreso" property="fingreso"/>
+	<result column="Residencia" property="residencia"/>
+	<result column="Cargo" property="cargo"/>
+	<result column="Terminal" property="terminal"/>
+	<result column="Ocupacion" property="ocupacion"/>
+	<result column="GrdoInstruccion" property="grdoInstruccion"/>
+	<result column="NroCell" property="nroCell"/>
+	<result column="Correo" property="correo"/>
+	<result column="UltimaEmpresa" property="ultimaEmpresa"/>
+	<result column="UltimoCargo" property="ultimoCargo"/>
+	<result column="MotivoCese" property="motivoCese"/>
+	<result column="EstCivil" property="estCivil"/>
+	<result column="NombreEsposa" property="nombreEsposa"/>
+	<result column="DNIESposa" property="dniEsposa"/>
+	<result column="FechaNacEsposa" property="fechaNacEsposa"/>
+	<result column="NombresHijo1" property="nombresHijo1"/>
+	<result column="NombresHijo2" property="nombresHijo2"/>
+	<result column="EmergenciaContacto" property="emergenciaContacto"/>
+	<result column="Imagen" property="imagen" javaType="byte[]" jdbcType="BLOB" />
+	<result column="FechaCreacion" property="FechaCreacion"/>
+	<result column="usuarioCreacion" property="usuarioCreacion"/>
+</resultMap>
+
+
+</mapper>	

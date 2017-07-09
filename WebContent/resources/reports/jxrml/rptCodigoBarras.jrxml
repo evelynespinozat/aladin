@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCodigoBarras" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1b232b7b-5d41-44b2-bff7-d01263708ef9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_ORIGEN" class="java.lang.String"/>
+	<parameter name="P_DESTINO" class="java.lang.String"/>
+	<parameter name="P_BUS" class="java.lang.String"/>
+	<parameter name="P_FECHA" class="java.lang.String"/>
+	<parameter name="P_HORA" class="java.lang.String"/>
+	<parameter name="P_NRO_BULTOS" class="java.lang.String"/>
+	<parameter name="P_PESO_TOTAL" class="java.lang.String"/>
+	<parameter name="P_IMPORTE_TOTAL" class="java.lang.String"/>
+	<parameter name="P_PILOTO" class="java.lang.String"/>
+	<parameter name="P_COPILOTO" class="java.lang.String"/>
+	<field name="codigoBarrasString" class="java.lang.String"/>
+	<field name="desProducto" class="java.lang.String"/>
+	<field name="tipoDocumento" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="173">
+			<staticText>
+				<reportElement uuid="e8f7a95e-0d3c-4904-85fa-097f4b353603" x="156" y="15" width="232" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO DE BARRAS ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fe8efea2-f524-4d27-bc76-b6f7d3480055" x="27" y="47" width="61" height="18"/>
+				<textElement/>
+				<text><![CDATA[ORIGEN:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1f8c341c-55d8-4341-9c35-fdd097277efb" x="88" y="47" width="68" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_ORIGEN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9dd39a26-3e71-40d3-a84d-2ff6a93087c9" x="400" y="47" width="31" height="20"/>
+				<textElement/>
+				<text><![CDATA[BUS:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="80d3991a-5f88-4482-b993-f292fa0bc09e" x="200" y="47" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[DESTINO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6e0b76b9-4010-43f9-8a16-bbb525d6c7c5" x="300" y="140" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[COPILOTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="efd68ea7-05b4-47da-81f0-639c7f3401de" x="27" y="114" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[PESO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c50a4f14-7d09-4a0d-b784-90b341082e43" x="27" y="140" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[PILOTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ca43a2d5-df98-4b76-b100-5828f578f529" x="200" y="112" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[TOTAL S/:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c48801f3-d47a-4c30-83d0-06fa72158068" x="200" y="79" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[HORA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="29099bcf-e5e2-4e26-9cd2-4d844ff7b9fe" x="27" y="77" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[FECHA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2659612c-9a47-4216-8580-74cb13ef6daa" x="400" y="79" width="82" height="20"/>
+				<textElement/>
+				<text><![CDATA[NRO BULTOS:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="c90335c3-5755-4444-991c-1d15be8d1b3e" x="261" y="47" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_DESTINO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="37330f1e-c790-4bab-93ca-442cf0f0b995" x="431" y="47" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_BUS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5f3687fa-5a17-4a0d-8916-047e4712b124" x="88" y="77" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b86d034a-69c0-4868-bd0a-730123d434d3" x="261" y="79" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_HORA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d348bd91-9064-4771-85ff-48caa75886d9" x="482" y="79" width="62" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_NRO_BULTOS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="79fecef6-a282-43df-a708-e919012511b9" x="88" y="114" width="68" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PESO_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c44c43fb-d016-4f40-bbb7-e48e7b217147" x="261" y="112" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_IMPORTE_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b3288f5b-89e3-4698-bd49-8f248b686e75" x="88" y="140" width="192" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PILOTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="16dba587-08a5-49ca-a87f-523d77b53db0" x="361" y="140" width="183" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_COPILOTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="80" splitType="Stretch">
+			<componentElement>
+				<reportElement uuid="109209d4-02d7-4418-82ce-8eeab17eaa0b" x="15" y="22" width="156" height="30"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Codabar" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{codigoBarrasString}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement uuid="1f3882ce-a280-4fe4-8f17-1bb05ced5948" x="88" y="51" width="83" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{codigoBarrasString}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="106724ca-41ad-4c56-bcd2-3e659acc944f" x="15" y="51" width="73" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{tipoDocumento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0b6cadb3-06e4-4f6e-9ab3-1f9c26bd29bb" x="15" y="0" width="332" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{desProducto}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

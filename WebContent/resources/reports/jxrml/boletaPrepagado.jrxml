@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="prueba" pageWidth="510" pageHeight="263" columnWidth="482" leftMargin="14" rightMargin="14" topMargin="17" bottomMargin="14" uuid="05c1e2cf-d3ed-4f8f-8d59-2981ed2a3d57">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="dni" class="java.lang.String"/>
+	<field name="fechaEmision" class="java.lang.String"/>
+	<field name="ruc" class="java.lang.String"/>
+	<field name="pasajero" class="java.lang.String"/>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="origen" class="java.lang.String"/>
+	<field name="destino" class="java.lang.String"/>
+	<field name="totalLetras" class="java.lang.String"/>
+	<field name="fechaViaje" class="java.lang.String"/>
+	<field name="horaViaje" class="java.lang.String"/>
+	<field name="valorTotal" class="java.lang.String"/>
+	<field name="numeroAsiento" class="java.lang.String"/>
+	<field name="montoPrepagado" class="java.lang.String"/>
+	<field name="pagador" class="java.lang.String"/>
+	<field name="tipoDoc" class="java.lang.String"/>
+	<field name="numeroDoc" class="java.lang.String"/>
+	<field name="codigoBoleta" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="89">
+			<staticText>
+				<reportElement x="93" y="3" width="274" height="31" uuid="1f5dd68a-31a9-42f4-808f-40bea1a6edb7"/>
+				<textElement>
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Boleta  Prepagado de prueba]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="38" y="58" width="99" height="14" uuid="66c3b462-88e1-417e-8731-7ccdc4e337dd"/>
+				<textFieldExpression><![CDATA[$F{montoPrepagado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="38" y="44" width="184" height="14" uuid="b6f801fc-48cc-4fc3-9839-3df0d834a886"/>
+				<textFieldExpression><![CDATA[$F{pagador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="237" y="44" width="63" height="14" uuid="5a69b6ab-b59d-4c34-9352-1238fa279e77"/>
+				<textFieldExpression><![CDATA[$F{tipoDoc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="304" y="44" width="80" height="14" uuid="6f2a6654-b8a2-4bb5-b017-5fbff2f2c06a"/>
+				<textFieldExpression><![CDATA[$F{numeroDoc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="44" width="77" height="14" uuid="db2d9295-04d0-446b-be45-f4cfe52f2514"/>
+				<textFieldExpression><![CDATA[$F{codigoBoleta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="166" y="57" width="100" height="15" uuid="261d8858-0c6d-4aea-af48-83d7236ed8f3"/>
+				<textFieldExpression><![CDATA[$F{fechaEmision}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="57" width="100" height="15" uuid="e778ac9a-49a6-4a9c-b6bd-9e969ea8c9da"/>
+				<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="117" splitType="Stretch">
+			<textField>
+				<reportElement x="252" y="25" width="100" height="15" uuid="8a42c852-9d0a-4d37-b664-eecb44574504"/>
+				<textFieldExpression><![CDATA[$F{dni}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="10" width="100" height="15" uuid="e341d849-02a8-4c3b-9972-b2c64ac972e5"/>
+				<textFieldExpression><![CDATA[$F{ruc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="25" width="238" height="15" uuid="53263212-e82a-4c66-8ffb-eebae0b90f75"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pasajero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="10" width="132" height="15" uuid="a62af1f3-361a-424f-b02d-bc148a7be4c4"/>
+				<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="44" width="100" height="15" uuid="1eff9256-53e3-4701-8c0a-d5bc13fb84ce"/>
+				<textFieldExpression><![CDATA[$F{origen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="122" y="44" width="100" height="15" uuid="3ef85054-acf8-463e-87d5-2463159a5581"/>
+				<textFieldExpression><![CDATA[$F{destino}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="68" width="196" height="13" uuid="d7f3d1fb-a69e-4b71-8547-a68dac6b88c2"/>
+				<textFieldExpression><![CDATA[$F{totalLetras}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="238" y="44" width="91" height="15" uuid="ce15fa13-b02a-40b0-aa21-2604bf7516f3"/>
+				<textFieldExpression><![CDATA[$F{fechaViaje}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="204" y="68" width="100" height="15" uuid="e92a23f6-4851-4bda-a65c-386e531be255"/>
+				<textFieldExpression><![CDATA[$F{valorTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="25" width="91" height="15" uuid="6469b036-1e22-431c-a491-d45ca4f1601c"/>
+				<textFieldExpression><![CDATA[$F{numeroAsiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="329" y="44" width="91" height="15" uuid="9c5c2626-de7c-4ba8-a61f-a516b7c3a67c"/>
+				<textFieldExpression><![CDATA[$F{horaViaje}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.PromocionMapper">
+
+	<resultMap id="PromocionServicioResult" type="com.certicom.ittsa.domain.Promocion">
+		<id column="IdPromocion" property="idPromocion" />
+		<result column="Descripcion" property="descripcion" />
+		<result column="ValorBoleto" property="valorBoleto" />
+		<result column="FRegistro" property="fRegistro" />
+		<result column="Tipo" property="tipo" />
+		<result column="tipoViaje" property="tipoViaje" />
+		<result column="Estado" property="estado" />
+		<result column="IdTipoPromocion" property="idTipoPromocion" />
+		<result column="IdOrigen" property="idOrigen" />
+		<result column="IdDestino" property="idDestino" />
+		<result column="FInicio" property="fInicio" />
+		<result column="FFin" property="fFin" />
+		<result column="FFin" property="fFin" />
+		<result column="IdAutorizante" property="idAutorizante" />
+		<result column="idservicioida" property="idservicioida" />
+		<result column="idserviciovuelta" property="idserviciovuelta" />
+		
+	</resultMap>
+	
+	
+	<update id="actualizarPromocion" parameterType="com.certicom.ittsa.domain.Promocion">
+		
+		<!-- Se cambio el script de update debido a que no existe un atributo afectoOficina en el objeto Promocion -->
+		<!--  update
+		dbo.t_promocion
+		SET
+		Descripcion = #{descripcion},
+		ValorBoleto = #{valorBoleto},
+		FRegistro =	#{fRegistro},
+		Tipo = #{tipo},
+		Estado = #{estado},
+		IdTipoPromocion = #{idTipoPromocion},
+		IdOrigen = #{idOrigen},
+		IdDestino =	#{idDestino},
+		FInicio = #{fInicio},
+		FFin = #{fFin},
+		IdAutorizante = #{idAutorizante},
+		TipoValorAplicado = #{tipoValorAplicado},
+		ValorAplicado = #{valorAplicado},
+		TipoViaje = #{tipoViaje},
+		afectoOficina = #{afectoOficina}
+		WHERE IdPromocion = #{idPromocion}-->
+		
+		update
+		dbo.t_promocion
+		SET
+		Descripcion = #{descripcion},
+		ValorBoleto = #{valorBoleto},
+		FRegistro =	#{fRegistro},
+		Tipo = #{tipo},
+		Estado = #{estado},
+		IdTipoPromocion = #{idTipoPromocion},
+		IdOrigen = #{idOrigen},
+		IdDestino =	#{idDestino},
+		FInicio = #{fInicio},
+		FFin = #{fFin},
+		IdAutorizante = #{idAutorizante},
+		TipoValorAplicado = #{tipoValorAplicado},
+		ValorAplicado = #{valorAplicado},
+		TipoViaje = #{tipoViaje}
+		WHERE IdPromocion = #{idPromocion}
+	</update>
+
+	<insert id="registrarPromocion" parameterType="com.certicom.ittsa.domain.Promocion">
+		insert into
+		dbo.t_promocion(Descripcion,ValorBoleto,FRegistro,Tipo,Estado,IdTipoPromocion,IdOrigen,IdDestino,FInicio,FFin,IdAutorizante,TipoValorAplicado,ValorAplicado,TipoViaje,isTodos)
+		values
+		(#{descripcion},#{valorBoleto},#{fRegistro},#{tipo},#{estado},#{idTipoPromocion},#{idOrigen},#{idDestino},#{fInicio},#{fFin},#{idAutorizante},#{tipoValorAplicado},#{valorAplicado},#{tipoViaje},#{isTodos})
+	</insert>
+
+</mapper>	

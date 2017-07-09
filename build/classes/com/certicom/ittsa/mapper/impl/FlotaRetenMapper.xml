@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.FlotaRetenMapper">
+
+<resultMap id="flotaRetenResult" type="com.certicom.ittsa.domain.FlotaReten">
+	<id column="IdBusReten" property="IdBusReten"/>
+	<result column="IdBus" property="IdBus"/>
+	<result column="IdAgencia" property="IdAgencia"/>
+	<result column="idPiloto" property="idPiloto"/>
+	<result column="idCopiloto" property="idCopiloto"/>
+	<result column="Estado" property="Estado"/>
+	<result column="descAgencia" property="descAgencia"/>
+	<result column="namePiloto" property="namePiloto"/>
+	<result column="nameCopiloto" property="nameCopiloto"/>
+	<result column="descEstado" property="descEstado"/>
+	<result column="nroBus" property="nroBus"/>
+	<result column="FRegistro" property="FRegistro"/>
+	<result column="placa" property="placa"/>
+	<result column="telefono" property="telefono"/>
+	
+</resultMap>
+
+	<select id="listaFlotaRetensActivas" resultMap="flotaRetenResult">
+		select 
+		br.IdBusReten,
+		br.IdBus,
+		br.IdAgencia,
+		br.idPiloto,
+		br.idCopiloto,
+		br.Estado,
+		br.FRegistro,
+		a.Descripcion as descAgencia,
+		(p.Nombres + ' '+ p.ApellidoPaterno + ' ' + p.ApellidoMaterno) as namePiloto,
+		(cp.Nombres + ' '+ cp.ApellidoPaterno + ' ' + cp.ApellidoMaterno) as nameCopiloto,
+		e.descripcion as descEstado,
+		f.Numero as nroBus,
+		p.DNI as dniPiloto,
+		cp.DNI as dniCopiloto,
+		f.Placa as placa,
+		f.telefono
+		from
+		 t_flotareten br,
+		 t_piloto p,
+		 t_piloto cp,
+		 t_flota f,
+		 t_estado e,
+		 t_agencia a
+		 where br.IdBus = f.IdBus
+			and br.idPiloto = p.IdPiloto
+			and br.idCopiloto = cp.IdPiloto
+			and br.Estado = e.valor
+			and br.IdAgencia = a.Idagencia
+			order by br.FRegistro desc
+	</select>
+
+</mapper>	

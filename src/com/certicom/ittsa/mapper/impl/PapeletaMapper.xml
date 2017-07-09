@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.PapeletaMapper">
+
+<resultMap id="papeletaResult" type="com.certicom.ittsa.domain.Papeleta">
+	<id column="Papeletaid" property="papeletaid"/>
+	<result column="FechaPapeleta" property="fechaPapeleta"/>
+	<result column="Lugar" property="lugar"/>
+	<result column="IdBus" property="idBus"/>
+	<result column="Motivo" property="motivo"/>
+	<result column="Policia" property="policia"/>
+	<result column="IdPiloto" property="idPiloto"/>
+	<result column="imagen" property="imagen" javaType="byte[]" jdbcType="BLOB" />
+	<result column="rutaImagen" property="rutaImagen"/>
+	
+	<result column="FechaUltimaActualizacion" property="FechaUltimaActualizacion"/>
+	<result column="UsuarioUltimaActualizacion" property="UsuarioUltimaActualizacion"/>
+	
+</resultMap>
+
+
+</mapper>	

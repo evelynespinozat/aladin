@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.CeseMapper">
+
+<resultMap id="ceseResult" type="com.certicom.ittsa.domain.Cese">
+	<id column="idCese" property="idCese"/>
+	<result column="motivo" property="motivo"/>
+	<result column="observacion" property="observacion"/>
+	<result column="IdTerramoza" property="IdTerramoza"/>
+	<result column="IdPiloto" property="IdPiloto"/>
+	<result column="Fecha" property="Fecha"/>
+	
+	<result column="FechaUltimaActualizacion" property="FechaUltimaActualizacion"/>
+	<result column="UsuarioUltimaActualizacion" property="UsuarioUltimaActualizacion"/>
+</resultMap>
+
+
+</mapper>	

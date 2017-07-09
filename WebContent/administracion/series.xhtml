@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Administracion" url="#" />
+    				<p:menuitem value="Series" url="series" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaAgencia">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{seriesMB.listaPV}" filteredValue="#{seriesMB.listaFiltroPV}"  
+					emptyMessage="No hay Puntos de Ventas disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Puntos de Ventas</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:50px" headerText="Agencia" filterStyleClass="mayuscula" filterBy="#{p.desAgencia}" filterMatchMode="contains" filterStyle="width:80px;">
+						<h:outputText value="#{p.desAgencia}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Oficina" filterStyleClass="mayuscula" filterBy="#{p.desOficina}" filterMatchMode="contains" filterStyle="width:80px;" >
+						<h:outputText value="#{p.desOficina}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Punto Venta"  filterStyleClass="mayuscula" filterBy="#{p.namePuntoVenta}" filterMatchMode="contains" filterStyle="width:50px;" >
+						<h:outputText value="#{p.namePuntoVenta}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Serie Boleto" >
+						<h:outputText value="#{p.serieBoleto}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Ultimo Boleto" >
+						<h:outputText value="#{p.ultimoBoleto}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Serie Boleta" >
+						<h:outputText value="#{p.serieBoleta}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Ultima Boleta" >
+						<h:outputText value="#{p.ultimaBoleta}" />
+					</p:column>
+					
+					
+					<p:column style="width:60px;text-align: center;" headerText="Serie Factura" >
+						<h:outputText value="#{p.serieFactura}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Ultima Factura" >
+						<h:outputText value="#{p.ultimaFactura}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Serie Guia Remision" >
+						<h:outputText value="#{p.serieGuiaRemision}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Ultima Guia" >
+						<h:outputText value="#{p.ultimaGuia}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Serie Reserva" >
+						<h:outputText value="#{p.seriereserva}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Ultima Reserva" >
+						<h:outputText value="#{p.ultimareserva}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Serie Nota Cobranza" >
+						<h:outputText value="#{p.serieNotaCobranza}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Ult. Nota Cobranza" >
+						<h:outputText value="#{p.ultimaNotaCobranza}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Serie Prepagado" >
+						<h:outputText value="#{p.seriePrepagado}" />
+					</p:column>
+					
+					<p:column style="width:60px;text-align: center;" headerText="Ult. Prepagado" >
+						<h:outputText value="#{p.ultimoPrepagado}" />
+					</p:column>
+					
+					<p:column headerText="Asignar Serie." style="width:10%;text-align: center">
+					
+						<p:commandButton id="AsigSerie" title="Asig. Serie"  update=":dlgDetNuevo" actionListener="#{seriesMB.editarSerie(p)}"
+										 oncomplete="dlgNuevo.show();" icon="icon-edit">
+						</p:commandButton>
+						<p:tooltip  for="AsigSerie" value="Asignar Serie"/>
+
+								
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar serie -->
+			
+			<p:dialog header="Asignar Series" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="4">
+						
+							#{"Serie Boleto:"}
+							<p:inputText value="#{seriesMB.pv.serieBoleto}" maxlength="5" required="true" requiredMessage="Ingrese Serie Boleto" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Ultimo Boleto:"}
+							<p:inputText id="txtultimoBoleto" value="#{seriesMB.pv.ultimoBoleto}" maxlength="4" required="true" requiredMessage="Ingrese Ultimo Boleto" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Serie Boleta:"}
+							<p:inputText value="#{seriesMB.pv.serieBoleta}" maxlength="5" required="true" requiredMessage="Ingrese Serie Boleto" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+
+							#{"Ultima Boleta:"}
+							<p:inputText id="txtultimaBoleta" value="#{seriesMB.pv.ultimaBoleta}" required="true" requiredMessage="Ingrese Ultima Boleta" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Serie Factura:"}
+							<p:inputText value="#{seriesMB.pv.serieFactura}" maxlength="5" required="true" requiredMessage="Ingrese Sere Factura">
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Ultima Factura:"}
+							<p:inputText id="txtultimaFactura" value="#{seriesMB.pv.ultimaFactura}" required="true" requiredMessage="Ingrese Ultima Factura" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>		
+												
+							#{"Serie Guia Remision:"}
+							<p:inputText value="#{seriesMB.pv.serieGuiaRemision}" maxlength="5" required="true" requiredMessage="Ingrese Serie Guia Remision" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Ultima Guia Remision:"}
+							<p:inputText id="txtultimaGuia" value="#{seriesMB.pv.ultimaGuia}" required="true" requiredMessage="Ingrese Ultima Guia Remision" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Serie Nota Cobranza:"}
+							<p:inputText id="txtSerieNotaCobranza" maxlength="5" value="#{seriesMB.pv.serieNotaCobranza}" required="true" requiredMessage="Ingrese Serie de Nota Cobranza" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Ultima Nota Cobranza:"}
+							<p:inputText id="txtultimaNotaCobranza" value="#{seriesMB.pv.ultimaNotaCobranza}" required="true" requiredMessage="Ingrese Ultima Nota Cobranza" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>	
+							
+							#{"Serie Reserva:"}
+							<p:inputText id="txtSerieReserva" maxlength="5" value="#{seriesMB.pv.seriereserva}" required="true" requiredMessage="Ingrese Serie de reservas" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Ultima Reserva:"}
+							<p:inputText id="txtultimaReserva" value="#{seriesMB.pv.ultimareserva}" required="true" requiredMessage="Ingrese Ultima Reserva" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>	
+						
+							#{"Serie Prepagado:"}
+							<p:inputText id="txtSeriePrep" maxlength="5" value="#{seriesMB.pv.seriePrepagado}" required="true" requiredMessage="Ingrese Serie de Prepagado" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+							
+							#{"Ultima Prepagado:"}
+							<p:inputText id="txtultimaPrep" value="#{seriesMB.pv.ultimoPrepagado}" required="true" requiredMessage="Ingrese Ultima Prepagado" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>	
+							
+<!-- 							#{"Ultima Reserva:"} -->
+<!-- 							<p:inputText id="txtultimaReserva" value="#{seriesMB.pv.ultimareserva}" required="true" requiredMessage="Ingrese Ultima Reserva" > -->
+<!-- 								<pe:keyFilter mask="num"/> -->
+<!-- 							</p:inputText> -->
+							
+										
+
+						</h:panelGrid>
+						<pe:keyFilter for="txtultimoBoleto" mask="num"  />
+						<pe:keyFilter for="txtultimaBoleta" mask="num"/>  
+						<pe:keyFilter for="txtultimaFactura" mask="num"/>  
+						<pe:keyFilter for="txtultimaGuia" mask="num"/>  
+						<pe:keyFilter for="txtSerieReserva" mask="num"/>  
+						<br/>
+						
+						<p:commandButton value="Guardar" actionListener="#{seriesMB.guardarSerie()}"
+									 update=":formListaAgencia msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+
+			
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar la Agencia porque cuenta con oficinas asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	<style>
+.ui-panelgrid tr, td {
+border:0 !important;
+}
+
+change it to the following and try again:
+.ui-panelgrid tr, .ui-panelgrid td {
+border:0 !important;
+}
+
+th.ui-datatable-header.ui-widget-header{
+font-family: Arial; font-size: 14pt;
+}
+	</style>
+		<p:panel>
+		
+		    <h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Ventas" url="#" />
+					<p:menuitem value="Ventas Detalladas" url="#" />
+				</p:breadCrumb>
+			</h:form>
+		
+		<br />
+			<h:form>
+				<p:panel>
+				   <p:messages showDetail="false" showSummary="true" closable="true" />
+				   
+					<p:panelGrid id="pg" cellpadding="5" >
+						<p:row>
+							<p:column>#{"Agencia:"}</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:150px"
+										value="#{ventaDetalleMB.agencia.idagencia}" required="true"
+										requiredMessage="Seleccione una Agencia">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="ag" value="#{ventaDetalleMB.listaAgencias}"
+											itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" />
+										<p:ajax update="cmbOfi" event="change"
+											listener="#{ventaDetalleMB.obtenerListaOficina()}" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column>#{"Oficina:"}</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:150px" id="cmbOfi"
+										value="#{ventaDetalleMB.oficina.idOficina}" required="true"
+										requiredMessage="Seleccione una Oficina">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="of" value="#{ventaDetalleMB.listaOficinas}"
+											itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+										<p:ajax update="cmbPv" event="change"
+											listener="#{ventaDetalleMB.obtenerListaPuntoVenta()}" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column>#{"Punto Venta:"}</p:column>
+							<p:column>
+								<p:selectOneMenu style="width:150px" id="cmbPv"
+										value="#{ventaDetalleMB.puntoVenta.idPuntoVenta}" required="true"
+										requiredMessage="Seleccione un Punto de Venta">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="pv" value="#{ventaDetalleMB.listaPuntoVenta}"
+											itemValue="#{pv.idPuntoVenta}" itemLabel="#{pv.namePuntoVenta}" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>#{"Fecha Inicio:"}</p:column>
+							<p:column>
+								<p:calendar id="popup" style="width:100px" value="#{ventaDetalleMB.fInicio}" pattern="dd/MM/yyyy" required="true" requiredMessage="Ingrese fecha de inicio"/>
+							</p:column>
+							<p:column>#{"Fecha Fin:"}</p:column>
+							<p:column>
+								<p:calendar id="popup2" style="width:100px" value="#{ventaDetalleMB.fFin}" pattern="dd/MM/yyyy" required="true" requiredMessage="Ingrese fecha de fin"/>
+							</p:column>
+							<p:column>
+								<p:commandButton value="Consultar" icon="icon-search" actionListener="#{ventaDetalleMB.Buscar()}" update="@form :formLista :formResultado" />
+							</p:column>
+							<ui:remove>
+							<p:column>
+								<h:commandLink id="Imprimir" value="Imprimir" style="padding: 6px 10px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+	    							   color: #1C190A;" actionListener="#{ventaDetalleMB.imprimirPDF()}" update="@form :formLista :formResultado">  
+								</h:commandLink>
+							</p:column>
+							</ui:remove>			
+							<p:column>
+								<h:commandLink id="Exportar" value="Exportar Excel" style="padding: 6px 10px;background: #FE642E; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+	    							   color: #1C190A;" actionListener="#{ventaDetalleMB.exportarXLS()}" update="@form :formLista :formResultado">  
+								</h:commandLink>
+							</p:column>	
+							
+						</p:row>						
+					</p:panelGrid>
+				</p:panel>
+			</h:form>
+			<br />
+
+			<h:form id="formLista">
+			
+
+					<p:dataTable widgetVar="dtVentaDetalle" var="v"
+						value="#{ventaDetalleMB.listaVentaDetalle}"
+						filteredValue="#{ventaDetalle.listaVentaDetallefilter}"
+						emptyMessage="No hay Registro" rowIndexVar="nro" paginator="true"
+						rows="10" paginatorPosition="bottom"
+						paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,20,30" style="FONT-SIZE: 10px; ">
+						<f:facet name="header">
+							Reporte de Ventas Detallado
+						</f:facet>
+
+						<p:column headerText="Orden" width="25" style="width:3%">
+						#{nro+1}
+					   </p:column>
+
+						<p:column  headerText="Fecha"
+							filterMatchMode="contains"
+							filterStyle="width:200px;">
+							<h:outputText value="#{v.fechaVenta}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+							</h:outputText>
+						</p:column>						
+						
+						<p:column  headerText="Nro. Comprobante"
+							 filterMatchMode="contains"
+							filterStyle="width:200px;">
+							<h:outputText value="#{v.nComprobante}" />
+						</p:column>
+						
+						<p:column  headerText="Boleto"
+							filterMatchMode="contains"
+							filterStyle="width:200px;">
+							<h:outputText value="#{v.nBoleto}" />
+						</p:column>
+
+
+						<p:column  headerText="Estado"
+							filterMatchMode="contains"
+							filterStyle="width:200px;">
+							<h:outputText value="#{v.estado}" />
+						</p:column>
+							
+						<p:column  headerText="MON"
+							filterMatchMode="contains" filterStyle="width:200px;">
+							<h:outputText value="Soles" />
+						</p:column>
+							
+						<p:column  headerText="Monto"
+							filterMatchMode="contains" filterStyle="width:200px;">
+							<h:outputText value="#{v.monto}" />
+						</p:column>
+
+						<p:column  headerText="Agencia"
+							filterMatchMode="contains" filterStyle="width:200px;">
+							<h:outputText value="#{v.nomAgencia}" />
+						</p:column>
+
+						<p:column  headerText="Oficina"
+							filterMatchMode="contains" filterStyle="width:200px;">
+							<h:outputText value="#{v.nomOficina}" />
+						</p:column>
+
+						<p:column  headerText="Punto de Venta"
+							filterMatchMode="contains" filterStyle="width:200px;">
+							<h:outputText value="#{v.nomPuntoVenta}" />
+						</p:column>
+
+						<p:column  headerText="Usuario"
+							filterMatchMode="contains" filterStyle="width:200px;">
+							<h:outputText value="#{v.nomUsuario}" />
+						</p:column>
+					</p:dataTable>
+				
+			</h:form>
+			
+			<br />
+			
+			<h:form id="formResultado">			     
+				<p:outputLabel value="Monto Total: " style="font-size:20px;"/><p:outputLabel value="#{ventaDetalleMB.montoTotal}" style="font-size:20px;" />
+			</h:form>
+			
+
+		</p:panel>
+	</ui:define>
+</ui:composition>
+</html>

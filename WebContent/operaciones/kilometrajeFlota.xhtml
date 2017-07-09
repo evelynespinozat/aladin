@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	<p:panel >
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Operaciones" url="#" />
+    				<p:menuitem value="Gestion Kilometraje" url="kilometraje" /> 
+    				<p:menuitem value="Registro Kilometraje" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+		<br/>		
+	<div>
+		<p:panel id="cabCabecera">			    
+		<h:panelGrid columns="14">
+				#{"Numero:"}
+				<h:outputText value=" #{mantFlotaMB.flota.numero}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				#{"Placa:"}
+				<h:outputText value=" #{mantFlotaMB.flota.placa}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Marca:"}
+				<h:outputText value=" #{mantFlotaMB.flota.marca}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Modelo:"}
+				<h:outputText value=" #{mantFlotaMB.flota.modelo}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+				
+				#{"Clase:"}
+				<h:outputText value=" #{mantFlotaMB.flota.descClase}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+				#{"Tipo Flota:"}
+				<h:outputText value=" #{mantFlotaMB.flota.desTipoFlota}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Kilometraje:"}
+				<h:outputText value=" #{mantFlotaMB.flota.recorrido}"  
+					style="font-weight:bold;font-size: 1.2em;" />						
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+	</div>	
+	 <p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+     <h:panelGroup id="pnAdicional" >
+							         <h:form id="form">
+										<p:dataTable widgetVar="dtProgramacion" var="p" value="#{mantFlotaMB.listaProgramciones}" filteredValue="#{mantFlotaMB.listaFilterProgramciones}"  
+											emptyMessage="No hay programaciones de este bus Disponibles." rowIndexVar="nro" 
+											paginator="true"
+											rows="10" paginatorPosition="bottom" 
+											paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+											rowsPerPageTemplate="10,20,30"
+											style="FONT-SIZE: 10px; ">
+											<f:facet name="header">Lista Programaciones sin Kilometraje Registrado</f:facet>
+											
+											<p:column headerText="Orden" width="25" style="width:3%" >
+												#{nro+1}
+											</p:column>
+											
+											<p:column style="width:200px" headerText="N° Bus">
+												<h:outputText value="#{p.nBus}" />
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Origen">
+												<h:outputText value="#{p.desOrigen}" />
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Destino">
+												<h:outputText value="#{p.desDestino}" />
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Fecha Salida">
+												<h:outputText value="#{p.fSalida}" >
+													<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+												</h:outputText>
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Hora de Salida">
+												<h:outputText value="#{p.hSalida}" />
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Servicio" >
+												<h:outputText value="#{p.descServicio}" />
+											</p:column>	
+											
+											<p:column style="width:200px" headerText="Recorrido" >
+												<h:outputText value="#{p.recorridoBus}" />
+											</p:column>	
+											
+											<p:column style="width:200px" headerText="Km. Final" >
+												<p:inputText style="width:150px" value="#{p.kmAumento}" maxlength="10"  dir="rtl" >
+														<pe:keyFilter mask="num"/>
+												</p:inputText>
+											</p:column>	
+											
+											<p:column style="width:20px" headerText="Guardar" >
+												<p:commandButton title="Guardar" update="@form :msgNuevo :cabCabecera :form"  actionListener="#{mantFlotaMB.guardarKilometrajeBus(p)}" icon="icon-disk" disabled="#{p.activar}">
+												</p:commandButton>
+											</p:column>	
+										</p:dataTable>
+										
+										<br/>
+										
+										<p:dataTable id="dtProgramKmAsig" widgetVar="dtProgramacion" var="p" value="#{mantFlotaMB.listaProgramcionesconKilometraje}"  
+											emptyMessage="No hay programaciones de este bus Disponibles." rowIndexVar="nro" 					
+											rows="5"
+											style="FONT-SIZE: 10px; ">
+											<f:facet name="header">Lista Programaciones con Kilometraje Registrado</f:facet>
+											
+											<p:column headerText="Orden" width="25" style="width:3%" >
+												#{nro+1}
+											</p:column>
+											
+											<p:column style="width:200px" headerText="N° Bus">
+												<h:outputText value="#{p.nBus}" />
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Origen">
+												<h:outputText value="#{p.desOrigen}" />
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Destino">
+												<h:outputText value="#{p.desDestino}" />
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Fecha Salida">
+												<h:outputText value="#{p.fSalida}" >
+													<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+												</h:outputText>
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Hora de Salida">
+												<h:outputText value="#{p.hSalida}" />
+											</p:column>
+											
+											<p:column style="width:200px" headerText="Servicio" >
+												<h:outputText value="#{p.descServicio}" />
+											</p:column>	
+											
+											<p:column style="width:200px" headerText="Km. Inicial" >
+												<h:outputText value="#{p.desKmInicial}" />
+											</p:column>	
+											
+											<p:column style="width:200px" headerText="Recorrido" >
+												<h:outputText value="#{p.desKmRecorridos}" />
+											</p:column>	
+											
+											<p:column style="width:200px" headerText="Km. Final" >
+												<h:outputText value="#{p.desKmFinal}" />
+											</p:column>	
+											
+											<p:column style="width:100px;text-align: center;" headerText="Precio Unit.">
+												<h:outputText value="#{p.precioComb}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Costo Total">
+												<h:outputText value="#{p.costoTotal}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Costo por Km">
+												<h:outputText value="#{p.costoKm}" />
+											</p:column>
+											
+											<p:column style="width:100px;text-align: center;" headerText="Consumo">
+												<pe:inputNumber decimalPlaces="2"  decimalSeparator="." minValue="0.00" style="width:100px"  
+														value="#{p.consumo}" maxlength="4" disabled="#{p.activar}" />
+											</p:column>
+									
+											<p:column headerText="Guardar//Editar" style="width:10%;text-align: center">
+											   <p:commandButton title="Guardar"  actionListener="#{mantFlotaMB.setearCombustible(p)}"
+															   update=":form:dtProgramKmAsig" icon="icon-disk" disabled="#{p.activar}" oncomplete="dlgSelecAgencia.show();" />
+															   
+												<p:commandButton title="Actualizar" actionListener="#{mantFlotaMB.editarCombustible(p)}"
+															 update=":form:dtProgramKmAsig" icon="icon-edit" />
+											</p:column>
+											
+										</p:dataTable>
+										</h:form> 
+						    	
+     </h:panelGroup>
+     
+     <p:dialog header="Seleccione Agencia" widgetVar="dlgSelecAgencia" appendToBody="true"
+					  resizable="false" id="dlgDetSelecAgencia" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgSelecAgencia" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"Agencia:"}
+							<p:selectOneMenu style="width:150px" value="#{mantFlotaMB._idOrigen}"
+								required="true" requiredMessage="Seleccione Origen">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{mantFlotaMB.listaAgOrigen}" 
+								itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							</p:selectOneMenu>
+						
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{mantFlotaMB.guardarConsumoCombustible()}"
+									 update=":form:dtProgramKmAsig msgSelecAgencia"
+									 oncomplete="validarSelecAge(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgSelecAgencia.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+
+	</p:panel>
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					
+				} else {
+					
+				}
+			}
+			
+			function validarSelecAge(xhr, status, args) {
+				if (!args.esValido) {
+					jQuery('#dlgDetSelecAgencia').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgSelecAgencia.hide();
+				}
+			}
+
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

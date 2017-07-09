@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<p:panel>
+
+			<h:form>
+				<p:breadCrumb>
+					<p:menuitem value="Home" url="#" />
+					<p:menuitem value="Ventas" url="#" />
+					<p:menuitem value="Consulta Reserva" url="delivery" />
+				</p:breadCrumb>
+			</h:form>
+
+			<br />
+			<!-- sms general -->
+			<p:messages id="sms" showDetail="false" showSummary="true"
+				closable="true" />
+
+			<!-- toolbar -->
+			<h:form id="Busqueda">
+			<p:panel >
+			 	<h:panelGrid columns="7" id="datareg">
+			 	
+			 		#{"Agencia:"}
+					<p:selectOneMenu style="width:150px" value="#{consultaReservaMB.idAgencia}" required="true" requiredMessage="Seleccione una Agencia">
+						<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+						<f:selectItems var="ag" value="#{consultaReservaMB.listaAgencias}" itemValue="#{ag.idagencia}" itemLabel="#{ag.descripcion}" /> 
+						<p:ajax update="cmbOfi" event="change" listener="#{consultaReservaMB.getOficinasxAgencia()}" /> 
+					</p:selectOneMenu>
+					
+					#{"Oficina:"}
+					<p:selectOneMenu style="width:150px" id="cmbOfi" value="#{consultaReservaMB.idOficina}" required="true" requiredMessage="Seleccione una Oficina">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="of" value="#{consultaReservaMB.listaOficinas}" itemValue="#{of.idOficina}" itemLabel="#{of.nombre}" />
+					</p:selectOneMenu>
+					
+					#{"Estado:"}
+					<p:selectOneMenu id="cmbEstado" value="#{consultaReservaMB.estado}" style=" width:150px;"
+							required="true" requiredMessage="Se necesita un Estado"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+							<f:selectItem itemLabel="ACTIVOS" itemValue="ACTIVOS"/>
+							<f:selectItem itemLabel="VENDIDO" itemValue="VENDIDO"/>
+							<f:selectItem itemLabel="PERSONA VENDIDA" itemValue="PERSONA VENDIDA"/>
+							<f:selectItem itemLabel="PERSONA ANULADA" itemValue="PERSONA ANULADA"/>
+					</p:selectOneMenu>
+					
+					<p:commandButton id="btnBusqueda" value="Consultar" actionListener="#{consultaReservaMB.listarReservas()}"  
+					 		update=":sms :formLista imprimir"	style=" width:160px;"/>
+					
+
+					#{"Origen:"}
+					 <p:selectOneMenu id="cmbOrigen"  value="#{consultaReservaMB.idOrigen}" style=" width:150px;"
+			        		required="true" requiredMessage="Se necesita un origen"> 
+						<f:selectItem itemLabel="Seleccionar" itemValue="" />
+						<f:selectItems var="o" value="#{consultaReservaMB.listaOrigen}" itemValue="#{o.idagencia}" itemLabel="#{o.descripcion}"/>
+						<p:ajax listener="#{consultaReservaMB.listarDestinosxOri()}"  event="change" update="cmbDestino "/>
+					</p:selectOneMenu>
+					
+					#{"Destino:"}
+					<p:selectOneMenu id="cmbDestino" value="#{consultaReservaMB.idDestino}" style=" width:150px;"
+							required="true" requiredMessage="Se necesita un destino"> 
+							<f:selectItem itemLabel="Seleccionar" itemValue=""/>
+							<f:selectItems var="d" value="#{consultaReservaMB.listaDestino}" itemValue="#{d.destino}" itemLabel="#{d.desDestino}"/>
+					</p:selectOneMenu>
+					
+					<h:outputLabel value="" escape="false"/>
+					<h:outputLabel value="" escape="false"/>
+					
+					<h:commandLink   disabled="#{consultaReservaMB.btnImprimir}"  id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{consultaReservaMB.imprimirPDF}" ajax="false"  oncomplete="dlgImprimir.hide()" >   
+					</h:commandLink>	
+					
+	
+					
+					<h:outputLabel value="F.Inicio "  /> 
+					<p:calendar style="width:200px"  value="#{consultaReservaMB.fecini}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"   required="true" requiredMessage="Se necesita una fecha de inicio">
+							  <p:ajax update="reservFfin" event="dateSelect"/>
+							  </p:calendar>
+							  
+				    <h:outputLabel value="F.Fin" />
+					<p:calendar id="reservFfin" style="width:200px;" mindate="#{consultaReservaMB.fecini}"  value="#{consultaReservaMB.fecfin}" pattern="dd/MM/yyyy" locale="es"
+							  navigator="true"  required="true" requiredMessage="Se necesita una fecha final" />
+		
+				
+				</h:panelGrid>
+				</p:panel>
+			</h:form>	
+			
+			<br />
+
+			<!-- listado de agencias -->
+			<h:form id="formLista">
+				<p:dataTable widgetVar="dtAgencia" var="p"
+					value="#{consultaReservaMB.listaAsientoVenta}"
+					filteredValue="#{consultaReservaMB.listaAsientoVentaFilter}"
+					emptyMessage="No hay delivery en la lista" rowIndexVar="nro"
+					paginator="true" rows="10" paginatorPosition="bottom"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista boletos por delivery</f:facet>
+
+					<p:column headerText="Orden" width="25" style="width:3%">
+						#{nro+1}
+					</p:column>
+
+					<p:column style="width:15%" headerText="Fecha Salida">
+						<h:outputText value="#{p.desFSalida}">
+							<f:convertDateTime pattern="dd/MM/yyyy" type="date"
+								dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Servicio">
+						<h:outputText value="#{p.desServicio}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Hora de Salida">
+						<h:outputText value="#{p.desHsalida}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="N° Asiento" filterBy="#{p.nroAsiento}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.nroAsiento}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Dias Restantes">
+						<h:outputText value="#{p.diasRestantes}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Horas Restantes">
+						<h:outputText value="#{p.horasRestantes}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Pasajero" filterStyleClass="mayuscula" filterBy="#{p.personaCliente.nombres}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.personaCliente.nombres}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="DNI" filterBy="#{p.personaPagador.dni}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.personaCliente.dni}" />
+					</p:column>
+					
+					<p:column style="width:15%" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{p.desOrigen}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.desOrigen}" />
+					</p:column>
+					 
+					<p:column style="width:15%" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{p.desDestino}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{p.desDestino}" />
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+
+		</p:panel>
+
+		<script>
+			function validar(xhr, status, args) {
+				if (!args.esValido) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
+</html>

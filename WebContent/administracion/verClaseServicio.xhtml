@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+
+		<style>
+		
+		.ui-datagrid-column
+		{
+			padding:1px!important;;
+		}
+		
+		</style>
+		
+		<p:panel style="width:1000px;">
+			<h:form id="frmBusClase">
+				<h:panelGrid columns="11" >
+				
+					#{"Categoria:"}
+					<h:selectOneMenu disabled="true" value="#{nuevaClaseServicioMB.busClase.idCatServicio}">
+						<f:selectItems var="item" value="#{nuevaClaseServicioMB.listaCategoriaServicio}" 
+									   itemValue="#{item.idCatServicio}" itemLabel="#{item.descripcion}" />
+					</h:selectOneMenu>
+					
+					<p:spacer width="20" />
+											
+					#{"Nombre:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.descripcion}" style="font-weight:bold;" />
+					
+					<p:spacer width="20" />		
+					#{"Nombre Corto:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.nombreCorto}" style="font-weight:bold;" />
+					
+					<p:spacer width="20" />		
+					
+					#{"Nro Asientos:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.asientos}"  style="font-weight:bold;"  />
+
+					<p:spacer width="20" />		
+					
+					#{"Nro Pisos:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.nroPisos}"   style="font-weight:bold;"  />
+  					
+					
+					#{"Atn bordo:"}
+					<h:outputText value="#{nuevaClaseServicioMB.busClase.atnBordo}"   style="font-weight:bold;"  />
+					
+					<p:spacer width="20" />	
+					
+					#{"Tipo Asiento P1:"}
+					<h:outputText value="#{nuevaClaseServicioMB.tipoAsientop1.nombre}"  size="4"  />
+					
+					<p:spacer width="20" />	
+					
+					<h:outputText value="Tipo Asiento P2:"  rendered="#{nuevaClaseServicioMB.busClase.nroPisos eq 2}"/>
+					<h:outputText rendered="#{nuevaClaseServicioMB.busClase.nroPisos eq 2}" value="#{nuevaClaseServicioMB.tipoAsientop2.nombre}" size="4"  />  
+					
+				</h:panelGrid>
+
+			</h:form>
+			</p:panel>
+			<br/>
+			
+			<h:panelGroup id="pnBus" > 
+			
+				<p:panel  rendered="#{nuevaClaseServicioMB.busClase.idCatServicio eq '4'}" style="width:1070px;" >
+					<h:form>
+						<h:panelGrid columns="5">
+							<h3>Configuracion del Bus </h3>
+							<p:spacer  width="50" height="5" />
+							<p:commandButton value="Volver al listado" action="pretty:claseservicio" ajax="false"/>
+						</h:panelGrid>
+					</h:form>
+					
+					<h:form id="frmBus"  style="width:#{nuevaClaseServicioMB.anchoBusDos}px;" >
+    					<h:panelGroup rendered="#{nuevaClaseServicioMB.busClase.nroPisos eq '1'}" >
+    		
+    						<h:panelGrid columns="3">
+    							<h:graphicImage url="/resources/img/front.png" height="225" />
+    							<h:panelGroup>
+    								<div  style="text-align:center;font-size:15px;font-weight:bold;" >
+										<h:outputText value="Piso Uno :#{nuevaClaseServicioMB.tipoAsientop1.nombre}" />
+									</div>
+    								<p:dataGrid var="as" value="#{nuevaClaseServicioMB.listaAsientosPisoUno}"  
+    										columns="#{nuevaClaseServicioMB.nroColumnasPisoUno}" rows="#{nuevaClaseServicioMB.nroColumnasPisoUno*nuevaClaseServicioMB.nroFilasPisoUno}">
+				
+										<div style="width:36px; height:36px; font-size:10px;" update="@form">
+											<h:commandButton value="#{as.numero}" 
+												 style="width:35px; height:35px; background-color:#6FD61B;color:black;font-weight:bold;"
+												 rendered="#{as.estado}" disabled="true" />
+											<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.png': as.numero eq '300' ? 'tv.png' : as.numero eq '400' ? 'cafe.png':'wc.png'}"
+															 rendered="#{not as.estado and as.numero ge '200'}" />
+												
+										</div>
+					
+									</p:dataGrid>
+								</h:panelGroup>
+								<h:graphicImage  url="/resources/img/back.png" height="210" />
+								
+    						</h:panelGrid>
+
+							
+						</h:panelGroup>
+						
+						<br/>
+						
+						
+						
+						<h:panelGroup rendered="#{nuevaClaseServicioMB.busClase.nroPisos eq '2'}">
+    						<h:panelGrid columns="5" >
+    						<h:graphicImage url="/resources/img/front.png" height="225" />
+    							<h:panelGroup>
+    								<div  style="text-align:center;font-size:15px;font-weight:bold;" >
+										<h:outputText value="Piso Uno :#{nuevaClaseServicioMB.tipoAsientop1.nombre}" />
+									</div>
+    								<p:dataGrid var="as" value="#{nuevaClaseServicioMB.listaAsientosPisoUno}"  
+    										columns="#{nuevaClaseServicioMB.nroColumnasPisoUno}" rows="#{nuevaClaseServicioMB.nroColumnasPisoUno*nuevaClaseServicioMB.nroFilasPisoUno}">
+				
+										<div style="width:36px; height:36px; font-size:10px;">
+											
+											<p:commandButton value="#{as.numero}" update="@form" 
+												 style="width:35px; height:35px; color:#{as.visible ? 'green':'gray'};font-weight:bold;" 
+												 rendered="#{as.estado}">
+											</p:commandButton>
+											
+											<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.png': as.numero eq '300' ? 'tv.png' : as.numero eq '400' ? 'cafe.png':as.numero eq '500'?'wc.png':'blanco.png'}"
+												rendered="#{ as.numero ge '200' and not as.estado}" />
+											
+										</div>
+					
+									</p:dataGrid>
+								</h:panelGroup>
+								
+    							<h:graphicImage  url="/resources/img/spacer.png" height="180" />
+    							
+    							<h:panelGroup>
+    								<div  style="text-align:center;font-size:15px;font-weight:bold;" >
+										<h:outputText value="Piso Dos: #{nuevaClaseServicioMB.tipoAsientop2.nombre}" />
+									</div>
+									<p:dataGrid  var="as" value="#{nuevaClaseServicioMB.listaAsientosPisoDos}"  
+    									columns="#{nuevaClaseServicioMB.nroColumnasPisoDos}" rows="#{nuevaClaseServicioMB.nroColumnasPisoDos*nuevaClaseServicioMB.nroFilasPisoDos}">
+				
+										<div style="width:36px; height:36px; font-size:10px;">
+											
+											<p:commandButton value="#{as.numero}" update="@form" 
+												 style="width:35px; height:35px; color:#{as.visible ? 'green':'gray'};font-weight:bold;" 
+												 rendered="#{as.estado}">
+											</p:commandButton>
+											
+											<h:graphicImage value="resources/img/#{as.numero eq '200' ? 'escalera.png': as.numero eq '300' ? 'tv.png' : as.numero eq '400' ? 'cafe.png':as.numero eq '500'?'wc.png':'blanco.png'}"
+												rendered="#{ as.numero ge '200' and not as.estado}" />
+
+										</div>
+					
+									</p:dataGrid>
+    							</h:panelGroup>
+    							<h:graphicImage  url="/resources/img/back.png" height="210" />
+    							
+    							
+    						</h:panelGrid>
+
+				</h:panelGroup>	
+						
+   			 </h:form>
+
+   			 
+   			</p:panel>
+		</h:panelGroup>
+		
+		
+	</ui:define>
+</ui:composition>
+</html>

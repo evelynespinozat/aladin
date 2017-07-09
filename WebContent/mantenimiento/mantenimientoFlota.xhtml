@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel >
+	
+		<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Mantenimiento" url="#" />
+    				<p:menuitem value="Flota" url="flotaVehicular" /> 
+    				<p:menuitem value="Mantenimiento Flota" url="#" />     
+				</p:breadCrumb>	
+		</h:form>	
+				
+		<br/>		
+	<div>
+		<p:panel id="cabCabecera">			    
+		<h:panelGrid columns="14">
+				#{"Numero:"}
+				<h:outputText value=" #{mantFlotaMB.flota.numero}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+					
+				#{"Placa:"}
+				<h:outputText value=" #{mantFlotaMB.flota.placa}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Marca:"}
+				<h:outputText value=" #{mantFlotaMB.flota.marca}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Modelo:"}
+				<h:outputText value=" #{mantFlotaMB.flota.modelo}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+				
+				#{"Clase:"}
+				<h:outputText value=" #{mantFlotaMB.flota.descClase}"  
+					style="font-weight:bold;font-size: 1.2em;" />	
+					
+				#{"Tipo Flota:"}
+				<h:outputText value=" #{mantFlotaMB.flota.desTipoFlota}"  
+					style="font-weight:bold;font-size: 1.2em;" />
+				
+				#{"Kilometraje:"}
+				<h:outputText value=" #{mantFlotaMB.flota.recorrido}"  
+					style="font-weight:bold;font-size: 1.2em;" />						
+				
+		</h:panelGrid>
+		</p:panel>
+		<br/>
+	</div>	
+	 <p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+     <h:panelGroup id="pnAdicional" >
+		<p:tabView id="tabMantenimiento"  > 
+<!-- ............................   CONTROL DE PIEZAS DE AUTOBUS  .................................. -->
+					<p:tab id="tab1" title="Control de Piezas (Km)" titleStyle="width:33%">  
+						    
+						   <h:form id="formListaMante">
+						     
+									<p:dataTable var="modu" value="#{mantFlotaMB.listaAutomotorxBus}" style="width:700px;"  rowIndexVar="nro" >
+											<f:facet name="header">
+												Autoparte de Bus
+											</f:facet>
+											
+											<p:columnGroup type="header">    
+							            		<p:row>  
+							                		<p:column headerText="Autoparte" />
+							                		<p:column headerText="Km. Cambio" /> 
+							                		<p:column headerText="Kilometraje Recorrido" />
+							                		<p:column headerText="Ult. Fec. Modificacion" /> 
+							                		<p:column headerText="Kilometraje Proyeccion" />
+							                		<p:column headerText="Ult. Fec. Proyeccion" /> 
+<!-- 							                		<p:column headerText="Km. a Adherir" />     -->
+							            		</p:row>  
+							        		</p:columnGroup> 
+											
+							
+											<p:subTable var="men" value="#{modu.listaFlotaAutoparte}" style="text-align:left;Width:100%" >
+												<f:facet name="header">
+													<h:outputText value="Sistema: #{modu.desAutomotor}"/>  
+												</f:facet>
+												
+												<p:column style="width:400px;">
+													#{men.desAutoparte}
+												</p:column>
+												
+												<p:column style="width:100px;">
+													#{men.kmCambio}
+												</p:column>
+												
+												<p:column style="width:100px;">
+													#{men.kmActual}
+												</p:column>
+												
+												<p:column style="width:100px;">
+													<h:outputText value="#{men.fecKmIncremento}">
+														<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+													</h:outputText>
+												</p:column>
+												
+												<p:column style="width:100px;">
+													#{men.kmAproximado}
+												</p:column>
+												
+												<p:column style="width:100px;">
+													<h:outputText value="#{men.fecKmIncrementoAprox}">
+														<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+													</h:outputText>
+												</p:column>
+												
+<!-- 												<p:column style="width:100px;">										 -->
+<!-- 													<p:inputText style="width:50px" value="#{men.kmAdherir}" maxlength="5" > -->
+<!-- 														<pe:keyFilter  mask="num"/>  -->
+<!-- 													</p:inputText>											 -->
+<!-- 												</p:column> -->
+							
+											</p:subTable>
+										</p:dataTable>
+								</h:form>
+				    </p:tab>
+<!-- 				    <p:tab title="Reportes" titleStyle="width:32%">   -->
+<!-- 				    </p:tab> -->
+<!-- 				    <p:tab title="Historial" titleStyle="width:33%">  -->
+<!-- 				    </p:tab> -->
+		</p:tabView>		
+   </h:panelGroup>
+
+	</p:panel>
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					
+				} else {
+					
+				}
+			}
+
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

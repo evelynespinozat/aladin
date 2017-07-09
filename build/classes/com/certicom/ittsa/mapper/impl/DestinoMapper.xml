@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.DestinoMapper">
+
+	<resultMap id="DestinoResult" type="com.certicom.ittsa.domain.Destino">
+		<id column="IdDestino" property="IdDestino" />
+		<result column="Origen" property="Origen" />
+		<result column="Destino" property="Destino" />
+		<result column="desOrigen" property="desOrigen" />
+		<result column="desDestino" property="desDestino" />
+		<result column="Estado" property="Estado" />
+		<result column="KmDistancia" property="kmDistancia" />
+	</resultMap>
+	
+	
+	<update id="actualizarDestino" parameterType="com.certicom.ittsa.domain.Destino">
+		update
+		dbo.t_destino
+		SET
+		Origen = #{Origen},
+		Destino = #{Destino},
+		Estado = #{Estado},
+		KmDistancia = #{kmDistancia}
+		WHERE IdDestino = #{IdDestino}
+	</update>
+
+	<insert id="registrarDestino" parameterType="com.certicom.ittsa.domain.Destino">
+		insert into
+		dbo.t_destino(Origen,Destino,Estado, KmDistancia)
+		values
+		(#{Origen},#{Destino},#{Estado},#{kmDistancia})
+	</insert>
+	
+	<select id="findAll" parameterType="com.certicom.ittsa.domain.Destino" resultMap="DestinoResult">
+		select 
+			IdDestino,
+			Origen,
+			(select descripcion from t_agencia where Idagencia= d.Origen ) as desOrigen,
+			Destino,
+			(select descripcion from t_agencia where Idagencia= d.Destino) as desDestino,
+		d.Estado as Estado,
+		KmDistancia
+ 		from t_destino d
+ 		order by 3,5
+	</select>
+
+</mapper>	

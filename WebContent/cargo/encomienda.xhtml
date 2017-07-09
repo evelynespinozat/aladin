@@ -1,0 +1,1334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	>
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+	<p:panel>
+	<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />	
+		
+		<h:panelGrid columns="4">
+		<table>
+		<tr><td>
+			<h:form id="formDestino" >
+				<h:panelGrid columns="1">			
+					<p:panel style="width:240px;">
+						<h:panelGroup id="pnTipoPago">
+							<p:outputLabel id="lblBoleta" value="Boleta N°:" rendered="#{encomiendaMB.remitente.tipoPersona eq 'N'}" 
+											style="font-weight:bold;font-size: 1em;color:#E50808;"/>
+							<p:outputLabel id="lblFactura" value="Factura N°:" rendered="#{encomiendaMB.remitente.tipoPersona eq 'J'}" 
+											style="font-weight:bold;font-size: 1em;color:#E50808;"/>
+							<p:outputLabel id="txtDocumento" value="#{encomiendaMB.comprobante}"  style="margin-left:10px;font-weight:bold;font-size: 1.5em;color:#E50808;"/>
+						</h:panelGroup>
+					</p:panel>
+					
+					<p:panel style="width:240px;">			
+						<h:panelGrid columns="2">
+								#{"Origen:"}
+								<p:selectOneMenu style="width:150px;margin-right:15px" value="#{encomiendaMB.agencia.idagencia}" disabled="true"
+										required="true" requiredMessage="Seleccione Origen">
+										<f:selectItem itemLabel="#{encomiendaMB.agencia.descripcion}" itemValue="#{encomiendaMB.agencia.idagencia}" />						
+								</p:selectOneMenu>
+														
+								#{"Destino:"}
+								<p:selectOneMenu id="cmbDest" style="width:150px" value="#{encomiendaMB.idDestino}" 
+										 required="true" requiredMessage="Seleccione Destino">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="item" value="#{encomiendaMB.listaAgDestinos}" itemValue="#{item.destino}" itemLabel="#{item.desDestino}" />
+										<p:ajax event="change" listener="#{encomiendaMB.setearDestino()}" update=":formDestino:pgReparto1 :listaDetalleEncomienda :formBusquedaBus cmbOfi"/>
+								</p:selectOneMenu>	
+								
+								#{"Oficina:"}
+								<p:selectOneMenu id="cmbOfi" style="width:150px" value="#{encomiendaMB.idOficina}" 
+										 required="true" requiredMessage="Seleccione Oficina">
+										<f:selectItem itemLabel="Seleccione..." itemValue="" />
+										<f:selectItems var="item" value="#{encomiendaMB.listaOficinas}" itemValue="#{item.idOficina}" itemLabel="#{item.nombre}" />
+										<p:ajax event="change" listener="#{encomiendaMB.setearOficina()}"/>
+								</p:selectOneMenu>
+								
+								<p:spacer></p:spacer>
+								<h:panelGroup>
+									<p:selectBooleanCheckbox value="#{encomiendaMB.bandMismaOficina}" style="margin-left:0px">
+			        						<p:ajax  update="cmbDest" listener="#{encomiendaMB.setearAgenciaOrigen}" />  
+			        				</p:selectBooleanCheckbox>
+									<h:outputText value=" :Envio misma oficina"/>
+								</h:panelGroup>
+									
+						</h:panelGrid>
+					</p:panel>
+					
+					<p:panel style="width:240px;">
+						<h:panelGrid columns="2" >
+						<h:outputText value="Forma Pago:" />
+						<p:selectOneMenu id="optionsPago"  value="#{encomiendaMB.formaPago}" style="margin-left:5px;width:150px" >  
+							<f:selectItem itemLabel="Efectivo" itemValue="E" />
+							<f:selectItem itemLabel="Tarjeta" itemValue="T" />
+							<f:selectItem itemLabel="Mixto" itemValue="M" />
+							<f:selectItem itemLabel="Credito" itemValue="C" />
+							<p:ajax event="change" update=":dlgDetFormaPago" listener="#{encomiendaMB.setearFormaPago}" oncomplete="validarFormaPago(xhr, status, args)"/>    
+						</p:selectOneMenu>
+						</h:panelGrid> 
+					</p:panel>
+					
+					<p:panel style="width:240px;">
+						<h:panelGroup id="pgReparto1">
+						<h:panelGrid columns="4">
+							<h:outputText value="Reparto:"/>  
+        					<p:selectBooleanCheckbox value="#{encomiendaMB.bandReparto}" style="margin-left:0px">
+        						<p:ajax update="pgReparto1 :listaDetalleEncomienda :dlgDetReparto" listener="#{encomiendaMB.listarDistritosReparto}" oncomplete="validarReparto(xhr, status, args)"/>  
+        					</p:selectBooleanCheckbox>
+        					
+        					<h:outputText value="Contra Entrega: " style="margin-left:5px"/>  
+        					
+        					<p:selectBooleanCheckbox value="#{encomiendaMB.bandContraEntrega}" style="margin-left:0px">
+        						<p:ajax update=":listaDetalleEncomienda" listener="#{encomiendaMB.marcarContraEntrega}"/>  
+        					</p:selectBooleanCheckbox>
+						</h:panelGrid>
+						<p:outputLabel value="Reparto: S/. #{encomiendaMB.precioReparto}" style="margin-left:0px;font-weight:bold;font-size: 1.1em;color:#E50808;"
+										rendered="#{encomiendaMB.bandReparto}"/>
+						</h:panelGroup>
+					</p:panel>
+
+				</h:panelGrid>	
+					
+			</h:form>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			
+			<h:panelGrid columns="2" id="pnlOptions">
+				<p:commandButton id="btnBuscar" value="Buscar Encom" oncomplete="dlgBusquedaEncomienda.show()" update=":dlgDetBusquedaEncomienda" actionListener="#{encomiendaMB.listarEncomiendas()}"/>
+				<p:commandButton id="btnActualizar" value="Actualizar Encom" oncomplete="dlgActualizarEncomienda.show()" disabled="#{encomiendaMB.bandAnularEncomienda}" update=":dlgDetActualizarEncomienda" />
+				<p:commandButton id="btnAnular" value="Anular Encom" disabled="#{encomiendaMB.bandAnularEncomienda}" oncomplete="dlgAnularEncomienda.show()" update=":dlgDetAnularEncomienda" />
+				<p:commandButton id="btnRegistrar" value="Registrar Encom" update=":sms :formDestino @this" rendered="#{encomiendaMB.bandRegRenderedEnc}" disabled="#{encomiendaMB.bandRegEncomienda}" oncomplete="validar(xhr, status, args)"  actionListener="#{encomiendaMB.verificarDatosIngreso()}" />
+				<p:commandButton id="btnNuevo" value="Nueva Encom" update=":listaDetalleEncomienda :formDestino :pnlOptions :formDatosRemitente :pt:formDatosDestinatario1 :pt:formDatosDestinatario2 :listaProductos" rendered="#{encomiendaMB.bandNuevoEncomienda}"  actionListener="#{encomiendaMB.inicia()}" />
+			</h:panelGrid>
+			</td></tr>
+			</table>
+			<h:form id="formDatosRemitente" >
+			<table>
+			<tr>
+			<td>
+			<h:panelGrid>
+			   <h:panelGrid columns="5" style="border-color: red; border: 2px; border-style: outset;background-color:#A9D0F5" rendered="#{encomiendaMB.flgidBus}">
+<!-- 						<h:outputText value="Bus : " rendered="#{encomiendaMB.flgidBus}" style="color: red; font-size: 14px; font-weight: bold;"/> -->
+<!-- 						<h:outputText id="id_bus_r" value="#{encomiendaMB._idBus}" rendered="#{encomiendaMB.flgidBus}" style="color: black; font-size: 14px; font-weight: bold;"/> -->
+<!-- 						<p:spacer width="10px"></p:spacer> -->
+						<h:outputText value="Guía de Remisión : " rendered="#{encomiendaMB.flgidBus}" style="color: red; font-size: 14px; font-weight: bold;"/>
+						<h:outputText id="id_guia_r" value="#{encomiendaMB._guiaRemisionCliente}" rendered="#{encomiendaMB.flgidBus}" style="color: black; font-size: 14px; font-weight: bold;"/>
+				</h:panelGrid>		
+			</h:panelGrid>
+			</td>
+			</tr>
+			<tr>
+			<td>
+
+        <p:panel header="Remitente">
+						<h:panelGrid columns="2">
+							#{"Tipo Persona: (*)"}
+							<p:selectOneRadio id="options" 	value="#{encomiendaMB.remitente.tipoPersona}" style="margin-left:10px">
+									<f:selectItem itemLabel="Normal" itemValue="N" />
+									<f:selectItem itemLabel="Juridica" itemValue="J" />
+									<p:ajax event="change" update="pnRUC :formDestino:pnTipoPago :listaDetalleEncomienda :formDatosRemitente" listener="#{encomiendaMB.setearTipoPersona()}"/>
+							</p:selectOneRadio>
+						</h:panelGrid>
+
+						<h:panelGrid columns="4">					        
+							  	#{"Tipo Doc.: (*)"}
+								<p:selectOneMenu id="tipoDoc"
+								value="#{encomiendaMB.remitente.idtipodoc}"
+								style="width:80px;margin-left:5px">
+								<f:selectItems var="item" value="#{encomiendaMB.listaTipoDoc}"
+									itemValue="#{item.idtipodoc}" itemLabel="#{item.descripcion}" />
+								<p:ajax event="change" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="N°: (*)" style="margin-left:10px" />
+							<p:inputText id="dni" value="#{encomiendaMB.remitente.dni}" style="width:80px;" maxlength="11" required="true" requiredMessage="Ingrese N° de Documento de Identidad">
+								<p:ajax event="keypress" update="apellidos nombres pnRUC dirc" listener="#{encomiendaMB.buscarPersona('R')}" oncomplete="validarListaEnvios(xhr, status, args)" execute="@this"/>
+								<p:ajax event="blur" update="apellidos nombres pnRUC dirc" listener="#{encomiendaMB.buscarPersona('R')}" oncomplete="validarListaEnvios(xhr, status, args)" execute="@this"/>
+							</p:inputText>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">					        
+								#{"Apellidos: (*)"}
+								<p:inputText id="apellidos"
+								value="#{encomiendaMB.remitente.apellidos}"
+								style="width:200px;margin-left:5px" required="true"
+								requiredMessage="Ingrese los apellidos del remitente" />
+								#{"Nombres: (*)"}
+								<p:inputText id="nombres" value="#{encomiendaMB.remitente.nombres}" style="width:200px;margin-left:5px" required="true"
+									requiredMessage="Ingrese al menos un nombre del remitente" />
+								#{"Dirección: (*)"}
+								<p:inputText id="dirc" value="#{encomiendaMB.remitente.direccion}" style="width:200px;margin-left:5px">
+									<p:ajax event="blur"/>
+								</p:inputText>
+								#{"Telefono:"}
+								<p:inputText value="#{encomiendaMB.remitente.telefono}" style="width:100px;margin-left:5px">
+									<p:ajax event="blur"/>
+								</p:inputText>
+						</h:panelGrid>
+
+						<h:panelGroup id="pnRUC">
+							<h:panelGrid columns="3" >
+
+								<p:outputLabel value="RUC: (*)"  />
+								<p:inputText id="txtRUC" value="#{encomiendaMB.remitente.empresa.RUC}"	style="width:90px;margin-left:5px" maxlength="11"
+									required="true" requiredMessage="Ingrese el ruc"
+									disabled="#{encomiendaMB.remitente.tipoPersona eq 'N'}">
+									<pe:keyFilter mask="num" />
+									<p:ajax event="keyup" update="txtRazonR" listener="#{encomiendaMB.buscarEmpresa('R')}" oncomplete="validarListaEnvios(xhr, status, args)" />    
+								</p:inputText>
+								
+								
+								<p:commandLink update=":dlgBusquedaEmpresa" style="padding: 5px; border-radius: 4px; background-color: #EBEAEA"
+									actionListener="#{encomiendaMB.nuevaBusquedaEmpresa('R')}" oncomplete="dlgDetBusquedaEmpresa.show();" process="@this" 
+									disabled="#{encomiendaMB.remitente.tipoPersona eq 'N'}">
+									<h:graphicImage 
+										value="/resources/img/icon-search.png"/>
+								</p:commandLink>
+
+								<p:outputLabel value="Razon Social: (*)" />
+								<p:inputText id="txtRazonR" value="#{encomiendaMB.remitente.empresa.razonSocial}"
+									style="width:190px;margin-left:5px" maxlength="100"
+									required="true" requiredMessage="Ingrese la razon social"
+									disabled="#{encomiendaMB.remitente.tipoPersona eq 'N'}" >
+									<!--  <p:ajax event="blur" />-->
+								</p:inputText>
+							</h:panelGrid>
+						</h:panelGroup>
+						
+						<pe:keyFilter for="dni" mask="num" />
+						<pe:keyFilter for="txtRUC" mask="num" />
+				
+			</p:panel>
+
+
+			</td>
+			</tr>
+			</table>
+			</h:form>
+			
+			 <p:accordionPanel style="width:400px;padding:0px" id="pt">
+		        <p:tab title="Destinatario 1" titleStyle="background:#F5F5F5;">
+		        <p:panel style="padding:0px;margin:0px;">
+		            <h:panelGrid columns="1">
+						<h:panelGroup id="formDatosDestinatario1">
+							<h:form>
+								<h:panelGrid columns="2">
+							#{"Tipo Persona: (*)"}
+								<p:selectOneRadio id="optionsD1" value="#{encomiendaMB.destinatario1.tipoPersona}" style="margin-left:10px">  
+									<f:selectItem itemLabel="Normal" itemValue="N" />
+									<f:selectItem itemLabel="Juridica" itemValue="J" />
+									<p:ajax event="change" update=":pt:formRucD1:pnRUCD1 :listaDetalleEncomienda" listener="#{encomiendaMB.validarContraEntrega()}"/>
+								</p:selectOneRadio> 
+								</h:panelGrid>
+					
+								<h:panelGrid columns="4">					        
+							#{"Tipo Doc.: (*)"}
+								<p:selectOneMenu id="tipoDocD1" value="#{encomiendaMB.destinatario1.idtipodoc}"  style="width:80px;margin-left:5px"> 
+									<f:selectItems var="item" value="#{encomiendaMB.listaTipoDoc}" itemValue="#{item.idtipodoc}" itemLabel="#{item.descripcion}" />
+									<p:ajax event="change" />     
+								</p:selectOneMenu>
+												         
+								<p:outputLabel value="N°: (*)" style="margin-left:10px"/>
+								<p:inputText id="dniD1" value="#{encomiendaMB.destinatario1.dni}" style="width:80px;"  maxlength="11" required="true" 
+											requiredMessage="Ingrese N° de Documento de Identidad del 2° destinatario" >									
+											<p:ajax event="blur" update=":pt:apellidosD1 :pt:formRucD1:nombresD1" listener="#{encomiendaMB.buscarPersona('D1')}"/>
+											<p:ajax event="keypress" update=":pt:apellidosD1 :pt:formRucD1:nombresD1" listener="#{encomiendaMB.buscarPersona('D1')}"/>  
+								</p:inputText>
+								
+								</h:panelGrid>	
+								<pe:keyFilter for="dniD1" mask="num"/>
+								<p:commandButton style="visibility:hidden;display:none"/>						 
+						</h:form>	
+								     
+						<h:panelGrid columns="3">					        
+							#{"Apellidos: (*)"}
+							<p:inputText id="apellidosD1" value="#{encomiendaMB.destinatario1.apellidos}" style="width:180px;margin-left:5px"  required="true" requiredMessage="Ingrese los apellidos del 1° destinatario" />
+							<p:commandButton icon="icon-search"  actionListener="#{encomiendaMB.nuevaBusquedaDestinatario('D1')}" update="formDatosDestinatario1 :dlgDetBusquedaDest" oncomplete="dlgBusquedaDest.show();"/>
+						</h:panelGrid>
+						
+						<h:form id="formRucD1">				
+						<h:panelGrid columns="2">
+							#{"Nombres: (*)"}
+							<p:inputText id="nombresD1" value="#{encomiendaMB.destinatario1.nombres}" style="width:200px;margin-left:5px" required="true" requiredMessage="Ingrese al menos un nombre del 1° destinatario" />
+							#{"Dirección: (*)"}
+							<p:inputText id="direccionD1" value="#{encomiendaMB.destinatario1.direccion}" style="width:200px;margin-left:5px" required="true" requiredMessage="Ingrese al menos un nombre del 1° destinatario" >
+								<p:ajax event="blur"/>
+							</p:inputText>
+							#{"Telefono:"}
+							<p:inputText id="telefonoD1" value="#{encomiendaMB.destinatario1.telefono}" style="width:100px;margin-left:5px">
+								<p:ajax event="blur" />
+							</p:inputText>
+						</h:panelGrid>
+			
+						<h:panelGroup id="pnRUCD1">
+							<h:panelGrid columns="3" >				
+								<p:outputLabel value="RUC: (*)"/>
+								<p:inputText id="txtRUCD1" value="#{encomiendaMB.destinatario1.empresa.RUC}" style="width:90px;margin-left:5px"  maxlength="11" required="true" 
+											requiredMessage="Ingrese el ruc del 2° destinatario" disabled="#{encomiendaMB.destinatario1.tipoPersona eq 'N'}">
+											<p:ajax event="keyup" update=":pt:formRucD1:txtRazonD1" listener="#{encomiendaMB.buscarEmpresa('D1')}" 
+												oncomplete="validarListaEnvios(xhr, status, args)" />   
+											<pe:keyFilter mask="num"/>
+								</p:inputText>
+								
+								<p:commandButton icon="icon-search" process="@this" actionListener="#{encomiendaMB.nuevaBusquedaEmpresa('D1')}" update=":dlgBusquedaEmpresa" oncomplete="dlgDetBusquedaEmpresa.show();" disabled="#{encomiendaMB.destinatario1.tipoPersona eq 'N'}"/>
+								
+								<p:outputLabel value="Razon Social: (*)"/>
+								<p:inputText id="txtRazonD1" value="#{encomiendaMB.destinatario1.empresa.razonSocial}" style="width:190px;margin-left:5px"  maxlength="100" required="true" 
+											requiredMessage="Ingrese la razon social del 1° destinatario" disabled="#{encomiendaMB.destinatario1.tipoPersona eq 'N'}">
+											<!--  <p:ajax event="blur" />-->
+								</p:inputText>
+							</h:panelGrid>
+						</h:panelGroup>
+									
+							
+							<pe:keyFilter for="txtRUCD1" mask="num"/>
+						</h:form>
+						</h:panelGroup>
+					</h:panelGrid>
+					 </p:panel>
+		        </p:tab>
+		        <p:tab title="Destinatario 2" titleStyle="background:#F5F5F5">
+		        <p:panel>
+		           <h:panelGrid columns="1">
+						<h:panelGroup id="formDatosDestinatario2">
+								<h:form>
+										<h:panelGrid columns="2">
+											#{"Tipo Persona: (*)"}
+											<p:selectOneRadio id="optionsD2" value="#{encomiendaMB.destinatario2.tipoPersona}" style="margin-left:10px">  
+												<f:selectItem itemLabel="Normal" itemValue="N" />
+												<f:selectItem itemLabel="Juridica" itemValue="J" />
+												<p:ajax event="change" update=":pt:formRucD2:pnRUCD2 :listaDetalleEncomienda" listener="#{encomiendaMB.validarContraEntrega()}"/>
+											</p:selectOneRadio> 
+										</h:panelGrid>
+				
+										 <h:panelGrid columns="4">					        
+											#{"Tipo Doc.: (*)"}
+											<p:selectOneMenu id="tipoDocD2" value="#{encomiendaMB.destinatario2.idtipodoc}"  style="width:80px;margin-left:5px"> 
+												<f:selectItems var="item" value="#{encomiendaMB.listaTipoDoc}"
+														itemValue="#{item.idtipodoc}" itemLabel="#{item.descripcion}" />
+												<p:ajax event="change" />     
+											</p:selectOneMenu>
+											         
+											<p:outputLabel value="N°: (*)" style="margin-left:10px"/>
+											<p:inputText id="dniD2" value="#{encomiendaMB.destinatario2.dni}" style="width:80px;"  maxlength="11" required="true" 
+																 requiredMessage="Ingrese N° de Documento de Identidad del 2° destinatario" >									
+												<p:ajax event="blur" update=":pt:apellidosD2 :pt:formRucD2:nombresD2" listener="#{encomiendaMB.buscarPersona('D2')}"/>
+												<p:ajax event="keyup" update=":pt:apellidosD2 :pt:formRucD2:nombresD2" listener="#{encomiendaMB.buscarPersona('D2')}"/>
+											</p:inputText>
+										</h:panelGrid>
+										<pe:keyFilter for="dniD2" mask="num"/> 
+										<p:commandButton style="visibility:hidden;display:none"/>
+									</h:form>	        
+										       
+										<h:panelGrid columns="3">					        
+											#{"Apellidos: (*)"}
+											<p:inputText id="apellidosD2" value="#{encomiendaMB.destinatario2.apellidos}" style="width:180px;margin-left:5px"  required="true" requiredMessage="Ingrese los apellidos del 2° destinatario" />
+											<p:commandButton icon="icon-search" actionListener="#{encomiendaMB.nuevaBusquedaDestinatario('D2')}" update="formDatosDestinatario2 :dlgDetBusquedaDest" oncomplete="dlgBusquedaDest.show()" process="@this"/>
+										</h:panelGrid>
+									
+									<h:form id="formRucD2">	
+										<h:panelGrid columns="2">					        
+											#{"Nombres: (*)"}
+											<p:inputText id="nombresD2" value="#{encomiendaMB.destinatario2.nombres}" style="width:200px;margin-left:5px" required="true" requiredMessage="Ingrese al menos un nombre del 2° destinatario" />
+											#{"Dirección: (*)"}
+											<p:inputText id="direccionD2" value="#{encomiendaMB.destinatario2.direccion}" style="width:200px;margin-left:5px" required="true" requiredMessage="Ingrese al menos un nombre del 2° destinatario" >
+												<p:ajax event="blur" />
+											</p:inputText>
+											#{"Telefono:"}
+											<p:inputText id="telefonoD2" value="#{encomiendaMB.destinatario2.telefono}" style="width:100px;margin-left:5px">
+												<p:ajax event="blur" />
+											</p:inputText>
+										</h:panelGrid>
+												
+												
+												
+										<h:panelGroup id="pnRUCD2">
+											<h:panelGrid columns="3" >				
+												<p:outputLabel value="RUC: (*)"/>
+												<p:inputText id="txtRUCD2" value="#{encomiendaMB.destinatario2.empresa.RUC}" style="width:90px;margin-left:5px"  maxlength="30" required="true" 
+																	 requiredMessage="Ingrese el ruc del 2° destinatario" disabled="#{encomiendaMB.destinatario2.tipoPersona eq 'N'}">
+													<p:ajax event="keypress" update=":pt:formRucD2:txtRazonD2" listener="#{encomiendaMB.buscarEmpresa('D2')}" 
+																	oncomplete="validarListaEnvios(xhr, status, args)" />    
+													<pe:keyFilter mask="num"/>
+												</p:inputText>
+												
+												<p:commandButton icon="icon-search" process="@this" actionListener="#{encomiendaMB.nuevaBusquedaEmpresa('D2')}" update=":dlgBusquedaEmpresa" oncomplete="dlgDetBusquedaEmpresa.show();" disabled="#{encomiendaMB.destinatario2.tipoPersona eq 'N'}"/>
+												
+												<p:outputLabel value="Razon Social: (*)"/>
+												<p:inputText id="txtRazonD2" value="#{encomiendaMB.destinatario2.empresa.razonSocial}" style="width:200px;margin-left:5px"  maxlength="30" required="true" 
+																	 requiredMessage="Ingrese la razon social del 2° destinatario" disabled="#{encomiendaMB.destinatario2.tipoPersona eq 'N'}">
+													<!--  <p:ajax event="blur" />-->
+												</p:inputText>
+											</h:panelGrid>
+											
+										</h:panelGroup>
+									<pe:keyFilter for="txtRUCD2" mask="num"/>
+								</h:form>
+							</h:panelGroup>
+					</h:panelGrid>
+				</p:panel>	
+		        </p:tab>
+		    </p:accordionPanel>
+			</h:panelGrid>
+		
+			<table>
+			<tr><td valign="top"> 
+			<h:form id="listaProductos" style="width:500px">
+				<p:dataTable widgetVar="dtProductos1" var="pr" value="#{encomiendaMB.listaTarifaProducto}" filteredValue="#{encomiendaMB.listaFilterTarifaProducto}"  
+					emptyMessage="No hay Productos Disponibles." rowIndexVar="nro" 
+					paginator="true" rows="5" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Productos</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:1%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:15%" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{pr.descripcion}" filterMatchMode="contains" filterStyle="width:180px;" >
+						<h:outputText value="#{pr.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="P. Envio">
+						<h:outputText value="S/. #{pr.precioEnvio}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Peso">
+						<h:outputText value="#{pr.peso} Kg" />
+					</p:column>
+
+					<p:column headerText="Acciones" style="width:10%;text-align: center">				
+						<p:commandButton title="Adicionar"  icon="icon-add" update=":dlgDetAdicionar" oncomplete="validarProductos(xhr, status, args)" actionListener="#{encomiendaMB.editarProducto(pr)}"/>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+			</td><td valign="top">
+			<h:form id="listaDetalleEncomienda" style="width:680px">
+				<p:panel style="width:580px;">
+				    <h:panelGrid columns="1">
+					<h:panelGrid columns="7">
+						<p:commandButton value="Nuevo Producto" update=":dlgDetNuevoProducto" oncomplete="dlgNuevoProducto.show();" actionListener="#{encomiendaMB.nuevoProducto()}"
+									style="margin-top:5px;width:130px"/>
+						<p:outputLabel value="Sub Total:" style="margin-left:10px;font-weight:bold;font-size: 1em;color:#E50808;"/>
+						<p:outputLabel value="S/. #{encomiendaMB.importeTotalEnc}" style="margin-left:10px;font-weight:bold;font-size: 1.1em;color:#E50808;"/>
+						<p:outputLabel value="IGV:" style="margin-left:10px;font-weight:bold;font-size: 1em;color:#E50808;"/>
+						<p:outputLabel value="S/. #{encomiendaMB.importeTotalIGVEnc}" style="margin-left:10px;font-weight:bold;font-size: 1.1em;color:#E50808;"/>
+						<p:outputLabel value="TOTAL:" style="margin-left:10px;font-weight:bold;font-size: 1em;color:#E50808;"/>
+						<p:outputLabel value="S/. #{encomiendaMB.importeTotalFactEnc}" style="margin-left:10px;font-weight:bold;font-size: 1.5em;color:#E50808;"/>
+					</h:panelGrid>
+					<h:panelGroup>
+					<p:spacer width="140px" height="5"></p:spacer>
+					<p:outputLabel value="SON: #{encomiendaMB.totalLetras}" style="margin-left:10px;font-weight:bold;font-size: 1.1em;color:#000;"/>
+					</h:panelGroup>
+					</h:panelGrid>
+					
+				</p:panel>
+				<p:dataTable widgetVar="dtProductos2" var="p" value="#{encomiendaMB.listaDetalleEncomienda}" filteredValue="#{encomiendaMB.listaFilterDetalleEncomienda}"  
+					emptyMessage="No hay productos a enviar." rowIndexVar="nro" 
+					paginator="true" rows="5" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10" style="FONT-SIZE: 10px;width:580px">
+					<f:facet name="header">Detalle de Encomienda</f:facet>
+					
+					<p:column headerText="Nro" width="10">
+						#{nro+1}
+					</p:column>
+					<p:column style="width:20%" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:160px;" >
+						<h:outputText value="#{p.descripcion}" />
+						<p:commandButton icon="icon-add" style="margin-left:50px" oncomplete="dlgDetalleProducto.show()" actionListener="#{encomiendaMB.setearDetalleEncomienda(p)}"  
+										 update=":dlgDetDetalleProducto" disabled="#{p.tipoReparto}" rendered="#{p.tipoReparto eq 'true'?'false':'true'}"/>
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Cantidad">
+						<h:outputText value=" #{p.cantidad}" /> 
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Peso">
+						<h:outputText value="#{p.peso} Kg" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Precio Envio">
+						<h:outputText value="S/. #{p.precioEnvio}" />
+					</p:column>
+					
+					<p:column style="width:10%;text-align: center;" headerText="Costo Total">
+						<h:outputText value="S/. #{p.importe}" />
+					</p:column>
+					
+					<p:column headerText="Acciones" style="width:15%;text-align: center">				
+						<p:commandButton title="Modificar"  icon="icon-edit" update=":dlgDetEditarProducto" oncomplete="dlgEditarProducto.show()" disabled="#{p.tipoReparto}" rendered="#{p.tipoReparto eq 'true'?'false':'true'}" actionListener="#{encomiendaMB.capturaDatosEditar(p)}"  >
+							<f:setPropertyActionListener target="#{encomiendaMB.detalleEncomienda}" value="#{p}" />
+							<f:setPropertyActionListener target="#{encomiendaMB.importeLastDetalle}" value="#{p.importe}" />
+						</p:commandButton>
+						<p:commandButton title="Eliminar"  icon="icon-cancel" update=":dlgDetEliminarEnc" oncomplete="dlgEliminarEnc.show()" disabled="#{p.tipoReparto}" rendered="#{p.tipoReparto eq 'true'?'false':'true'}">
+							<f:setPropertyActionListener target="#{encomiendaMB.detalleEncomienda}" value="#{p}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+			</td></tr>
+			</table>
+			
+			
+			<p:confirmDialog id="dlgDetEliminarEnc" appendToBody="true"
+					message="¿Esta seguro que desea eliminar este detalle de la Encomienda?" header="Eliminar Encomienda"
+					severity="alert" widgetVar="dlgEliminarEnc">
+				<h:form>
+					<p:commandButton value="Aceptar"
+						actionListener="#{encomiendaMB.eliminarDetalleEncomienda()}" 
+						update=":listaDetalleEncomienda"
+						oncomplete="dlgEliminarEnc.hide();" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminarEnc.hide()" icon="icon-cancel"/>
+				</h:form>
+			</p:confirmDialog>
+			
+			
+			<p:dialog header="Adicionales" widgetVar="dlgAdicionar" appendToBody="true"
+					  resizable="false" id="dlgDetAdicionar" modal="true">
+					 <h:form >		
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>						
+						 
+							<h:panelGroup>
+							<h:panelGrid columns="2">
+							#{"Descripcion: (*)"}
+							<p:inputTextarea style="width:180px;margin-left:10px" value="#{encomiendaMB.tarifa_producto.descripcion}" required="true" maxlength="50" requiredMessage="Se necesita descripción del producto"  >
+								<p:ajax event="blur"/>
+							</p:inputTextarea>
+							
+							<p:outputLabel value="Forma de Pago: (*)"/>
+							<p:selectOneMenu id="optPago" value="#{encomiendaMB.basePago2}" style="margin-left:10px" >
+							    <f:selectItem itemLabel="Estándar" itemValue="4" />
+								<f:selectItem itemLabel="Por Producto" itemValue="1" />
+								<f:selectItem itemLabel="Por Peso" itemValue="2" />  
+								<f:selectItem itemLabel="Por Volumen" itemValue="3" />
+								<p:ajax event="change" update="pnAdicionales"/> 
+							</p:selectOneMenu>
+							
+							<p:outputLabel value="Cantidad: (*)"/>
+							<p:inputText style="width:80px;margin-left:10px" value="#{encomiendaMB.cantidad}" required="true" maxlength="50" requiredMessage="Se necesita la cantidad de los productos" >
+							  <p:ajax event="blur" update="pnlRend pnlRend2" listener="#{encomiendaMB.calculoPrecioUnit()}"  />   
+							</p:inputText>
+							
+							</h:panelGrid>
+							</h:panelGroup>
+							
+							<h:panelGroup id="pnAdicionales">
+							<h:panelGrid columns="2">
+							<p:outputLabel id="txtPrecioEnvioA" value="Precio Envio Unit: (*)" rendered="#{encomiendaMB.basePago2==1}"/>
+							<p:inputText id="lblPrecioEnvioA" style="width:80px;margin-left:10px" value="#{encomiendaMB.tarifa_producto.precioEnvio}" required="true" maxlength="50" requiredMessage="Se necesita el precio de envio" rendered="#{encomiendaMB.basePago2==1}"/>
+							
+							<p:outputLabel value="Peso Unit.: (*)"  rendered="#{encomiendaMB.basePago2!=4}" />
+							<p:inputText style="width:80px;margin-left:10px" value="#{encomiendaMB.tarifa_producto.peso}" required="true" maxlength="50" requiredMessage="Se necesita peso unitario" rendered="#{encomiendaMB.basePago2!=4}" />
+							
+							<p:outputLabel id="txtPrecioKiloA" value="Precio Kilo: (*)" rendered="#{encomiendaMB.basePago2 ne 1 and encomiendaMB.basePago2 ne 4}"/>
+							<p:inputText id="lblPrecioKiloA" style="width:80px;margin-left:10px" value="#{encomiendaMB.tarifa_producto.precioKilo}" required="true" maxlength="50" requiredMessage="Se necesita precio por kilo" rendered="#{encomiendaMB.basePago2 ne 1 and encomiendaMB.basePago2 ne 4}"/>
+								
+							<p:outputLabel id="txtPrecioBaseA" value="Precio Base: (*)" rendered="#{encomiendaMB.basePago2==3}"/>
+							<p:inputText id="lblPrecioBaseA" style="width:80px;margin-left:10px" value="#{encomiendaMB.tarifaBase.precioEnvioNormal}" required="true" maxlength="50" requiredMessage="Se necesita precio base" rendered="#{encomiendaMB.basePago2==3}"/>
+							
+							<p:outputLabel id="txtPrecioTotal" value="Total a Pagar: (*)" rendered="#{encomiendaMB.basePago2==4}"/>
+							<p:inputText id="lblPrecioTotal" style="width:80px;margin-left:10px " value="#{encomiendaMB.tarifa_producto.totalPagar}" required="true" maxlength="50" requiredMessage="Se necesita el total a pagar" rendered="#{encomiendaMB.basePago2==4}" >
+                            <p:ajax update="pnlRend pnlRend2" listener="#{encomiendaMB.calculoPrecioUnit()}" process="@this" />  
+							</p:inputText>
+
+						
+                            <h:panelGroup id="pnlRend">
+							<p:outputLabel  value="Precio Unitario: (*)" rendered="#{encomiendaMB.basePago2==4}"  disabled="false" />
+							</h:panelGroup>
+							
+							 <h:panelGroup id="pnlRend2">
+							 <p:inputText   style="width:80px;margin-left:10px" value="#{encomiendaMB.precioUnit}" required="true" maxlength="50"  rendered="#{encomiendaMB.basePago2==4}"/>
+							 </h:panelGroup>
+							 
+							</h:panelGrid>
+							</h:panelGroup>
+							
+							
+							
+							<p:commandButton value="Guardar"  icon="icon-disk" actionListener="#{encomiendaMB.guardarDetalleEncomienda()}" 
+											oncomplete="validarAdicionales(xhr, status, args)" update=":listaDetalleEncomienda msgNuevo"/>
+									 
+						    <p:commandButton value="Cancelar" type="button"	 onclick="dlgAdicionar.hide();"  icon="icon-cancel" />
+						
+					 </h:form>
+						
+						
+						
+						
+					     
+			</p:dialog>
+			
+			
+			<p:dialog header="Nuevo Producto" widgetVar="dlgNuevoProducto" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetNuevoProducto">
+					  <h:form >	
+						<p:messages showDetail="false" showSummary="true" id="msgNuevoProducto" closable="true"/>										
+							
+							<h:panelGroup>
+								<h:panelGrid columns="2">
+								#{"Descripcion: (*)"}
+								<p:inputTextarea style="width:180px;margin-left:10px" value="#{encomiendaMB.tarifa_producto.descripcion}" required="true" maxlength="50" requiredMessage="Se necesita descripción del producto" />
+							
+								<p:outputLabel value="Forma de Pago: (*)"  required="true" requiredMessage="Seleccione forma de pago" />
+								<p:selectOneMenu id="optPagoNN" value="#{encomiendaMB.basePago2}" style="margin-left:10px" >
+								    <f:selectItem itemLabel="Estándar" itemValue="4" />
+									<f:selectItem itemLabel="Por Producto" itemValue="1" />
+									<f:selectItem itemLabel="Por Peso" itemValue="2" />  
+									<f:selectItem itemLabel="Por Volumen" itemValue="3" />
+									<p:ajax event="change" update="pnAdicionalesNN "/> 
+								</p:selectOneMenu>
+								
+								
+								<p:outputLabel value="Cantidad: (*)"/>
+								<p:inputText style="width:80px;margin-left:10px" value="#{encomiendaMB.cantidad}" required="true" maxlength="50" requiredMessage="Se necesita la cantidad de los productos" >
+								  <p:ajax event="keyup" update="pnlRendNN pnlRend2NN" listener="#{encomiendaMB.calculoPrecioUnit()}"  />   
+								</p:inputText>
+								
+								</h:panelGrid>
+								</h:panelGroup>
+								
+							     <h:panelGroup id="pnAdicionalesNN">
+							      <h:panelGrid columns="2">
+								
+										<p:outputLabel id="txtPrecioEnvioNN" value="Precio Envio Unit: (*)" rendered="#{encomiendaMB.basePago2==1}"/>
+										<p:inputText id="lblPrecioEnvioNN" style="width:80px;margin-left:10px" value="#{encomiendaMB.tarifa_producto.precioEnvio}" required="true" maxlength="50" requiredMessage="Se necesita el precio de envio" rendered="#{encomiendaMB.basePago2==1}"/>
+										
+										
+										<p:outputLabel value="Peso Unit.: (*)" rendered="#{encomiendaMB.basePago2!=4}" />
+										<p:inputText style="width:80px;margin-left:10px" value="#{encomiendaMB.tarifa_producto.peso}" required="true" maxlength="50" requiredMessage="Se necesita peso unitario" rendered="#{encomiendaMB.basePago2!=4}" />
+										
+							
+										<p:outputLabel id="txtPrecioKiloNN" value="Precio Kilo: (*)" rendered="#{encomiendaMB.basePago2 ne 1 and encomiendaMB.basePago2 ne 4}"/>
+										<p:inputText id="lblPrecioKiloNN" style="width:80px;margin-left:10px" value="#{encomiendaMB.tarifa_producto.precioKilo}" required="true" maxlength="50" requiredMessage="Se necesita precio por kilogramo" rendered="#{encomiendaMB.basePago2 ne 1 and encomiendaMB.basePago2 ne 4}"/>
+											                                                                      
+										<p:outputLabel id="txtPrecioBaseNN" value="Precio Base: (*)" rendered="#{encomiendaMB.basePago2==3}"/>
+										<p:inputText id="lblPrecioBaseNN" style="width:80px;margin-left:10px" value="#{encomiendaMB.tarifaBase.precioEnvioNormal}" required="true" maxlength="50" requiredMessage="Se necesita precio base" rendered="#{encomiendaMB.basePago2==3}"/>
+										
+										<p:outputLabel id="txtPrecioTotalNN" value="Total a Pagar: (*)" rendered="#{encomiendaMB.basePago2==4}"/>
+										<p:inputText id="lblPrecioTotalNN" style="width:80px; margin-left:10px" value="#{encomiendaMB.tarifa_producto.totalPagar}" required="true" maxlength="50" requiredMessage="Se necesita el total a pagar" rendered="#{encomiendaMB.basePago2==4}" >
+			                            <p:ajax event="keyup" update="pnlRendNN pnlRend2NN" listener="#{encomiendaMB.calculoPrecioUnit()}"  />  
+										</p:inputText>
+
+										
+			                            <h:panelGroup id="pnlRendNN">
+										<p:outputLabel  value="Precio Unitario: (*)" rendered="#{encomiendaMB.basePago2==4}"  disabled="false" />
+										</h:panelGroup>
+										
+										 <h:panelGroup id="pnlRend2NN">
+										 <p:inputText   style="width:80px;margin-left:10px" value="#{encomiendaMB.precioUnit}" required="true" maxlength="50"  rendered="#{encomiendaMB.basePago2==4}"/>
+										 </h:panelGroup>
+								
+								</h:panelGrid>
+							   </h:panelGroup>
+								
+								
+							
+						<br/>
+						<p:commandButton value="Guardar"  icon="icon-disk" actionListener="#{encomiendaMB.guardarDetalleEncomienda()}"  update=":listaDetalleEncomienda msgNuevoProducto"
+											oncomplete=" validarNuevoProducto(xhr, status, args)"/>
+											
+										
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevoProducto.hide();"  icon="icon-cancel" />
+				</h:form>	
+			</p:dialog>
+			
+			
+			
+			<p:dialog header="Editar Producto" widgetVar="dlgEditarProducto" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetEditarProducto">
+					  <h:form >	
+						<p:messages showDetail="false" showSummary="true" id="msgEditarProducto" closable="true"/>										
+							
+							<h:panelGroup>
+								<h:panelGrid columns="2">
+								#{"Descripcion: (*)"}
+								<p:inputTextarea style="width:180px;margin-left:10px" value="#{encomiendaMB.detalleEncomienda.descripcion}" required="true" maxlength="50" requiredMessage="Se necesita descripción del producto" />
+							
+								<p:outputLabel value="Forma de Pago: (*)"/>
+								<p:selectOneMenu id="optPagoN" value="#{encomiendaMB.detalleEncomienda.basePago2}" style="margin-left:10px" >
+								    <f:selectItem itemLabel="Estándar" itemValue="4" />
+									<f:selectItem itemLabel="Por Producto" itemValue="1" />
+									<f:selectItem itemLabel="Por Peso" itemValue="2" />  
+									<f:selectItem itemLabel="Por Volumen" itemValue="3" />
+									<p:ajax event="change" update="nuevoProducto "/> 
+								</p:selectOneMenu>
+								</h:panelGrid>
+							</h:panelGroup>
+							
+							
+							<h:panelGroup id="nuevoProducto">
+								<h:panelGrid columns="2">
+								<p:outputLabel value="Cantidad: (*)"/>
+								<p:inputText style="width:80px;margin-left:10px" value="#{encomiendaMB.detalleEncomienda.cantidad}" required="true" maxlength="50" requiredMessage="Se necesita la cantidad de los productos" >
+								 <p:ajax event="keyup" update="pnlRendN pnlRend2N" listener="#{encomiendaMB.calculoPrecioUnitDetalleEncomienda()}"  /> 
+								</p:inputText>
+								
+								<p:outputLabel id="txtPrecioEnvioN" value="Precio Envio Unit: (*)" rendered="#{encomiendaMB.detalleEncomienda.basePago2==1}"/>
+								<p:inputText id="lblPrecioEnvioN" style="width:80px;margin-left:10px" value="#{encomiendaMB.detalleEncomienda.precioEnvio}" required="true" maxlength="50" requiredMessage="Se necesita el precio de envio" rendered="#{encomiendaMB.detalleEncomienda.basePago2==1}"/>
+								
+								<p:outputLabel value="Peso: (*)"  rendered="#{encomiendaMB.detalleEncomienda.basePago2!=4}" />
+								<p:inputText style="width:80px;margin-left:10px" value="#{encomiendaMB.detalleEncomienda.peso}" required="true" maxlength="50" requiredMessage="Se necesita el peso" rendered="#{encomiendaMB.detalleEncomienda.basePago2!=4}" />
+								
+								<p:outputLabel id="txtPrecioKiloN" value="Precio Kilo: (*)"  rendered="#{encomiendaMB.detalleEncomienda.basePago2 ne 1 and encomiendaMB.detalleEncomienda.basePago2 ne 4}"/>
+								<p:inputText id="lblPrecioKiloN" style="width:80px;margin-left:10px" value="#{encomiendaMB.detalleEncomienda.precioKilo}" required="true" maxlength="50" requiredMessage="Se necesita precio kilo" rendered="#{encomiendaMB.detalleEncomienda.basePago2 ne 1 and encomiendaMB.detalleEncomienda.basePago2 ne 4}"/>
+								
+								<p:outputLabel id="txtPrecioBaseN" value="Precio Base: (*)" rendered="#{encomiendaMB.detalleEncomienda.basePago2==3}"/>
+								<p:inputText id="lblPrecioBaseN" style="width:80px;margin-left:10px" value="#{encomiendaMB.detalleEncomienda.precioEnvioNormal}" required="true" maxlength="50" requiredMessage="Se necesita precio base" rendered="#{encomiendaMB.detalleEncomienda.basePago2==3}"/>
+								
+								<p:outputLabel id="txtPrecioTotalN" value="Total a Pagar: (*)" rendered="#{encomiendaMB.detalleEncomienda.basePago2==4}"/>
+							     <p:inputText id="lblPrecioTotalN" style="width:80px; margin-left:10px" value="#{encomiendaMB.detalleEncomienda.importe}" required="true" maxlength="50" requiredMessage="Se necesita el total a pagar" rendered="#{encomiendaMB.detalleEncomienda.basePago2==4}" >
+						       <p:ajax event="keyup" update="pnlRendN pnlRend2N" listener="#{encomiendaMB.calculoPrecioUnitDetalleEncomienda()}"  /> 
+							     </p:inputText>
+							     
+							
+	                            <h:panelGroup id="pnlRendN">
+								<p:outputLabel  value="Precio Unitario: (*)" rendered="#{encomiendaMB.detalleEncomienda.basePago2==4}"  disabled="false" />
+								</h:panelGroup>
+								
+								 <h:panelGroup id="pnlRend2N">
+								 <p:inputText   style="width:80px;margin-left:10px" value="#{encomiendaMB.precioUnit}" required="true" maxlength="50"  rendered="#{encomiendaMB.detalleEncomienda.basePago2==4}"/>
+								 </h:panelGroup>
+								
+								</h:panelGrid>
+							</h:panelGroup>
+						<br/>
+						<p:commandButton value="Guardar"  icon="icon-disk" actionListener="#{encomiendaMB.editarDetalleEncomienda()}"  update=":listaDetalleEncomienda "
+											oncomplete="validarEditarProducto(xhr, status, args)"/>
+										
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgEditarProducto.hide();"  icon="icon-cancel" />
+				</h:form>	
+			</p:dialog>
+			
+			<p:confirmDialog id="dlgDetConfirmar" appendToBody="true"
+					message="¿Esta seguro que desea registrar esta encomienda?" header="Registrar Encomienda"
+					severity="alert" widgetVar="dlgConfirmar">
+				<h:form>
+					<p:commandButton value="Aceptar"
+						onclick="saveButton.disable()"
+						widgetVar="saveButton"
+						actionListener="#{encomiendaMB.guardarEncomienda}"  
+						update=":formDestino :listaDetalleEncomienda  :sms"
+						oncomplete="saveButton.enable(); dlgConfirmar.hide();imprimirDocumentos();" icon="icon-disk" 
+						 />
+					<p:spacer height="1px"></p:spacer>
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgConfirmar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			<h:form id="formImprimir">
+				<h:commandLink id="cmdImprimir" 
+						actionListener="#{encomiendaMB.imprimirPDF()}"/>
+			</h:form>
+			
+			<p:dialog header="Envios Frecuentes" widgetVar="dlgEnviosFrecuentes" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetEnviosFrecuentes">
+				<h:form id="formListaEnviosFrec">	
+				<p:dataTable widgetVar="dtEnviosFrecuentes" var="h" value="#{encomiendaMB.listaHistorial}"
+					filteredValue="#{encomiendaMB.listaHistorialFilter}"  
+					emptyMessage="No hay envios frecuentes." rowIndexVar="nro" 
+					paginator="true" rows="5" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Envios Frecuentes</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:10px" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:100px" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{h.apellidosRemitente} #{h.nombresRemitente}" filterMatchMode="contains" filterStyle="width:100px;" >
+						<h:outputText value="#{h.apellidosRemitente} #{h.nombresRemitente}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="RUC Rem." filterStyleClass="mayuscula" filterBy="#{h.rucRemitente}" filterMatchMode="contains" filterStyle="width:90px;">
+						<h:outputText value="#{h.rucRemitente}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Razon Social Rem.">
+						<h:outputText value="#{h.razonSocialRemitente}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="DNI Dest1" filterStyleClass="mayuscula" filterBy="#{h.dniDestinatario1}" filterMatchMode="contains" filterStyle="width:90px;">
+						<h:outputText value="#{h.dniDestinatario1}" />
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Destinatario 1" filterStyleClass="mayuscula" filterBy="#{h.apellidosDestinatario1} #{h.nombresDestinatario1}" filterMatchMode="contains" filterStyle="width:100px;">
+						<h:outputText value="#{h.apellidosDestinatario1} #{h.nombresDestinatario1}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="RUC D1." filterStyleClass="mayuscula" filterBy="#{h.rucDestinatario1}" filterMatchMode="contains" filterStyle="width:90px;">
+						<h:outputText value="#{h.rucDestinatario1}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Razon Social D1.">
+						<h:outputText value="#{h.razonSocialDestinatario1}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Direcion Envio">
+						<h:outputText value="#{h.direccionEnvio}" />
+					</p:column>
+
+					<p:column style="width:20px;text-align: center;" headerText="Reparto" filterStyleClass="mayuscula" filterBy="#{h.precioReparto eq '0.0'?'NO':'SI'}" filterMatchMode="exact" filterOptions="#{encomiendaMB.listSINO}"  filterStyle="width:50px;">
+						<h:outputText value="#{h.precioReparto eq '0.0'?'NO':'SI'}" />
+					</p:column>
+
+					<p:column style="width:20px;text-align: center;" headerText="Extra R.">
+						<h:outputText value="#{h.precioExtraRapido>0 ?'SI':'NO'}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Acciones">
+						<p:commandButton value="Asignar" actionListener="#{encomiendaMB.asignarDatos(h)}" update=":formDatosRemitente :pt:formDatosDestinatario1 :pt:formDatosDestinatario2 :formDestino :listaDetalleEncomienda :formDestino:pgReparto1" oncomplete="dlgEnviosFrecuentes.hide()"/> 
+					</p:column>
+					
+				</p:dataTable>
+
+				</h:form>	
+			</p:dialog>
+			
+			<p:dialog header="Busqueda por apellidos" widgetVar="dlgBusquedaDest" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetBusquedaDest">
+				
+					<p:messages  id="smsFmPersonas" showDetail="false" showSummary="true" closable="true" />	
+				<h:form id="formBusquedaDest">
+				
+				<h:panelGrid columns="5">	
+				#{"Apellido Paterno:"}
+				<p:inputText value="#{encomiendaMB.aPaternoDestBusqueda}" style="width:100px" required="true" requiredMessage="Ingrese el apellido paterno"/>
+				#{"Apellido Materno:"}
+				<p:inputText value="#{encomiendaMB.aMaternoDestBusqueda}" style="width:100px" required="true" requiredMessage="Ingrese el apellido materno"/>
+				<p:commandButton value="Buscar" actionListener="#{encomiendaMB.buscarDestinatario}" update="formBusquedaDest:dtPosDest :smsFmPersonas" oncomplete="dtPosiblesDestinatarios.clearFilters();"/>
+				</h:panelGrid>
+				
+				<p:dataTable  id="dtPosDest" widgetVar="dtPosiblesDestinatarios" var="p" value="#{encomiendaMB.listaPosiblesDestinatarios}"
+					filteredValue="#{encomiendaMB.listaPosiblesDestinatariosFilter}"  
+					emptyMessage="No hay personas con ese apellido" rowIndexVar="nro" 
+					paginator="true" rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,15" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Posibles Destinatarios</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:10px" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:400px" headerText="Apellidos y Nombres" filterStyleClass="mayuscula" filterBy="#{p.APaterno} #{p.AMaterno} #{p.nombres}" filterMatchMode="contains" filterStyle="200px;" >
+						<h:outputText value="#{p.APaterno} #{p.AMaterno} #{p.nombres}"  />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="DNI" filterBy="#{p.dni}" filterMatchMode="contains" filterStyle="100px;">
+						<h:outputText value="#{p.dni}" />
+					</p:column>
+
+					<p:column style="width:100px;text-align: center;" headerText="Acciones">
+						<p:commandButton value="Asignar" actionListener="#{encomiendaMB.asignarDestinatario(p)}" update=":formDatosRemitente :pt:formDatosDestinatario1 :pt:formDatosDestinatario2" oncomplete="dlgBusquedaDest.hide()"/> 
+					</p:column>
+					
+
+				</p:dataTable>
+				
+				</h:form>	
+			</p:dialog>
+			
+			
+			<p:dialog header="Busqueda por Razón Social" widgetVar="dlgDetBusquedaEmpresa" appendToBody="true" modal="true"
+					  resizable="false" id="dlgBusquedaEmpresa">
+				
+					<p:messages  id="smsFmEmpresas" showDetail="false" showSummary="true" closable="true" />	
+				<h:form id="formBusquedaEmpresa">
+				
+				
+				
+				<h:panelGrid columns="3">	
+				<!--  #{"RUC:"}
+				<p:inputText value="#{encomiendaMB.empresa.RUC}" style="width:100px" required="true" requiredMessage="Ingrese el RUC"/>-->
+				#{"Empresa:"}
+				<p:inputText value="#{encomiendaMB.empresa.razonSocial}" style="width:100px" required="true" requiredMessage="Ingrese la Razón Social"/>
+				<p:commandButton value="Buscar" actionListener="#{encomiendaMB.buscarEmpresas}" update="formBusquedaEmpresa:dtPosEmpresa :smsFmEmpresas" oncomplete="dtPosiblesEmpresas.clearFilters();"/>
+				</h:panelGrid>
+				
+				<p:dataTable  id="dtPosEmpresa" widgetVar="dtPosiblesEmpresas" var="p" value="#{encomiendaMB.listaEmpresas}"
+					filteredValue="#{encomiendaMB.listaEmpresasFilter}"  
+					emptyMessage="No hay empresas con esa Razón Social" rowIndexVar="nro" 
+					paginator="true" rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,15" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Empresas</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:10px" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:100px" headerText="RUC" filterBy="#{p.RUC}" filterMatchMode="contains" filterStyle="100px;" >
+						<h:outputText value="#{p.RUC}"  />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Empresa" filterMatchMode="contains" filterStyle="100px;">
+						<h:outputText value="#{p.razonSocial}" />
+					</p:column>
+					
+					<p:column style="width:150px;text-align: center;" headerText="Direccion" filterMatchMode="contains" filterStyle="100px;">
+						<h:outputText value="#{p.direccion}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Telefono" filterMatchMode="contains" filterStyle="100px;">
+						<h:outputText value="#{p.telefono}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Email" filterMatchMode="contains" filterStyle="100px;">
+						<h:outputText value="#{p.email}" />
+					</p:column>
+					
+					<p:column style="width:100px;text-align: center;" headerText="Estado" filterMatchMode="contains" filterStyle="100px;">
+						<h:outputText value="#{p.estado eq 'true'? 'activo':'no activo'} " />
+					</p:column>
+					
+					<p:column style="width:50px;text-align: center;" headerText="Acciones">
+						<p:commandButton value="Asignar" actionListener="#{encomiendaMB.asignarEmpresa(p)}" update=":formDatosRemitente :pt:formDatosDestinatario1 :pt:formDatosDestinatario2" oncomplete="dlgDetBusquedaEmpresa.hide()"/> 
+					</p:column>
+					
+
+				</p:dataTable>
+				
+				</h:form>	
+			</p:dialog>
+			
+			
+			<p:dialog header="Forma de Pago" widgetVar="dlgFormaPago" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetFormaPago">
+				<h:form id="formFormaPago">
+				
+						<h:panelGrid columns="2">
+							#{"Elija una tarjeta:"}
+					
+							<p:selectOneMenu id="formaPago" value="#{encomiendaMB.tipoTarjeta}" style="margin-left:5px;margin-top:10px" rendered="#{encomiendaMB.formaPago eq 'T' or encomiendaMB.formaPago eq 'M'}">  
+								<f:selectItem itemLabel="VISA" itemValue="V" />
+								<f:selectItem itemLabel="MasterCard" itemValue="M" />
+								<p:ajax event="change"/>    
+							</p:selectOneMenu> 
+						
+							
+								<h:outputText value="Monto Efectivo:" rendered="#{encomiendaMB.formaPago eq 'M'}"/>							 
+								<p:inputText value="#{encomiendaMB.montoEfectivo}" style="width:60px" rendered="#{encomiendaMB.formaPago eq 'M'}">
+									<p:ajax event="blur"/>
+								</p:inputText>
+									
+								<h:outputText value="Monto Tarjeta:" rendered="#{encomiendaMB.formaPago eq 'M'}"/>								
+								<p:inputText value="#{encomiendaMB.montoTarjeta}"  style="width:60px" rendered="#{encomiendaMB.formaPago eq 'M'}">
+									<p:ajax event="blur" />
+								</p:inputText>
+								
+						</h:panelGrid>
+						
+						<p:commandButton value="Aceptar" oncomplete="dlgFormaPago.hide()" style="margin-left:70px; margin-top:10px"/> 
+				</h:form>	
+			</p:dialog>
+			
+			<p:dialog header="Reparto" widgetVar="dlgReparto" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetReparto" closable="false">
+				<h:form id="formReparto">
+					<p:messages showDetail="false" showSummary="true" id="smsReparto" closable="true"/>
+					<h:panelGroup id="pgReparto">
+						<table>
+						<tr>
+						<td>
+						<h:panelGrid columns="2">
+        					<h:outputText value="Extra Rapido: " rendered="#{encomiendaMB.bandReparto}"/>  
+        					<p:selectBooleanCheckbox id="chkExtRap" value="#{encomiendaMB.bandExtraRapido}" style="margin-left:5px" rendered="#{encomiendaMB.bandReparto}">
+        						<p:ajax  listener="#{encomiendaMB.setearBandExtraRapido}" update="pgReparto :listaDetalleEncomienda :formReparto"/>
+        					</p:selectBooleanCheckbox> 
+						</h:panelGrid>
+						</td></tr>
+						<tr><td>
+						<h:panelGrid columns="2">
+						#{"Distrito:"}
+						<p:selectOneMenu id="tipoDoc" value="#{encomiendaMB.idTarifaReparto}" style="width:150px" rendered="#{encomiendaMB.bandReparto}" required="true" requiredMessage="Seleccione un Distrito">
+								<f:selectItem itemLabel="Seleccionar" itemValue="" /> 
+								<f:selectItems var="item" value="#{encomiendaMB.listaTarifaReparto}"
+										itemValue="#{item.idTarifa}" itemLabel="#{item.sdistrito}" />
+								<p:ajax event="change" listener="#{encomiendaMB.listarCategoriasReparto}" update="tipoEntRe"/>     
+						</p:selectOneMenu>
+						#{"Tipo:"}
+						<p:selectOneMenu id="tipoEntRe" value="#{encomiendaMB._idDistritoReparto}"  style="width:150px" rendered="#{encomiendaMB.bandReparto}" required="true" requiredMessage="Seleccione un Tipo">
+								<f:selectItem itemLabel="Seleccionar" itemValue="" /> 
+								<f:selectItems var="item" value="#{encomiendaMB.listaDistCateg}"
+										itemValue="#{item.id}" itemLabel="#{item.descripcion}" />
+								<p:ajax event="change" listener="#{encomiendaMB.setearTarifaReparto}" update="lblPreReparto lblCostoServ :listaDetalleEncomienda"/>     
+						</p:selectOneMenu>
+						
+						<p:outputLabel value="Cost Serv:" style="margin-left:0px;font-weight:bold;font-size: 1.1em;color:#E50808;"></p:outputLabel>
+						<p:outputLabel id="lblCostoServ" value="S/. #{encomiendaMB.precioServicio}" style="margin-left:5px;font-weight:bold;font-size: 1.1em;color:#E50808;"
+										rendered="#{encomiendaMB.bandReparto}"/>
+						
+						<p:outputLabel value="Reparto:" style="margin-left:0px;font-weight:bold;font-size: 1.1em;color:#E50808;"></p:outputLabel>
+						<p:outputLabel id="lblPreReparto" value="S/. #{encomiendaMB.precioRepartoSolo}" style="margin-left:5px;font-weight:bold;font-size: 1.1em;color:#E50808;"
+										rendered="#{encomiendaMB.bandReparto}"/>			
+						</h:panelGrid>
+						</td></tr>
+						</table>
+						
+						</h:panelGroup>	
+						<h:panelGroup id="pgDireccion">
+							<h:panelGrid columns="1">
+								<h:outputText value="Direccion: " rendered="#{encomiendaMB.bandReparto}"/>  
+								<p:inputTextarea value="#{encomiendaMB.direccionEnvio}" rendered="#{encomiendaMB.bandReparto}" style="width:240px" autoResize="false" 
+									/>
+							</h:panelGrid>
+						</h:panelGroup>	
+						
+						<h:panelGrid columns="2">
+							<p:commandButton value="Aceptar"  oncomplete="validarRepartoCierre(xhr, status, args)" actionListener="#{encomiendaMB.agregarRepartoGrilla()}" update=":formDestino:pgReparto1 smsReparto :listaDetalleEncomienda"/>	
+							<p:commandButton value="Cancelar" actionListener="#{encomiendaMB.descontarTarifaReparto()}"  oncomplete="dlgReparto.hide()" update=":formDestino:pgReparto1 :listaDetalleEncomienda">
+								
+							</p:commandButton>
+						</h:panelGrid>
+				
+				</h:form>	
+			</p:dialog>
+			
+			<p:dialog header="Subpartes del Producto del Detalle de la Encomienda" widgetVar="dlgDetalleProducto" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetDetalleProducto">
+				<h:form id="formDetalleProducto">
+				<h:panelGrid columns="4">
+				<p:outputLabel value="Producto: " style="margin-left:10px"/>
+				<p:outputLabel value="#{encomiendaMB.detEncomiendaCompuesto.descripcion}" style="margin-left:10px;font-weight:bold;font-size: 1em;color:#040000;"/>
+				
+				<p:outputLabel value="Cantidad: " style="margin-left:20px"/>
+				<p:outputLabel value="#{encomiendaMB.detEncomiendaCompuesto.cantidad}" style="margin-left:10px;font-weight:bold;font-size: 1em;color:#040000;"/>
+				
+				</h:panelGrid>
+				<p:separator/>
+				
+				<h:panelGrid columns="3">
+					<p:outputLabel value="Descripcion: " style="margin-left:10px"/>
+					<p:inputText value="#{encomiendaMB.producto_detalleEnc.descripcion}" style="margin-left:10px;width:200px;"/>
+					<p:commandButton icon="icon-add"  actionListener="#{encomiendaMB.agregarDetalle_ProductoDetalleEnc()}" update="formDetalleProducto" style="margin-left:10px;margin-top:10px"/>
+				</h:panelGrid>
+				
+				<p:dataTable widgetVar="dtProductosDetEnc" var="p" value="#{encomiendaMB.listaProductoDetalleEnc}"  
+					emptyMessage="No hay subpartes para este producto" rowIndexVar="nro" 
+					paginator="true" rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,15" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Subpartes</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:1%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:50%" headerText="Descripcion" >
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+
+
+					<p:column style="width:20%;text-align: center;" headerText="Acciones">
+						<p:commandButton icon="icon-cancel" actionListener="#{encomiendaMB.eliminarSubParte(p)}" update="@form"/> 
+					</p:column>
+				</p:dataTable>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Aceptar" actionListener="#{encomiendaMB.guardarSubpartesProductoTemporal()}" oncomplete="dlgDetalleProducto.hide()" style="margin-left:100px"/>	
+					<p:commandButton value="Cancelar" oncomplete="dlgDetalleProducto.hide()"/>
+				</h:panelGrid>
+				
+			</h:form>	
+		</p:dialog>
+		
+		<p:dialog header="Busqueda Encomienda" widgetVar="dlgBusquedaEncomienda" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetBusquedaEncomienda">
+				<h:form id="formBusquedaEncomienda">
+
+				<p:dataTable widgetVar="dtEncomiendas" var="e" value="#{encomiendaMB.listaEncomienda}"   filteredValue="#{encomiendaMB.listaEncomiendaFilter}" 
+					emptyMessage="No hay encomiendas registradas" rowIndexVar="nro" 
+					paginator="true" rows="5" paginatorPosition="bottom" rowKey="#{e.idEncomienda}"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,15" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista de Encomiendas  </f:facet>
+					
+					<p:column headerText="Ord." width="18" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column width="49" headerText="Fecha" filterBy="#{e.fRegistroString}" filterMatchMode="contains"
+					 filterStyle="width:48px;text-transform: uppercase">
+						<h:outputText value="#{e.fRegistroString}" />
+					</p:column>
+					
+					<p:column width="48" headerText="Tip. Doc" filterStyleClass="mayuscula" filterBy="#{e.tipoDocumento}" filterMatchMode="contains" filterStyle="width:47px;text-transform: uppercase">
+						<h:outputText value="#{e.tipoDocumento}" />
+					</p:column>
+					
+					<p:column width="48" headerText="Documento" filterStyleClass="mayuscula" filterBy="#{e.comprobante}" filterMatchMode="contains" filterStyle="width:47px;text-transform: uppercase">
+						<h:outputText value="#{e.comprobante}" />
+					</p:column>
+					
+					<p:column width="46" headerText="Origen" filterStyleClass="mayuscula" filterBy="#{e.origenString}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.origenString}" />
+					</p:column>
+					
+					<p:column width="46" headerText="Destino" filterStyleClass="mayuscula" filterBy="#{e.destinoString}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.destinoString}" />
+					</p:column>
+					
+					<p:column width="46" headerText="DNI R." filterBy="#{e.dniRemitente}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.dniRemitente}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Remitente" filterStyleClass="mayuscula" filterBy="#{e.apellidosRemitente} #{e.nombresRemitente}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.apellidosRemitente} #{e.nombresRemitente}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Empresa Remit." filterStyleClass="mayuscula" filterBy="#{e.razonSocialRemitente}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.razonSocialRemitente}" />
+					</p:column>
+					
+					<p:column width="46" headerText="DNI D1" filterBy="#{e.dniDestinatario1}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.dniDestinatario1}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Destinatario 1" filterStyleClass="mayuscula" filterBy="#{e.apellidosDestinatario1} #{e.nombresDestinatario1}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.apellidosDestinatario1} #{e.nombresDestinatario1}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Empresa D1" filterBy="#{e.razonSocialDestinatario1}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.razonSocialDestinatario1}" />
+					</p:column>
+					
+					<p:column width="46" headerText="DNI D2" filterBy="#{e.dniDestinatario2}" filterMatchMode="contains" filterStyle="width:45px;text-transform: uppercase">
+						<h:outputText value="#{e.dniDestinatario2}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Destinatario 2" filterBy="#{e.apellidosDestinatario2} #{e.nombresDestinatario2}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.apellidosDestinatario2} #{e.nombresDestinatario2}" />
+					</p:column>
+					
+					<p:column width="70" headerText="Empresa D2" filterBy="#{e.razonSocialDestinatario2}" filterMatchMode="contains" filterStyle="width:60px;text-transform: uppercase">
+						<h:outputText value="#{e.razonSocialDestinatario2}" />
+					</p:column>
+
+					<p:column width="60" headerText="Estado" filterBy="#{e.desEstado}" filterMatchMode="contains" filterStyle="width:55px;text-transform: uppercase">
+						<h:outputText value="#{e.desEstado}" />
+					</p:column>
+					
+					<p:column width="65" headerText="Acciones">
+						<p:commandButton value="Ver" disabled="#{e.estado == 5}" actionListener="#{encomiendaMB.setearEncomienda(e)}" oncomplete="dlgBusquedaEncomienda.hide()" update=":pnlOptions"/>
+						<p:commandButton icon="icon-trackingencomienda" title="Ver Tracking" actionListener="#{encomiendaMB.consultarTracking(e)}" oncomplete="dlgTrackEnc.show()" update=":dlgDetTrackEnc"/>
+					</p:column>
+				</p:dataTable>
+				</h:form>	
+			</p:dialog>
+			
+			<p:dialog header="Tracking de Encomienda" widgetVar="dlgTrackEnc" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetTrackEnc" closable="false">
+				<h:form id="formTrackEncomiendas">
+				<p:panel>
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Remitente"/> 
+					<h:outputText  value="#{encomiendaMB.encoTracking.remitcompleto}"  style="font-weight:bold;font-size: 1.2em;" />
+				</h:panelGrid>	
+				
+				<h:panelGrid columns="4">
+					<h:outputLabel value="Documento:"/> 
+					<h:outputText  value="#{encomiendaMB.encoTracking.comprobante}"  style="font-weight:bold;font-size: 1.2em;" />
+						<h:outputLabel value="Fecha Envio:"/> 
+					<h:outputText  value="#{encomiendaMB.encoTracking.fRegistro}"  style="font-weight:bold;font-size: 1.2em;" >
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+					</h:outputText>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Destinatario :"/> 
+					<h:outputText  value="#{encomiendaMB.encoTracking.dest1}"  style="font-weight:bold;font-size: 1.2em;" />
+				</h:panelGrid>	
+				
+				
+				<h:panelGrid columns="4">
+					<h:outputLabel value="Origen"/> 
+					<h:outputText  value="#{encomiendaMB.encoTracking.desOrigen}"  style="font-weight:bold;font-size: 1.2em;" />
+					<h:outputLabel value="Destino:"/> 
+					<h:outputText  value="#{encomiendaMB.encoTracking.desDestino}"  style="font-weight:bold;font-size: 1.2em;" />
+				</h:panelGrid>	
+				</p:panel>
+				<br/>
+				<p:dataTable widgetVar="dtEncomiendas" var="e" value="#{encomiendaMB.listaTrackEncomienda}"   filteredValue="#{encomiendaMB.listaTrackEncomiendaFilter}"
+					emptyMessage="No hay tracking de encomiendas" rowIndexVar="nro" 
+					paginator="true" rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,15" style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Tracking de Encomiendas</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:10px" >
+						#{nro+1}
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Doc" >
+						<h:outputText value="#{e.tipoDocAbr} #{e.comprobante}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Bus" >
+						<h:outputText value="#{e.nroBus}" />
+					</p:column>
+					
+					<p:column style="width:50px" headerText="Hora Salida" >
+						<h:outputText value="#{e.hSalida}" />
+					</p:column>
+					
+					<p:column style="width:100px" headerText="Estado">
+						<h:outputText value="#{e.desEstadoTrack}" />
+					</p:column>
+					
+				</p:dataTable>
+				<br/>
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgTrackEnc.hide()" icon="icon-cancel"/>
+				</h:form>	
+			</p:dialog>
+		
+			<p:dialog header="Busqueda de Buses" widgetVar="dlgBusquedaBus" appendToBody="true" modal="true"
+					  resizable="false" id="dlgDetBusquedaBus">
+				<p:messages  id="smsGuiav" showDetail="false" showSummary="true" closable="true" />	
+				<h:form id="formBusquedaBus">
+					<h:panelGrid columns="2">
+					#{"Bus a Transportar:"}
+					<p:selectOneMenu style="width:350px" value="#{encomiendaMB._idBus}" required="true" requiredMessage="Seleccione un Bus">
+						<f:selectItem itemLabel="Seleccione..." itemValue=""/>
+						<f:selectItems var="a" value="#{encomiendaMB.listaBusGuia}" itemValue="#{a.idBus}" itemLabel="#{a.nBus} - #{a.hSalida} - #{a.nomPiloto} - #{a.nomCopiloto}" /> 
+					</p:selectOneMenu>
+					#{"Guia de Remision Cliente:"}
+					<p:inputText value="#{encomiendaMB._guiaRemisionCliente}" style="width:350px;"/>
+					<br/>
+					</h:panelGrid>	
+				    <p:commandButton value="Aceptar"
+						update=":formBusquedaBus :smsGuiav :formDatosRemitente"
+						actionListener="#{encomiendaMB.setearBusGuia()}"
+						oncomplete="validarBusGuia(xhr, status, args);" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgBusquedaBus.hide()" icon="icon-cancel"/>
+				</h:form>	
+			</p:dialog>	
+	</p:panel>	
+	
+	<p:confirmDialog id="dlgDetAnularEncomienda" appendToBody="true"
+					message="¿Esta seguro que desea anular esta encomienda?" header="Anular Encomienda"
+					severity="alert" widgetVar="dlgAnularEncomienda">
+				<h:form>
+					<p:commandButton value="Aceptar" actionListener="#{encomiendaMB.anularEncomienda()}"
+						oncomplete="dlgAnularEncomienda.hide();" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgAnularEncomienda.hide()" icon="icon-cancel"/>
+
+				</h:form>
+	</p:confirmDialog>
+	
+	<p:confirmDialog id="dlgDetActualizarEncomienda" appendToBody="true"
+					message="¿Esta seguro que desea actualizar esta encomienda?" header="Actualizar Datos de  Encomienda"
+					severity="alert" widgetVar="dlgActualizarEncomienda">
+				<h:form>
+					<p:commandButton value="Aceptar" actionListener="#{encomiendaMB.actualizarEncomienda()}"
+						oncomplete="dlgActualizarEncomienda.hide();" icon="icon-disk" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgActualizarEncomienda.hide()" icon="icon-cancel"/>
+				</h:form>
+	</p:confirmDialog>
+	
+	<script type="text/javascript">	
+
+		function validarBusGuia(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetConfirmar').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				dlgConfirmar.show();
+			}
+		}
+		
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetConfirmar').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				dlgConfirmar.show();
+			}
+		}
+
+		function validarListaEnvios(xhr, status, args) {
+			if (args.esListaEnvios) {
+				dlgEnviosFrecuentes.show();
+			} 
+		}
+
+		function validarProductos(xhr, status, args) {
+			if (args.esDestinoNP) {
+				dlgNuevoProducto.show();
+			} 
+			
+			if (args.esDestinoP) {
+				dlgAdicionar.show();
+			} 
+		}
+
+		function validarFormaPago(xhr, status, args) {
+			if (args.esFormaPago) {
+				dlgFormaPago.show();
+			} 
+		}
+
+		function validarReparto(xhr, status, args) {
+			if (args.esReparto) {
+				dlgReparto.show();
+			}
+		}
+		
+		function validarRepartoCierre(xhr, status, args) {
+			if (args.esRepartoCierre) {
+				dlgReparto.hide();
+			}
+		}
+		
+		function validarAdicionales(xhr, status, args) {
+			if (args.esAdicional) {
+				dlgAdicionar.hide();
+			}
+		}
+		
+		function validarNuevoProducto(xhr, status, args) {
+			if (args.esAdicional) {
+				dlgNuevoProducto.hide();
+			}
+		}
+		
+		function validarEditarProducto(xhr, status, args) {
+			if (args.esEdit) {
+				dlgEditarProducto.hide();
+			}
+		}
+		
+		
+		function imprimirDocumentos() {
+	       document.getElementById("formImprimir:cmdImprimir").click();
+		}
+		
+		function resetFilter() {
+	     //  document.getElementById("dlgDetBusquedaDest:dtPosDest").clearFilters();
+		}
+
+		</script>
+	</ui:define>
+</ui:composition>
+</html>

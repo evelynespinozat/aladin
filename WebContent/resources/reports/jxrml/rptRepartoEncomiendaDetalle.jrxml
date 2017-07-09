@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRepartoEncomiendaDetalle" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e1974fda-7063-4135-a2e7-2bd05f34dee5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_FEC_REPARTO" class="java.lang.String"/>
+	<parameter name="P_OFICINA" class="java.lang.String"/>
+	<parameter name="P_RESPONSABLE" class="java.lang.String"/>
+	<parameter name="P_IMPORTE_TOTAL" class="java.lang.String"/>
+	<parameter name="P_TOTAL_ENC" class="java.lang.String"/>
+	<field name="tipoDocumento" class="java.lang.String"/>
+	<field name="comprobante" class="java.lang.String"/>
+	<field name="desOrigen" class="java.lang.String"/>
+	<field name="remitente" class="java.lang.String"/>
+	<field name="destinatario1" class="java.lang.String"/>
+	<field name="direccionEnvio" class="java.lang.String"/>
+	<field name="totalCobrado" class="java.lang.Double"/>
+	<field name="nroBultos" class="java.lang.Integer"/>
+	<field name="detalle" class="java.lang.String"/>
+	<field name="tipoDocAbr" class="java.lang.String"/>
+	<variable name="doc" class="java.lang.String">
+		<variableExpression><![CDATA[$F{tipoDocAbr}+" " +$F{comprobante}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="104" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="e686ce51-92d9-44c1-8523-36511c96da96" mode="Transparent" x="10" y="64" width="138" height="20" backcolor="#340505"/>
+				<textElement textAlignment="Right">
+					<font isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Encomiendas para Reparto]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="bd91808e-8632-4806-bd9d-6ae03e678cfa" x="34" y="10" width="103" height="38"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="ee9f7377-249b-421f-b9d1-4ebd993fbfe1" x="169" y="10" width="266" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE ENCOMIENDAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1283817f-6f8c-42ca-9796-cd11adc63054" x="329" y="64" width="77" height="20"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Responsable :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1ce047a8-ff64-4ae4-969e-77649e91ed15" x="406" y="64" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_RESPONSABLE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="011124e8-0c84-4f57-bcf3-02eec9dc988a" x="406" y="36" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_OFICINA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8a8752a0-31e1-488d-a488-758ce1838e23" x="159" y="64" width="89" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_FEC_REPARTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2d7f0c32-6363-4e81-93e7-84290d27d4ce" x="329" y="36" width="77" height="20"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Oficina :]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="836d3559-4a57-49f2-b21b-202018af4e2f" mode="Opaque" x="0" y="7" width="555" height="15" forecolor="#000000" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="2bb0bb67-a653-45d9-89e5-9f2097fab944" x="34" y="7" width="114" height="13"/>
+				<textElement/>
+				<text><![CDATA[Remitente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ec23e7e0-ef7e-4c47-99e2-433025c79379" x="0" y="7" width="34" height="13"/>
+				<textElement/>
+				<text><![CDATA[Doc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a23d6545-3de5-496b-b58b-d79701a0f9c7" x="148" y="7" width="100" height="15"/>
+				<textElement/>
+				<text><![CDATA[Destinatario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a68a1853-6dcd-4c3f-9a08-66a7cebcbddd" x="248" y="7" width="107" height="15"/>
+				<textElement/>
+				<text><![CDATA[Detalle]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5034fd8d-36d3-4a36-a72c-1cbe2479010a" x="457" y="7" width="55" height="13"/>
+				<textElement/>
+				<text><![CDATA[Origen]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="383d6311-8c95-4c82-b338-b6845ff36099" x="355" y="7" width="69" height="15"/>
+				<textElement/>
+				<text><![CDATA[Direccion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d737bc41-4da4-40d6-9b03-b076ae24568e" x="512" y="7" width="43" height="15"/>
+				<textElement/>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0c405047-065b-4b05-9e07-89f140862728" x="424" y="7" width="33" height="13"/>
+				<textElement/>
+				<text><![CDATA[Bultos]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement uuid="83ec531d-6faf-47c2-846d-4d5f654679ae" x="0" y="0" width="34" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{doc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="1d8d8b28-555c-48ba-ba65-22bfd335de98" x="34" y="0" width="114" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remitente}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a2d744be-ae0d-4464-8efd-d9874df4905d" x="150" y="0" width="98" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{destinatario1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="4eb19dfe-1a26-481d-91d6-de27293b1aa5" x="248" y="0" width="107" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{detalle}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement uuid="376dd6dc-17bf-41aa-9cc4-b1c761ddd64b" x="512" y="0" width="43" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalCobrado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a68a9e0e-194f-4052-a31b-2e24b58aba3b" x="355" y="0" width="69" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccionEnvio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e1688112-4697-4c0f-a970-3cd8a8489133" x="457" y="0" width="55" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desOrigen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c1e50c0b-a912-4b6d-876c-361ec5229940" x="424" y="0" width="33" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nroBultos}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42">
+			<textField>
+				<reportElement uuid="25523f57-d8ec-4183-8e9e-be0b78eaa808" x="274" y="6" width="65" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_IMPORTE_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="83b6cc39-936e-4843-95aa-fd0e1e9a8e5e" x="457" y="6" width="51" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TOTAL_ENC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6797131d-e187-425f-9038-daed00e40394" x="339" y="6" width="118" height="20"/>
+				<textElement/>
+				<text><![CDATA[TOTAL ENCOMIENDAS :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1402398c-2245-4028-8792-dcdac44774f1" x="210" y="6" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[TOTAL(S/.)]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

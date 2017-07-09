@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.LogMapper">
+
+<resultMap id="logResult" type="com.certicom.ittsa.domain.Log">
+
+	<id column="pk_log_id" property="pk_log_id"/>
+	<result column="idusuario" property="idusuario"/>
+	<result column="cod_menu" property="cod_menu"/>
+	<result column="accion" property="accion"/>
+	<result column="descripcion" property="descripcion"/>
+	<result column="ip_client" property="ip_client"/>
+	<result column="host_client" property="host_client"/>
+	<result column="fecha" property="fecha"/>
+	<result column="hora" property="hora"/>
+	<result column="anio" property="anio"/>
+	<result column="ip_server_img" property="ip_server_img"/>
+	<result column="login" property="login"/>
+	<result column="nombre_opMenu" property="nombre_opMenu"/>
+	<result column="modulo" property="modulo"/>
+	<result column="fechaString" property="fechaString"/>
+</resultMap>
+
+
+<!-- ESTO ES PARA ENERO -->
+		<select id="getLog_Ene_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo,
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 1
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login} 
+					  </if>
+					order by a.fecha desc  
+		</select>
+		
+		<select id="getLog_Ene_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 AND a.anio = #{anio}
+			 WHERE MONTH(a.fecha) = 1
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			order by a.fecha desc
+		</select>
+		
+		<select id="getLog_Ene_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo, 
+		CONVERT(varchar(10), a.fecha, 103) as fechaString 
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 1 
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			   AND c.nombre  like #{p_opcion}
+			 </if>
+			 order by a.fecha desc
+		</select>
+		
+		<!-- ESTO ES PARA FEBRERO -->
+		<select id="getLog_Feb_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		      d.nombre_sistema as modulo,
+		      CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 2
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+				order by a.fecha desc
+		</select>
+		
+		<select id="getLog_Feb_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu ,d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 2
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			order by a.fecha desc
+		</select>
+		
+		<select id="getLog_Feb_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 2
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>
+		
+<!-- ESTO ES PARA MARZO -->
+		<select id="getLog_Mar_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo,
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 3
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+				order by a.fecha desc	  
+		</select>
+		
+		<select id="getLog_Mar_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 3
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			order by a.fecha desc
+		</select>
+		
+		<select id="getLog_Mar_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 3
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>	
+		
+		<!-- ESTO ES PARA ABRIL -->
+		<select id="getLog_Abr_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo, 
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 4
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+			order by a.fecha desc		  
+		</select>
+		
+		<select id="getLog_Abr_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 4
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			order by a.fecha desc
+		</select>
+		
+		<select id="getLog_Abr_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 4
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+		 order by a.fecha desc	 
+		</select>
+		
+		
+		<!-- ESTO ES PARA MAYO -->
+		<select id="getLog_May_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo,
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 5
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+			order by a.fecha desc		  
+		</select>
+		
+		<select id="getLog_May_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 5
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			order by a.fecha desc
+		</select>
+		
+		<select id="getLog_May_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 5
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>	
+		
+		
+		<!-- ESTO ES PARA JUNIO -->
+		<select id="getLog_Jun_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo,
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 6
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+			order by a.fecha desc		  
+		</select>
+		
+		<select id="getLog_Jun_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 6
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			order by a.fecha desc
+		</select>
+		
+		<select id="getLog_Jun_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+			CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 6
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>	
+		
+		<!-- ESTO ES PARA JULIO -->
+		<select id="getLog_Jul_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo,
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString 
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 7
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+			order by a.fecha desc		  
+		</select>
+		
+		<select id="getLog_Jul_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 7
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			order by a.fecha desc
+		</select>
+		
+		<select id="getLog_Jul_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+			CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 7
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>	
+		
+		<!-- ESTO ES PARA AGOSTO -->
+		<select id="getLog_Ago_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo,
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 8
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+				order by a.fecha desc	  
+		</select>
+		
+		<select id="getLog_Ago_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 8
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			 order by a.fecha desc 
+		</select>
+		
+		<select id="getLog_Ago_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 8
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>	
+		
+		<!-- ESTO ES PARA SETIEMBRE -->
+		<select id="getLog_Set_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo, 
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 9
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+				order by a.fecha desc	  
+		</select>
+		
+		<select id="getLog_Set_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 9
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			 order by a.fecha desc 
+		</select>
+		
+		<select id="getLog_Set_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 9
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>	
+		
+		<!-- ESTO ES PARA OCTUBRE -->
+		<select id="getLog_Oct_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo,
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 10
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+				order by a.fecha desc	  
+		</select>
+		
+		<select id="getLog_Oct_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 10
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			  order by a.fecha desc
+		</select>
+		
+		<select id="getLog_Oct_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 10
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>	
+		
+		<!-- ESTO ES PARA NOVIEMBRE -->
+		<select id="getLog_Nov_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo, 
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 11
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+			order by a.fecha desc		  
+		</select>
+		
+		<select id="getLog_Nov_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 11
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			 order by a.fecha desc 
+		</select>
+		
+		<select id="getLog_Nov_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 11
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			order by a.fecha desc 
+		</select>	
+		
+		<!-- ESTO ES PARA DICIEMBRE -->
+		<select id="getLog_Dic_By_Login" parameterType="String" resultMap="logResult">
+		SELECT a.pk_log_id,
+		       a.accion, 
+		       a.descripcion, 
+		       a.ip_client, 
+		       a.fecha, 
+		       a.hora, 
+		       a.anio,
+		       a.ip_server_img, 
+		       b.login, 
+		       c.nombre as nombre_opMenu, 
+		       d.nombre_sistema as modulo,
+		       CONVERT(varchar(10), a.fecha, 103) as fechaString  
+					 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+					 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+					 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+					 WHERE MONTH(a.fecha) = 12
+					 AND a.anio = #{anio}
+					  <if test="p_login != null">
+					    AND b.login like #{p_login}
+					  </if>
+				order by a.fecha desc	  
+		</select>
+		
+		<select id="getLog_Dic_By_Accion" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 12
+			 AND a.anio = #{anio}
+			  <if test="p_accion != null">
+					    AND a.accion like #{p_accion}
+			  </if>
+			 order by a.fecha desc 
+		</select>
+		
+		<select id="getLog_Dic_By_OpcionMenu" parameterType="String" resultMap="logResult" >
+		SELECT a.pk_log_id,a.accion, a.descripcion, a.ip_client, a.fecha, a.hora, a.anio,a.ip_server_img, b.login , c.nombre as nombre_opMenu , d.nombre_sistema as modulo,
+		CONVERT(varchar(10), a.fecha, 103) as fechaString  
+			 FROM  t_log a LEFT OUTER JOIN t_usuario b on (a.idusuario = b.idusuario) 
+			 LEFT OUTER JOIN t_opcion_menu c on (a.cod_menu = c.cod_menu) 
+			 LEFT OUTER JOIN t_sistema d on (c.cod_sistema = d.cod_sistema) 
+			 WHERE MONTH(a.fecha) = 12
+			 AND a.anio = #{anio}
+			 <if test="p_opcion != null">
+			 AND c.nombre  like #{p_opcion}
+			 </if>
+			 order by a.fecha desc
+		</select>	
+		
+		
+</mapper>	

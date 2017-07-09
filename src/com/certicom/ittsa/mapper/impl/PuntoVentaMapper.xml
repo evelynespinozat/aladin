@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.PuntoVentaMapper">
+
+<resultMap id="puntoVentaResult" type="com.certicom.ittsa.domain.PuntoVenta">
+	<id column="IdPuntoVenta" property="idPuntoVenta"/>
+	<result column="IdOficina" property="IdOficina"/>
+	<result column="NamePuntoVenta" property="namePuntoVenta"/>
+	<result column="NumeroIP" property="numeroIP"/>
+	<result column="SerieBoleto" property="serieBoleto"/>
+	<result column="SerieBoleta" property="serieBoleta"/>
+	<result column="UltimoBoleto" property="ultimoBoleto"/>
+	<result column="UltimaBoleta" property="ultimaBoleta"/>
+	<result column="Tipo" property="tipo"/>
+	<result column="Estado" property="estado"/>
+	<result column="SerieFactura" property="serieFactura"/>
+	<result column="UltimaFactura" property="ultimaFactura"/>
+	<result column="SerieGuiaRemision" property="serieGuiaRemision"/>
+	<result column="UltimaGuia" property="ultimaGuia"/>
+	<result column="desOficina" property="desOficina"/>
+	<result column="IdAgencia" property="IdAgencia"/>
+	<result column="desAgencia" property="desAgencia"/>
+	<result column="descPtventa" property="descPtventa"/>
+	<result column="desTipo" property="desTipo"/>
+	<result column="seriereserva" property="seriereserva"/>
+	<result column="ultimareserva" property="ultimareserva"/>
+	<result column="SeriePrepagado" property="seriePrepagado"/>
+	<result column="UltimoPrepagado" property="ultimoPrepagado"/>
+	<result column="NombreImpresora" property="NombreImpresora"/>
+	<result column="login" property="login"/>
+	
+</resultMap>
+
+<select id="listaPuntoVenta" resultMap="puntoVentaResult">
+		select p.IdPuntoVenta, 
+			a.Idagencia,
+			a.Descripcion as desAgencia,
+			o.IdOficina,
+			o.Nombre as desOficina,
+			p.NamePuntoVenta,
+			p.NumeroIP, 
+			p.SerieBoleto,
+			p.SerieBoleta,
+			p.UltimoBoleto, 
+			p.UltimaBoleta,
+			p.Tipo, 
+			p.Estado, 
+			p.SerieFactura, 
+			p.UltimaFactura, 
+			p.SerieGuiaRemision, 
+			p.UltimaGuia,
+			p.seriereserva,
+			p.ultimareserva,
+			p.SerieNotaCobranza,
+			p.UltimaNotaCobranza, 
+			p.SeriePrepagado,
+			p.UltimoPrepagado,
+			p.NombreImpresora,
+			u.nombre+' '+u.apellido_paterno as login
+		from (t_puntoventa p inner join t_agenciaoficina o on p.IdOficina = o.IdOficina) 
+			inner join t_agencia a on a.Idagencia = o.IdAgencia  left join t_usuario u on p.idpuntoventa=u.idpuntoventa
+			order by a.Descripcion, o.Nombre, p.NamePuntoVenta  
+</select>
+
+<select id="getPventasxOficina" resultMap="puntoVentaResult" parameterType="int">
+<!-- 	select pv.IdPuntoVenta as IdPuntoVenta, -->
+<!-- 	  	   (pv.NamePuntoVenta) as descPtventa -->
+<!--  			from t_puntoventa pv,  -->
+<!-- 			t_tipoequipo te -->
+<!-- 		where  te.idtipoequipo = pv.Tipo -->
+<!-- 		and pv.IdOficina = #{idoficina} -->
+		select pv.IdPuntoVenta as IdPuntoVenta,
+	  	   (pv.NamePuntoVenta) as descPtventa 
+ 			from t_puntoventa pv 
+		where pv.IdOficina = #{idoficina}
+</select>
+
+
+<select id="obtenerPuntoVenta"  resultMap="puntoVentaResult" parameterType="int">
+		select  
+		p.IdPuntoVenta,
+		p.IdOficina,
+		o.IdAgencia,
+		p.NamePuntoVenta,
+		p.NumeroIP,
+		p.SerieBoleto,
+		p.SerieBoleta,
+		p.UltimoBoleto,
+		p.UltimaBoleta,
+		p.Tipo,
+		p.Estado,
+		p.SerieFactura,
+		p.UltimaFactura,
+		p.SerieGuiaRemision,
+		p.UltimaGuia,
+		p.seriereserva,
+		o.Nombre as desOficina,
+		t.descripcion as desTipo,
+		p.seriereserva,
+		p.ultimareserva,
+		p.NombreImpresora
+		from (t_puntoventa p inner join t_agenciaoficina o on p.IdOficina = o.IdOficina) inner join t_tipoequipo t on p.Tipo = t.idtipoequipo  
+		where p.IdPuntoVenta =  #{idPuntoVenta}
+</select>
+
+
+</mapper>	

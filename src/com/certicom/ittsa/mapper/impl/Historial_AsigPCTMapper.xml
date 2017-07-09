@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.AgenciaMapper">
+
+<resultMap id="historial_asigPCTResult" type="com.certicom.ittsa.domain.Historial_AsigPCT">
+	<id column="idHistorial" property="idHistorial"/>
+	<result column="idBus" property="idBus"/>
+	<result column="idPiloto" property="idPiloto"/>
+	<result column="idCopiloto" property="idCopiloto"/>
+	<result column="idTerramoza" property="idTerramoza"/>
+	<result column="fecha" property="fecha"/>
+	<result column="estado" property="estado"/>
+</resultMap>
+
+
+</mapper>	

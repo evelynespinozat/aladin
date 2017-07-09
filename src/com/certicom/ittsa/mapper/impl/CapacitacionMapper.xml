@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.CapacitacionMapper">
+
+<resultMap id="capacitacionResult" type="com.certicom.ittsa.domain.Capacitacion">
+	<id column="CapacitacionId" property="capacitacionId"/>
+	<result column="Curso" property="curso"/>
+	<result column="Fecha" property="fecha"/>
+	<result column="Anio" property="anio"/>
+	<result column="titulo" property="titulo"/>
+	<result column="CentroEstudios" property="centroEstudios"/>
+	<result column="IdPiloto" property="idPiloto"/>
+	<result column="imagen" property="imagen" javaType="byte[]" jdbcType="BLOB" />
+	<result column="rutaImagen" property="rutaImagen"/>
+	
+	<result column="FechaUltimaActualizacion" property="FechaUltimaActualizacion"/>
+	<result column="UsuarioUltimaActualizacion" property="UsuarioUltimaActualizacion"/>
+</resultMap>
+
+
+</mapper>	

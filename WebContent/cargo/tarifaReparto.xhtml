@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Cargo" url="#" />
+    				<p:menuitem value="Tarifa de Reparto" url="tarifaReparto" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true" closable="true" />		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Nuevo Reparto" icon="icon-add" update=":dlgDetNuevo" 
+					oncomplete="dlgNuevo.show();" actionListener="#{tarifaRepartoMB.nuevoTarifaGiro()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaTarifaGiro">
+			<br/>
+				<p:dataTable id="dtAgencias" widgetVar="dtAgencias2" var="a" value="#{tarifaRepartoMB.listaAgencias}" 
+					emptyMessage="No existen agencias registradas." rowIndexVar="nro" filteredValue="#{tarifaRepartoMB.listaFilterAgencias}"
+					paginator="true" rows="20"
+					style="FONT-SIZE: 10px; ">
+					
+					<p:ajax id="ajax1" event="rowToggle" listener="#{tarifaRepartoMB.onRowToggleDestinos}" />
+					
+					<f:facet name="header">Lista de Agencias</f:facet>
+					
+					<p:column style="width:1%">  
+			            <p:rowToggler />  
+			        </p:column> 
+					
+					<p:column style="width:15%;" headerText="Oficina Origen" filterStyleClass="mayuscula" filterBy="#{a.descripcion}"  filterStyle="width:150px;" filterMatchMode="contains">
+						<h:outputText value="#{a.descripcion}" />
+					</p:column>
+					
+					<p:rowExpansion id="rwe1">
+						<p:dataTable id="dtDestinos" widgetVar="dtDestino2" var="d" value="#{tarifaRepartoMB.mapAgenciaListaTarifaDestino.get(a.idagencia)}" 
+									filteredValue="#{tarifaRepartoMB.listaFilterDestino}"  paginatorPosition="bottom" 
+									emptyMessage="No hay Excepciones Disponibles." rowIndexVar="nro" 
+									paginator="true" rows="20" style="FONT-SIZE: 10px; ">
+															
+						<f:facet name="header">Lista de Agencias de Destino</f:facet>					
+						
+						<p:column style="width:90%;" headerText="Destino">
+							<h:outputText value="#{d.desDestino}" />
+						</p:column>
+						
+						<p:column headerText="Ver Distritos" style="width:10%;text-align: center">
+
+						<p:commandButton title="Ver Distritos" update=":dlgDetDistritos" oncomplete="dlgDistrito.show();" 
+										 icon="icon-ubigeo" actionListener="#{tarifaRepartoMB.listarTarifas(d)}">
+							
+						</p:commandButton>
+					</p:column>
+
+					</p:dataTable>
+					</p:rowExpansion>  
+					
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="Registrar Nuevo Tarifario de Giro" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true" />
+						
+						<h:panelGrid columns="2">
+								
+							#{"Origen:"}
+							<p:selectOneMenu style="width:150px" value="#{tarifaRepartoMB.tarifa.idOrigen}"
+								required="true" requiredMessage="Seleccione origen.">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{tarifaRepartoMB.listaAgencias}" 
+									itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />							
+								<p:ajax update="cmbDest" listener="#{tarifaRepartoMB.listarAgeDestino()}" />
+							</p:selectOneMenu>
+							
+							#{"Destino:"}
+							<p:selectOneMenu id="cmbDest" style="width:150px" value="#{tarifaRepartoMB.tarifa.idDestino}"
+								required="true" requiredMessage="Seleccione destino.">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{tarifaRepartoMB.listaAgDestinos}"  
+									itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+								<p:ajax update="cmbDist" listener="#{tarifaRepartoMB.listarDistritos()}" />
+							</p:selectOneMenu>
+							
+							#{"Distrito:"}
+							<p:selectOneMenu id="cmbDist" style="width:150px" value="#{tarifaRepartoMB.tarifa.sid_ubigeo}"
+								required="true" requiredMessage="Seleccione distrito.">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{tarifaRepartoMB.listaUbigeo}" 
+									itemValue="#{item.sid_ubigeo}" itemLabel="#{item.sdistrito}" />
+							</p:selectOneMenu>
+							
+							#{"Precio:"}
+							<p:inputText  id="precioNormal" style="width:60px" value="#{tarifaRepartoMB.tarifa.precioEnvioNormal}"  required="true" requiredMessage="Se necesita un costo de envío normal." dir="rtl" >
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+														
+							#{"Estado:"}			
+							<p:selectOneMenu value="#{tarifaRepartoMB.tarifa.estado}" required="true" requiredMessage="Se necesita estado.">
+								<f:selectItem itemLabel="Activo" itemValue="true"  />
+								<f:selectItem itemLabel="No activo" itemValue="false"  />
+							</p:selectOneMenu>
+							
+					
+
+						</h:panelGrid>
+						<pe:keyFilter for="precioNormal" mask="num"/>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{tarifaRepartoMB.guardarTarifaGiro()}" style="margin-left:90px" 
+									 update="msgNuevo :formListaTarifaGiro"
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk"/>
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" style="margin-left:5px"/>
+					</h:form>	
+			</p:dialog>
+
+			
+			<p:dialog header="Lista de Tarifas por Distritos" widgetVar="dlgDistrito" appendToBody="true"
+					  resizable="false" id="dlgDetDistritos" modal="true">
+					
+					<h:form id="listaTarifasDistritos" style="width:600px;">
+						
+						<p:dataTable widgetVar="dtDistrito" var="t" value="#{tarifaRepartoMB.listaTarifaReparto}" filteredValue="#{tarifaRepartoMB.listaFiltroTarifaReparto}"
+									 emptyMessage="No hay Tarifas disponibles" rowIndexVar="nro" rows="5" paginator="true" paginatorPosition="bottom"
+									 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									 rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px;">
+									 
+		
+							<p:column headerText="Orden" style="width:3%;text-align:right">
+								#{nro+1}
+							</p:column>
+		
+							<p:column style="width:77%" headerText="Distrito." filterStyleClass="mayuscula" filterBy="#{t.sdistrito}" filterStyle="width:150px;" filterMatchMode="contains">
+								<h:outputText value="#{t.sdistrito}" />
+							</p:column>
+		
+							<ui:remove>
+							<p:column style="width:100px;" headerText="Precio">
+								<h:outputText value="#{t.precioEnvioNormal}" />
+							</p:column>
+							</ui:remove>
+							
+							<p:column headerText="Editar/Elim./Cat"
+								style="width:20%;text-align: center">
+		
+								<p:commandButton title="Editar" update=":dlgDetEditar" oncomplete="dlgEditar.show();" icon="icon-edit"
+									actionListener="#{tarifaRepartoMB.editarTarifaReparto(t)}">
+								</p:commandButton>
+		
+								<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+									<f:setPropertyActionListener target="#{tarifaRepartoMB.tarifa}" value="#{t}" />
+								</p:commandButton>
+								
+								<p:commandButton title="Agregar Categoria Reparto" update=":dlgDetCat" oncomplete="dlgCat.show();" icon="icon-categoria"
+									actionListener="#{tarifaRepartoMB.consultarCategoriaReparto(t)}">
+								</p:commandButton>
+		
+							</p:column>
+
+				</p:dataTable>
+					</h:form>	
+			</p:dialog>
+			
+			<p:dialog header="Modificar Tarifario" widgetVar="dlgEditar" appendToBody="true"
+					  resizable="false" id="dlgDetEditar" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgEditar" closable="true" />
+						
+						<h:panelGrid columns="2">
+							
+							#{"Distrito:"}
+							<p:selectOneMenu id="cmbDist" style="width:150px" value="#{tarifaRepartoMB.tarifa.sdistrito}"
+								required="true" requiredMessage="Seleccione distrito.">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="item" value="#{tarifaRepartoMB.listaUbigeo}" 
+									itemValue="#{item.sdistrito}" itemLabel="#{item.sdistrito}" />
+							</p:selectOneMenu>
+							
+							#{"Precio:"}
+							<p:inputText  id="precioNormal" style="width:60px" value="#{tarifaRepartoMB.tarifa.precioEnvioNormal}"  required="true" requiredMessage="Se necesita un costo de envío normal.">
+								<pe:keyFilter mask="num"/>
+							</p:inputText>
+														
+							#{"Estado:"}			
+							<p:selectOneMenu value="#{tarifaRepartoMB.tarifa.estado}" required="true" requiredMessage="Se necesita estado.">
+								<f:selectItem itemLabel="Activo" itemValue="true"  />
+								<f:selectItem itemLabel="No activo" itemValue="false"  />
+							</p:selectOneMenu>
+							
+					
+
+						</h:panelGrid>
+						<pe:keyFilter for="precioNormal" mask="num"/>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{tarifaRepartoMB.guardarTarifaGiro()}" style="margin-left:90px" 
+									 update="msgEditar :listaTarifasDistritos"
+									 oncomplete="dlgEditar.hide();" icon="icon-disk"/>
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgEditar.hide();"  icon="icon-cancel" style="margin-left:5px"/>
+					</h:form>	
+			</p:dialog>
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Esta seguro que desea eliminar esta tarifa de giro?" header="Eliminar Tarifa de Giro"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					<p:commandButton value="Eliminar" update=":listaTarifasDistritos"
+						actionListener="#{tarifaRepartoMB.eliminarTarifaReparto()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			
+			<p:dialog header="Agregar Categoria" widgetVar="dlgCat" appendToBody="true"
+					  resizable="false" id="dlgDetCat" modal="true" closable="true">
+					
+					<h:form id="formCat">
+						<p:messages showDetail="false" showSummary="true" id="msgEditar" closable="true" />
+						
+						<h:panelGrid columns="9">
+							#{"Distrito :"} 
+							<h:outputLabel value="#{tarifaRepartoMB.disSelec.sdistrito}" style="width:100px"/>
+							
+						</h:panelGrid>
+						<h:panelGrid columns="9">
+							#{"Categoria:"} 
+							<p:selectOneMenu  style="width:150px" value="#{tarifaRepartoMB.distritoCategoria.descripcion}" 
+										required="true" requiredMessage="Debe seleccionar una categoria.">
+								<f:selectItem itemLabel="Seleccione" itemValue="" />
+								<f:selectItem itemLabel="SOBRE" itemValue="SOBRE" />
+								<f:selectItem itemLabel="PAQUETE" itemValue="PAQUETE" />
+								<f:selectItem itemLabel="CAJA" itemValue="CAJA" />
+								<f:selectItem itemLabel="MUDANZA" itemValue="MUDANZA" />
+							</p:selectOneMenu>
+							
+							#{"Importe:"} 
+							<pe:inputNumber value="#{tarifaRepartoMB.distritoCategoria.valor}" required="true" requiredMessage="Se necesita un importe." dir="rtl"
+								style="width:60px" />
+							
+							#{"Costo de Servicio:"} 
+							<pe:inputNumber value="#{tarifaRepartoMB.distritoCategoria.costoServicio}" required="true" requiredMessage="Se necesita un costo de servicio." dir="rtl"
+								style="width:60px" />
+						
+							<p:commandButton value="Guardar" actionListener="#{tarifaRepartoMB.registrarCategoriaDistrito()}" 
+									 update=":formCat :formLista"  icon="icon-disk"/>
+												
+						</h:panelGrid>
+						</h:form>
+						
+						<br/>
+						<h:form id="formLista" style="width:700px;">
+						<p:dataTable widgetVar="dtCat" var="t" value="#{tarifaRepartoMB.listaCategoriasDis}" 
+									 emptyMessage="No hay categorias disponibles" rowIndexVar="nro" rows="5" paginator="true" paginatorPosition="bottom"
+									 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									 rowsPerPageTemplate="10,20,30" style="FONT-SIZE: 10px; ">
+									 
+							<f:facet name="header">Lista Tarifas por Categoria</f:facet>
+		
+							<p:column headerText="Orden" style="width:3%;text-align:right">
+								#{nro+1}
+							</p:column>
+		
+							<p:column style="width:54%;text-align:left" headerText="Categoria">
+								<h:outputText value="#{t.descripcion}" />
+							</p:column>
+		
+							<p:column style="width:20%;text-align:right;" headerText="Precio">
+								<h:outputText value="#{t.valor}" />
+							</p:column>
+							
+							<p:column style="width:20%;text-align:right" headerText="Costo Servicio">
+								<h:outputText value="#{t.costoServicio}" />
+							</p:column>
+							
+							<p:column headerText="Elim." style="width:3%;text-align: center">
+		
+								<p:commandButton title="Eliminar"  update=":formLista :formCat" icon="icon-delete" actionListener="#{tarifaRepartoMB.eliminarCatDistrito(t)}"/>
+								
+							</p:column>
+
+				</p:dataTable>
+						
+									 
+					</h:form>	
+			</p:dialog>
+		
+	</p:panel>
+		
+		<script>
+			
+			function validar(xhr, status, args) {
+				if (args.validationFailed) {
+					jQuery('#dlgDetNuevo').effect("shake", {
+						times : 1
+					}, 100);
+				} else {
+					dlgNuevo.hide();
+				}
+			}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

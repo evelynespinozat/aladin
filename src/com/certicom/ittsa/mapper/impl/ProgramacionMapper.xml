@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.ProgramacionMapper">
+
+<resultMap id="programacionResult" type="com.certicom.ittsa.domain.Programacion">
+	<id column="IdProgramacion" property="idProgramacion"/>
+	<result column="IdServicio" property="idServicio"/>
+	<result column="IdBus" property="idBus"/>
+	<result column="FLiquidacion" property="fLiquidacion"/>
+	<result column="FSalida" property="fSalida"/>
+	<result column="PrecioPiso1" property="precioPiso1"/>
+	<result column="PrecioPiso2" property="precioPiso2"/>
+	<result column="HSalida" property="hSalida"/>
+	
+	<result column="Fcreacion" property="fcreacion"/>
+	<result column="Fconfirmacion" property="fconfirmacion"/>
+	<result column="Fmodificacion" property="fmodificacion"/>
+	<result column="Hora24" property="hora24"/>
+	<result column="Estado" property="estado"/>
+	<result column="cantAsiVen" property="cantAsiVen"/>
+	<result column="EstEmbarque" property="estEmbarque"/>
+	<result column="EstDesembarque" property="estDesembarque"/>
+	<result column="FSalidaReal" property="fSalidaReal"/>
+	<result column="FLlegadaReal" property="fLlegadaReal"/>
+	<result column="Origen" property="origen"/>
+	<result column="Destino" property="destino"/>
+	<result column="EstManifiesto" property="estManifiesto"/>
+	<result column="descServicio" property="descServicio"/> 	<!-- added by juan -->
+	<result column="descEstado" property="descEstado"/> 	<!-- added by juan -->
+	<result column="icono" property="icono"/> 	<!-- added by juan -->
+	<result column="NumeroBus" property="numeroBus"/>
+	<result column="IdClase" property="idClase"/>
+	<result column="UsuarioRegistro" property="usuarioRegistro"/>
+	<result column="FechaRegistro" property="fechaRegistro"/>
+	<result column="nombUsuarioRegistro" property="nombUsuarioRegistro"/>
+	<result column="desAgencia" property="desAgencia"/>
+	<result column="desOficina" property="desOficina"/>
+	<result column="flagAtnBordo" property="flagAtnBordo"/>
+	<result column="IdPiloto" property="IdPiloto"/>
+	<result column="IdCopiloto" property="IdCopiloto"/>
+	<result column="IdTerramoza" property="IdTerramoza"/>
+	<result column="IdTerramoza2" property="IdTerramoza2"/>
+	<result column="nomPiloto" property="nomPiloto"/>
+	<result column="nomCopiloto" property="nomCopiloto"/>
+	<result column="desOrigen" property="desOrigen"/>
+	<result column="desDestino" property="desDestino"/>
+	<result column="fSubm" property="fSubm"/>
+	<result column="idSubmanifiesto" property="idSubmanifiesto"/>
+	<result column="horasViaje" property="horasViaje"/>
+	<result column="desRutaCompartida" property="desRutaCompartida"/>
+	
+	<result column="asienVendidos" property="asienVendidos"/>
+	<result column="asienReserva" property="asienReserva"/>
+	<result column="frecuenteSabado" property="frecuenteSabado"/>
+	<result column="IntCorreEnlace" property="IntCorreEnlace"/>
+	<result column="ampliado" property="ampliado"/>
+	<result column="ruta" property="ruta"/>
+	<result column="disponibles" property="disponibles"/>
+	<result column="vendidos" property="vendidos"/>
+	<result column="reservados" property="reservados"/>
+	<result column="separados" property="separados"/>
+	<result column="capacidadVerdadera" property="capacidadVerdadera"/>
+	<result column="disponibleP1" property="disponibleP1"/>
+	<result column="disponibleP2" property="disponibleP2"/>
+        <association property="clase" javaType="com.certicom.ittsa.domain.ClaseServicio">
+		<id column="clsIdClase" property="idclase" />
+		<result column="clsDescripcion" property="Descripcion" />
+		<result column="clsEstado" property="estado" />
+		<result column="clsGrupo" property="grupo" />
+		<result column="clsNombreCorto" property="nombreCorto" />
+		<result column="clsAtnBordo" property="atnBordo" />
+		<result column="clsAsientos" property="asientos" />
+		<result column="clsnroPisos" property="nroPisos" />
+		<result column="clsIdCatServicio" property="IdCatServicio" />
+		<result column="clsnroColumnasPisoUno" property="nroColumnasPisoUno" />
+		<result column="clsnroColumnasPisoDos" property="nroColumnasPisoDos" />
+		<result column="clsidtipoasientop1" property="idtipoasientop1" />
+		<result column="clsidtipoasientop2" property="idtipoasientop2" />
+		<result column="clscolor" property="color" />
+		<result column="clsidclasecapacidad" property="idclasecapacidad" />
+        </association>
+        <association property="tipoAsientoP1" javaType="com.certicom.ittsa.domain.TipoAsiento">
+            <id column="tasp1idtipoasiento" property="idtipoasiento"/>
+            <result column="tasp1nombre" property="nombre"/>
+            <result column="tasp1estado" property="estado"/>
+        </association>
+        <association property="tipoAsientop2" javaType="com.certicom.ittsa.domain.TipoAsiento">
+            <id column="tasp2idtipoasiento" property="idtipoasiento"/>
+            <result column="tasp2nombre" property="nombre"/>
+            <result column="tasp2estado" property="estado"/>
+        </association>
+        <association property="servicio" javaType="com.certicom.ittsa.domain.Servicio">
+		<id column="srvIdServicio" property="IdServicio" />
+		<result column="srvIdClase" property="IdClase" />
+		<result column="srvDescripcion" property="Descripcion" />
+		<result column="srvPrecio1" property="Precio1" />
+		<result column="srvPrecio2" property="Precio2" />
+		<result column="srvOrigen" property="Origen" />
+		<result column="srvdesOrigen" property="desOrigen" />
+		<result column="srvdesDestino" property="desDestino" />
+		<result column="srvDestino" property="Destino" />
+		<result column="srvHSalida" property="HSalida" />
+		<result column="srvHorasViaje" property="HorasViaje" />
+		<result column="srvHLlegada" property="HLlegada" />
+		<result column="srvHora24" property="Hora24" />
+		<result column="srvEstado" property="Estado" />
+		<result column="srvTipoFrecuencia" property="TipoFrecuencia" />
+		<result column="srvidRutaDestino" property="idRutaDestino" />
+		<result column="srvFRegistro" property="FRegistro" />
+		<result column="srvFrecuenteSabado" property="FrecuenteSabado" />
+		<result column="srvDescripcionClase" property="DescripcionClase" />
+		<result column="srvRutaCompartida" property="RutaCompartida"/>
+		<result column="srvIntCorre" property="IntCorre"/>
+		<result column="srvGradoServ" property="GradoServ"/>
+		<result column="srvrutaCompEnCaliente" property="rutaCompEnCaliente"/>
+        </association>
+</resultMap>
+
+
+<insert id="crearProgramacion2" parameterType="com.certicom.ittsa.domain.Programacion">
+
+		CALL USP_INS_Programacion_Demanda(#{idServicio},#{idBus},#{fLiquidacion},#{fSalida},#{precioPiso1},#{precioPiso2},
+	                                     #{hSalida},#{fcreacion},#{fconfirmacion},#{fmodificacion},#{hora24},#{estado},#{estEmbarque},
+	                                     #{estDesembarque},#{fSalidaReal},#{fLlegadaReal},#{estManifiesto},#{usuarioRegistro},#{fechaRegistro}
+											)
+
+<!-- 	insert into dbo.t_programacion ( -->
+<!-- 	IdServicio,  -->
+<!-- 	IdBus,  -->
+<!-- 	FLiquidacion,  -->
+<!-- 	FSalida,  -->
+<!-- 	PrecioPiso1,  -->
+<!-- 	PrecioPiso2,  -->
+<!-- 	HSalida,  -->
+<!-- 	Fcreacion,  -->
+<!-- 	Fconfirmacion,  -->
+<!-- 	Fmodificacion,  -->
+<!-- 	Hora24,  -->
+<!-- 	Estado,  -->
+<!-- 	EstEmbarque,  -->
+<!-- 	EstDesembarque,  -->
+<!-- 	FSalidaReal, -->
+<!-- 	FLlegadaReal, -->
+<!-- 	EstManifiesto, -->
+<!-- 	UsuarioRegistro, -->
+<!-- 	FechaRegistro )  -->
+<!-- 	values (#{idServicio}, -->
+<!-- 	#{idBus}, -->
+<!-- 	#{fLiquidacion}, -->
+<!-- 	#{fSalida}, -->
+<!-- 	#{precioPiso1}, -->
+<!-- 	#{precioPiso2}, -->
+<!-- 	#{hSalida}, -->
+<!-- 	#{fcreacion}, -->
+<!-- 	#{fconfirmacion}, -->
+<!-- 	#{fmodificacion}, -->
+<!-- 	#{hora24}, -->
+<!-- 	#{estado}, -->
+<!-- 	#{estEmbarque}, -->
+<!-- 	#{estDesembarque}, -->
+<!-- 	#{fSalidaReal}, -->
+<!-- 	#{fLlegadaReal}, -->
+<!-- 	#{estManifiesto}, -->
+<!-- 	#{usuarioRegistro}, -->
+<!-- 	#{fechaRegistro}) -->
+</insert>
+
+<update id="actualizarProgramacion" parameterType="com.certicom.ittsa.domain.Programacion">
+		update dbo.t_programacion 
+		SET 
+		IdServicio = #{idServicio}, 
+		PrecioPiso1 = #{precioPiso1},
+		PrecioPiso2 = #{precioPiso2},
+		FSalida = #{fSalida},
+		FLiquidacion = #{fLiquidacion},
+		HSalida = #{hSalida},
+		Hora24 = #{hora24} 
+		WHERE IdProgramacion = #{idProgramacion}	
+	
+	</update>
+	
+	<!-- changed by juan -->
+	<select id="listarProgFrecuente" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="programacionResult">
+		SELECT p.IdProgramacion,s.Descripcion as descServicio,s.HorasViaje as horasViaje, s.rutaCompartida as desRutaCompartida ,p.HSalida,p.PrecioPiso1,
+			   p.PrecioPiso2,e.descripcion as descEstado,p.FSalida,p.Hora24,e.icono,s.FrecuenteSabado as frecuenteSabado
+		FROM ((t_programacion p inner join t_servicio s on p.IdServicio = s.IdServicio) 
+								inner join t_clase c on s.IdClase = c.IdClase) 
+								inner join t_estado e on p.Estado = e.valor
+				 where c.IdCatServicio = 4
+							and p.Origen = #{origen}
+							and p.Destino = #{destino}
+							and p.FSalida &gt;= #{fecInicio} and p.FSalida &lt;= #{fecFin}
+							and p.Estado = 3 
+							and e.modulo = 'PROGRAMACION'
+							order by p.FSalida asc, p.Hora24 asc
+
+	</select>	
+	
+	<select id="listarProgDemanda" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="programacionResult">
+		select	p.IdProgramacion,
+				s.Descripcion as descServicio,
+				s.HorasViaje as horasViaje, 
+				s.rutaCompartida as desRutaCompartida,  
+				p.HSalida,
+				p.PrecioPiso1,
+				p.PrecioPiso2,
+				e.descripcion as descEstado,
+				p.FSalida,
+				p.Hora24,
+				e.icono,
+				p.UsuarioRegistro,
+				(u.nombre +' ' +u.apellido_paterno + ' ' +u.apellido_materno) as nombUsuarioRegistro, 
+		 		p.Fcreacion,
+		 		a.Idagencia, 
+		 		a.Descripcion as desAgencia,
+		 		o.IdOficina,
+		 		o.Nombre as desOficina,
+		 		p.IdServicio,
+		 		c.IdClase  
+		 		from 
+					t_programacion p,
+					t_servicio s,
+					t_clase c,
+					t_estado e,
+					t_usuario u, 
+					t_agencia a,
+					t_agenciaoficina o  
+				where s.IdServicio =  p.IdServicio
+					and p.Estado = e.valor
+					and s.IdClase = c.IdClase 
+					and u.idusuario = p.UsuarioRegistro 
+					and u.idagencia = a.Idagencia 
+					and u.idoficina = o.IdOficina 
+					and c.IdCatServicio = #{idCatServicio}
+					and p.Origen = #{origen}
+					and p.Destino = #{destino}
+					and p.FSalida &gt;= #{fecInicio} and p.FSalida &lt;= #{fecFin}
+					and p.Estado = 0
+					order by p.FSalida asc, p.Hora24 asc
+	</select>	
+	
+	<select id="obtenerHoraxServicio" parameterType="com.certicom.ittsa.domain.Transbordo" resultMap="programacionResult">
+		select p.IdProgramacion as IdProgramacion, p.IdServicio, s.Descripcion as descServicio, p.IdBus, f.Numero as NumeroBus, 
+	    	   p.PrecioPiso1, p.PrecioPiso2, p.FSalida, p.HSalida, p.Hora24, p.Origen, p.Destino, s.IdClase 
+		from ((t_programacion p inner join t_servicio s on  p.IdServicio = s.IdServicio) 
+							  inner join t_flota f on f.IdBus = p.IdBus)  
+		where p.Origen = #{origen} AND p.Destino = #{destino} and p.FSalida = #{fecha} order by p.Hora24
+	</select>
+	
+	<select id="findProgByFecha_orig_dest22" resultMap="programacionResult">
+			select p.IdProgramacion as idProgramacion,p.IdServicio as idServicio,s.Descripcion as descServicio, p.HSalida as hSalida,p.PrecioPiso1 as precioPiso1,p.PrecioPiso2 as precioPiso2, estado = CASE p.Estado
+		  WHEN '0' THEN 'DEMANDA'
+		  WHEN '3' THEN 'FRECUENTE' 
+		  END , s.IdClase as idClase from t_programacion p, t_servicio s , t_clase c, t_categoriaservicio cs 
+					  where p.FSalida = #{fechaProg} and p.Origen = #{idOrigen} and  p.Destino = #{idDestino} and (p.Estado=3 or p.Estado=0) 
+					  and p.IdServicio = s.IdServicio and s.IdClase = c.IdClase and c.IdCatServicio = cs.IdCatServicio and cs.IdCatServicio = 4 
+					 order by p.Hora24 asc
+	</select>
+	
+<select id="listarProgrPlantilla" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="programacionResult">
+select	p.IdProgramacion,
+				s.Descripcion as descServicio,
+				p.HSalida,
+				p.PrecioPiso1,
+				p.PrecioPiso2,
+				(select e.descripcion from t_estado e where e.valor = p.Estado and e.modulo = 'PROGRAMACION')  as descEstado,
+				(select e.icono from t_estado e where e.valor = p.Estado and e.modulo = 'PROGRAMACION')  as icono,
+				p.FSalida,
+				p.Hora24,
+				p.flagAtnBordo,
+				(select COUNT(*) from t_asientoventa av where av.IdProgramacion = p.IdProgramacion  and av.estado = 'VENTA') as cantAsiVen,
+				s.IdServicio as idServicio
+		 		from 
+					t_programacion p,
+					t_servicio s,
+					t_clase c
+				where s.IdServicio =  p.IdServicio
+					and s.IdClase = c.IdClase
+					and c.IdCatServicio = 4
+					and p.Origen = #{origen}
+					and p.Destino = #{destino}
+					and p.FSalida = #{fecInicio}
+					and p.Estado in (0,1,3)
+					and s.IdClase = #{idClase}
+					and p.flagAtnBordo = 0
+					order by p.FSalida asc, p.Hora24 asc
+	</select>
+	
+	
+	<!-- 27-02-2014 -->
+	<select id="buscarProxServicioPiloto" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="programacionResult">
+		select top 1 
+			p.IdProgramacion as idProgramacion,
+			s.Descripcion as descServicio,
+			(select Descripcion from t_agencia where Idagencia  = s.Origen) as desOrigen,
+			(select Descripcion from t_agencia where Idagencia  = s.Destino) as desDestino,
+			p.FSalida as fSalida,
+			p.HSalida as hSalida
+		from t_tripulacion t inner join t_programacion p
+		on p.IdProgramacion = t.IdProgramacion 
+		inner join t_servicio s
+		on p.IdServicio = s.IdServicio
+	<if test="varTripulante == 'PILOTO'">
+ 		where t.IdPiloto = #{IdPiloto} 
+	</if>
+	<if test="varTripulante == 'COPILOTO'">
+ 		where t.IdCopiloto = #{IdCopiloto} 
+	</if>
+		and (p.EstDesembarque is null or p.EstDesembarque =0) 
+ 		order by p.FSalida asc ,p.Hora24 asc
+	</select>
+	
+	<!-- 28-02-2014 -->
+	<select id="buscarProxServicioTerramoza" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="programacionResult">
+	 select top 1 
+		p.IdProgramacion as idProgramacion,
+		s.Descripcion as descServicio,
+		(select Descripcion from t_agencia where Idagencia  = s.Origen) as desOrigen,
+		(select Descripcion from t_agencia where Idagencia  = s.Destino) as desDestino,
+		p.FSalida as fSalida,
+		p.HSalida as hSalida
+	from  t_programacion p
+		inner join t_servicio s
+		on p.IdServicio = s.IdServicio
+		<if test="varTripulante == 'TERRAMOZA1'">
+		where p.IdTerramoza = #{IdTerramoza}
+		</if>
+		<if  test="varTripulante == 'TERRAMOZA2'">
+		where p.IdTerramoza2 = #{IdTerramoza2}
+		</if>
+		 and (p.EstDesembarque is null or p.EstDesembarque =0) 
+ 		order by p.FSalida asc ,p.Hora24 asc
+	</select>
+	
+	
+	<select id="listarProgSubManifiesto" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="programacionResult">
+	select  p.IdProgramacion as idProgramacion, p.IdBus as idBus, p.IdServicio as idServicio, s.Descripcion as descServicio, p.HSalida as hSalida, 
+				  p.PrecioPiso1 as precioPiso1, p.PrecioPiso2 as precioPiso2, p.Estado as estado, s.IdClase as idClase, p.UsuarioRegistro as usuarioRegistro, 
+				  p.Origen as origen , p.Destino as destino, p.FSalida as fSalida, t.IdTripulacion, t.IdPiloto, t.IdCopiloto, p.IdTerramoza, p.IdTerramoza2, 
+				  (select Nombres + ' '+  ApellidoPaterno  + ' ' +  ApellidoMaterno from t_piloto where IdPiloto = t.IdPiloto) as nomPiloto, 
+				  (select Nombres + ' ' + ApellidoPaterno + ' '  +ApellidoMaterno from t_piloto where IdPiloto = t.IdCopiloto) as nomCopiloto, 
+				 	(select f.Numero from t_flota f where f.IdBus = t.IdBus) as numeroBus,
+				  (select a.Descripcion from t_agencia a where a.Idagencia = p.Origen) as desOrigen,
+				  (select a.Descripcion from t_agencia a where a.Idagencia = p.Destino) as desDestino,
+				  sm.fRegistro as fSubm,
+				  sm.idSubmanifiesto
+				  from t_programacion p inner join t_tripulacion t on p.IdProgramacion = t.IdProgramacion inner join t_servicio s on s.IdServicio = p.IdServicio 
+				  inner join t_clase c on c.IdClase = s.IdClase inner join t_categoriaservicio cs on cs.IdCatServicio = c.IdCatServicio 
+				  inner join t_submanifiesto sm on sm.idProgramacion = p.IdProgramacion 
+				  where p.Origen  = #{origen} and p.Destino = #{destino} 
+				  and p.EstEmbarque is null and p.IdBus != 0 
+				  <if test="fSubm !=null">
+				  and cast(sm.fRegistro as date) = #{fSubm}
+				  </if >
+				  <if test="idBus !=0">
+				  and p.IdBus = #{idBus}
+				  </if>
+				  order by sm.fRegistro desc 
+	
+	</select>
+	
+	<select id="listarSalidasProgramacion" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="programacionResult">
+			select p.IdProgramacion, p.HSalida, p.FSalida, s.IdServicio as idServicio, s.Descripcion as descServicio, 
+				   o.Descripcion as desOrigen, d.Descripcion as desDestino,
+				   (select COUNT(*) from t_asientoventa where IdProgramacion = p.IdProgramacion and estado = 'VENTA') as asienVendidos,
+				   (select COUNT(*) from t_asientoventa where IdProgramacion = p.IdProgramacion and estado = 'RESERVA') as asienReserva,
+				   p.IdBus, f.Numero as numeroBus, 
+				   p.IdTerramoza 
+			from ((((((t_programacion p inner join t_servicio s on p.IdServicio = s.IdServicio)
+			                        inner join t_agencia o on s.Origen = o.Idagencia)
+			                        inner join t_agencia d on s.Destino = d.Idagencia)
+			                        inner join t_flota f on f.IdBus = p.IdBus)
+			                        left join t_terramoza t on p.IdTerramoza = t.IdTerramoza)
+			                        inner join t_rutaServicio r on r.idRutaDestino = s.idRutaDestino)
+			where p.FLiquidacion = CAST(#{fLiquidacion} as Date)
+			and r.TipoViaje = 'SALIDA'
+			and r.Estado = 1 
+			<if test="ruta == '1'">
+			and r.RutaDestino != 'TRUJILLO-LIMA'
+			</if>
+			<if test="ruta == '2'">
+			and r.RutaDestino = 'TRUJILLO-LIMA'
+			</if>
+	
+	</select>
+	
+	<select id="listarRetornoProgramacion" parameterType="com.certicom.ittsa.domain.Programacion" resultMap="programacionResult">
+			select p.IdProgramacion, p.HSalida, p.FSalida, s.IdServicio as idServicio, s.Descripcion as descServicio, 
+				   o.Descripcion as desOrigen, d.Descripcion as desDestino,
+				   (select COUNT(*) from t_asientoventa where IdProgramacion = p.IdProgramacion and estado = 'VENTA') as asienVendidos,
+				   (select COUNT(*) from t_asientoventa where IdProgramacion = p.IdProgramacion and estado = 'RESERVA') as asienReserva,
+				   p.IdBus, f.Numero as numeroBus, 
+				   p.IdTerramoza 
+			from ((((((t_programacion p inner join t_servicio s on p.IdServicio = s.IdServicio)
+			                        inner join t_agencia o on s.Origen = o.Idagencia)
+			                        inner join t_agencia d on s.Destino = d.Idagencia)
+			                        inner join t_flota f on f.IdBus = p.IdBus)
+			                        left join t_terramoza t on p.IdTerramoza = t.IdTerramoza)
+			                        inner join t_rutaServicio r on r.idRutaDestino = s.idRutaDestino)
+			where p.FLiquidacion = CAST(#{fLiquidacion} as Date)
+			and r.TipoViaje = 'RETORNO'
+			and r.Estado = 1 
+			<if test="ruta == '1'">
+			and r.RutaDestino != 'TRUJILLO-LIMA'
+			</if>
+			<if test="ruta == '2'">
+			and r.RutaDestino = 'TRUJILLO-LIMA'
+			</if>
+	
+	</select>
+        
+<select id="findByOrigenDestinoAndFsalida" resultMap="programacionResult" >
+select
+    prg.idprogramacion,
+    prg.IdServicio,
+    prg.IdBus,
+    prg.FLiquidacion,
+    prg.FSalida,
+    prg.PrecioPiso1,
+    prg.intCorreEnlace,
+    prg.PrecioPiso2,
+    prg.HSalida,
+    prg.Fcreacion,
+    prg.Hora24,
+    prg.Estado,
+    prg.Origen,
+    prg.Destino,
+    prg.flagAtnBordo,
+    srv.HLlegada,
+    srv.HorasViaje,
+    srv.RutaCompartida as desRutaCompartida,
+    srv.GradoServ as desGradoServicio,
+    srv.IdServicio srvIdServicio,
+    srv.IdClase srvIdClase,
+    srv.Descripcion srvDescripcion,
+    srv.Precio1 srvPrecio1,
+    srv.Precio2 srvPrecio2,
+    srv.Origen srvOrigen,
+    srv.Destino srvDestino,
+    srv.HSalida srvHSalida,
+    srv.HorasViaje srvHorasViaje,
+    srv.HLlegada srvHLlegada,
+    srv.Hora24 srvHora24,
+    srv.Estado srvEstado,
+    srv.TipoFrecuencia srvTipoFrecuencia,
+    srv.idRutaDestino srvidRutaDestino,
+    srv.FRegistro srvFRegistro,
+    srv.FrecuenteSabado srvFrecuenteSabado,
+    srv.RutaCompartida srvRutaCompartida,
+    srv.IntCorre srvIntCorre,
+    srv.GradoServ srvGradoServ,
+    srv.rutaCompEnCaliente srvrutaCompEnCaliente,
+    prg.ampliado,
+    cls.IdClase clsIdClase,
+    cls.Descripcion clsDescripcion,
+    cls.Estado clsEstado,
+    cls.Grupo clsGrupo,
+    cls.NombreCorto clsNombreCorto,
+    cls.AtnBordo clsAtnBordo,
+    cls.Asientos clsAsientos,
+    cls.nroPisos clsnroPisos,
+    cls.IdCatServicio clsIdCatServicio,
+    cls.nroColumnasPisoUno clsnroColumnasPisoUno,
+    cls.nroColumnasPisoDos clsnroColumnasPisoDos,
+    cls.idtipoasientop1 clsidtipoasientop1,
+    cls.idtipoasientop2 clsidtipoasientop2,
+    cls.color clscolor,
+    cls.idclasecapacidad clsidclasecapacidad,
+    tasp1.idtipoasiento tasp1idtipoasiento,
+    tasp1.nombre tasp1nombre,
+    tasp1.Estado tasp1Estado,
+    tasp2.idtipoasiento tasp2idtipoasiento,
+    tasp2.nombre tasp2nombre,
+    tasp2.Estado tasp2Estado,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1 and  a.estado = 'LIBRE' ) as disponibles,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1 and  a.estado = 'VENTA' ) as vendidos,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1 and  a.estado = 'RESERVA' ) as reservados,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1 and  a.estado = 'SEPARADO' ) as separados,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1) capacidadVerdadera,
+    (select count(*) from t_asientoventa av,dbo.t_asiento asi where asi.IdAsiento = av.IdAsiento and av.IdProgramacion = prg.IdProgramacion and av.visible = 1 and  av.estado = 'LIBRE' and asi.Piso = 1 ) as disponibleP1,
+    (select count(*) from t_asientoventa av,dbo.t_asiento asi where asi.IdAsiento = av.IdAsiento and av.IdProgramacion = prg.IdProgramacion and av.visible = 1 and  av.estado = 'LIBRE' and asi.Piso = 2 ) as disponibleP2
+from
+    t_programacion prg
+join
+    t_servicio srv
+on
+    prg.IdServicio = srv.IdServicio
+join
+    t_clase cls
+on
+    cls.IdClase = srv.IdClase
+join
+    t_tipoasiento tasp1
+on
+    cls.IdTipoAsientoP1 = tasp1.IdTipoAsiento
+left join
+    t_tipoasiento tasp2
+on
+    cls.IdTipoAsientoP2 = tasp2.IdTipoAsiento
+where
+    srv.origen = #{p_origen}
+and
+    srv.destino = #{p_destino}
+and
+    prg.fsalida = CAST(#{p_fsalida} AS date)
+and 
+    (DATEDIFF(minute, Cast(prg.FSalida as varchar) +'  '+ Cast(prg.Hora24 as varchar), GETDATE())) <![CDATA[<]]> 0
+and
+    cls.IdCatServicio = 4
+order by
+    prg.hora24 asc;
+</select>
+<select id="findByOrigenDestinoAndFsalidaAllDay" resultMap="programacionResult" >
+select
+    prg.idprogramacion,
+    prg.IdServicio,
+    prg.IdBus,
+    prg.FLiquidacion,
+    prg.FSalida,
+    prg.PrecioPiso1,
+    prg.intCorreEnlace,
+    prg.PrecioPiso2,
+    prg.HSalida,
+    prg.Fcreacion,
+    prg.Hora24,
+    prg.Estado,
+    prg.Origen,
+    prg.Destino,
+    prg.flagAtnBordo,
+    srv.HLlegada,
+    srv.HorasViaje,
+    srv.RutaCompartida as desRutaCompartida,
+    srv.GradoServ as desGradoServicio,
+    srv.IdServicio srvIdServicio,
+    srv.IdClase srvIdClase,
+    srv.Descripcion srvDescripcion,
+    srv.Precio1 srvPrecio1,
+    srv.Precio2 srvPrecio2,
+    srv.Origen srvOrigen,
+    srv.Destino srvDestino,
+    srv.HSalida srvHSalida,
+    srv.HorasViaje srvHorasViaje,
+    srv.HLlegada srvHLlegada,
+    srv.Hora24 srvHora24,
+    srv.Estado srvEstado,
+    srv.TipoFrecuencia srvTipoFrecuencia,
+    srv.idRutaDestino srvidRutaDestino,
+    srv.FRegistro srvFRegistro,
+    srv.FrecuenteSabado srvFrecuenteSabado,
+    srv.RutaCompartida srvRutaCompartida,
+    srv.IntCorre srvIntCorre,
+    srv.GradoServ srvGradoServ,
+    srv.rutaCompEnCaliente srvrutaCompEnCaliente,
+    prg.ampliado,
+    cls.IdClase clsIdClase,
+    cls.Descripcion clsDescripcion,
+    cls.Estado clsEstado,
+    cls.Grupo clsGrupo,
+    cls.NombreCorto clsNombreCorto,
+    cls.AtnBordo clsAtnBordo,
+    cls.Asientos clsAsientos,
+    cls.nroPisos clsnroPisos,
+    cls.IdCatServicio clsIdCatServicio,
+    cls.nroColumnasPisoUno clsnroColumnasPisoUno,
+    cls.nroColumnasPisoDos clsnroColumnasPisoDos,
+    cls.idtipoasientop1 clsidtipoasientop1,
+    cls.idtipoasientop2 clsidtipoasientop2,
+    cls.color clscolor,
+    cls.idclasecapacidad clsidclasecapacidad,
+    tasp1.idtipoasiento tasp1idtipoasiento,
+    tasp1.nombre tasp1nombre,
+    tasp1.Estado tasp1Estado,
+    tasp2.idtipoasiento tasp2idtipoasiento,
+    tasp2.nombre tasp2nombre,
+    tasp2.Estado tasp2Estado,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1 and  a.estado = 'LIBRE' ) as disponibles,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1 and  a.estado = 'VENTA' ) as vendidos,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1 and  a.estado = 'RESERVA' ) as reservados,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1 and  a.estado = 'SEPARADO' ) as separados,
+    (select count(*) from t_asientoventa a where a.IdProgramacion = prg.IdProgramacion and a.visible = 1) capacidadVerdadera,
+    (select count(*) from t_asientoventa av,dbo.t_asiento asi where asi.IdAsiento = av.IdAsiento and av.IdProgramacion = prg.IdProgramacion and av.visible = 1 and  av.estado = 'LIBRE' and asi.Piso = 1 ) as disponibleP1,
+    (select count(*) from t_asientoventa av,dbo.t_asiento asi where asi.IdAsiento = av.IdAsiento and av.IdProgramacion = prg.IdProgramacion and av.visible = 1 and  av.estado = 'LIBRE' and asi.Piso = 2 ) as disponibleP2
+from
+    t_programacion prg
+join
+    t_servicio srv
+on
+    prg.IdServicio = srv.IdServicio
+join
+    t_clase cls
+on
+    cls.IdClase = srv.IdClase
+join
+    t_tipoasiento tasp1
+on
+    cls.IdTipoAsientoP1 = tasp1.IdTipoAsiento
+left join
+    t_tipoasiento tasp2
+on
+    cls.IdTipoAsientoP2 = tasp2.IdTipoAsiento
+where
+    srv.origen = #{p_origen}
+and
+    srv.destino = #{p_destino}
+and
+    prg.fsalida = CAST(#{p_fsalida} AS date)
+and
+    cls.IdCatServicio = 4
+order by
+    prg.hora24 asc;
+</select>
+	
+
+</mapper>	

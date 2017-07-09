@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptHistMantFlota" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b39488bd-e64e-4662-abb6-3c07198019af">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_LOGO" class="java.lang.String"/>
+	<parameter name="P_FEC_DESDE" class="java.lang.String"/>
+	<parameter name="P_FEC_HASTA" class="java.lang.String"/>
+	<parameter name="P_NROBUS" class="java.lang.Integer"/>
+	<parameter name="P_PLACA" class="java.lang.String"/>
+	<parameter name="P_MARCA" class="java.lang.String"/>
+	<parameter name="P_MODELO" class="java.lang.String"/>
+	<parameter name="P_CLASE" class="java.lang.String"/>
+	<parameter name="P_KILOMETRAJE" class="java.lang.Integer"/>
+	<field name="fecMantenimiento" class="java.util.Date"/>
+	<field name="desAutomotor" class="java.lang.String"/>
+	<field name="desAutoparte" class="java.lang.String"/>
+	<field name="tipMantenimiento" class="java.lang.String"/>
+	<field name="cantidad" class="java.lang.Integer"/>
+	<field name="tipMantEfectuado" class="java.lang.String"/>
+	<field name="nombreMeca" class="java.lang.String"/>
+	<field name="observacion" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="110" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="d41fce65-fdab-4277-bd94-776cb7020ad1" x="152" y="15" width="250" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HISTORIAL DE FLOTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1f8b5c30-9bf4-49a0-a75f-a34ff623710f" x="17" y="81" width="34" height="18"/>
+				<textElement/>
+				<text><![CDATA[Placa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="295ed5c9-1e0e-4480-8e77-458a52c088cb" x="19" y="56" width="70" height="18"/>
+				<textElement/>
+				<text><![CDATA[Rango Fechas:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8a8c220b-12cd-4600-b7c8-08dcf52aa64b" x="89" y="56" width="205" height="18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_FEC_DESDE}+" - "+$P{P_FEC_HASTA}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="33394aa1-db06-41f8-9b14-bfeaad772451" x="32" y="15" width="103" height="38"/>
+				<imageExpression><![CDATA[$P{P_LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="5f51f6bd-a6f2-432f-b70b-7d9738ca9376" x="417" y="17" width="45" height="22"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Bus Nro:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="00094be9-19dd-447f-9889-a2d100296aa0" x="462" y="17" width="93" height="22"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NROBUS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="70a989ab-393c-450d-97a3-01349ee79338" x="52" y="81" width="100" height="18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PLACA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a992c60f-7354-4325-ab99-a8958c9d2131" x="152" y="81" width="34" height="18"/>
+				<textElement/>
+				<text><![CDATA[Marca:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="37be2336-da4e-4f5d-8616-0cb6abad9516" x="186" y="81" width="77" height="18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_MARCA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="781768f9-8ea9-4add-bd16-35d091d6f17b" x="263" y="81" width="42" height="18"/>
+				<textElement/>
+				<text><![CDATA[Modelo:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="ba0bbac2-7b1a-482e-93b2-4e9efa946b05" x="305" y="81" width="100" height="18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_MODELO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f270bf2f-b8f2-4f65-aad2-cf80045fecb2" x="447" y="81" width="100" height="18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CLASE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="abb64cfa-82ce-4e1d-b860-d98c3012ea20" x="405" y="81" width="42" height="18"/>
+				<textElement/>
+				<text><![CDATA[Clase:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2746c359-5043-4b41-a06e-813fb8d5445d" x="394" y="53" width="61" height="18"/>
+				<textElement/>
+				<text><![CDATA[Kilometraje:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="254dc2f9-67cb-4ebb-bb11-720c625e7d7b" x="455" y="53" width="100" height="18" forecolor="#FF0000"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_KILOMETRAJE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="53f80087-91c9-42cf-94ad-441c6e340d84" x="0" y="6" width="555" height="15" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="8a806d8e-e9fd-4c1b-99af-12acdac74678" x="4" y="6" width="59" height="15"/>
+				<textElement/>
+				<text><![CDATA[F. Mant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0cb16ee4-d4df-4bea-8177-63a48074e8d9" x="63" y="6" width="89" height="15"/>
+				<textElement/>
+				<text><![CDATA[Sistema]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f9e5e9bc-37e2-4cb1-9e87-705b5d919f6c" x="155" y="5" width="97" height="15"/>
+				<textElement/>
+				<text><![CDATA[Autoparte]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b46091d0-515b-4930-af3e-35e2664d499e" x="294" y="6" width="64" height="14"/>
+				<textElement/>
+				<text><![CDATA[Tip. Mant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a773837b-028d-47ba-b1f1-83f895e946fb" x="363" y="5" width="92" height="14"/>
+				<textElement/>
+				<text><![CDATA[Mant . Efectuado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eae0f672-0a9c-4822-bf06-3047ac750686" x="255" y="7" width="34" height="14"/>
+				<textElement/>
+				<text><![CDATA[Cant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="602faf0c-e252-4192-9da2-f2d2dfb52722" x="462" y="6" width="93" height="14"/>
+				<textElement/>
+				<text><![CDATA[Mecanico]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement uuid="0f2e055a-d1ae-448c-8451-7a42972e00d5" x="4" y="0" width="59" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecMantenimiento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="d9ca38bb-e822-45d7-9ee7-33b5266bcc05" x="294" y="0" width="64" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipMantenimiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="540ad23c-3e5a-47c9-80a9-b06b40213656" x="255" y="1" width="34" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="59b5ef8f-dbaa-46e6-b750-30300ffe128b" x="462" y="1" width="93" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreMeca}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="80129da8-a8ec-44d2-a087-30a878ef7dac" x="363" y="1" width="92" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipMantEfectuado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="6c2cc498-a5f6-4315-830a-0bec27c33bc8" x="155" y="1" width="97" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desAutoparte}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="ec0622eb-7554-4f35-82e2-9e5986336959" x="63" y="1" width="89" height="19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desAutomotor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

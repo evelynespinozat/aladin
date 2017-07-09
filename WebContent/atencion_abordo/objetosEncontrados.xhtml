@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Atencion a Bordo" url="#" />
+    				<p:menuitem value="Objetos Encontrados" url="objetosEncontrados" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>
+			
+				<h:form>
+					<p:panel>
+					  <h:panelGrid columns="6">
+					     #{"Origen:"}
+					     <p:selectOneMenu style="width:150px" value="#{objetosEncontradosMB.objEncontradosFilter.idOrigen}"
+							required="true" requiredMessage="Seleccione Origen">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{objetosEncontradosMB.listaAgOrigen}" 
+							itemValue="#{item.idagencia}" itemLabel="#{item.descripcion}" />
+							<p:ajax update="cmbDest" listener="#{objetosEncontradosMB.listarAgeDestino()}" />
+						</p:selectOneMenu>
+						
+					     #{"Destino:"}
+					     <p:selectOneMenu style="width:150px" value="#{objetosEncontradosMB.objEncontradosFilter.idDestino}" id="cmbDest"
+							 required="true" requiredMessage="Seleccione Destino">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems var="item" value="#{objetosEncontradosMB.listaAgDestinos}"
+								itemValue="#{item.destino}" itemLabel="#{item.desDestino}" />
+						</p:selectOneMenu>
+
+						<p:commandButton value="Consultar"
+						actionListener="#{objetosEncontradosMB.buscarObjetos()}"
+						update=":formObjEncontrados :sms"
+						icon="icon-search" />
+						
+						<h:commandLink id="imprimir" value="Imprimir" style="padding: 6px 30px;background: #FCC14D; text-decoration: none; border: solid 1px #624B1E; font-weight: bold;
+    							 color: #1C190A;" actionListener="#{objetosEncontradosMB.imprimirPDF}" >   
+						</h:commandLink>
+						
+					  </h:panelGrid>
+					</p:panel>	
+	
+					<br/>
+				</h:form>
+			<!-- toolbar -->
+			<!-- listado de agencias -->
+			<h:form id="formObjEncontrados">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{objetosEncontradosMB.listaObjEncontrados}" filteredValue="#{objetosEncontradosMB.listaFilterObjEncontrados}"  
+					emptyMessage="No hay Objetos Encontrados Disponibles." rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Objetos Encontrados</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:200px" headerText="Descripcion" filterStyleClass="mayuscula" filterBy="#{p.descripcion}" filterMatchMode="contains" filterStyle="width:70px;" >
+						<h:outputText value="#{p.descripcion}" />
+					</p:column>
+					
+					<p:column style="width:40px;text-align: center;" headerText="N° Asiento Ref.">
+						<h:outputText value="#{p.nroAsiento}" />
+					</p:column>
+
+					<p:column style="width:50px;text-align: center;" headerText="Bus">
+						<h:outputText value="#{p.numero}" />
+					</p:column>
+
+					<p:column style="width:100px;text-align: center;" headerText="Servicio">
+						<h:outputText value="#{p.desServicio}" />
+					</p:column>
+
+					<p:column style="width:70px;text-align: center;" headerText="F.Llegada">
+						<h:outputText value="#{p.fLlegadaReal}" >
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+				
+					<p:column style="width:150px;text-align: center;" headerText="Propietario:">
+						<h:outputText value="#{p.nomEntregado}" />
+					</p:column>
+
+					<p:column style="width:50px;text-align: center;" headerText="DNI">
+						<h:outputText value="#{p.dniEntregado}" />
+					</p:column>
+
+					
+					<p:column style="width:70px;text-align: center;" headerText="F. dev.">
+						<h:outputText value="#{p.fechaEntrega}" rendered="#{p.fechaEntrega !=null}">
+						<f:convertDateTime pattern="dd/MM/yyyy" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width:80px;text-align: center;" headerText="Estado">
+						<h:outputText value="#{p.estado}" />
+					</p:column>
+					
+					
+					<p:column headerText="Entregar" style="width:10%;text-align: center">
+					<p:commandButton title="Entregar" update=":dlgDetDevOE" disabled="#{p.estado == 'DEVUELTO'}"
+							actionListener="#{objetosEncontradosMB.editarObjEncontrados(p)}"
+							oncomplete="dlgDevOE.show();" icon="icon-edit">
+					</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+		
+		<p:dialog header="Devolver Objeto Encontrado"
+			  		widgetVar="dlgDevOE" resizable="false"
+			  		id="dlgDetDevOE" showEffect="fade" closable="true"
+			 		appendToBody="true" modal="true" >
+			<h:form>
+				<p:messages showDetail="false" showSummary="true" id="mgsNuevo" closable="true" />
+				<h:panelGrid columns="2">
+				
+					#{"Objeto:"}		
+					<h:outputText style="width:200px" value="#{objetosEncontradosMB.objEncontrados.descripcion}" 
+					required="true" requiredMessage="Se necesita un nombre"/>
+
+					#{"Observacion:"}		
+					<h:outputText cols="16" rows="4" style="width:200px" value="#{objetosEncontradosMB.objEncontrados.observacion}"/> 
+					
+					#{"Nro Asiento:"}		
+					<h:outputText style="width:200px" value="#{objetosEncontradosMB.objEncontrados.nroAsiento}" 
+					required="true" requiredMessage="Se necesita un numero de asiento de Referencia"/>
+					
+					#{"Fecha Registro:"}
+					<p:calendar disabled="true" value="#{objetosEncontradosMB.objEncontrados.fRegistro}"  pattern="dd/MM/yyyy hh:mm a" locale="es"
+							 	navigator="true"  required="true" requiredMessage="Se necesita una fecha de registro"/>  		
+					
+					#{"Propietario:"}		
+					<p:inputText style="width:200px" value="#{objetosEncontradosMB.objEncontrados.nomEntregado}" required="true" 
+						requiredMessage="Se necesita el nombre del propietario"/>
+			
+					#{"DNI:"}		
+					<p:inputText style="width:100px" value="#{objetosEncontradosMB.objEncontrados.dniEntregado}" required="true"
+						requiredMessage="Se necesita el dni del propietario"/>
+		
+							
+					<p:commandButton value="Guardar" actionListener="#{objetosEncontradosMB.devolverObjEnc()}"
+								 oncomplete="validar(xhr, status, args)" update=":formObjEncontrados mgsNuevo" />
+							
+					<p:commandButton value="Cerrar" onclick="dlgDevOE.hide();" type="button" />
+							
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+			
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetDevOE').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				dlgDevOE.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

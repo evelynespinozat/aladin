@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.certicom.ittsa.mapper.SalidaDetalleMapper">
+
+<resultMap id="salidaDetalleResult" type="com.certicom.ittsa.domain.SalidaDetalle">
+	<id column="IDSalDet" property="IDSalDet"/>
+	<result column="IdSalida" property="IdSalida"/>
+	<result column="IdProducto" property="IdProducto"/>
+	<result column="cantSalida" property="cantSalida"/>
+	<result column="stockAnt" property="stockAnt"/>
+	<result column="FRegistro" property="FRegistro"/>
+	<result column="costoUni" property="costoUni"/>
+	<result column="costo" property="costo"/>
+	<result column="disgregacion" property="disgregacion"/>
+	<result column="cantDist" property="cantDist"/>
+	<result column="costoxPasj" property="costoxPasj"/>
+</resultMap>
+
+
+<insert id="registrarSalidaDetalle" parameterType="com.certicom.ittsa.domain.SalidaDetalle">
+	insert into t_salida_detalle(IdSalida,IdProducto,cantSalida,stockAnt,FRegistro,costoUni,costo,disgregacion,cantDist,costoxPasj)
+				values(#{IdSalida},#{IdProducto},#{cantSalida},#{stockAnt},#{FRegistro},#{costoUni},#{costo},#{disgregacion},#{cantDist},#{costoxPasj})
+</insert>
+
+
+</mapper>	

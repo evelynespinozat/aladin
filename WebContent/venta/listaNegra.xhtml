@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Ventas" url="#" />
+    				<p:menuitem value="Lista Negra" url="listaNegra" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px">
+				<p:toolbarGroup align="top">
+					<p:commandButton value="Añadir Persona" icon="icon-add" update=":dlgDetNuevo" oncomplete="dlgNuevo.show();" actionListener="#{listaNegraMB.nuevoListaNegra()}" />
+				</p:toolbarGroup>
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaAgencia">
+				<p:dataTable widgetVar="dtAgencia" var="p" value="#{listaNegraMB.listaNegralist}" filteredValue="#{listaNegraMB.listaNegralistfilter}"  
+					emptyMessage="No hay Personas en la lista Negra" rowIndexVar="nro" 
+					paginator="true"
+					rows="10" paginatorPosition="bottom" 
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,30"
+					style="FONT-SIZE: 10px; ">
+					<f:facet name="header">Lista Negra</f:facet>
+					
+					<p:column headerText="Orden" width="25" style="width:3%" >
+						#{nro+1}
+					</p:column>
+					<p:column style="width:15%" headerText="DNI" filterBy="#{p.DNI}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.DNI}" />
+
+					</p:column>
+					<p:column style="width:15%" headerText="Nombre" filterStyleClass="mayuscula" filterBy="#{p.nombreCompleto}" filterMatchMode="contains" filterStyle="width:200px;" >
+						<h:outputText value="#{p.nombreCompleto}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="Nombre" >
+						<h:outputText value="#{p.motivo}" />
+					</p:column>
+
+					<p:column style="width:15%" headerText="F.Registro" >
+						<h:outputText value="#{p.fRegistro}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date" dateStyle="short" />
+						</h:outputText>
+					</p:column>
+
+					<p:column style="width:15%" headerText="Usuario Autorizante" >
+						<h:outputText value="#{p.nomUsuAutoizante}"/>
+					</p:column>
+					
+					<p:column style="width:7%" headerText="Estado">
+						<p:commandLink update="@form :sms" actionListener="#{listaNegraMB.cambiarEstado(p)}" > 
+								<h:graphicImage value="#{p.estado?'/resources/img/icon-ok.png':'/resources/img/icon-block.png'}" 
+								title="#{p.estado?'Activo':'Bloqueado'}" />
+						</p:commandLink>		
+					</p:column>
+					
+					<p:column headerText="Autorizar" style="width:10%;text-align: center">
+					
+						<p:commandButton title="Autorizar"  update=":dlgDetAct" actionListener="#{listaNegraMB.setearListaNegra(p)}"
+										 oncomplete="dlgAct.show();" icon="icon-edit">
+						</p:commandButton>
+
+		    <ui:remove>
+						<p:commandButton title="Eliminar" oncomplete="dlgEliminar.show();" update=":dlgDetEliminar" icon="icon-delete">
+							    <f:setPropertyActionListener target="#{listaNegraMB.agencia}" value="#{p}" />
+						</p:commandButton>
+			</ui:remove>		
+						
+								
+					</p:column>
+					
+					
+					<p:column headerText="Editar" style="width:20%;text-align: center">
+						<p:commandButton id="cbtEditar" title="Editar"
+							update=":dlgDetEditar" oncomplete="dlgEditar.show();"
+							icon="icon-edit" actionListener="#{listaNegraMB.editar(p)}" />
+				    </p:column>
+
+				</p:dataTable>
+			</h:form>
+			
+			<!-- #############    Dialogos      ################ -->
+			
+			<!-- dialogo nuevo/editar perfil -->
+			
+			<p:dialog header="Añadir Persona" widgetVar="dlgNuevo" appendToBody="true"
+					  resizable="false" id="dlgDetNuevo" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"DNI:"}
+							<p:inputText style="width:200px" value="#{listaNegraMB.listaNegra.DNI}" required="true" maxlength="8" requiredMessage="Se necesita un dni" dir="rtl" >
+								<pe:keyFilter  mask="num"/> 
+								<p:ajax event="blur" listener="#{listaNegraMB.buscarPersona()}" update="txtNomUsuReco"/> 
+							</p:inputText>
+
+							#{"Nombre:"}
+							<p:inputText id="txtNomUsuReco" style="width:200px" value="#{listaNegraMB.listaNegra.nombreCompleto}" styleClass="mayuscula" required="true" maxlength="50" requiredMessage="Se necesita un nombre" />
+							<!-- INICIO JPISCOYA -->
+							#{"Fecha de Incidente:"}
+							<p:calendar id="german" value="#{listaNegraMB.listaNegra.fAproxIncidencia}" locale="de" navigator="true" pattern="dd-MM-yyyy HH:mm:ss" />
+							
+							#{"Ruta Origen:"}
+							<p:inputText style="width:200px" value="#{listaNegraMB.listaNegra.rutaOrigen}" required="true" maxlength="50" requiredMessage="Se necesita una ruta origen" />
+							
+							#{"Ruta Destino:"}
+							<p:inputText style="width:200px" value="#{listaNegraMB.listaNegra.rutaDestino}" required="true" maxlength="50" requiredMessage="Se necesita una ruta destino" />
+							<!-- FIN jpiscoya-->								
+							#{"Motivo:"}
+							<p:inputTextarea cols="10" rows="4" style="width:200px" value="#{listaNegraMB.listaNegra.motivo}" styleClass="mayuscula" required="true" maxlength="50" requiredMessage="Se necesita un motivo" />
+							
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{listaNegraMB.registrarListaNegra()}"
+									 update=":formListaAgencia msgNuevo "
+									 oncomplete="validar(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgNuevo.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+			
+			
+			<p:dialog header="Autorizar" widgetVar="dlgAct" appendToBody="true"
+					  resizable="false" id="dlgDetAct" modal="true">
+					
+					<h:form>
+						<p:messages showDetail="false" showSummary="true" id="msgNuevo" closable="true"/>
+						
+						<h:panelGrid columns="2">
+
+							#{"DNI:"}
+							<p:outputLabel style="width:200px;font-weight:bold" disabled="true" value="#{listaNegraMB.listaNegra.DNI}" required="true" maxlength="8" requiredMessage="Se necesita un dni" />
+
+							#{"Nombre:"}
+							<p:outputLabel style="width:200px;font-weight:bold" disabled="true" value="#{listaNegraMB.listaNegra.nombreCompleto}" styleClass="mayuscula" required="true" maxlength="50" requiredMessage="Se necesita un nombre" />
+
+							#{"Motivo:"}
+							<p:outputLabel cols="3" rows="10" disabled="true" style="width:200px;font-weight:bold" value="#{listaNegraMB.listaNegra.motivo}" styleClass="mayuscula" required="true" maxlength="50" requiredMessage="Se necesita un motivo" />
+							
+							#{"Usu. Autorizante:"}
+							<p:selectOneMenu style="width:200px" value="#{listaNegraMB.listaNegra.usuarioAutorizante}" styleClass="mayuscula" required="true" requiredMessage="Seleccione una usuario autorizante">
+								<f:selectItem itemLabel="Seleccione..." itemValue="" />
+								<f:selectItems var="ag" value="#{listaNegraMB.listaUsuarioAutorizante}" itemValue="#{ag.idAutorizante}" itemLabel="#{ag.nombres}" /> 
+							</p:selectOneMenu>
+							
+
+						</h:panelGrid>
+						<br/>
+						<p:commandButton value="Guardar" actionListener="#{listaNegraMB.actualizarListaNegra()}"
+									 update=":formListaAgencia msgNuevo "
+									 oncomplete="validar2(xhr, status, args)" icon="icon-disk" />
+									 
+						<p:commandButton value="Cancelar" type="button"	 onclick="dlgAct.hide();"  icon="icon-cancel" />
+					</h:form>	
+			</p:dialog>
+			
+			<!--INICIO JPISCOYA -->			
+			<p:dialog header="Editar" widgetVar="dlgEditar" appendToBody="true"
+				position="center,top" resizable="false" id="dlgDetEditar"
+				modal="true">
+
+				<h:panelGrid columns="2">
+					
+					<p:messages showDetail="false" showSummary="true" id="msgEditar"
+							closable="true" />
+					
+					<h:form >
+						
+
+						<p:panel header="Datos de la Persona">
+
+							<p:accordionPanel>
+								<p:tab title="Datos Personales">
+									<h:panelGrid columns="2">  
+						        	
+						        	#{"Nombre Completo: "}
+									<p:inputText style="width:200px" value="#{listaNegraMB.listaNegra.nombreCompleto}" maxlength="30"/>																		
+																			
+									#{"Motivo "}
+									<p:inputText style="width:200px" value="#{listaNegraMB.listaNegra.motivo}" maxlength="50"/>
+											
+									#{"Ruta Origen"}
+									<p:inputText style="width:200px" value="#{listaNegraMB.listaNegra.rutaOrigen}" maxlength="50"/>
+									
+									#{"Ruta Destino "}
+									<p:inputText style="width:200px" value="#{listaNegraMB.listaNegra.rutaDestino}" maxlength="50"/>
+									
+									#{"Fecha de Incidente:"}
+									<p:calendar id="german" value="#{listaNegraMB.listaNegra.fAproxIncidencia}" locale="de" navigator="true" pattern="dd-MM-yyyy HH:mm:ss" />									
+									
+										<p:commandButton value="Actualizar"
+											actionListener="#{listaNegraMB.editarListaNegra()}"
+											update=":formListaAgencia :msgEditar"
+											oncomplete="validar3(xhr, status, args);"
+											icon="icon-disk">
+										</p:commandButton>
+
+										<p:commandButton type="button" value="Cerrar"
+											onclick="dlgEditar.hide();"
+											actionListener="#{listaNegraMB.limpiarValores()}"
+											icon="icon-cancel" />
+
+									</h:panelGrid>
+								</p:tab>
+							</p:accordionPanel>
+						</p:panel>
+					</h:form>
+				</h:panelGrid>
+			</p:dialog>
+			<!--FIN JPISCOYA -->
+			
+		<ui:remove>	
+			
+
+			<!-- dialogo eliminar -->	
+			<p:confirmDialog id="dlgDetEliminar" appendToBody="true"
+					message="¿Desea eliminar esta agencia?" header="Eliminar Agencia"
+					severity="alert" widgetVar="dlgEliminar">
+				<h:form>
+					Agencia: <h:outputText value="#{listaNegraMB.agencia.descripcion}" style="font-size:12px;font-weight: bold;" /> 
+					<br/>
+					<p:commandButton value="Eliminar"
+						update=":formListaAgencia :sms"
+						actionListener="#{listaNegraMB.eliminarAgencia()}"
+						oncomplete="dlgEliminar.hide();" icon="icon-delete" />
+
+					<p:commandButton value="Cancelar"  type="button" 
+						onclick="dlgEliminar.hide()" icon="icon-cancel"/>
+
+				</h:form>
+			</p:confirmDialog>
+			
+			
+			
+			
+			<p:confirmDialog id="dlgOmisoo" appendToBody="true"
+					message="No se puede Eliminar la Agencia porque cuenta con oficinas asignados" header="Aviso"
+					severity="alert" widgetVar="dlgOmiso">
+						
+					<h:form id="formOmiso" style="text-algin:center">		
+
+						<p:commandButton value="Aceptar" 
+							oncomplete="dlgOmiso.hide();" icon="icon-cancel" />
+					</h:form>
+			</p:confirmDialog>
+			
+						<!-- dialogo Editar Perfil -->
+
+			
+	</ui:remove>		
+		
+		
+		</p:panel>
+		
+		<script>
+			
+		function validar(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetNuevo').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgNuevo.hide();
+			}
+		}
+		function validar2(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetAct').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+	
+				dlgAct.hide();
+			}
+		}
+		
+		function validar3(xhr, status, args) {
+			if (!args.esValido) {
+				jQuery('#dlgDetEditar').effect("shake", {
+					times : 1
+				}, 100);
+			} else {
+				//limpiando
+				
+				dlgEditar.hide();
+			}
+		}
+
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>

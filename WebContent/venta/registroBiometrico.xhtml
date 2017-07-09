@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/plantillas/plantilla.xhtml">
+	<ui:define name="contenido">
+	
+		<p:panel>
+			
+			<h:form>
+				<p:breadCrumb>  
+    				<p:menuitem value="Home" url="#" />  
+    				<p:menuitem value="Ventas" url="#" />
+    				<p:menuitem value="Registro Biometrico" url="registroBiometrico" />   
+				</p:breadCrumb>	
+			</h:form>
+			
+			
+			<br/>
+			<!-- sms general -->			
+			<p:messages  id="sms" showDetail="false" showSummary="true"  closable="true"/>		
+			
+			<!-- toolbar -->
+			<h:form style="margin-bottom: 8px" id="formBuscaDNI">
+				<h:panelGrid columns="2">
+				#{"INGRESE DNI:"}
+				<p:inputText style="width:200px" value="#{pasajerosHuellasMB.dni}" id="numDNI"/>
+				<p:commandButton value="Buscar" icon="icon-search" update=":formListaAgencia :formCaptura :formGuardar"  action="#{pasajerosHuellasMB.buscarPersona()}" />
+				</h:panelGrid>	
+			</h:form>
+			
+				<!-- listado de agencias -->
+			<h:form id="formListaAgencia">
+					<h:panelGrid columns="4">
+					#{"Nombre:"}
+					<p:outputLabel style="width:200px;color:blue;font-weight:bold;" value="#{pasajerosHuellasMB.persona.nombres}" />
+					
+						#{"A. Paterno:"}
+					<p:outputLabel style="width:200px;color:blue;font-weight:bold;" value="#{pasajerosHuellasMB.persona.APaterno}" />
+					
+						#{"A.Materno:"}
+					<p:outputLabel style="width:200px;color:blue;font-weight:bold;" value="#{pasajerosHuellasMB.persona.AMaterno}" />
+					
+						#{"Dni:"}
+					<p:outputLabel style="width:200px;color:blue;font-weight:bold;" value="#{pasajerosHuellasMB.persona.dni}" />
+
+					</h:panelGrid>
+			
+			</h:form>
+			<br>
+			</br>
+			<h:form id="formCaptura">	
+	               <h:panelGroup>
+<!-- 								<p:fieldset legend= "PROCESO DE CAPTURA" style="width:200px;font-weight:bold;color:#0000FF;border:0;"> -->
+								<h:panelGrid columns="3" style="width:200px;font-weight:bold;color:#0000FF;border:0;" rendered="#{pasajerosHuellasMB.estadoApplet}">											
+											<p:column>
+												<p:commandButton value="Capturar"  action="#{pasajerosHuellasMB.cancelar()}" update=":formCaptura :formGuardar"  oncomplete="captura();"  disabled="#{pasajerosHuellasMB.estadoBtnCaptura}"/>
+											</p:column>	
+
+											<p:column>
+													<applet id="HuelleroApplet" code="org.certicom.lectorhuella.applet.LectorHuellaApplet" style="width: 250px; height: 250px" archive="AppletBiometrico/ver.jar">	
+		         								    </applet>
+											</p:column>
+											<p:column>
+												<p:inputText id="msCaptura" value="#{pasajerosHuellasMB.mensajeCaptura}"  style=" width:150px; font-weight:bold;font-size: 1.5 em;color:#080B01;  background-color:#DABC25 " readonly="true" ></p:inputText>
+											</p:column>
+									
+											<ui:remove>
+												<div align="center" >
+														<h:outputText value="ENROLAMIENTO " style="padding-left: 50px;font-weight:bold;font-size: 1.5em;color:#0000FF"/>
+												</div>
+											</ui:remove>
+								</h:panelGrid >
+<!-- 							</p:fieldset> -->
+					</h:panelGroup>	
+			</h:form>
+			
+				<h:form id="formGuardar" style="padding-left: 150px;">					
+						<p:inputText  id="trama" value="#{pasajerosHuellasMB.trama}" type="hidden"/>
+						<p:inputText  id="imagen" value="#{pasajerosHuellasMB.imagenCadena}" type="hidden"/>
+						
+						
+						<p:commandButton value ="Guardar" oncomplete="dlgFinCaptura.show();" actionListener="#{pasajerosHuellasMB.ocultarApplet()}"
+						 		update=":dlgDetFinCaptura :formCaptura" style="width:160px;" disabled="#{pasajerosHuellasMB.estadoBtnCaptura}"/> 	
+				</h:form>
+
+				
+				<p:confirmDialog id="dlgDetFinCaptura" appendToBody="true"
+					message="¿Desea guardar huella?"
+					header="Guardar Huella" severity="alert"
+					widgetVar="dlgFinCaptura">
+						<h:form >
+								<p:commandButton value="Aceptar"
+									actionListener ="#{pasajerosHuellasMB.guardar()}"
+									update=":formGuardar :formCaptura :formListaAgencia :formBuscaDNI :sms"
+									oncomplete="dlgFinCaptura.hide()"   
+									icon="icon-delete" />
+								
+								<p:commandButton value="Cancelar" onclick="dlgFinCaptura.hide()" action="#{pasajerosHuellasMB.cancelar()}"
+									update=":formCaptura :formListaAgencia" 
+									icon="icon-cancel" />
+						</h:form>
+				</p:confirmDialog>
+				
+				
+				
+		</p:panel>
+		<script type="text/javascript" src="jsThreads/Concurrent.Thread.js"></script>
+		<script type="text/javascript">
+			
+				function validar(xhr, status, args) {
+					if (!args.esValido) {
+						jQuery('#dlgDetFinCaptura').effect("shake", {
+							times : 1
+						}, 100);
+					} else {
+						//limpiando
+						
+						dlgNuevo.hide();
+					}
+				}
+				
+				
+				
+			       
+		       function procesoCapturaHuella(){
+		         console.log(" procesa applet");
+		         
+		         var calidadImagenCaptura = "#{pasajerosHuellasMB.getUmbralCaptura()}";
+			     var calidadImagenDetectada ="#{pasajerosHuellasMB.getUmbralDeteccion()}";
+		         var appletHuelleroLumi=document.getElementById("HuelleroApplet");
+		         var pasajero=document.getElementById("formBuscaDNI:numDNI");
+		          
+// 		          appletHuelleroLumi.setPathImagenHuella("C:\\IMAGEN_HUELLAS\\Huellas_BMP\\"+pasajero.value);
+		          appletHuelleroLumi.setPathImagenHuella("C:\\xampp\\htdocs\\huellas\\"+pasajero.value);
+		          appletHuelleroLumi.setUmbralCalidadImagenCaptura(calidadImagenCaptura); 
+		          appletHuelleroLumi.setUmbralCalidadImagenDetectada(calidadImagenDetectada);
+		          console.log("iniciando captura");
+		          appletHuelleroLumi.capturarHuella();
+		                   
+		       }
+
+		       function captura(){
+		           console.log("************ PROCESO CAPTURA");				           
+		           procesoCapturaHuella();		     		           
+		       }
+		       
+		       function terminoCapturarHuella(tramaHuella){           
+		           //EN ESTE METODO SE GUARDA LA TRAMA DE LA HUELLA
+			        var varTrama=document.getElementById("formGuardar:trama");
+					varTrama.value=tramaHuella;
+// 			        console.log(tramaHuella);   
+		           
+		       }
+
+		       function terminoCapturarImagenHuella(imagenHuella){           
+		           //EN ESTE METODO SE GUARDA LA TRAMA DE LA HUELLA			            
+		           	var varImagen=document.getElementById("formGuardar:imagen");
+		           	var varMensaje=document.getElementById("formCaptura:msCaptura");
+					varImagen.value=imagenHuella;
+// 		            console.log(imagenHuella);  
+		            varMensaje.value="CAPTURA CORRECTA!";
+		            
+		       }
+
+// 		function captura(){		
+// 			var init;
+// 			var huella;
+// 			var varImg;
+// 			console.log("ingresa a captura");
+// 			var appletHuelleroLumi = document.getElementById("HuelleroApplet");
+			
+// 			var umbcap="#{pasajerosHuellasMB.getUmbralCaptura()}";
+// 			console.log("umbral de captura "+umbcap);
+			
+// 			var umbdetec="#{pasajerosHuellasMB.getUmbralDeteccion()}";
+// 			console.log("umbral de Deteccion "+umbdetec);
+			
+// 			console.log("***SET'S UMBRALES");
+// 			appletHuelleroLumi.setUmbralCalidadImagenCaptura(umbcap);
+// 			appletHuelleroLumi.setUmbralCalidadImagenDetectada(umbdetec);
+		
+			
+// 			var varMensaje=document.getElementById("formCaptura:msCaptura");
+// 				init=appletHuelleroLumi.iniciar();
+// 				if(init!=2048){
+					
+// 					huella =appletHuelleroLumi.procesoCaptura();	
+// 					console.log("huella capturada "+huella);
+// 					estado=true;
+					
+// 					setTrama(huella);
+// 					varImg=appletHuelleroLumi.getTramaImagen();
+// 					setImagen(varImg);
+// 					varMensaje.value="CAPTURA CORRECTA!";
+// 				}
+// 				if(init==2048){
+// 					alert("DISPOSITIVO DESCONECTADO");
+// 				}
+// 		}
+				
+// 		function setTrama(h){
+// 			var varTrama=document.getElementById("formGuardar:trama");
+// 			varTrama.value=h;
+// 			//console.log("trama a form ");
+			
+// 		}
+// 		function setImagen(img){
+// 			var varImagen=document.getElementById("formGuardar:imagen");
+// 			varImagen.value=img;
+// 			//console.log("imagen cadena");
+// 			//alert(img);
+// 		}
+		
+		
+// 		function capturar(){
+// 			console.log(" ingresa al hilo ");
+// 			Concurrent.Thread.create(captura);
+			
+// 		}
+		</script>
+		
+	</ui:define>
+</ui:composition>
+</html>
